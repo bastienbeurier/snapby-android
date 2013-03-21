@@ -1,0 +1,10 @@
+out
+.DS_Store
+*.iml
+*.ipr
+*.iws
+local.properties
+bin/
+target
+gen/
+.idea/
