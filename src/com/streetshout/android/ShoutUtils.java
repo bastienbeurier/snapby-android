@@ -1,6 +1,12 @@
 package com.streetshout.android;
 
+import android.appwidget.AppWidgetProviderInfo;
 import android.util.Log;
+import android.widget.Toast;
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+import org.json.JSONObject;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,7 +17,7 @@ import android.util.Log;
  */
 public class ShoutUtils {
 
-    public static void createShout(double lat, double lng, String description) {
-        Log.d("BAB", "cooool! " + description);
+    public static void createShout(AQuery aq, double lat, double lng, String description, AjaxCallback<JSONObject> cb) {
+        ApiUtils.createShout(aq, lat, lng, description, cb);
     }
 }

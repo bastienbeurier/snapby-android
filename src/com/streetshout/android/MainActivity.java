@@ -8,6 +8,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+import org.json.JSONObject;
 
 public class MainActivity extends Activity {
 
@@ -18,12 +23,15 @@ public class MainActivity extends Activity {
     private LocationManager locationManager = null;
     private LocationListener listener = null;
 
-    private Location currentBestLocation = null;
-    private Location currentAccurateLocation = null;
+    private Location bestLoc = null;
+
+    private AQuery aq = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        this.aq = new AQuery(this);
 
         setContentView(R.layout.main);
 
@@ -33,14 +41,8 @@ public class MainActivity extends Activity {
 
             @Override
             public void onLocationChanged(Location location) {
-                printLocationLogs(location, "provider");
-
-                if (LocationUtils.isBetterLocation(location, MainActivity.this.currentBestLocation)) {
-                    MainActivity.this.currentBestLocation = location;
-                }
-
-                if (location.getAccuracy() < REQUIRED_ACCURACY) {
-                    MainActivity.this.currentAccurateLocation = location;
+                if (LocationUtils.isBetterLocation(location, MainActivity.this.bestLoc)) {
+                    MainActivity.this.bestLoc = location;
                 }
             }
 
@@ -85,14 +87,22 @@ public class MainActivity extends Activity {
     }
 
     /** User clicks on the button to create a new bubble */
-    public void createBubbleBtnPressed(View v) {
-        printLocationLogs(currentAccurateLocation, "bubble");
-        if (this.currentAccurateLocation != null &&
-                          (System.currentTimeMillis() - this.currentAccurateLocation.getTime() < REQUIRED_RECENTNESS)) {
-            ShoutUtils.createShout(currentAccurateLocation.getLatitude(), currentAccurateLocation.getLongitude(),
-                                    ((EditText) this.findViewById(R.id.shout_description_input)).getText().toString());
+    public void createShoutBtnPressed(View v) {
+        if (this.bestLoc != null && (System.currentTimeMillis() - this.bestLoc.getTime() < REQUIRED_RECENTNESS)) {
+            String description = ((EditText) this.findViewById(R.id.shout_description_input)).getText().toString();
+
+            ShoutUtils.createShout(aq, bestLoc.getLatitude(), bestLoc.getLongitude(), description
+                                                                                      , new AjaxCallback<JSONObject>() {
+                @Override
+                public void callback(String url, JSONObject object, AjaxStatus status) {
+                    super.callback(url, object, status);
+                    Toast toast = Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
         } else {
-            Log.d("BAB", "No location available");
+            Toast toast = Toast.makeText(MainActivity.this, "No good location available!", Toast.LENGTH_LONG);
+            toast.show();
         }
     }
 

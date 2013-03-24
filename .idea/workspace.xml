@@ -31,9 +31,9 @@
     <ignored path="untitled.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/AndroidManifest.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363759111973" ignored="false" />
-    <file path="/MainActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363929733693" ignored="false" />
+    <file path="/MainActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364102118835" ignored="false" />
     <file path="/Dummy.txt" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363929350845" ignored="false" />
-    <file path="/main.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363929842647" ignored="false" />
+    <file path="/main.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364101161933" ignored="false" />
     <file path="/fragment.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363798710601" ignored="false" />
     <file path="/Utils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363821831114" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/3rdparty/HoloEverywhere/library/project.properties" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363827350998" ignored="false" />
@@ -49,6 +49,9 @@
     <file path="$PROJECT_DIR$/gen/com/streetshout/android/Manifest.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363934389729" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/streetshout/android/BuildConfig.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363934389729" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/streetshout/android/R.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363934389729" ignored="false" />
+    <file path="/ApiUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364101596908" ignored="false" />
+    <file path="/ShoutUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364101870251" ignored="false" />
+    <file path="/*.regexp" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364101696845" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,8 +122,10 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="33" selection-start="96" selection-end="96" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="43" column="59" selection-start="1346" selection-end="1346" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -128,22 +133,27 @@
       <file leaf-file-name="ShoutUtils.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/ShoutUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="1" selection-start="96" selection-end="96" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="19" column="117" selection-start="589" selection-end="589" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ApiUtils.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="ApiUtils.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/ApiUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="14" selection-start="61" selection-end="61" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="22" column="9" selection-start="702" selection-end="702" vertical-scroll-proportion="0.40145984">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#512#528#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
@@ -167,7 +177,7 @@
             <state />
           </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="38" selection-start="1132" selection-end="1144" vertical-scroll-proportion="0.0">
+            <state line="2" column="66" selection-start="106" selection-end="106" vertical-scroll-proportion="-0.5769231">
               <folding />
             </state>
           </provider>
@@ -197,8 +207,8 @@
         <option value="$PROJECT_DIR$/src/dummy.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/LocationUtils.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/BubbleUtils.java" />
-        <option value="$PROJECT_DIR$/res/layout/main.xml" />
         <option value="$PROJECT_DIR$/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/res/layout/main.xml" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/ShoutUtils.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/MainActivity.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/ApiUtils.java" />
@@ -297,6 +307,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -333,10 +345,22 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="untitled" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="street-shout-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="libs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -356,8 +380,8 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -397,6 +421,19 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -422,19 +459,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -540,10 +564,11 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1920" height="970" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.74941176" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -555,12 +580,11 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2113127" sideWeight="0.74941176" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2113127" sideWeight="0.74941176" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20470588" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32959402" sideWeight="0.74941176" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32973805" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -648,7 +672,9 @@
     <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="75" column="147" selection-start="2475" selection-end="2475" vertical-scroll-proportion="0.0">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -672,7 +698,9 @@
     <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="50" column="25" selection-start="1643" selection-end="1643" vertical-scroll-proportion="0.0">
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -693,16 +721,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="38" selection-start="1132" selection-end="1144" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="38" selection-start="147" selection-end="147" vertical-scroll-proportion="0.0">
@@ -717,31 +735,48 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="66" selection-start="106" selection-end="106" vertical-scroll-proportion="-0.5769231">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="33" selection-start="96" selection-end="96" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="43" column="59" selection-start="1346" selection-end="1346" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/ShoutUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="1" selection-start="96" selection-end="96" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="19" column="117" selection-start="589" selection-end="589" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/ApiUtils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="14" selection-start="61" selection-end="61" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="22" column="9" selection-start="702" selection-end="702" vertical-scroll-proportion="0.40145984">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#512#528#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -821,6 +856,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
+          <last-edited>spring-android-rest-template-1.0.1.RELEASE</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
