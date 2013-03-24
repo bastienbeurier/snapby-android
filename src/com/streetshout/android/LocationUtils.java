@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.provider.Settings;
 
-public class Utils {
+public class LocationUtils {
 
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     private static final int SIGNIFICANT_ACCURACY = 200;

@@ -1,17 +1,13 @@
 package com.streetshout.android;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
 
 public class MainActivity extends Activity {
 
@@ -28,6 +24,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.main);
 
         this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
@@ -38,7 +35,7 @@ public class MainActivity extends Activity {
             public void onLocationChanged(Location location) {
                 printLocationLogs(location, "provider");
 
-                if (Utils.isBetterLocation(location, MainActivity.this.currentBestLocation)) {
+                if (LocationUtils.isBetterLocation(location, MainActivity.this.currentBestLocation)) {
                     MainActivity.this.currentBestLocation = location;
                 }
 
@@ -69,7 +66,7 @@ public class MainActivity extends Activity {
 
 
         if (!gpsEnabled && !networkEnabled) {
-            Utils.enableLocationSettings(this);
+            LocationUtils.enableLocationSettings(this);
             this.finish();
         }
 
@@ -92,9 +89,10 @@ public class MainActivity extends Activity {
         printLocationLogs(currentAccurateLocation, "bubble");
         if (this.currentAccurateLocation != null &&
                           (System.currentTimeMillis() - this.currentAccurateLocation.getTime() < REQUIRED_RECENTNESS)) {
-            ((TextView) this.findViewById(R.id.display_latlng)).setText("Lat: " + currentAccurateLocation.getLatitude() + ", lng: " + currentAccurateLocation.getLongitude());
+            ShoutUtils.createShout(currentAccurateLocation.getLatitude(), currentAccurateLocation.getLongitude(),
+                                    ((EditText) this.findViewById(R.id.shout_description_input)).getText().toString());
         } else {
-            ((TextView) this.findViewById(R.id.display_latlng)).setText("No location available");
+            Log.d("BAB", "No location available");
         }
     }
 

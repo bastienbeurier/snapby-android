@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
-    <TextView android:id="@+id/display_latlng"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:text="Hello World, MainActivity"/>
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/map"
+              android:layout_width="match_parent"
+              android:layout_height="300dp"
+              class="com.google.android.gms.maps.MapFragment"/>
 
-    <Button android:id="@+id/create_bubble"
+    <EditText android:id="@+id/shout_description_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="12dp"
+            android:scrollHorizontally="false"
+            android:textSize="13sp" >
+    </EditText>
+
+    <Button android:id="@+id/create_shout"
+            android:text="@string/create_shout"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_marginTop="20dp"
             android:textSize="14sp"
             android:onClick="createBubbleBtnPressed"/>
 </LinearLayout>
-
