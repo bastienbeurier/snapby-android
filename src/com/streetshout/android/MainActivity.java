@@ -5,13 +5,16 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity {
@@ -19,13 +22,15 @@ public class MainActivity extends Activity {
     /** Required recentness and accuracy for creating a bubble */
     private static final int REQUIRED_RECENTNESS = 1000 * 60 * 2;
     private static final int REQUIRED_ACCURACY = 50;
+    private static final int INITIAL_ZOOM = 11;
 
     private LocationManager locationManager = null;
     private LocationListener listener = null;
-
     private Location bestLoc = null;
-
     private AQuery aq = null;
+    private GoogleMap mMap;
+    private boolean initCamera = false;
+    private Location firstLoc = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,11 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.main);
 
+        if (getIntent().hasExtra("firstLocation")) {
+            firstLoc = (Location) getIntent().getParcelableExtra("firstLocation");
+            bestLoc = firstLoc;
+        }
+
         this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
 
         listener = new LocationListener() {
@@ -43,6 +53,10 @@ public class MainActivity extends Activity {
             public void onLocationChanged(Location location) {
                 if (LocationUtils.isBetterLocation(location, MainActivity.this.bestLoc)) {
                     MainActivity.this.bestLoc = location;
+                    if (mMap != null && !initCamera) {
+                        initializeCamera();
+                        initCamera = true;
+                    }
                 }
             }
 
@@ -61,16 +75,20 @@ public class MainActivity extends Activity {
                 //Nothing
             }
         };
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        locationManager.removeUpdates(listener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         final boolean gpsEnabled = this.locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         final boolean networkEnabled = this.locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-
-
-        if (!gpsEnabled && !networkEnabled) {
-            LocationUtils.enableLocationSettings(this);
-            this.finish();
-        }
 
         if (gpsEnabled) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, listener);
@@ -79,11 +97,32 @@ public class MainActivity extends Activity {
         if (networkEnabled) {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10 ,listener);
         }
+
+        boolean newMap = setUpMapIfNeeded();
+        if (newMap) {
+            initCamera = false;
+            if (firstLoc != null) {
+                bestLoc = (Location) getIntent().getParcelableExtra("firstLocation");
+                initializeCamera();
+                initCamera = true;
+
+                //Only use the first location from Welcome Activity once
+                firstLoc = null;
+            }
+        }
     }
 
-    protected void onStop() {
-        super.onStop();
-        locationManager.removeUpdates(listener);
+    private boolean setUpMapIfNeeded() {
+        if (mMap == null) {
+            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+            return true;
+        }
+        return false;
+    }
+
+    private void initializeCamera() {
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(bestLoc), INITIAL_ZOOM);
+        mMap.moveCamera(update);
     }
 
     /** User clicks on the button to create a new bubble */
@@ -104,18 +143,5 @@ public class MainActivity extends Activity {
             Toast toast = Toast.makeText(MainActivity.this, "No good location available!", Toast.LENGTH_LONG);
             toast.show();
         }
-    }
-
-    private void printLocationLogs(Location location, String locationType) {
-        if (locationType.equals("bubble")) {
-            Log.d("BAB", "NEW BUBBLE LOCATION");
-        } else {
-            Log.d("BAB", "NEW LOCATION PROVIDED");
-        }
-        Log.d("BAB", "lat: " + location.getLatitude());
-        Log.d("BAB", "lng: " + location.getLongitude());
-        Log.d("BAB", "provider: " + location.getProvider());
-        long ago = (System.currentTimeMillis() - location.getTime()) / 1000;
-        Log.d("BAB", "time: " + ago);
     }
 }

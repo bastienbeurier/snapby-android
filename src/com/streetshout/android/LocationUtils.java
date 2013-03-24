@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.provider.Settings;
+import com.google.android.gms.maps.model.LatLng;
 
 public class LocationUtils {
 
@@ -69,5 +72,10 @@ public class LocationUtils {
     public static void enableLocationSettings(Context ctx) {
         Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         ctx.startActivity(settingsIntent);
+    }
+
+    /**Given a Location object, returns a LatLng*/
+    public static LatLng toLatLng(Location loc) {
+        return new LatLng(loc.getLatitude(), loc.getLongitude());
     }
 }
