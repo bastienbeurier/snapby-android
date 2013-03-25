@@ -5,16 +5,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.CameraPosition;
 import org.json.JSONObject;
 
 public class MainActivity extends Activity {
@@ -25,7 +24,9 @@ public class MainActivity extends Activity {
     private static final int INITIAL_ZOOM = 11;
 
     private LocationManager locationManager = null;
-    private LocationListener listener = null;
+    private LocationListener locationListener = null;
+    private MapRequestHandler mapReqHandler = null;
+    private GoogleMap.OnCameraChangeListener cameraListener = null;
     private Location bestLoc = null;
     private AQuery aq = null;
     private GoogleMap mMap;
@@ -37,9 +38,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         this.aq = new AQuery(this);
+        mapReqHandler = new MapRequestHandler();
 
         setContentView(R.layout.main);
 
+        //Check if we have the user position from the Welcome Activity
         if (getIntent().hasExtra("firstLocation")) {
             firstLoc = (Location) getIntent().getParcelableExtra("firstLocation");
             bestLoc = firstLoc;
@@ -47,7 +50,7 @@ public class MainActivity extends Activity {
 
         this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
 
-        listener = new LocationListener() {
+        locationListener = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location location) {
@@ -80,7 +83,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        locationManager.removeUpdates(listener);
+        locationManager.removeUpdates(locationListener);
     }
 
     @Override
@@ -91,35 +94,65 @@ public class MainActivity extends Activity {
         final boolean networkEnabled = this.locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if (gpsEnabled) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, listener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
         }
 
         if (networkEnabled) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10 ,listener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10 ,locationListener);
         }
 
         boolean newMap = setUpMapIfNeeded();
+
+        //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         if (newMap) {
             initCamera = false;
             if (firstLoc != null) {
                 bestLoc = (Location) getIntent().getParcelableExtra("firstLocation");
                 initializeCamera();
+
+                //Now camera has been initialized
                 initCamera = true;
 
-                //Only use the first location from Welcome Activity once
+                //Only use the first location once
                 firstLoc = null;
             }
         }
     }
 
+    /** If no map already present, set up map with settings, event listener, ... Return true if a new map is set */
     private boolean setUpMapIfNeeded() {
         if (mMap == null) {
+            //Instantiate map
             mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+            //Set map settings
+            UiSettings settings = mMap.getUiSettings();
+            settings.setZoomControlsEnabled(false);
+            settings.setCompassEnabled(true);
+            settings.setMyLocationButtonEnabled(true);
+            settings.setRotateGesturesEnabled(false);
+            settings.setTiltGesturesEnabled(false);
+
+            //Set camera move listener
+            mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                @Override
+                public void onCameraChange(CameraPosition cameraPosition) {
+                    mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
+                        @Override
+                        public void responseReceived(JSONObject object, AjaxStatus status) {
+                            Log.d("BAB", "Server response: " + object);
+                        }
+                    });
+                    mapReqHandler.addMapRequest(aq, cameraPosition);
+                }
+            });
+
             return true;
         }
         return false;
     }
 
+    /** Set initial camera position on the user location */
     private void initializeCamera() {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(bestLoc), INITIAL_ZOOM);
         mMap.moveCamera(update);
