@@ -1,17 +1,19 @@
-package com.streetshout.android;
+package com.streetshout.android.Utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.provider.Settings;
 import com.google.android.gms.maps.model.LatLng;
 
+/**
+ * Tools relative to location.
+ */
 public class LocationUtils {
 
     private static final int TWO_MINUTES = 1000 * 60 * 2;
+
+    /** Significant accuracy to determine if a newer and less precised shout should be favored against an older one */
     private static final int SIGNIFICANT_ACCURACY = 200;
 
     /** Determines whether one Location reading is better than the current Location fix
@@ -74,7 +76,7 @@ public class LocationUtils {
         ctx.startActivity(settingsIntent);
     }
 
-    /**Given a Location object, returns a LatLng*/
+    /** Given a Location object, returns a LatLng*/
     public static LatLng toLatLng(Location loc) {
         return new LatLng(loc.getLatitude(), loc.getLongitude());
     }

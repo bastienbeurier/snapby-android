@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bubblz!!!!!!!!!</string>
+    <string name="app_name">Bubblz</string>
     <string name="create_shout">Create</string>
     <string name="settings">Settings</string>
     <string name="skip">Skip</string>
     <string name="no_location_dialog_title">Location access disabled</string>
-    <string name="no_location_dialog_message">Some features of this application require access to your location. Tap "Settings" if you are willing to modify your location settings, otherwise tap "Skip".</string>
+    <string name="no_location_dialog_message">Some features of Bubblz require access to your location. Tap "Settings" to edit these settings, otherwise tap "Skip".</string>
 </resources>

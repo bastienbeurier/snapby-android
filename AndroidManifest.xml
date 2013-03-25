@@ -19,10 +19,10 @@
             android:required="true"/>
     <uses-sdk android:minSdkVersion="17"/>
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
-        <activity android:name="MainActivity"
+        <activity android:name=".Activities.MainActivity"
                   android:label="@string/app_name">
         </activity>
-        <activity android:name=".WelcomeActivity"
+        <activity android:name=".Activities.WelcomeActivity"
                   android:label="welcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
