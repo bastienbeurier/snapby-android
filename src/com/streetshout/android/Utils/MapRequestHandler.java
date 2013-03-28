@@ -4,7 +4,6 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.streetshout.android.Utils.ApiUtils;
 import org.json.JSONObject;
 
 /**

@@ -5,7 +5,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,13 +14,11 @@ import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.Utils.MapRequestHandler;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.LocationUtils;
-import com.streetshout.android.Utils.ShoutUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,6 +62,7 @@ public class MainActivity extends Activity {
      * used only once (set to null after use), if no user location, user gets zoom 0 map by default */
     private Location firstLoc = null;
 
+    /** Set of shout ids to keep track of shouts already added to the map */
     private Set<Integer> markedShouts = null;
 
     @Override
@@ -185,40 +183,8 @@ public class MainActivity extends Activity {
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
-                //Set listener to catch API response from the MapRequestHandler
-                mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
-                    @Override
-                    public void responseReceived(String url, JSONObject object, AjaxStatus status) {
-                    if (status.getError() == null) {
-                        Log.d("BAB", "Server response: " + object);
-
-                        JSONArray rawResult = null;
-                        try {
-                            rawResult = object.getJSONArray("result");
-                            List<ShoutModel> shouts = ShoutModel.rawShoutsToInstances(rawResult);
-
-                            for (ShoutModel shout: shouts) {
-                                if (!markedShouts.contains(shout.id)) {
-                                    MarkerOptions marker = new MarkerOptions();
-                                    marker.position(new LatLng(shout.lat, shout.lng));
-                                    marker.title(shout.description).snippet(shout.created);
-                                    marker.draggable(true);
-                                    mMap.addMarker(marker);
-
-                                    markedShouts.add(shout.id);
-                                    Log.d("BAB", "length: " + markedShouts.size());
-                                }
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    }
-                });
-
-                //Add a request to populate the map to the MapRequestHandler
-                mapReqHandler.addMapRequest(aq, cameraPosition);
+                //Set listener and send calls to the MapRequestHandler
+                pullShoutsOnMap(cameraPosition);
                 }
             });
 
@@ -227,12 +193,58 @@ public class MainActivity extends Activity {
         return false;
     }
 
+    /** Set listener for MapRequestHandler responses and add requests to this handler */
+    private void pullShoutsOnMap(CameraPosition cameraPosition) {
+        //Set listener to catch API response from the MapRequestHandler
+        mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
+            @Override
+            public void responseReceived(String url, JSONObject object, AjaxStatus status) {
+                if (status.getError() == null) {
+
+                    JSONArray rawResult = null;
+                    try {
+                        rawResult = object.getJSONArray("result");
+
+                        //Get ShoutModel instances for a raw JSONArray
+                        List<ShoutModel> shouts = ShoutModel.rawShoutsToInstances(rawResult);
+
+                        //Add received shours on the map
+                        addShoutsOnMap(shouts);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        //Add a request to populate the map to the MapRequestHandler
+        mapReqHandler.addMapRequest(aq, cameraPosition);
+    }
+
+    /** Add a list of shouts on the map */
+    private void addShoutsOnMap(List<ShoutModel> shouts) {
+
+        for (ShoutModel shout: shouts) {
+            //Check that the shout is not already marked on the map
+            if (!markedShouts.contains(shout.id)) {
+                MarkerOptions marker = new MarkerOptions();
+                marker.position(new LatLng(shout.lat, shout.lng));
+                marker.title(shout.description).snippet(shout.created);
+                marker.draggable(true);
+                mMap.addMarker(marker);
+
+                //Keep track that we added the shout on the map
+                markedShouts.add(shout.id);
+            }
+        }
+    }
+
     /** User clicks on the button to create a new bubble */
     public void createShoutBtnPressed(View v) {
         if (this.bestLoc != null && (System.currentTimeMillis() - this.bestLoc.getTime() < REQUIRED_RECENTNESS)) {
             String description = ((EditText) this.findViewById(R.id.shout_description_input)).getText().toString();
 
-            ShoutUtils.createShout(aq, bestLoc.getLatitude(), bestLoc.getLongitude(), description
+            ShoutModel.createShout(aq, bestLoc.getLatitude(), bestLoc.getLongitude(), description
                     , new AjaxCallback<JSONObject>() {
                 @Override
                 public void callback(String url, JSONObject object, AjaxStatus status) {
