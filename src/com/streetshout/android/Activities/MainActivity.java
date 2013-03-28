@@ -14,11 +14,21 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.Utils.MapRequestHandler;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.LocationUtils;
 import com.streetshout.android.Utils.ShoutUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends Activity {
 
@@ -55,12 +65,16 @@ public class MainActivity extends Activity {
      * used only once (set to null after use), if no user location, user gets zoom 0 map by default */
     private Location firstLoc = null;
 
+    private Set<Integer> markedShouts = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         this.aq = new AQuery(this);
         mapReqHandler = new MapRequestHandler();
+
+        markedShouts = new HashSet<Integer>();
 
         setContentView(R.layout.main);
 
@@ -171,17 +185,40 @@ public class MainActivity extends Activity {
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
-                    //Set listener to catch API response from the MapRequestHandler
-                    mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
-                        @Override
-                        public void responseReceived(String url, JSONObject object, AjaxStatus status) {
-                            Log.d("BAB", "Server response: " + object);
-                            Log.d("BAB", "URL: " + url);
-                        }
-                    });
+                //Set listener to catch API response from the MapRequestHandler
+                mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
+                    @Override
+                    public void responseReceived(String url, JSONObject object, AjaxStatus status) {
+                    if (status.getError() == null) {
+                        Log.d("BAB", "Server response: " + object);
 
-                    //Add a request to populate the map to the MapRequestHandler
-                    mapReqHandler.addMapRequest(aq, cameraPosition);
+                        JSONArray rawResult = null;
+                        try {
+                            rawResult = object.getJSONArray("result");
+                            List<ShoutModel> shouts = ShoutModel.rawShoutsToInstances(rawResult);
+
+                            for (ShoutModel shout: shouts) {
+                                if (!markedShouts.contains(shout.id)) {
+                                    MarkerOptions marker = new MarkerOptions();
+                                    marker.position(new LatLng(shout.lat, shout.lng));
+                                    marker.title(shout.description).snippet(shout.created);
+                                    marker.draggable(true);
+                                    mMap.addMarker(marker);
+
+                                    markedShouts.add(shout.id);
+                                    Log.d("BAB", "length: " + markedShouts.size());
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    }
+                });
+
+                //Add a request to populate the map to the MapRequestHandler
+                mapReqHandler.addMapRequest(aq, cameraPosition);
                 }
             });
 
