@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bubblz</string>
+    <string name="app_name">Shout</string>
     <string name="create_shout">Create</string>
     <string name="settings">Settings</string>
     <string name="skip">Skip</string>

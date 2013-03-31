@@ -1,5 +1,6 @@
 package com.streetshout.android.Utils;
 
+import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import org.json.JSONObject;

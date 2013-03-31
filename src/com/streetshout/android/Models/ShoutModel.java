@@ -55,6 +55,24 @@ public class ShoutModel {
         return shouts;
     }
 
+    public static ShoutModel rawShoutToInstance(JSONObject rawShout) {
+        ShoutModel shout = new ShoutModel();
+
+        try {
+            if (rawShout != null) {
+                shout.id = Integer.parseInt(rawShout.getString("id"));
+                shout.lat = Double.parseDouble(rawShout.getString("lat"));
+                shout.lng = Double.parseDouble(rawShout.getString("lng"));
+                shout.description = rawShout.getString("description");
+                shout.created = rawShout.getString("created_at");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return shout;
+    }
+
     /** User creates a new shout */
     public static void createShout(AQuery aq, double lat, double lng, String description, AjaxCallback<JSONObject> cb) {
         ApiUtils.createShout(aq, lat, lng, description, cb);

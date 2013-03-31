@@ -1,5 +1,6 @@
 package com.streetshout.android.Utils;
 
+import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -30,6 +31,7 @@ public class MapRequestHandler {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
+
                 //Notify the MapRequestHandler caller that we received the shouts
                 reportResponseReceived(url, object, status);
             }

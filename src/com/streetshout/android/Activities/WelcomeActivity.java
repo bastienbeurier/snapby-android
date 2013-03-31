@@ -14,10 +14,10 @@ import com.streetshout.android.Utils.LocationUtils;
 
 public class WelcomeActivity extends Activity {
 
-    /** Location manager that handles the GPS and network services */
+    /** Location manager that handles the network services */
     private LocationManager locationManager = null;
 
-    /** Location listener to get location from GPS and network services */
+    /** Location listener to get location from network services */
     private LocationListener listener = null;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -61,11 +61,10 @@ public class WelcomeActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        final boolean gpsEnabled = this.locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         final boolean networkEnabled = this.locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         //If location services disabled, user is invited to edit settings
-        if (!gpsEnabled && !networkEnabled) {
+        if (!networkEnabled) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -90,10 +89,7 @@ public class WelcomeActivity extends Activity {
             builder.create().show();
         }
 
-        //Request location to GPS and network providers
-        if (gpsEnabled) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, listener);
-        }
+        //Request location to network provider
         if (networkEnabled) {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10 ,listener);
         }

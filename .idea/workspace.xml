@@ -31,9 +31,9 @@
     <ignored path="untitled.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/AndroidManifest.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364691329194" ignored="false" />
-    <file path="/MainActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364698593521" ignored="false" />
-    <file path="/Dummy.txt" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364692256458" ignored="false" />
-    <file path="/main.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364692803059" ignored="false" />
+    <file path="/MainActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364760831156" ignored="false" />
+    <file path="/Dummy.txt" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364750768547" ignored="false" />
+    <file path="/main.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364760031670" ignored="false" />
     <file path="/fragment.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364151894870" ignored="false" />
     <file path="/Utils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363821831114" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/3rdparty/HoloEverywhere/library/project.properties" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364148668735" ignored="false" />
@@ -45,19 +45,19 @@
     <file path="/GogobotAPI.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364521057107" ignored="false" />
     <file path="/LocationUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364229029486" ignored="false" />
     <file path="/BubbleUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363929927742" ignored="false" />
-    <file path="/strings.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364698608374" ignored="false" />
+    <file path="/strings.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364698903091" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/streetshout/android/Manifest.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364151942076" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/streetshout/android/BuildConfig.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364151947519" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/streetshout/android/R.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364228096231" ignored="false" />
-    <file path="/ApiUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364229281902" ignored="false" />
+    <file path="/ApiUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364753097993" ignored="false" />
     <file path="/ShoutUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364227322438" ignored="false" />
-    <file path="/*.regexp" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364511780610" ignored="false" />
+    <file path="/*.regexp" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364752859383" ignored="false" />
     <file path="/WelcomeActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364690903486" ignored="false" />
     <file path="$PROJECT_DIR$/3rd party/HoloEverywhere/library/project.properties" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364148733896" ignored="false" />
     <file path="/MapShoutsRequestHandler.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364188104368" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/utilities/FbUpsellHelper.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364185222387" ignored="false" />
-    <file path="/MapRequestHandler.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364228419099" ignored="false" />
-    <file path="/ShoutModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364486436283" ignored="false" />
+    <file path="/MapRequestHandler.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364753295174" ignored="false" />
+    <file path="/ShoutModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364704028875" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/TripModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364515939712" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/MyTripActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364518711617" ignored="false" />
     <file path="/MyTripActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364518710178" ignored="false" />
@@ -74,6 +74,7 @@
     <file path="$PROJECT_DIR$/../GogoDroid/gen/com/gogobot/gogodroid/R.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364520324786" ignored="false" />
     <file path="/MyTripEditorsActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364522408208" ignored="false" />
     <file path="/create_shout.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364695977762" ignored="false" />
+    <file path="/TimeUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364758072348" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,45 +134,16 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ShoutModel.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Models/ShoutModel.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="56" column="35" selection-start="1707" selection-end="1707" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ApiUtils.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="56" selection-start="908" selection-end="908" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LocationUtils.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="56" selection-start="524" selection-end="524" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="MainActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="308" column="103" selection-start="12212" selection-end="12232" vertical-scroll-proportion="0.0">
+            <state line="291" column="55" selection-start="10684" selection-end="10684" vertical-scroll-proportion="0.53467155">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#9969#10309#0" expanded="true" />
-                <element signature="e#10294#10295#0" expanded="true" />
-                <element signature="e#10425#10595#0" expanded="true" />
-                <element signature="e#10580#10581#0" expanded="true" />
-                <element signature="e#10791#11564#0" expanded="true" />
-                <element signature="e#11549#11550#0" expanded="true" />
+                <element signature="e#7771#8554#0" expanded="true" />
+                <element signature="e#8543#8544#0" expanded="true" />
+                <element signature="e#12073#12786#0" expanded="true" />
+                <element signature="e#12775#12776#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -180,7 +152,7 @@
       <file leaf-file-name="main.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="63" selection-start="533" selection-end="533" vertical-scroll-proportion="-2.8846154">
+            <state line="19" column="46" selection-start="837" selection-end="857" vertical-scroll-proportion="-5.480769">
               <folding />
             </state>
           </provider>
@@ -189,31 +161,30 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="create_shout.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/layout/create_shout.xml">
+      <file leaf-file-name="TimeUtils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/TimeUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="45" selection-start="562" selection-end="562" vertical-scroll-proportion="-3.4615386">
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="strings.xml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="61" selection-start="841" selection-end="841" vertical-scroll-proportion="0.32608697">
-              <folding />
+            <state line="43" column="41" selection-start="1415" selection-end="1415" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+      <file leaf-file-name="LocationUtils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="51" selection-start="1556" selection-end="1556" vertical-scroll-proportion="0.0">
+            <state line="9" column="3" selection-start="228" selection-end="255" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ApiUtils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="38" column="0" selection-start="1278" selection-end="1278" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -222,16 +193,16 @@
       <file leaf-file-name="MapRequestHandler.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="13" selection-start="352" selection-end="352" vertical-scroll-proportion="0.0">
+            <state line="25" column="16" selection-start="943" selection-end="943" vertical-scroll-proportion="-3.235294">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WelcomeActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/WelcomeActivity.java">
+      <file leaf-file-name="ShoutModel.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Models/ShoutModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="8" selection-start="835" selection-end="835" vertical-scroll-proportion="0.0">
+            <state line="39" column="74" selection-start="1043" selection-end="1043" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -247,22 +218,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/MapShoutsRequestHandler.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/ApiUtils.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/MapRequestHandler.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/MainActivity.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/ShoutUtils.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java" />
         <option value="$PROJECT_DIR$/res/layout/welcome.xml" />
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java" />
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/Models/ShoutModel.java" />
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java" />
         <option value="$PROJECT_DIR$/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/Activities/WelcomeActivity.java" />
-        <option value="$PROJECT_DIR$/res/layout/main.xml" />
         <option value="$PROJECT_DIR$/res/layout/create_shout.xml" />
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java" />
         <option value="$PROJECT_DIR$/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Activities/WelcomeActivity.java" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Models/ShoutModel.java" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/TimeUtils.java" />
+        <option value="$PROJECT_DIR$/res/layout/main.xml" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -359,7 +330,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -496,6 +466,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -514,11 +485,11 @@
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="MemberChooser.showClasses" value="true" />
     <property name="FullScreen" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -558,6 +529,19 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -583,19 +567,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -705,26 +676,26 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32905984" sideWeight="0.73294115" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32905984" sideWeight="0.9117647" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19764706" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21291356" sideWeight="0.71294117" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25764707" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26705882" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32235295" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15901814" sideWeight="0.7658824" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23411764" sideWeight="0.999388" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21291356" sideWeight="0.50235295" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23411764" sideWeight="0.999388" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32975337" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1980728" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -789,25 +760,15 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="66" selection-start="106" selection-end="106" vertical-scroll-proportion="0.0" />
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="50" column="25" selection-start="1643" selection-end="1643" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#9969#10309#0" expanded="true" />
-            <element signature="e#10294#10295#0" expanded="true" />
-            <element signature="e#10425#10595#0" expanded="true" />
-            <element signature="e#10580#10581#0" expanded="true" />
-            <element signature="e#10791#11564#0" expanded="true" />
-            <element signature="e#11549#11550#0" expanded="true" />
+            <element signature="e#7771#8554#0" expanded="true" />
+            <element signature="e#8543#8544#0" expanded="true" />
+            <element signature="e#12073#12786#0" expanded="true" />
+            <element signature="e#12775#12776#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -828,94 +789,101 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/welcome.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="41" selection-start="275" selection-end="275" vertical-scroll-proportion="0.14900662" />
-      </provider>
       <provider editor-type-id="android-designer">
         <state />
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="13" selection-start="352" selection-end="352" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="6" column="41" selection-start="275" selection-end="275" vertical-scroll-proportion="0.14900662" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Models/ShoutModel.java">
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/WelcomeActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="35" selection-start="1707" selection-end="1707" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="56" selection-start="908" selection-end="908" vertical-scroll-proportion="0.0">
+        <state line="27" column="40" selection-start="954" selection-end="954" vertical-scroll-proportion="-0.66386557">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="51" selection-start="1556" selection-end="1556" vertical-scroll-proportion="0.0">
+        <state line="33" column="45" selection-start="1827" selection-end="1828" vertical-scroll-proportion="0.8684211">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/WelcomeActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="8" selection-start="835" selection-end="835" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="63" selection-start="533" selection-end="533" vertical-scroll-proportion="-2.8846154">
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="56" selection-start="524" selection-end="524" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/create_shout.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="45" selection-start="562" selection-end="562" vertical-scroll-proportion="-3.4615386">
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="308" column="103" selection-start="12212" selection-end="12232" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#9969#10309#0" expanded="true" />
-            <element signature="e#10294#10295#0" expanded="true" />
-            <element signature="e#10425#10595#0" expanded="true" />
-            <element signature="e#10580#10581#0" expanded="true" />
-            <element signature="e#10791#11564#0" expanded="true" />
-            <element signature="e#11549#11550#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="61" selection-start="841" selection-end="841" vertical-scroll-proportion="0.32608697">
+        <state line="2" column="33" selection-start="84" selection-end="84" vertical-scroll-proportion="0.05263158">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/create_shout.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="45" selection-start="562" selection-end="562" vertical-scroll-proportion="0.3314917">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/TimeUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="41" selection-start="1415" selection-end="1415" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="3" selection-start="228" selection-end="255" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Models/ShoutModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="39" column="74" selection-start="1043" selection-end="1043" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="0" selection-start="1278" selection-end="1278" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="46" selection-start="837" selection-end="857" vertical-scroll-proportion="-5.480769">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="16" selection-start="943" selection-end="943" vertical-scroll-proportion="-3.235294">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="291" column="55" selection-start="10684" selection-end="10684" vertical-scroll-proportion="0.53467155">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7771#8554#0" expanded="true" />
+            <element signature="e#8543#8544#0" expanded="true" />
+            <element signature="e#12073#12786#0" expanded="true" />
+            <element signature="e#12775#12776#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

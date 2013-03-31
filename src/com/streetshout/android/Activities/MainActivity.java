@@ -10,30 +10,31 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.*;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.Utils.MapRequestHandler;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.LocationUtils;
+import com.streetshout.android.Utils.TimeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class MainActivity extends Activity {
+
+    private static final boolean ADMIN = true;
+    private boolean admin_super_powers = false;
+
 
     /** Required recentness and accuracy of the user position for creating a new shout */
     private static final int REQUIRED_RECENTNESS = 1000 * 60 * 2;
@@ -42,10 +43,16 @@ public class MainActivity extends Activity {
     /** Zoom for the initial camera position when we have the user location */
     private static final int INITIAL_ZOOM = 11;
 
-    /** Location manager that handles the GPS and network services */
+    private static final int CREATE_SHOUT_ZOOM = 17;
+
+    private static final boolean MARKERS_DRAGGABLE = true;
+
+    private Location newShoutLoc = null;
+
+    /** Location manager that handles the network services */
     private LocationManager locationManager = null;
 
-    /** Location listener to get location from GPS and network services */
+    /** Location listener to get location from network services */
     private LocationListener locationListener = null;
 
     /** Instance of the class that handles request to populate a map zone with shouts */
@@ -85,6 +92,12 @@ public class MainActivity extends Activity {
         markedShouts = new HashSet<Integer>();
 
         setContentView(R.layout.main);
+
+        if (ADMIN)  {
+            findViewById(R.id.admin_toggle).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.admin_toggle).setVisibility(View.GONE);
+        }
 
         //Check if we have the user position from the Welcome Activity
         if (getIntent().hasExtra("firstLocation")) {
@@ -138,13 +151,9 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        //Set up GPD and network services for location updates
-        final boolean gpsEnabled = this.locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        //Set up network services for location updates
         final boolean networkEnabled = this.locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if (gpsEnabled) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, locationListener);
-        }
         if (networkEnabled) {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10 ,locationListener);
         }
@@ -210,7 +219,6 @@ public class MainActivity extends Activity {
             @Override
             public void responseReceived(String url, JSONObject object, AjaxStatus status) {
                 if (status.getError() == null) {
-
                     JSONArray rawResult = null;
                     try {
                         rawResult = object.getJSONArray("result");
@@ -239,8 +247,8 @@ public class MainActivity extends Activity {
             if (!markedShouts.contains(shout.id)) {
                 MarkerOptions marker = new MarkerOptions();
                 marker.position(new LatLng(shout.lat, shout.lng));
-                marker.title(shout.description).snippet(shout.created);
-                marker.draggable(true);
+                marker.title(shout.description).snippet(TimeUtils.shoutAgeToString(TimeUtils.getShoutAge(shout.created)));
+                marker.draggable(MARKERS_DRAGGABLE);
                 mMap.addMarker(marker);
 
                 //Keep track that we added the shout on the map
@@ -249,66 +257,131 @@ public class MainActivity extends Activity {
         }
     }
 
-    /** User clicks on the button to create a new bubble */
+    /** User clicks on the button to create a new shout */
     public void createShoutBtnPressed(View v) {
-        if (this.bestLoc != null && (System.currentTimeMillis() - this.bestLoc.getTime() < REQUIRED_RECENTNESS)) {
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            LayoutInflater inflater = this.getLayoutInflater();
-
-            builder.setTitle(getString(R.string.create_shout_dialog_title));
-
-            builder.setView(inflater.inflate(R.layout.create_shout, null));
-
-            //OK: Redirect user to edit location settings
-            builder.setPositiveButton(R.string.shout, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    String description = ((EditText) ((AlertDialog) dialog).findViewById(R.id.create_shout_descr_dialog)).getText().toString();
-                    createShoutConfirmed(description);
-                }
-            });
-            //DISMISS: MainActivity without user location
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                   //Dismiss
-                }
-            });
-
-            Dialog dialog = builder.create();
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
-            dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                        if (canCreateShout) {
-                            canCreateShout = false;
-                            String description = ((EditText) ((AlertDialog) dialog).findViewById(R.id.create_shout_descr_dialog)).getText().toString();
-                            dialog.dismiss();
-                            createShoutConfirmed(description);
-                        } else {
-                            canCreateShout = true;
-                        }
-                    }
-                    return false;
-                }
-            });
-            dialog.show();
+        if (admin_super_powers) {
+            displayCreateShoutDialog();
         } else {
-            Toast toast = Toast.makeText(MainActivity.this, "No good location available!", Toast.LENGTH_LONG);
-            toast.show();
+
+            if (this.bestLoc != null && (System.currentTimeMillis() - this.bestLoc.getTime() < REQUIRED_RECENTNESS)) {
+                this.newShoutLoc = this.bestLoc;
+
+                CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(newShoutLoc), CREATE_SHOUT_ZOOM);
+                mMap.animateCamera(update, 2000, new GoogleMap.CancelableCallback() {
+                    @Override
+                    public void onFinish() {
+                        displayCreateShoutDialog();
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        //Do nothing
+                    }
+                });
+            } else {
+                Toast toast = Toast.makeText(MainActivity.this, "No good location available!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+
         }
     }
 
+    private void displayNewShout(ShoutModel shout) {
+        MarkerOptions marker = new MarkerOptions();
+
+        marker.position(new LatLng(shout.lat, shout.lng));
+        marker.draggable(MARKERS_DRAGGABLE);
+        marker.title(shout.description).snippet(shout.created);
+        mMap.addMarker(marker);
+
+        markedShouts.add(shout.id);
+    }
+
+    private void displayCreateShoutDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        builder.setTitle(getString(R.string.create_shout_dialog_title));
+
+        builder.setView(inflater.inflate(R.layout.create_shout, null));
+
+        //OK: Redirect user to edit location settings
+        builder.setPositiveButton(R.string.shout, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                String description = ((EditText) ((AlertDialog) dialog).findViewById(R.id.create_shout_descr_dialog)).getText().toString();
+                createShoutConfirmed(description);
+            }
+        });
+        //DISMISS: MainActivity without user location
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //Nothing
+            }
+        });
+
+        Dialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    if (canCreateShout) {
+                        canCreateShout = false;
+                        String description = ((EditText) ((AlertDialog) dialog).findViewById(R.id.create_shout_descr_dialog)).getText().toString();
+                        dialog.dismiss();
+                        createShoutConfirmed(description);
+                    } else {
+                        canCreateShout = true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        dialog.show();
+    }
+
     public void createShoutConfirmed(String description) {
-        ShoutModel.createShout(aq, bestLoc.getLatitude(), bestLoc.getLongitude(), description
+        double lat;
+        double lng;
+        if (admin_super_powers) {
+            lat = mMap.getCameraPosition().target.latitude;
+            lng = mMap.getCameraPosition().target.longitude;
+        } else {
+            lat = newShoutLoc.getLatitude();
+            lng = newShoutLoc.getLongitude();
+        }
+        ShoutModel.createShout(aq, lat, lng, description
                 , new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
-                Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_success), Toast.LENGTH_LONG);
-                toast.show();
+                if (status.getError() == null) {
+                    JSONObject rawShout = null;
+
+                    try {
+                        rawShout = object.getJSONObject("result");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    displayNewShout(ShoutModel.rawShoutToInstance(rawShout));
+                    newShoutLoc = null;
+                    Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_success), Toast.LENGTH_LONG);
+                    toast.show();
+                }
             }
         });
+    }
+
+    public void onAdminToggleClicked(View v) {
+        if (admin_super_powers) {
+            admin_super_powers = false;
+            Log.d("BAB", "ADMIN POWERS SET TO FALSE");
+        } else {
+            admin_super_powers = true;
+            Log.d("BAB", "ADMIN POWERS SET TO TRUE");
+        }
     }
 }

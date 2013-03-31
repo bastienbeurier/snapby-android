@@ -10,6 +10,15 @@
               android:layout_height="match_parent"
               class="com.google.android.gms.maps.MapFragment"/>
 
+    <ToggleButton
+            android:id="@+id/admin_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="on"
+            android:textOff="off"
+            android:layout_alignParentTop="true"
+            android:onClick="onAdminToggleClicked"/>
+
     <Button android:id="@+id/create_shout"
             android:text="@string/create_shout_button"
             android:layout_width="match_parent"
