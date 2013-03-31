@@ -4,6 +4,12 @@
     <string name="create_shout">Create</string>
     <string name="settings">Settings</string>
     <string name="skip">Skip</string>
+    <string name="shout">Shout</string>
+    <string name="cancel">Cancel</string>
+    <string name="create_shout_dialog_title">The world wants to know...</string>
     <string name="no_location_dialog_title">Location access disabled</string>
-    <string name="no_location_dialog_message">Some features of Bubblz require access to your location. Tap "Settings" to edit these settings, otherwise tap "Skip".</string>
+    <string name="no_location_dialog_message">Some features of Shout require access to your location. Tap "Settings" to edit these settings, otherwise tap "Skip".</string>
+    <string name="create_shout_dialog">What\'s happening around you?</string>
+    <string name="create_shout_button">Tap to shout!</string>
+    <string name="create_shout_success">Congrats for shouting your truth...</string>
 </resources>

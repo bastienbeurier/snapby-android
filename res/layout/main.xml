@@ -1,34 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/map"
               android:layout_width="match_parent"
-              android:layout_height="300dp"
+              android:layout_height="match_parent"
               class="com.google.android.gms.maps.MapFragment"/>
 
-    <EditText android:id="@+id/shout_description_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:inputType="textMultiLine"
-            android:lines="3"
-            android:paddingBottom="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="12dp"
-            android:scrollHorizontally="false"
-            android:textSize="13sp" >
-    </EditText>
-
     <Button android:id="@+id/create_shout"
-            android:text="@string/create_shout"
+            android:text="@string/create_shout_button"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginTop="20dp"
-            android:textSize="14sp"
+            android:layout_height="50dp"
+            android:textSize="20sp"
+            android:background="#272727"
+            android:alpha="0.7"
+            android:layout_alignParentBottom="true"
             android:onClick="createShoutBtnPressed"/>
-</LinearLayout>
+</RelativeLayout>

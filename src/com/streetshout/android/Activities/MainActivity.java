@@ -1,12 +1,18 @@
 package com.streetshout.android.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
+import android.view.*;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -65,9 +71,13 @@ public class MainActivity extends Activity {
     /** Set of shout ids to keep track of shouts already added to the map */
     private Set<Integer> markedShouts = null;
 
+    private boolean canCreateShout = true;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
 
         this.aq = new AQuery(this);
         mapReqHandler = new MapRequestHandler();
@@ -242,20 +252,63 @@ public class MainActivity extends Activity {
     /** User clicks on the button to create a new bubble */
     public void createShoutBtnPressed(View v) {
         if (this.bestLoc != null && (System.currentTimeMillis() - this.bestLoc.getTime() < REQUIRED_RECENTNESS)) {
-            String description = ((EditText) this.findViewById(R.id.shout_description_input)).getText().toString();
 
-            ShoutModel.createShout(aq, bestLoc.getLatitude(), bestLoc.getLongitude(), description
-                    , new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-                    Toast toast = Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_LONG);
-                    toast.show();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            LayoutInflater inflater = this.getLayoutInflater();
+
+            builder.setTitle(getString(R.string.create_shout_dialog_title));
+
+            builder.setView(inflater.inflate(R.layout.create_shout, null));
+
+            //OK: Redirect user to edit location settings
+            builder.setPositiveButton(R.string.shout, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    String description = ((EditText) ((AlertDialog) dialog).findViewById(R.id.create_shout_descr_dialog)).getText().toString();
+                    createShoutConfirmed(description);
                 }
             });
+            //DISMISS: MainActivity without user location
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                   //Dismiss
+                }
+            });
+
+            Dialog dialog = builder.create();
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+            dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                        if (canCreateShout) {
+                            canCreateShout = false;
+                            String description = ((EditText) ((AlertDialog) dialog).findViewById(R.id.create_shout_descr_dialog)).getText().toString();
+                            dialog.dismiss();
+                            createShoutConfirmed(description);
+                        } else {
+                            canCreateShout = true;
+                        }
+                    }
+                    return false;
+                }
+            });
+            dialog.show();
         } else {
             Toast toast = Toast.makeText(MainActivity.this, "No good location available!", Toast.LENGTH_LONG);
             toast.show();
         }
+    }
+
+    public void createShoutConfirmed(String description) {
+        ShoutModel.createShout(aq, bestLoc.getLatitude(), bestLoc.getLongitude(), description
+                , new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+                Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_success), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
     }
 }

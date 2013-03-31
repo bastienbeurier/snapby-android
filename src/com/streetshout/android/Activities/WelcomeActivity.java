@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.Window;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.LocationUtils;
 
@@ -21,6 +22,7 @@ public class WelcomeActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.welcome);
 
         //Set up location service: trying to get user location in WelcomeActivity to display map faster in MainActivity
