@@ -12,4 +12,6 @@
     <string name="create_shout_dialog">What\'s happening around you?</string>
     <string name="create_shout_button">Tap to shout!</string>
     <string name="create_shout_success">Congrats for shouting your truth...</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -16,16 +16,7 @@
             android:layout_height="wrap_content"
             android:textOn="on"
             android:textOff="off"
-            android:layout_alignParentTop="true"
-            android:onClick="onAdminToggleClicked"/>
-
-    <Button android:id="@+id/create_shout"
-            android:text="@string/create_shout_button"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:textSize="20sp"
-            android:background="#272727"
-            android:alpha="0.7"
             android:layout_alignParentBottom="true"
-            android:onClick="createShoutBtnPressed"/>
+            android:layout_alignParentRight="true"/>
+
 </RelativeLayout>
