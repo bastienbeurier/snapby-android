@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -33,7 +34,7 @@ import java.util.*;
 
 public class MainActivity extends Activity {
 
-    private static final boolean ADMIN = false;
+    private static final boolean ADMIN = true;
     private boolean admin_super_powers = false;
 
     /** Required recentness and accuracy of the user position for creating a new shout */
@@ -312,7 +313,7 @@ public class MainActivity extends Activity {
         });
 
         //Add a request to populate the map to the MapRequestHandler
-        mapReqHandler.addMapRequest(aq, cameraPosition);
+        mapReqHandler.addMapRequest(this, aq, cameraPosition);
     }
 
     /** Add a list of shouts on the map */

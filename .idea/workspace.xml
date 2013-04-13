@@ -24,43 +24,46 @@
       </GlobalState>
     </option>
   </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="BAB" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="b7a0b6e2-dfc8-43bb-9100-53b04945d142" name="Default" comment="" />
     <ignored path="untitled.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/AndroidManifest.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365131937418" ignored="false" />
-    <file path="/MainActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365273430825" ignored="false" />
-    <file path="/Dummy.txt" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365186473681" ignored="false" />
+    <file path="/MainActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365826204884" ignored="false" />
+    <file path="/Dummy.txt" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365550733169" ignored="false" />
     <file path="/main.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365182185194" ignored="false" />
     <file path="/fragment.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364151894870" ignored="false" />
     <file path="/Utils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363821831114" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/3rdparty/HoloEverywhere/library/project.properties" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365102808139" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/3rdparty/HoloEverywhere/library/project.properties" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365469150282" ignored="false" />
     <file path="$PROJECT_DIR$/libs/google-play-services_lib/gen/com/google/android/gms/Manifest.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363827351893" ignored="false" />
     <file path="$PROJECT_DIR$/google-play-services_lib/gen/com/google/android/gms/BuildConfig.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363827379821" ignored="false" />
     <file path="$PROJECT_DIR$/google-play-services_lib/gen/com/google/android/gms/Manifest.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363827746706" ignored="false" />
     <file path="$PROJECT_DIR$/google-play-services_lib/gen/com/google/android/gms/R.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363827379821" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/GogobotAPI.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365125112473" ignored="false" />
-    <file path="/GogobotAPI.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365119576257" ignored="false" />
-    <file path="/LocationUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364881740365" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/GogobotAPI.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365553295754" ignored="false" />
+    <file path="/GogobotAPI.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365553295141" ignored="false" />
+    <file path="/LocationUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365827357992" ignored="false" />
     <file path="/BubbleUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1363929927742" ignored="false" />
-    <file path="/strings.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365204189124" ignored="false" />
+    <file path="/strings.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365554351290" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/streetshout/android/Manifest.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364151942076" ignored="false" />
-    <file path="$PROJECT_DIR$/gen/com/streetshout/android/BuildConfig.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364151947519" ignored="false" />
+    <file path="$PROJECT_DIR$/gen/com/streetshout/android/BuildConfig.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365531110328" ignored="false" />
     <file path="$PROJECT_DIR$/gen/com/streetshout/android/R.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365204147872" ignored="false" />
-    <file path="/ApiUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364753097993" ignored="false" />
+    <file path="/ApiUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365724828889" ignored="false" />
     <file path="/ShoutUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364227322438" ignored="false" />
-    <file path="/*.regexp" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365125420444" ignored="false" />
+    <file path="/*.regexp" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365700467923" ignored="false" />
     <file path="/WelcomeActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364690903486" ignored="false" />
     <file path="$PROJECT_DIR$/3rd party/HoloEverywhere/library/project.properties" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364148733896" ignored="false" />
     <file path="/MapShoutsRequestHandler.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364188104368" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/utilities/FbUpsellHelper.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364185222387" ignored="false" />
-    <file path="/MapRequestHandler.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364753295174" ignored="false" />
+    <file path="/MapRequestHandler.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365826057080" ignored="false" />
     <file path="/ShoutModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364704028875" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/TripModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365185292083" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/MyTripActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365185292083" ignored="false" />
-    <file path="/MyTripActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364953865603" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/TripModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/MyTripActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365555000698" ignored="false" />
+    <file path="/MyTripActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365555000698" ignored="false" />
     <file path="/TripModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364493915102" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/TripPropertiesActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365125112473" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/TripPropertiesActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365547813033" ignored="false" />
     <file path="/TripPropertiesActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365117509829" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/res/layout/create_trip.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365125112473" ignored="false" />
     <file path="/create_trip.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364952171640" ignored="false" />
@@ -68,12 +71,12 @@
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/TripEditorsActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365123984590" ignored="false" />
     <file path="/TripEditorsActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365117897544" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/MyTripEditorsActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364522429731" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/AndroidManifest.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365185292083" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/AndroidManifest.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365547813033" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/gen/com/gogobot/gogodroid/R.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365095639926" ignored="false" />
     <file path="/MyTripEditorsActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364522408208" ignored="false" />
     <file path="/create_shout.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364695977762" ignored="false" />
     <file path="/TimeUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364758072348" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/res/values/strings.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365185292083" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/res/values/strings.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365554351290" ignored="false" />
     <file path="/UserModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364945723349" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/res/layout/editor_row.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364947274399" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/res/layout/trip_editors.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1364949685279" ignored="false" />
@@ -86,17 +89,37 @@
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/MomentEditActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365125112473" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/CalendarActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365185292083" ignored="false" />
     <file path="$APPLICATION_HOME_DIR$/plugins/android/lib/android.jar!/org/jetbrains/android/android.xsd" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365095687048" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/ExploreSearchSortDialogFragment.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365185292083" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/ExploreSearchSortDialogFragment.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365550313401" ignored="false" />
     <file path="/ExploreSearchSortDialogFragment.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365125406194" ignored="false" />
     <file path="/color.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365200547050" ignored="false" />
     <file path="/styles.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365133211465" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/res/values/styles.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365185292083" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/res/values/color.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365185292083" ignored="false" />
-    <file path="/actionbar_feed_and_create_shout.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365201052440" ignored="false" />
+    <file path="/actionbar_feed_and_create_shout.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365463742646" ignored="false" />
     <file path="/button_dark.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365201028961" ignored="false" />
     <file path="/actionbar_discard_button.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365204185288" ignored="false" />
-    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/ExploreSearchFilterActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365211410922" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/ExploreSearchFilterActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
     <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/BookNowActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365211410922" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/AccountNotificationsActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/ExploreSearchActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/NotificationsActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/TopicActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/GogoDroidApplication.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/MyTripsActivity.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/GogoUtils.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/PushNotificationsReceiver.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365468762112" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/3rdparty/HoloEverywhere/addons/preferences/project.properties" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365469235337" ignored="false" />
+    <file path="$PROJECT_DIR$/../android-sdk-macosx/extras/google/google_play_services/libproject/google-play-services_lib/gen/com/google/android/gms/BuildConfig.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365531110328" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/res/layout/trip_plan_row.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365547813033" ignored="false" />
+    <file path="/trip_plan_row.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365539362851" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/TripPlacesAdapter.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365554425526" ignored="false" />
+    <file path="/TripPlacesAdapter.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365553938365" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/trips/TripPlaceModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365554721940" ignored="false" />
+    <file path="/TripPlaceModel.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365553450782" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/res/layout/trip_place_more_dialog.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365552185418" ignored="false" />
+    <file path="/trip_place_more_dialog.xml" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365550894376" ignored="false" />
+    <file path="$PROJECT_DIR$/../GogoDroid/src/com/gogobot/gogodroid/dialogs/TripPlaceMoreDialogFragment.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365556322173" ignored="false" />
+    <file path="/TripPlaceMoreDialogFragment.java" changelist="b7a0b6e2-dfc8-43bb-9100-53b04945d142" time="1365554957720" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,6 +134,7 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -147,7 +171,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -158,84 +181,39 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="main.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
-          <provider editor-type-id="text-editor">
-            <state line="21" column="16" selection-start="881" selection-end="881" vertical-scroll-proportion="-12.6">
-              <folding />
-            </state>
-          </provider>
-          <provider selected="true" editor-type-id="android-designer">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WelcomeActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/WelcomeActivity.java">
+      <file leaf-file-name="MapRequestHandler.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="13" selection-start="448" selection-end="448" vertical-scroll-proportion="0.0">
+            <state line="40" column="54" selection-start="1729" selection-end="1729" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ApiUtils.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="38" column="38" selection-start="1339" selection-end="1339" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="341" column="34" selection-start="12940" selection-end="12943" vertical-scroll-proportion="-0.21575342">
+            <state line="315" column="42" selection-start="11973" selection-end="11973" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="actionbar_feed_and_create_shout.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/layout/actionbar_feed_and_create_shout.xml">
+      <file leaf-file-name="LocationUtils.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="36" selection-start="1179" selection-end="1179" vertical-scroll-proportion="-8.365385">
+            <state line="145" column="48" selection-start="5523" selection-end="5523" vertical-scroll-proportion="0.88188976">
               <folding />
             </state>
-          </provider>
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="styles.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/values/styles.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="45" selection-start="491" selection-end="491" vertical-scroll-proportion="-6.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="button_dark.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/drawable-hdpi/button_dark.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="11" selection-start="257" selection-end="257" vertical-scroll-proportion="-3.6">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="color.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/values/color.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="28" selection-start="157" selection-end="157" vertical-scroll-proportion="-2.4">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="actionbar_discard_button.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/layout/actionbar_discard_button.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="0" selection-start="892" selection-end="1290" vertical-scroll-proportion="-9.519231">
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer">
-            <state />
           </provider>
         </entry>
       </file>
@@ -246,13 +224,15 @@
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
   </component>
+  <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/street-shout.keystore" />
+    <option name="KEY_ALIAS" value="street-shout" />
+    <option name="REMEMBER_PASSWORDS" value="true" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java" />
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/TimeUtils.java" />
-        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java" />
         <option value="$PROJECT_DIR$/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/res/values/styles.xml" />
         <option value="$PROJECT_DIR$/res/layout/main.xml" />
@@ -264,14 +244,17 @@
         <option value="$PROJECT_DIR$/res/layout/actionbar_discard_button.xml" />
         <option value="$PROJECT_DIR$/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/res/layout/actionbar_feed_and_create_shout.xml" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java" />
         <option value="$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java" />
+        <option value="$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="22" />
-    <option name="width" value="1680" />
-    <option name="height" value="1024" />
+    <option name="width" value="2560" />
+    <option name="height" value="1418" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -360,7 +343,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -392,153 +375,25 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Activities" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable-xhdpi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable-mdpi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable-ldpi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="street-shout-android" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="drawable-hdpi" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
     <property name="project.structure.last.edited" value="Modules" />
-    <property name="OverrideImplement.combined" value="false" />
     <property name="project.structure.proportion" value="0.12121209" />
+    <property name="OverrideImplement.combined" value="false" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="recentsLimit" value="5" />
-    <property name="MemberChooser.sorted" value="false" />
     <property name="GenerateAntBuildDialog.generateSingleFile" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../android-sdk-macosx/extras/google/google_play_services/libproject/google-play-services_lib" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="recentsLimit" value="5" />
+    <property name="ExportedApkPath" value="$USER_HOME$/android/ project/street-shout.apk" />
+    <property name="ExportedModule" value="Street Shout" />
     <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/street-shout.keystore" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="street-shout-android" />
     <property name="GoToClass.includeJavaFiles" value="false" />
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
@@ -549,10 +404,11 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="options.lastSelected" value="preferences.sourceCode.General" />
-    <property name="AndroidLayoutSelectedEditor" value="android-designer" />
+    <property name="AndroidLayoutSelectedEditor" value="text-editor" />
     <property name="project.structure.side.proportion" value="0.23951712" />
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="AndroidRunProguardForReleaseBuild" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="GenerateAntBuildDialog.backupFiles" value="true" />
     <property name="options.searchVisible" value="true" />
@@ -605,19 +461,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -643,6 +486,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -722,7 +578,7 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
-  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false">
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="sslv3">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
     <option name="mySSHConnectionTimeout" value="30000" />
@@ -732,7 +588,6 @@
     <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
     <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
     <option name="IGNORE_SPACES_IN_MERGE" value="false" />
-    <option name="DETECT_NESTED_COPIES" value="true" />
     <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
     <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
     <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
@@ -749,33 +604,33 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1680" height="1024" extended-state="6" />
-    <editor active="false" />
+    <frame x="0" y="22" width="2560" height="1418" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925338" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32925338" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33001593" sideWeight="0.9111283" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32781863" sideWeight="0.7665929" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32973805" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2403698" sideWeight="0.4669849" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21291356" sideWeight="0.71294117" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25577813" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4348786" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28384614" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14810282" sideWeight="0.56471497" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2403698" sideWeight="0.53301513" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14757359" sideWeight="0.7157165" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34360555" sideWeight="0.53301513" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32895783" sideWeight="0.56548536" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32895783" sideWeight="0.56548536" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19764706" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32781863" sideWeight="0.7665929" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19722651" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25577813" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -844,39 +699,14 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="75" selection-start="1682" selection-end="1682" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/drawable-ldpi/button_dark.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/drawable-mdpi/button_dark.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/res/drawable-xhdpi/button_dark.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="49" selection-start="177" selection-end="198" vertical-scroll-proportion="0.0882353">
-          <folding />
-        </state>
+        <state line="4" column="49" selection-start="177" selection-end="198" vertical-scroll-proportion="0.0882353" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/actionbar_custom_view_done_discard.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="51" selection-start="779" selection-end="826" vertical-scroll-proportion="0.24630542">
-          <folding />
-        </state>
+        <state line="20" column="51" selection-start="779" selection-end="826" vertical-scroll-proportion="0.24630542" />
       </provider>
       <provider editor-type-id="android-designer">
         <state />
@@ -884,9 +714,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/actionbar_done_button.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="46" selection-start="886" selection-end="886" vertical-scroll-proportion="0.27093595">
-          <folding />
-        </state>
+        <state line="22" column="46" selection-start="886" selection-end="886" vertical-scroll-proportion="0.27093595" />
       </provider>
       <provider editor-type-id="android-designer">
         <state />
@@ -894,23 +722,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../android-sdk-macosx/platforms/android-17/data/res/values/attrs.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="548" column="20" selection-start="30169" selection-end="30169" vertical-scroll-proportion="0.30230707">
-          <folding />
-        </state>
+        <state line="548" column="20" selection-start="30169" selection-end="30169" vertical-scroll-proportion="0.30230707" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="30" selection-start="957" selection-end="957" vertical-scroll-proportion="0.30429596">
-          <folding />
-        </state>
+        <state line="17" column="30" selection-start="957" selection-end="957" vertical-scroll-proportion="0.30429596" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/actionbar_feed_and_create_shout.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="36" selection-start="1179" selection-end="1179" vertical-scroll-proportion="-8.365385">
-          <folding />
-        </state>
+        <state line="36" column="107" selection-start="1452" selection-end="1452" vertical-scroll-proportion="0.7209613" />
       </provider>
       <provider editor-type-id="android-designer">
         <state />
@@ -918,55 +740,64 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/res/values/styles.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="45" selection-start="491" selection-end="491" vertical-scroll-proportion="-6.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/drawable-hdpi/button_dark.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="11" selection-start="257" selection-end="257" vertical-scroll-proportion="-3.6">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/values/color.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="28" selection-start="157" selection-end="157" vertical-scroll-proportion="-2.4">
-          <folding />
-        </state>
+        <state line="10" column="45" selection-start="491" selection-end="491" vertical-scroll-proportion="0.19329897" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/res/layout/actionbar_discard_button.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="0" selection-start="892" selection-end="1290" vertical-scroll-proportion="-9.519231">
-          <folding />
-        </state>
+        <state line="33" column="0" selection-start="892" selection-end="1290" vertical-scroll-proportion="0.66088116" />
       </provider>
       <provider editor-type-id="android-designer">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
-      <provider editor-type-id="text-editor">
-        <state line="21" column="16" selection-start="881" selection-end="881" vertical-scroll-proportion="-12.6">
-          <folding />
-        </state>
+    <entry file="file://$PROJECT_DIR$/res/values/color.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="28" selection-start="157" selection-end="157" vertical-scroll-proportion="0.077319585" />
       </provider>
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/drawable-hdpi/button_dark.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="11" selection-start="257" selection-end="257" vertical-scroll-proportion="0.11597938" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/WelcomeActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="13" selection-start="448" selection-end="448" vertical-scroll-proportion="0.0">
+        <state line="14" column="13" selection-start="448" selection-end="448" vertical-scroll-proportion="0.018726591" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/layout/main.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="16" selection-start="881" selection-end="881" vertical-scroll-proportion="0.42056075" />
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/ApiUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="38" selection-start="1339" selection-end="1339" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Activities/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="341" column="34" selection-start="12940" selection-end="12943" vertical-scroll-proportion="-0.21575342">
+        <state line="315" column="42" selection-start="11973" selection-end="11973" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/MapRequestHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="54" selection-start="1729" selection-end="1729" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/streetshout/android/Utils/LocationUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="145" column="48" selection-start="5523" selection-end="5523" vertical-scroll-proportion="0.88188976">
           <folding />
         </state>
       </provider>

@@ -30,13 +30,9 @@ public class ApiUtils {
 
     /** API call to retrieve shouts in a zone of the map */
     public static void pullShoutsInZone(AQuery aq, int radius, double lat, double lng, AjaxCallback<JSONObject> cb) {
-        String url = SITEURL + "/zone_shouts.json";
+        String url = SITEURL + "/zone_shouts.json?lat=" + String.valueOf(lat) + "&lng=" + String.valueOf(lng)
+                                                                                  + "&radius=" + String.valueOf(radius);
 
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("radius", radius);
-        params.put("lat", lat);
-        params.put("lng", lng);
-
-        aq.ajax(url, params, JSONObject.class, cb);
+        aq.ajax(url, JSONObject.class, cb);
     }
 }

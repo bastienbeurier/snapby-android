@@ -1,5 +1,7 @@
 package com.streetshout.android.Utils;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -23,11 +25,13 @@ public class MapRequestHandler {
     }
 
     /** Add a request to populate a zone of the map with shout, we're going to handle that */
-    public void addMapRequest(AQuery aq, CameraPosition position) {
+    public void addMapRequest(Activity ctx, AQuery aq, CameraPosition position) {
         this.lastRequest = position;
 
+        int queryRadius = LocationUtils.zoomToKm(position.zoom, ctx.getWindowManager().getDefaultDisplay());
+
         //API call to retrieve shouts in the camera zone
-        ApiUtils.pullShoutsInZone(aq, 20, position.target.latitude, position.target.longitude, new AjaxCallback<JSONObject>() {
+        ApiUtils.pullShoutsInZone(aq, queryRadius, position.target.latitude, position.target.longitude, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);

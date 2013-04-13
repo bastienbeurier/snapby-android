@@ -2,8 +2,11 @@ package com.streetshout.android.Utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.location.Location;
 import android.provider.Settings;
+import android.util.Log;
+import android.view.Display;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -16,6 +19,7 @@ public class LocationUtils {
     private static final double MIN_LNG = -180;
     private static final double MAX_LNG = 180;
     private static final double EARTH_RADIUS = 6370997;
+    private static final double EARTH_CIRCUMFERENCE = EARTH_RADIUS * 2 * Math.PI;
 
 
     private static final int TWO_MINUTES = 1000 * 60 * 2;
@@ -132,5 +136,14 @@ public class LocationUtils {
         LatLng northEast = new LatLng(maxLat, maxLng);
 
         return new LatLng[] {southWest, northEast};
+    }
+
+    /** For a given Google Map zoom level and a screen display, returns the max height/width distance in kilometers*/
+    public static int zoomToKm(float zoom, Display display) {
+        Point size = new Point();
+        display.getSize(size);
+        int maxPixels = Math.max(size.x, size.y);
+
+        return (int) ((EARTH_CIRCUMFERENCE / 1000) / Math.pow(2, Math.round(zoom) - 1)) * (maxPixels / (256 * 3));
     }
 }
