@@ -8,3 +8,5 @@ bin/
 target
 gen/
 .idea/
+.idea/modules.xml
+.idea/workspace.xml
