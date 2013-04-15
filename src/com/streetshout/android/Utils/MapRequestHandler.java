@@ -13,6 +13,8 @@ import org.json.JSONObject;
  * Handles the requests made to populate the map with shouts as the user scrolls
  */
 public class MapRequestHandler {
+    private static final int MIN_QUERY_RADIUS = 15;
+
     /** Camera position given by the caller to retrieve shouts in a zone */
     private CameraPosition lastRequest = null;
 
@@ -28,7 +30,7 @@ public class MapRequestHandler {
     public void addMapRequest(Activity ctx, AQuery aq, CameraPosition position) {
         this.lastRequest = position;
 
-        int queryRadius = LocationUtils.zoomToKm(position.zoom, ctx.getWindowManager().getDefaultDisplay());
+        int queryRadius = Math.max(MIN_QUERY_RADIUS, LocationUtils.zoomToKm(position.zoom, ctx.getWindowManager().getDefaultDisplay()));
 
         //API call to retrieve shouts in the camera zone
         ApiUtils.pullShoutsInZone(aq, queryRadius, position.target.latitude, position.target.longitude, new AjaxCallback<JSONObject>() {
