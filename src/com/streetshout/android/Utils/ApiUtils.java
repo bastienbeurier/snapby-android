@@ -29,9 +29,11 @@ public class ApiUtils {
     }
 
     /** API call to retrieve shouts in a zone of the map */
-    public static void pullShoutsInZone(AQuery aq, int radius, double lat, double lng, AjaxCallback<JSONObject> cb) {
+    public static void pullShoutsInZone(AQuery aq, int radius, double lat, double lng, boolean ff_super_powers, AjaxCallback<JSONObject> cb) {
+        int noTwitter = ff_super_powers ? 1 : 0;
+
         String url = SITEURL + "/zone_shouts.json?lat=" + String.valueOf(lat) + "&lng=" + String.valueOf(lng)
-                                                                                  + "&radius=" + String.valueOf(radius);
+                                                                                  + "&radius=" + String.valueOf(radius) + "&notwitter=" + noTwitter;
 
         aq.ajax(url, JSONObject.class, cb);
     }

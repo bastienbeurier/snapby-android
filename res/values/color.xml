@@ -2,4 +2,5 @@
 <resources>
     <color name="actionBarGrey">#CC272727</color>
     <color name="shoutBlue">#327CCB</color>
+    <color name="black">#333333</color>
 </resources>

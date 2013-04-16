@@ -30,6 +30,11 @@ public class ShoutModel {
     /** Shout creation date/time */
     public String created = "";
 
+    /** Shout source (ex: Twitter) */
+    public String source = "";
+
+    public String displayName = "";
+
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static List<ShoutModel> rawShoutsToInstances(JSONArray rawShouts) {
         List<ShoutModel> shouts = new ArrayList<ShoutModel>();
@@ -45,6 +50,8 @@ public class ShoutModel {
                     shout.lng = Double.parseDouble(rawShout.getString("lng"));
                     shout.description = rawShout.getString("description");
                     shout.created = rawShout.getString("created_at");
+                    shout.source = rawShout.getString("source");
+                    shout.displayName = rawShout.getString("display_name");
                     shouts.add(shout);
                 }
             } catch (JSONException e) {

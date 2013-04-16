@@ -17,6 +17,15 @@
             android:textOn="on"
             android:textOff="off"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"/>
+
+    <ToggleButton
+            android:id="@+id/family_friends_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="on"
+            android:textOff="off"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"/>
 
 </RelativeLayout>

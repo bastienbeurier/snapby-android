@@ -5,22 +5,23 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.*;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.Toast;
-import android.widget.ToggleButton;
+import android.widget.*;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.streetshout.android.Models.ShoutModel;
+import com.streetshout.android.Utils.GeneralUtils;
 import com.streetshout.android.Utils.MapRequestHandler;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.LocationUtils;
@@ -36,12 +37,16 @@ public class MainActivity extends Activity {
     private static final boolean ADMIN = true;
     private boolean admin_super_powers = false;
 
+    private static final boolean FAMILY_AND_FRIENDS = true;
+    private boolean ff_super_powers = false;
+
     /** Required recentness and accuracy of the user position for creating a new shout */
     private static final int REQUIRED_RECENTNESS = 1000 * 60 * 2;
 
     /** Zoom for the initial camera position when we have the user location */
     private static final int INITIAL_ZOOM = 11;
 
+    /** Minimum radius around the user's location where he can create shout **/
     private static final int MIN_SHOUT_RADIUS = 200;
 
     /** Location manager that handles the network services */
@@ -65,6 +70,8 @@ public class MainActivity extends Activity {
     /** Because dialog "done" action is triggered twice */
     private boolean canCreateShout = true;
 
+    private CameraPosition savedCameraPosition = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,18 +82,11 @@ public class MainActivity extends Activity {
 
         markedShouts = new HashSet<Integer>();
 
-        ToggleButton adminToggle = (ToggleButton) findViewById(R.id.admin_toggle);
-        if (ADMIN)  {
-            adminToggle.setVisibility(View.VISIBLE);
-            adminToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    admin_super_powers = isChecked;
-                }
-            });
-        } else {
-            adminToggle.findViewById(R.id.admin_toggle).setVisibility(View.GONE);
+        if (savedInstanceState != null) {
+            savedCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
+
+        setSpecialCapabilities();
     }
 
     @Override
@@ -131,7 +131,10 @@ public class MainActivity extends Activity {
                 bestLoc = getIntent().getParcelableExtra("firstLocation");
             }
 
-            if (bestLoc != null) {
+            if (savedCameraPosition != null) {
+                initializeCameraWithCameraPosition(savedCameraPosition);
+                savedCameraPosition = null;
+            } else if (bestLoc != null) {
                 initializeCamera(bestLoc);
             }
         }
@@ -143,9 +146,48 @@ public class MainActivity extends Activity {
         locationManager.removeUpdates(locationListener);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("cameraPosition", mMap.getCameraPosition());
+        super.onSaveInstanceState(outState);
+    }
+
+    private void setSpecialCapabilities() {
+        ToggleButton adminToggle = (ToggleButton) findViewById(R.id.admin_toggle);
+        if (ADMIN)  {
+            adminToggle.setVisibility(View.VISIBLE);
+            adminToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    admin_super_powers = isChecked;
+                }
+            });
+        } else {
+            adminToggle.setVisibility(View.GONE);
+        }
+
+        ToggleButton ffToggle = (ToggleButton) findViewById(R.id.family_friends_toggle);
+        if (FAMILY_AND_FRIENDS)  {
+            ffToggle.setVisibility(View.VISIBLE);
+            ffToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ff_super_powers = isChecked;
+                }
+            });
+        } else {
+            ffToggle.setVisibility(View.GONE);
+        }
+    }
+
     /** Set initial camera position on the user location */
     private void initializeCamera(Location location) {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(location), INITIAL_ZOOM);
+        mMap.moveCamera(update);
+    }
+
+    private void initializeCameraWithCameraPosition(CameraPosition cameraPosition) {
+        CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
         mMap.moveCamera(update);
     }
 
@@ -174,6 +216,7 @@ public class MainActivity extends Activity {
         });
 
         actionBar.setCustomView(mainActionBarView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+        actionBar.show();
     }
 
     /** If no map already present, set up map with settings, event listener, ... Return true if a new map is set */
@@ -198,6 +241,42 @@ public class MainActivity extends Activity {
                 //Set listener and send calls to the MapRequestHandler
                 pullShouts(cameraPosition);
                 }
+            });
+
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                // Use default InfoWindow frame
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+
+                // Defines the contents of the InfoWindow
+                @Override
+                public View getInfoContents(Marker marker) {
+
+                    if (marker.getTitle() == null && marker.getSnippet() == null) {
+                        return null;
+                    }
+
+                    // Getting view from the layout file info_window_layout
+                    View v = getLayoutInflater().inflate(R.layout.map_info_window, null);
+
+                    // Getting reference to the TextView to set title
+                    TextView userNameView = (TextView) v.findViewById(R.id.map_info_window_title);
+                    TextView descriptionView = (TextView) v.findViewById(R.id.map_info_window_body);
+                    TextView timeStampView = (TextView) v.findViewById(R.id.map_info_window_stamp);
+
+                    userNameView.setText(marker.getTitle());
+
+                    String[] descriptionAndStamp = TextUtils.split(marker.getSnippet(), GeneralUtils.STAMP_DIVIDER);
+
+                    descriptionView.setText(descriptionAndStamp[0]);
+                    timeStampView.setText(descriptionAndStamp[1]);
+
+                    // Returning the view containing InfoWindow contents
+                    return v;
+                }
+
             });
 
             return true;
@@ -231,7 +310,7 @@ public class MainActivity extends Activity {
         });
 
         //Add a request to populate the map to the MapRequestHandler
-        mapReqHandler.addMapRequest(this, aq, cameraPosition);
+        mapReqHandler.addMapRequest(this, aq, cameraPosition, ff_super_powers);
     }
 
     /** Add a list of shouts on the map */
@@ -299,6 +378,9 @@ public class MainActivity extends Activity {
         marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_arrow));
         Marker newShoutMarker = mMap.addMarker(marker);
 
+        final double initialLat = newShoutLoc.getLatitude();
+        final double initialLng = newShoutLoc.getLongitude();
+
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
@@ -313,7 +395,7 @@ public class MainActivity extends Activity {
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 float[] distance = new float[] {0};
-                Location.distanceBetween(newShoutLoc.getLatitude(), newShoutLoc.getLongitude(), marker.getPosition().latitude, marker.getPosition().longitude, distance);
+                Location.distanceBetween(initialLat, initialLng, marker.getPosition().latitude, marker.getPosition().longitude, distance);
 
                 //If user drags marker outside of the shoutRadius, bring back shout marker to initial position
                 if (distance[0] > shoutRadius) {
@@ -334,7 +416,14 @@ public class MainActivity extends Activity {
         MarkerOptions marker = new MarkerOptions();
 
         marker.position(new LatLng(shout.lat, shout.lng));
-        marker.title(shout.description).snippet(TimeUtils.shoutAgeToString(TimeUtils.getShoutAge(shout.created)));
+        if (shout.displayName != null && shout.displayName.length() > 0 && !shout.displayName.equals("null")) {
+            marker.title(shout.displayName);
+        }
+        String shoutBody = shout.description + GeneralUtils.STAMP_DIVIDER + TimeUtils.shoutAgeToString(TimeUtils.getShoutAge(shout.created));
+        if (shout.source.equals("twitter")) {
+            shoutBody += " " + getString(R.string.powered_by_twitter);
+        }
+        marker.snippet(shoutBody);
         marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
         markedShouts.add(shout.id);
         mMap.addMarker(marker);
@@ -352,6 +441,7 @@ public class MainActivity extends Activity {
         customActionBarView.findViewById(R.id.actionbar_done).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                actionBar.hide();
                 getNewShoutDescription(newShoutLoc, newShoutCircle, newShoutMarker);
             }
         });
@@ -365,6 +455,7 @@ public class MainActivity extends Activity {
         });
 
         actionBar.setCustomView(customActionBarView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+        actionBar.show();
     }
 
     private void getNewShoutDescription(final Location newShoutLoc, final Circle shoutRadiusCircle, final Marker newShoutMarker) {

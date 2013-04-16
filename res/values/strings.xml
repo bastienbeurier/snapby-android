@@ -14,4 +14,5 @@
     <string name="create_shout_success">Congrats for shouting your truth...</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
+    <string name="powered_by_twitter">(powered by Twitter)</string>
 </resources>
