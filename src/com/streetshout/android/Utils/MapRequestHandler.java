@@ -1,8 +1,6 @@
 package com.streetshout.android.Utils;
 
 import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
