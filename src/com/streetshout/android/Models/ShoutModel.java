@@ -72,6 +72,7 @@ public class ShoutModel {
                 shout.lng = Double.parseDouble(rawShout.getString("lng"));
                 shout.description = rawShout.getString("description");
                 shout.created = rawShout.getString("created_at");
+                shout.displayName = rawShout.getString("display_name");
             }
         } catch (JSONException e) {
             e.printStackTrace();

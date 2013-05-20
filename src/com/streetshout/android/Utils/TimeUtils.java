@@ -29,19 +29,19 @@ public class TimeUtils {
         if (age >= 0) {
             long hours = age / ONE_HOUR;
             if (hours > 1) {
-                return String.format("%d hours ago", hours);
+                return String.format("%d hrs ago", hours);
             } else if (hours == 1) {
-                return String.format("1 hour ago");
+                return String.format("1 hr ago");
             } else {
                 long minutes = age / ONE_MIN;
                 if (minutes > 1) {
-                    return String.format("%d minutes ago", minutes);
+                    return String.format("%d mins ago", minutes);
                 } else {
-                    return String.format("%d minute ago", minutes);
+                    return String.format("%d min ago", minutes);
                 }
             }
         } else {
-            return "Unknown creation time";
+            return "just now";
         }
     }
 }

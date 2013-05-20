@@ -32,13 +32,12 @@ import java.util.*;
 public class MainActivity extends SlidingMapActivity {
 
     private static final boolean ADMIN = true;
-    private boolean admin_super_powers = false;
-
-    private static final boolean FAMILY_AND_FRIENDS = true;
-    private boolean ff_super_powers = false;
-
+    private static final boolean FAMILY_AND_FRIENDS = false;
     public static final int MAX_USER_NAME_LENGTH = 20;
     public static final int MAX_DESCRIPTION_LENGTH = 140;
+
+    private boolean shout_from_anywhere = false;
+    private boolean no_twitter = true;
 
     /** Required recentness and accuracy of the user position for creating a new shout */
     private static final int REQUIRED_RECENTNESS = 1000 * 60 * 2;
@@ -171,7 +170,7 @@ public class MainActivity extends SlidingMapActivity {
             adminToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    admin_super_powers = isChecked;
+                    shout_from_anywhere = isChecked;
                 }
             });
         } else {
@@ -184,7 +183,7 @@ public class MainActivity extends SlidingMapActivity {
             ffToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ff_super_powers = isChecked;
+                no_twitter = isChecked;
                 }
             });
         } else {
@@ -213,7 +212,7 @@ public class MainActivity extends SlidingMapActivity {
         mainActionBarView.findViewById(R.id.create_shout_item_menu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (admin_super_powers) {
+                if (shout_from_anywhere) {
                     getNewShoutDescription(bestLoc, null, null);
                 } else {
 
@@ -329,7 +328,7 @@ public class MainActivity extends SlidingMapActivity {
         });
 
         //Add a request to populate the map to the MapRequestHandler
-        mapReqHandler.addMapRequest(this, aq, cameraPosition, ff_super_powers);
+        mapReqHandler.addMapRequest(this, aq, cameraPosition, no_twitter);
     }
 
     /** Add a list of shouts on the map */
@@ -606,7 +605,7 @@ public class MainActivity extends SlidingMapActivity {
         double lng;
 
         //If a admin capabilities, create shout in the middle on the map
-        if (admin_super_powers) {
+        if (shout_from_anywhere) {
             lat = mMap.getCameraPosition().target.latitude;
             lng = mMap.getCameraPosition().target.longitude;
         //Else get the location specified by the user
