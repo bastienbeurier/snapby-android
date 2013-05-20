@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.androidquery.AQuery;
@@ -20,6 +21,8 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingMapActivity;
+import com.streetshout.android.Adapters.ShoutFeedEndlessAdapter;
+import com.streetshout.android.Custom.PermanentToast;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.Utils.*;
 import com.streetshout.android.R;
@@ -78,13 +81,17 @@ public class MainActivity extends SlidingMapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        setBehindContentView(R.layout.behind_view);
+        setBehindContentView(R.layout.shout_feed);
         displayMainActionBar();
 
         SlidingMenu menu = getSlidingMenu();
         menu.setBehindWidth(GeneralUtils.getVerticalWindowWitdh(this) - 100);
+        menu.setShadowWidth(15);
+        menu.setShadowDrawable(R.drawable.sliding_menu_shadow);
 
         this.aq = new AQuery(this);
+
+        setGlobalShoutsFeed();
 
         markedShouts = new HashSet<Integer>();
 
@@ -94,6 +101,13 @@ public class MainActivity extends SlidingMapActivity {
 
         setSpecialCapabilities();
     }
+
+   private void setGlobalShoutsFeed() {
+       ListView feedListView = (ListView) findViewById(R.id.global_shouts_feed);
+       ShoutFeedEndlessAdapter adapter = new ShoutFeedEndlessAdapter(this, aq);
+       feedListView.addHeaderView(getLayoutInflater().inflate(R.layout.shout_feed_header, null));
+       feedListView.setAdapter(adapter);
+   }
 
     @Override
     protected void onResume() {

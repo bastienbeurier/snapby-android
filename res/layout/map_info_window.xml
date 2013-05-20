@@ -11,12 +11,12 @@
             android:maxLines="1"
             android:textSize="16dp"
             android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:textColor="@color/lightGrey"/>
     <TextView
             android:id="@+id/map_info_window_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"/>
+            android:textColor="@color/lightGrey"/>
     <TextView
             android:id="@+id/map_info_window_stamp"
             android:layout_width="match_parent"

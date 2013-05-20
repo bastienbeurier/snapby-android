@@ -37,4 +37,12 @@ public class ApiUtils {
 
         aq.ajax(url, JSONObject.class, cb);
     }
+
+    public static void retrieveFeedShouts(AQuery aq, int page, int perPage, AjaxCallback<JSONObject> cb) {
+        String url = SITEURL + "/global_feed_shouts.json?page=" + String.valueOf(page) + "&per_page=" + String.valueOf(perPage);
+
+        cb.url(url).type(JSONObject.class);
+
+        aq.sync(cb);
+    }
 }
