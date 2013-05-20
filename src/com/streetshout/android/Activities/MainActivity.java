@@ -1,18 +1,16 @@
 package com.streetshout.android.Activities;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
+import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
 import com.androidquery.AQuery;
@@ -20,25 +18,27 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingMapActivity;
 import com.streetshout.android.Models.ShoutModel;
-import com.streetshout.android.Utils.GeneralUtils;
-import com.streetshout.android.Utils.MapRequestHandler;
+import com.streetshout.android.Utils.*;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.LocationUtils;
-import com.streetshout.android.Utils.TimeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends SlidingMapActivity {
 
     private static final boolean ADMIN = true;
     private boolean admin_super_powers = false;
 
     private static final boolean FAMILY_AND_FRIENDS = true;
     private boolean ff_super_powers = false;
+
+    public static final int MAX_USER_NAME_LENGTH = 20;
+    public static final int MAX_DESCRIPTION_LENGTH = 140;
 
     /** Required recentness and accuracy of the user position for creating a new shout */
     private static final int REQUIRED_RECENTNESS = 1000 * 60 * 2;
@@ -72,11 +72,18 @@ public class MainActivity extends Activity {
 
     private CameraPosition savedCameraPosition = null;
 
+    /** Permanent toast to display intructions to the user while creating a shout */
+    PermanentToast permanentToast = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        setBehindContentView(R.layout.behind_view);
         displayMainActionBar();
+
+        SlidingMenu menu = getSlidingMenu();
+        menu.setBehindWidth(GeneralUtils.getVerticalWindowWitdh(this) - 100);
 
         this.aq = new AQuery(this);
 
@@ -147,6 +154,11 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected boolean isRouteDisplayed() {
+        return false;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("cameraPosition", mMap.getCameraPosition());
         super.onSaveInstanceState(outState);
@@ -212,6 +224,13 @@ public class MainActivity extends Activity {
                         toast.show();
                     }
                 }
+            }
+        });
+
+        mainActionBarView.findViewById(R.id.feed_item_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggle();
             }
         });
 
@@ -353,6 +372,12 @@ public class MainActivity extends Activity {
         /**Shout radius is the perimeter where the user could be due to location inaccuracy (there is a minimum radius
         if location is very accurate) */
 
+        //User instructions in a toast
+        final Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_instructions), Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, GeneralUtils.getWindowHeight(this) / 2 - 100);
+        permanentToast = new PermanentToast(toast);
+        permanentToast.start();
+
         //Compute bouds of this perimeter
         LatLng[] boundsResult = LocationUtils.getLatLngBounds(shoutRadius, newShoutLoc);
         LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
@@ -441,6 +466,7 @@ public class MainActivity extends Activity {
         customActionBarView.findViewById(R.id.actionbar_done).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                permanentToast.interrupt();
                 actionBar.hide();
                 getNewShoutDescription(newShoutLoc, newShoutCircle, newShoutMarker);
             }
@@ -450,6 +476,7 @@ public class MainActivity extends Activity {
         customActionBarView.findViewById(R.id.actionbar_discard).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                permanentToast.interrupt();
                 endShoutCreationProcess(newShoutCircle, newShoutMarker);
             }
         });
@@ -459,17 +486,17 @@ public class MainActivity extends Activity {
     }
 
     private void getNewShoutDescription(final Location newShoutLoc, final Circle shoutRadiusCircle, final Marker newShoutMarker) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
 
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getString(R.string.create_shout_dialog_title));
         builder.setView(inflater.inflate(R.layout.create_shout, null));
 
         //OK: Redirect user to edit location settings
         builder.setPositiveButton(R.string.shout, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                String description = ((EditText) ((AlertDialog) dialog).findViewById(R.id.create_shout_descr_dialog)).getText().toString();
-                createNewShoutFromInfo(description, newShoutLoc);
-                endShoutCreationProcess(shoutRadiusCircle, newShoutMarker);
+
             }
         });
 
@@ -480,7 +507,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        Dialog dialog = builder.create();
+        final AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         //User press "send" on the keyboard
@@ -491,10 +518,7 @@ public class MainActivity extends Activity {
                     //For some reason, the event get fired twice. This is a hack to send the shout only once.
                     if (canCreateShout) {
                         canCreateShout = false;
-                        String description = ((EditText) ((AlertDialog) dialog).findViewById(R.id.create_shout_descr_dialog)).getText().toString();
-                        dialog.dismiss();
-                        createNewShoutFromInfo(description, newShoutLoc);
-                        endShoutCreationProcess(shoutRadiusCircle, newShoutMarker);
+                        validateShoutInfo((AlertDialog) dialog, newShoutLoc, shoutRadiusCircle, newShoutMarker);
                     } else {
                         canCreateShout = true;
                     }
@@ -504,10 +528,80 @@ public class MainActivity extends Activity {
         });
 
         dialog.show();
+
+        final EditText descriptionView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_descr);
+        final TextView charCountView = (TextView) dialog.findViewById(R.id.create_shout_descr_dialog_count);
+
+        descriptionView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                descriptionView.setError(null);
+                charCountView.setText((MAX_DESCRIPTION_LENGTH - s.length()) + " " + getString(R.string.characters));
+            }
+        });
+
+
+
+        Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        positiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validateShoutInfo(dialog, newShoutLoc, shoutRadiusCircle, newShoutMarker);
+            }
+        });
+
+    }
+
+    private void validateShoutInfo(AlertDialog dialog, final Location newShoutLoc, final Circle shoutRadiusCircle, final Marker newShoutMarker) {
+        boolean errors = false;
+
+        EditText userNameView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_name);
+        EditText descriptionView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_descr);
+        userNameView.setError(null);
+        descriptionView.setError(null);
+
+        String userName = userNameView.getText().toString();
+        String description = descriptionView.getText().toString();
+
+        if (userName.length() == 0) {
+            userNameView.setError(getString(R.string.name_not_empty));
+            errors = true;
+        }
+
+        if (userName.length() > MAX_USER_NAME_LENGTH) {
+            userNameView.setError(getString(R.string.name_too_long));
+            errors = true;
+        }
+
+        if (description.length() == 0) {
+            descriptionView.setError(getString(R.string.description_not_empty));
+            errors = true;
+        }
+
+        if (description.length() > MAX_DESCRIPTION_LENGTH) {
+            descriptionView.setError(getString(R.string.description_too_long));
+            errors = true;
+        }
+
+        if (!errors) {
+            dialog.dismiss();
+            createNewShoutFromInfo(userName, description, newShoutLoc);
+            endShoutCreationProcess(shoutRadiusCircle, newShoutMarker);
+        }
     }
 
     /** User confirmed shout creation after scpecifying accurate location and shout description */
-    public void createNewShoutFromInfo(String description, final Location newShoutLoc) {
+    public void createNewShoutFromInfo(String userName, String description, final Location newShoutLoc) {
         double lat;
         double lng;
 
@@ -522,7 +616,7 @@ public class MainActivity extends Activity {
         }
 
         //Create shout!
-        ShoutModel.createShout(aq, lat, lng, description, new AjaxCallback<JSONObject>() {
+        ShoutModel.createShout(aq, lat, lng, userName, description, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);

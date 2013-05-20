@@ -17,10 +17,11 @@ public class ApiUtils {
     public static String SITEURL = "http://street-shout.herokuapp.com";
 
     /** API call to create a new shout */
-    public static void createShout(AQuery aq, double lat, double lng, String description, AjaxCallback<JSONObject> cb) {
+    public static void createShout(AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
         String url = SITEURL + "/shouts.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user_name", userName);
         params.put("description", description);
         params.put("lat", lat);
         params.put("lng", lng);

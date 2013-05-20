@@ -81,7 +81,7 @@ public class ShoutModel {
     }
 
     /** User creates a new shout */
-    public static void createShout(AQuery aq, double lat, double lng, String description, AjaxCallback<JSONObject> cb) {
-        ApiUtils.createShout(aq, lat, lng, description, cb);
+    public static void createShout(AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
+        ApiUtils.createShout(aq, lat, lng, userName, description, cb);
     }
 }

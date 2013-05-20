@@ -6,13 +6,22 @@
     <string name="skip">Skip</string>
     <string name="shout">Shout</string>
     <string name="cancel">Cancel</string>
-    <string name="create_shout_dialog_title">The world wants to know...</string>
     <string name="no_location_dialog_title">Location access disabled</string>
     <string name="no_location_dialog_message">Some features of Shout require access to your location. Tap "Settings" to edit these settings, otherwise tap "Skip".</string>
+    <string name="create_shout_dialog_name">Your name</string>
     <string name="create_shout_dialog">What\'s happening around you?</string>
+    <string name="create_shout_dialog_title">Create a shout</string>
+    <string name="create_shout_dialog_count">140 characters</string>
+    <string name="characters">characters</string>
     <string name="create_shout_button">Tap to shout!</string>
     <string name="create_shout_success">Congrats for shouting your truth...</string>
+    <string name="create_shout_instructions">Drag the arrow anywhere inside the blue area, then press DONE.</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="powered_by_twitter">(powered by Twitter)</string>
+    <string name="name_not_empty">Please enter a non-empty name</string>
+    <string name="name_too_long">Please a name of less than 20 characters</string>
+    <string name="description_not_empty">Please enter a non-empty shout</string>
+    <string name="description_too_long">Please enter a shout of less than 150 characters</string>
+
 </resources>
