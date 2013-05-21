@@ -1,6 +1,7 @@
 package com.streetshout.android.Activities;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -20,6 +22,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingMapActivity;
 import com.streetshout.android.Adapters.ShoutFeedEndlessAdapter;
 import com.streetshout.android.Custom.PermanentToast;
@@ -32,9 +35,9 @@ import org.json.JSONObject;
 
 import java.util.*;
 
-public class MainActivity extends SlidingMapActivity {
+public class MainActivity extends SlidingFragmentActivity {
 
-    private static final boolean ADMIN = true;
+    private static final boolean ADMIN = false;
     private static final boolean FAMILY_AND_FRIENDS = false;
     public static final int MAX_USER_NAME_LENGTH = 20;
     public static final int MAX_DESCRIPTION_LENGTH = 140;
@@ -173,10 +176,10 @@ public class MainActivity extends SlidingMapActivity {
         locationManager.removeUpdates(locationListener);
     }
 
-    @Override
-    protected boolean isRouteDisplayed() {
-        return false;
-    }
+//    @Override
+//    protected boolean isRouteDisplayed() {
+//        return false;
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -262,7 +265,11 @@ public class MainActivity extends SlidingMapActivity {
     private boolean setUpMapIfNeeded() {
         if (mMap == null) {
             //Instantiate map
-            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+
+            if (mMap == null) {
+                return false;
+            }
 
             //Set map settings
             UiSettings settings = mMap.getUiSettings();
