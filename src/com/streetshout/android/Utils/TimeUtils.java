@@ -26,7 +26,7 @@ public class TimeUtils {
     }
 
     public static String shoutAgeToString(long age) {
-        if (age >= 0) {
+        if (age > 0) {
             long hours = age / ONE_HOUR;
             if (hours > 1) {
                 return String.format("%d hrs ago", hours);

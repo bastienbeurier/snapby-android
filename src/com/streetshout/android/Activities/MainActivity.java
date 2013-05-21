@@ -37,7 +37,7 @@ import java.util.*;
 
 public class MainActivity extends SlidingMapActivity {
 
-    private static final boolean ADMIN = false;
+    private static final boolean ADMIN = true;
     private static final boolean FAMILY_AND_FRIENDS = false;
     public static final int MAX_USER_NAME_LENGTH = 20;
     public static final int MAX_DESCRIPTION_LENGTH = 140;
@@ -243,7 +243,7 @@ public class MainActivity extends SlidingMapActivity {
                     if (bestLoc != null && (System.currentTimeMillis() - bestLoc.getTime() < REQUIRED_RECENTNESS)) {
                         startShoutCreationProcess(MainActivity.this.bestLoc);
                     } else {
-                        Toast toast = Toast.makeText(MainActivity.this, "No good location available!", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }
