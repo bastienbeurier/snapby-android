@@ -9,6 +9,12 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.streetshout.android.Activities.MainActivity;
 import com.streetshout.android.Custom.ShoutBaseAdapter;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
@@ -27,11 +33,19 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
 
     private JSONArray items = null;
 
+    private CameraPosition.Builder builder = null;
+
+    private GoogleMap map = null;
+
     int page = 1;
 
-    public ShoutFeedAdapter(Context context, AQuery aq) {
+    public ShoutFeedAdapter(Context context, AQuery aq, GoogleMap map) {
         this.context = context;
         this.aq = aq;
+        this.map = map;
+
+        builder = new CameraPosition.Builder();
+        builder.zoom(MainActivity.CLICK_ON_SHOUT_ZOOM);
     }
 
     @Override
@@ -44,19 +58,35 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
             shoutView = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.feed_shout_view, null);
         }
 
-        ShoutModel shout = null;
+
+        JSONObject rawShout = null;
 
         try {
-            shout = ShoutModel.rawShoutToInstance(items.getJSONObject(position));
+            rawShout = items.getJSONObject(position);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        if (rawShout == null) {
+            return null;
+        }
+
+        final ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
 
         if (shout != null) {
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_title)).setText(shout.displayName);
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_body)).setText(shout.description);
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(TimeUtils.shoutAgeToString(TimeUtils.getShoutAge(shout.created)));
         }
+
+        shoutView.findViewById(R.id.feed_shout_view_linear_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(shout.lat, shout.lng)).build());
+                map.moveCamera(update);
+                ((MainActivity) context).toggle();
+            }
+        });
 
         return shoutView;
     }

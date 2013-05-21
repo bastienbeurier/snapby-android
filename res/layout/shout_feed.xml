@@ -5,6 +5,18 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/darkGrey">
+    <TextView
+            android:id="@+id/feed_shout_header"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:text="@string/feed_header"
+            android:layout_margin="10dp"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/lightGrey"/>
     <ListView
             android:id="@+id/global_shouts_feed"
             android:layout_width="fill_parent"

@@ -39,6 +39,8 @@ public class MainActivity extends SlidingMapActivity {
     public static final int MAX_USER_NAME_LENGTH = 20;
     public static final int MAX_DESCRIPTION_LENGTH = 140;
 
+    public static final int CLICK_ON_SHOUT_ZOOM = 16;
+
     private boolean shout_from_anywhere = false;
     private boolean no_twitter = true;
 
@@ -74,6 +76,8 @@ public class MainActivity extends SlidingMapActivity {
 
     private CameraPosition savedCameraPosition = null;
 
+    private CameraPosition.Builder builder = null;
+
     /** Permanent toast to display intructions to the user while creating a shout */
     PermanentToast permanentToast = null;
 
@@ -91,7 +95,8 @@ public class MainActivity extends SlidingMapActivity {
 
         this.aq = new AQuery(this);
 
-        setGlobalShoutsFeed();
+        builder = new CameraPosition.Builder();
+        builder.zoom(MainActivity.CLICK_ON_SHOUT_ZOOM);
 
         markedShouts = new HashSet<Integer>();
 
@@ -104,8 +109,8 @@ public class MainActivity extends SlidingMapActivity {
 
    private void setGlobalShoutsFeed() {
        ListView feedListView = (ListView) findViewById(R.id.global_shouts_feed);
-       ShoutFeedEndlessAdapter adapter = new ShoutFeedEndlessAdapter(this, aq);
-       feedListView.addHeaderView(getLayoutInflater().inflate(R.layout.shout_feed_header, null));
+       ShoutFeedEndlessAdapter adapter = new ShoutFeedEndlessAdapter(this, aq, mMap);
+//       feedListView.addHeaderView(getLayoutInflater().inflate(R.layout.shout_feed_header, null));
        feedListView.setAdapter(adapter);
    }
 
@@ -158,6 +163,8 @@ public class MainActivity extends SlidingMapActivity {
                 initializeCamera(bestLoc);
             }
         }
+
+        setGlobalShoutsFeed();
     }
 
     @Override
@@ -311,6 +318,14 @@ public class MainActivity extends SlidingMapActivity {
 
             });
 
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)).build());
+                    mMap.moveCamera(update);
+                }
+            });
+
             return true;
         }
         return false;
@@ -461,6 +476,7 @@ public class MainActivity extends SlidingMapActivity {
         if (shout.source.equals("twitter")) {
             shoutBody += " " + getString(R.string.powered_by_twitter);
         }
+
         marker.snippet(shoutBody);
         marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
         markedShouts.add(shout.id);
