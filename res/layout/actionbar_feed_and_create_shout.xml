@@ -11,9 +11,9 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_feed"
             android:layout_gravity="center"
+            android:background="@drawable/button_dark"
             android:layout_alignParentLeft="true"/>
 
-            <!--android:background="@drawable/button_dark"-->
     <View
             android:layout_height="match_parent"
             android:layout_width="1dip"
@@ -29,8 +29,8 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_create_shout"
             android:layout_gravity="center"
+            android:background="@drawable/button_dark"
             android:layout_alignParentRight="true"/>
-            <!--android:background="@drawable/button_dark"-->
 
     <View
             android:layout_height="match_parent"
