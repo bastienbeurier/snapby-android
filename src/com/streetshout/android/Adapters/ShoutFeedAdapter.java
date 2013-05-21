@@ -79,7 +79,7 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(TimeUtils.shoutAgeToString(TimeUtils.getShoutAge(shout.created)));
         }
 
-        shoutView.findViewById(R.id.feed_shout_view_linear_layout).setOnClickListener(new View.OnClickListener() {
+        shoutView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(shout.lat, shout.lng)).build());

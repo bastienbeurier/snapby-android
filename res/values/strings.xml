@@ -24,6 +24,6 @@
     <string name="description_not_empty">Please enter a non-empty shout.</string>
     <string name="description_too_long">Please enter a shout of less than 140 characters.</string>
     <string name="loading">Loading...</string>
-    <string name="feed_header">LATEST WORLDWIDE SHOUTS</string>
-
+    <string name="feed_header">LATEST SHOUTS</string>
+    <string name="empty_feed">Nobody shouted recently...</string>
 </resources>

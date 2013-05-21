@@ -110,7 +110,7 @@ public class MainActivity extends SlidingMapActivity {
    private void setGlobalShoutsFeed() {
        ListView feedListView = (ListView) findViewById(R.id.global_shouts_feed);
        ShoutFeedEndlessAdapter adapter = new ShoutFeedEndlessAdapter(this, aq, mMap);
-//       feedListView.addHeaderView(getLayoutInflater().inflate(R.layout.shout_feed_header, null));
+       feedListView.setEmptyView(findViewById(R.id.empty_feed_view));
        feedListView.setAdapter(adapter);
    }
 
