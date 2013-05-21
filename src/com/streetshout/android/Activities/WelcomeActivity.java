@@ -20,6 +20,10 @@ public class WelcomeActivity extends Activity {
     /** Location listener to get location from network services */
     private LocationListener listener = null;
 
+    private Thread thread = null;
+
+    private boolean locationFound = false;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -33,6 +37,11 @@ public class WelcomeActivity extends Activity {
 
             @Override
             public void onLocationChanged(Location location) {
+                locationFound = true;
+                if (thread != null) {
+                    thread.interrupt();
+                }
+
                 //When we have the user location, start MainActivity
                 Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
                 i.putExtra("firstLocation", location);
@@ -92,6 +101,26 @@ public class WelcomeActivity extends Activity {
         //Request location to network provider
         if (networkEnabled) {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10 ,listener);
+
+            thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        sleep(5000);
+
+                        //Waiting to long for user location, start activity (retrieve city somehow?)
+                        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+                        startActivity(i);
+                        WelcomeActivity.this.finish();
+
+                        interrupt();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            thread.run();
         }
     }
 
@@ -101,5 +130,7 @@ public class WelcomeActivity extends Activity {
 
         //Disable location services
         this.locationManager.removeUpdates(listener);
+
+        thread = null;
     }
 }

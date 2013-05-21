@@ -10,8 +10,8 @@
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_feed"
-            android:background="@drawable/button_dark"
             android:layout_gravity="center"
+            android:background="@drawable/button_dark"
             android:layout_alignParentLeft="true"/>
 
     <View
@@ -28,8 +28,8 @@
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_create_shout"
-            android:background="@drawable/button_dark"
             android:layout_gravity="center"
+            android:background="@drawable/button_dark"
             android:layout_alignParentRight="true"/>
 
     <View

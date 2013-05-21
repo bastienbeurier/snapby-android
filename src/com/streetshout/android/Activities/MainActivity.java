@@ -1,6 +1,7 @@
 package com.streetshout.android.Activities;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -20,6 +22,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingMapActivity;
 import com.streetshout.android.Adapters.ShoutFeedEndlessAdapter;
 import com.streetshout.android.Custom.PermanentToast;
@@ -240,7 +243,7 @@ public class MainActivity extends SlidingMapActivity {
                     if (bestLoc != null && (System.currentTimeMillis() - bestLoc.getTime() < REQUIRED_RECENTNESS)) {
                         startShoutCreationProcess(MainActivity.this.bestLoc);
                     } else {
-                        Toast toast = Toast.makeText(MainActivity.this, "No good location available!", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }
@@ -263,6 +266,10 @@ public class MainActivity extends SlidingMapActivity {
         if (mMap == null) {
             //Instantiate map
             mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+            if (mMap == null) {
+                return false;
+            }
 
             //Set map settings
             UiSettings settings = mMap.getUiSettings();
