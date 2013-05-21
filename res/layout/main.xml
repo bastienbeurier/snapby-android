@@ -8,7 +8,7 @@
               android:id="@+id/map"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              class="com.google.android.gms.maps.SupportMapFragment"/>
+              class="com.google.android.gms.maps.MapFragment"/>
 
     <ToggleButton
             android:id="@+id/admin_toggle"
@@ -27,5 +27,10 @@
             android:textOff="off"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
 
 </RelativeLayout>

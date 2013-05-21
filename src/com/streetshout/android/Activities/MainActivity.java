@@ -35,7 +35,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 
-public class MainActivity extends SlidingFragmentActivity {
+public class MainActivity extends SlidingMapActivity {
 
     private static final boolean ADMIN = false;
     private static final boolean FAMILY_AND_FRIENDS = false;
@@ -176,10 +176,10 @@ public class MainActivity extends SlidingFragmentActivity {
         locationManager.removeUpdates(locationListener);
     }
 
-//    @Override
-//    protected boolean isRouteDisplayed() {
-//        return false;
-//    }
+    @Override
+    protected boolean isRouteDisplayed() {
+        return false;
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -265,7 +265,7 @@ public class MainActivity extends SlidingFragmentActivity {
     private boolean setUpMapIfNeeded() {
         if (mMap == null) {
             //Instantiate map
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
             if (mMap == null) {
                 return false;
