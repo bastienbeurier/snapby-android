@@ -357,7 +357,7 @@ public class MainActivity extends SlidingMapActivity {
                 @Override
                 public void onInfoWindowClick(Marker marker) {
                     CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude)).build());
-                    mMap.moveCamera(update);
+                    mMap.animateCamera(update);
                 }
             });
 
@@ -595,14 +595,15 @@ public class MainActivity extends SlidingMapActivity {
 
         //Set user name if we have it
         EditText userNameView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_name);
+        final EditText descriptionView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_descr);
+        final TextView charCountView = (TextView) dialog.findViewById(R.id.create_shout_descr_dialog_count);
 
         String savedUserName = appPrefs.getUserNamePref();
         if (savedUserName.length() > 0) {
             userNameView.setText(savedUserName);
+            userNameView.clearFocus();
+            descriptionView.requestFocus();
         }
-
-        final EditText descriptionView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_descr);
-        final TextView charCountView = (TextView) dialog.findViewById(R.id.create_shout_descr_dialog_count);
 
         descriptionView.addTextChangedListener(new TextWatcher() {
             @Override

@@ -34,9 +34,4 @@ public class ShoutBaseAdapter extends BaseAdapter {
     {
         return;
     }
-
-    public void refresh()
-    {
-        return;
-    }
 }

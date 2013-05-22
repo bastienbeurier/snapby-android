@@ -8,7 +8,7 @@
     <string name="cancel">Cancel</string>
     <string name="no_location_dialog_title">Location access disabled</string>
     <string name="no_location_dialog_message">Some features of Shout require access to your location. Tap "Settings" to edit these settings, otherwise tap "Skip".</string>
-    <string name="create_shout_dialog_name">Your name</string>
+    <string name="create_shout_dialog_name">Your name (publicly visible)</string>
     <string name="create_shout_dialog">What\'s happening around you?</string>
     <string name="create_shout_dialog_title">Create a shout</string>
     <string name="create_shout_dialog_count">140 characters</string>

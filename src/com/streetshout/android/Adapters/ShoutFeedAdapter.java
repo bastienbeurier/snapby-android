@@ -84,20 +84,12 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
             @Override
             public void onClick(View v) {
                 CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(shout.lat, shout.lng)).build());
-                map.moveCamera(update);
+                map.animateCamera(update);
                 ((MainActivity) context).toggle();
             }
         });
 
         return shoutView;
-    }
-
-    @Override
-    public void refresh() {
-        this.page = 1;
-        this.items = null;
-
-        this.notifyDataSetInvalidated();
     }
 
     @Override

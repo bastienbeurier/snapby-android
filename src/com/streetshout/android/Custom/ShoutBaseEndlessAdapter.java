@@ -32,12 +32,4 @@ public class ShoutBaseEndlessAdapter extends EndlessAdapter {
 
         adapter.processLatestJSON();
     }
-
-    public void refresh()
-    {
-        ShoutBaseAdapter adapter	= (ShoutBaseAdapter)getWrappedAdapter();
-        adapter.refresh();
-
-        this.restartAppending();
-    }
 }
