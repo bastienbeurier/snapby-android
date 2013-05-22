@@ -5,17 +5,32 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/darkGrey">
-    <TextView
-            android:id="@+id/feed_shout_header"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18dp"
-            android:text="@string/feed_header"
-            android:layout_margin="10dp"/>
+    <LinearLayout android:id="@+id/feed_shout_header"
+                  android:layout_width="fill_parent"
+                  android:layout_height="@dimen/feed_header_height"
+                  android:orientation="horizontal">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:textSize="18dp"
+                android:text="@string/feed_header"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"/>
+        <FrameLayout android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_gravity="center_vertical">
+            <ImageView android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="right"
+                       android:layout_marginRight="10dp"
+                       android:src="@drawable/feed_refresh_ic"/>
+        </FrameLayout>
+
+    </LinearLayout>
 
     <View
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="2px"
             android:background="@color/lightGrey"/>
     <ListView
             android:id="@+id/global_shouts_feed"

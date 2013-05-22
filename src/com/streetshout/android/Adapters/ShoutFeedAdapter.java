@@ -97,7 +97,7 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
         this.page = 1;
         this.items = null;
 
-        this.notifyDataSetChanged();
+        this.notifyDataSetInvalidated();
     }
 
     @Override

@@ -86,6 +86,8 @@ public class MainActivity extends SlidingMapActivity {
     /** Permanent toast to display intructions to the user while creating a shout */
     PermanentToast permanentToast = null;
 
+    ListView feedListView = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,12 +116,31 @@ public class MainActivity extends SlidingMapActivity {
         setSpecialCapabilities();
     }
 
-   private void setGlobalShoutsFeed() {
-       ListView feedListView = (ListView) findViewById(R.id.global_shouts_feed);
-       ShoutFeedEndlessAdapter adapter = new ShoutFeedEndlessAdapter(this, aq, mMap);
+    private void setGlobalShoutsFeed() {
+       feedListView = (ListView) findViewById(R.id.global_shouts_feed);
        feedListView.setEmptyView(findViewById(R.id.empty_feed_view));
+
+       ShoutFeedEndlessAdapter adapter = new ShoutFeedEndlessAdapter(this, aq, mMap);
        feedListView.setAdapter(adapter);
-   }
+
+       LinearLayout feedHeader = (LinearLayout) findViewById(R.id.feed_shout_header);
+       feedHeader.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               refreshShoutFeed();
+           }
+       });
+    }
+
+    private void refreshShoutFeed() {
+        feedListView.setAdapter(new ShoutFeedEndlessAdapter(MainActivity.this, aq, mMap));
+    }
+
+    @Override
+    public void toggle() {
+        refreshShoutFeed();
+        super.toggle();
+    }
 
     @Override
     protected void onResume() {
