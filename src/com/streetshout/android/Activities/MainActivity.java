@@ -479,7 +479,7 @@ public class MainActivity extends SlidingMapActivity {
         if (shout.displayName != null && shout.displayName.length() > 0 && !shout.displayName.equals("null")) {
             marker.title(shout.displayName);
         }
-        String shoutBody = shout.description + GeneralUtils.STAMP_DIVIDER + TimeUtils.shoutAgeToString(TimeUtils.getShoutAge(shout.created));
+        String shoutBody = shout.description + GeneralUtils.STAMP_DIVIDER + TimeUtils.shoutAgeToString(this, TimeUtils.getShoutAge(shout.created));
         if (shout.source.equals("twitter")) {
             shoutBody += " " + getString(R.string.powered_by_twitter);
         }

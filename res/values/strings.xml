@@ -27,4 +27,9 @@
     <string name="feed_header">LATEST SHOUTS</string>
     <string name="empty_feed">Nobody shouted recently...</string>
     <string name="no_location">No location available!</string>
+    <string name="minute_ago">min ago</string>
+    <string name="minutes_ago">mins ago</string>
+    <string name="hour_ago">hour ago</string>
+    <string name="hours_ago">hours ago</string>
+    <string name="just_now">just now</string>
 </resources>

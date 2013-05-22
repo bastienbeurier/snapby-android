@@ -1,5 +1,8 @@
 package com.streetshout.android.Utils;
 
+import android.app.Activity;
+import com.streetshout.android.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,23 +28,25 @@ public class TimeUtils {
         return (new Date()).getTime() - date.getTime();
     }
 
-    public static String shoutAgeToString(long age) {
+    public static String shoutAgeToString(Activity activity, long age) {
         if (age > 0) {
             long hours = age / ONE_HOUR;
             if (hours > 1) {
-                return String.format("%d hrs ago", hours);
+                return String.valueOf(hours) + " " + activity.getString(R.string.hours_ago);
             } else if (hours == 1) {
-                return String.format("1 hr ago");
+                return String.valueOf(hours) + " " + activity.getString(R.string.hour_ago);
             } else {
                 long minutes = age / ONE_MIN;
                 if (minutes > 1) {
-                    return String.format("%d mins ago", minutes);
+                    return String.valueOf(minutes) + " " + activity.getString(R.string.minutes_ago);
+                } else if (minutes == 1) {
+                    return String.valueOf(minutes) + " " + activity.getString(R.string.minute_ago);
                 } else {
-                    return String.format("%d min ago", minutes);
+                    return activity.getString(R.string.just_now);
                 }
             }
         } else {
-            return "just now";
+            return activity.getString(R.string.just_now);
         }
     }
 }

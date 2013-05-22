@@ -76,7 +76,7 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
         if (shout != null) {
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_title)).setText(shout.displayName);
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_body)).setText(shout.description);
-            ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(TimeUtils.shoutAgeToString(TimeUtils.getShoutAge(shout.created)));
+            ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(TimeUtils.shoutAgeToString(context, TimeUtils.getShoutAge(shout.created)));
         }
 
         shoutView.setOnClickListener(new View.OnClickListener() {
