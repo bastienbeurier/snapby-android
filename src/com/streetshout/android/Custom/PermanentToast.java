@@ -5,7 +5,6 @@ import android.widget.Toast;
 public class PermanentToast {
     private Thread thread = null;
     private Toast mToast = null;
-    public boolean running = true;
 
     public PermanentToast(Toast toast) {
         mToast = toast;
@@ -16,14 +15,8 @@ public class PermanentToast {
             public void run() {
                 try {
                     while (true) {
-                        if (running) {
-                            mToast.show();
-                            sleep(3600);
-                        } else {
-                            mToast.cancel();
-                            interrupt();
-                            return;
-                        }
+                        mToast.show();
+                        sleep(3600);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -37,7 +30,7 @@ public class PermanentToast {
     }
 
     public void interrupt() {
-        running = false;
+        mToast.cancel();
+        thread.interrupt();
     }
-
 }

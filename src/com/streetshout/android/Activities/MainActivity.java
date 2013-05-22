@@ -81,6 +81,8 @@ public class MainActivity extends SlidingMapActivity {
 
     private CameraPosition.Builder builder = null;
 
+    private  AppPreferences appPrefs = null;
+
     /** Permanent toast to display intructions to the user while creating a shout */
     PermanentToast permanentToast = null;
 
@@ -97,6 +99,8 @@ public class MainActivity extends SlidingMapActivity {
         menu.setShadowDrawable(R.drawable.sliding_menu_shadow);
 
         this.aq = new AQuery(this);
+
+        appPrefs = new AppPreferences(getApplicationContext());
 
         builder = new CameraPosition.Builder();
         builder.zoom(MainActivity.CLICK_ON_SHOUT_ZOOM);
@@ -174,6 +178,9 @@ public class MainActivity extends SlidingMapActivity {
     protected void onPause() {
         super.onStop();
         locationManager.removeUpdates(locationListener);
+        if (permanentToast != null) {
+            permanentToast.interrupt();
+        }
     }
 
     @Override
@@ -565,6 +572,14 @@ public class MainActivity extends SlidingMapActivity {
 
         dialog.show();
 
+        //Set user name if we have it
+        EditText userNameView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_name);
+
+        String savedUserName = appPrefs.getUserNamePref();
+        if (savedUserName.length() > 0) {
+            userNameView.setText(savedUserName);
+        }
+
         final EditText descriptionView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_descr);
         final TextView charCountView = (TextView) dialog.findViewById(R.id.create_shout_descr_dialog_count);
 
@@ -585,8 +600,6 @@ public class MainActivity extends SlidingMapActivity {
                 charCountView.setText((MAX_DESCRIPTION_LENGTH - s.length()) + " " + getString(R.string.characters));
             }
         });
-
-
 
         Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -640,6 +653,9 @@ public class MainActivity extends SlidingMapActivity {
     public void createNewShoutFromInfo(String userName, String description, final Location newShoutLoc) {
         double lat;
         double lng;
+
+        //Save user name in prefs
+        appPrefs.setUserNamePref(userName);
 
         //If a admin capabilities, create shout in the middle on the map
         if (shout_from_anywhere) {
