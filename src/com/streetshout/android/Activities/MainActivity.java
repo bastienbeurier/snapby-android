@@ -19,6 +19,7 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.google.android.maps.MyLocationOverlay;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingMapActivity;
 import com.streetshout.android.Adapters.ShoutFeedEndlessAdapter;
@@ -299,6 +300,23 @@ public class MainActivity extends SlidingMapActivity {
             settings.setMyLocationButtonEnabled(true);
             settings.setRotateGesturesEnabled(false);
             settings.setTiltGesturesEnabled(false);
+
+            //Set user location
+            mMap.setMyLocationEnabled(true);
+
+            // Gets the my location button
+            View myLocationButton = findViewById(2);
+
+            // Checks if we found the my location button
+            if (myLocationButton != null){
+
+                // Sets the margin of the button
+                ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(myLocationButton.getLayoutParams());
+                marginParams.setMargins(0, (int) getResources().getDimension(R.dimen.feed_header_height) + 20, 20, 0);
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(marginParams);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+                myLocationButton.setLayoutParams(layoutParams);
+            }
 
             /** Set camera move listener that sends requests to populate the map to the MapRequestHandler and listen for
              its response */

@@ -112,7 +112,7 @@ public class WelcomeActivity extends Activity {
                 @Override
                 public void run() {
                     try {
-                        sleep(15000);
+                        sleep(1000);
 
                         //Waiting to long for user location, start activity (retrieve city somehow?)
                         Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
