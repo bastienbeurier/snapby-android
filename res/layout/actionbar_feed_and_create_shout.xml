@@ -7,7 +7,7 @@
 
     <ImageButton
             android:id="@+id/feed_item_menu"
-            android:layout_width="50dp"
+            android:layout_width="@dimen/action_bar_icon_width"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_feed"
             android:layout_gravity="center"
@@ -25,7 +25,7 @@
 
     <ImageButton
             android:id="@+id/create_shout_item_menu"
-            android:layout_width="50dp"
+            android:layout_width="@dimen/action_bar_icon_width"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_create_shout"
             android:layout_gravity="center"

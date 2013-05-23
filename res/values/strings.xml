@@ -14,7 +14,8 @@
     <string name="create_shout_dialog_count">140 characters</string>
     <string name="characters">characters</string>
     <string name="create_shout_button">Tap to shout!</string>
-    <string name="create_shout_success">Congrats for shouting your truth...</string>
+    <string name="create_shout_success">Congrats for shouting your truth!</string>
+    <string name="shout_processing">Your shout is being processed</string>
     <string name="create_shout_instructions">Drag the arrow anywhere inside the blue area, then press DONE.</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>

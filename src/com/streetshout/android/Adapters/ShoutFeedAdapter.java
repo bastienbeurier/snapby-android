@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -51,12 +52,12 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        FrameLayout shoutView;
+        LinearLayout shoutView;
 
         if (convertView != null) {
-            shoutView = (FrameLayout) convertView;
+            shoutView = (LinearLayout) convertView;
         } else {
-            shoutView = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.feed_shout_view, null);
+            shoutView = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.feed_shout_view, null);
         }
 
 

@@ -1,7 +1,6 @@
 package com.streetshout.android.Activities;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -9,11 +8,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.androidquery.AQuery;
@@ -22,7 +19,6 @@ import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingMapActivity;
 import com.streetshout.android.Adapters.ShoutFeedEndlessAdapter;
 import com.streetshout.android.Custom.PermanentToast;
@@ -92,13 +88,8 @@ public class MainActivity extends SlidingMapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        setBehindContentView(R.layout.shout_feed);
         displayMainActionBar();
-
-        SlidingMenu menu = getSlidingMenu();
-        menu.setBehindWidth(GeneralUtils.getVerticalWindowWitdh(this) - 100);
-        menu.setShadowWidth(15);
-        menu.setShadowDrawable(R.drawable.sliding_menu_shadow);
+        setSlidingMenuOptions();
 
         this.aq = new AQuery(this);
 
@@ -116,12 +107,15 @@ public class MainActivity extends SlidingMapActivity {
         setSpecialCapabilities();
     }
 
+    private void setSlidingMenuOptions() {
+        SlidingMenu menu = getSlidingMenu();
+        menu.setBehindOffsetRes(R.dimen.action_bar_icon_width);
+        setBehindContentView(R.layout.shout_feed);
+    }
+
     private void setGlobalShoutsFeed() {
        feedListView = (ListView) findViewById(R.id.global_shouts_feed);
        feedListView.setEmptyView(findViewById(R.id.empty_feed_view));
-
-       ShoutFeedEndlessAdapter adapter = new ShoutFeedEndlessAdapter(this, aq, mMap);
-       feedListView.setAdapter(adapter);
 
        LinearLayout feedHeader = (LinearLayout) findViewById(R.id.feed_shout_header);
        feedHeader.setOnClickListener(new View.OnClickListener() {
@@ -689,6 +683,9 @@ public class MainActivity extends SlidingMapActivity {
             lng = newShoutLoc.getLongitude();
         }
 
+        final Toast processingToast = Toast.makeText(MainActivity.this, getString(R.string.shout_processing), Toast.LENGTH_LONG);
+        processingToast.show();
+
         //Create shout!
         ShoutModel.createShout(aq, lat, lng, userName, description, new AjaxCallback<JSONObject>() {
             @Override
@@ -704,6 +701,7 @@ public class MainActivity extends SlidingMapActivity {
                     }
 
                     displayShoutOnMap(ShoutModel.rawShoutToInstance(rawShout));
+                    processingToast.cancel();
                     Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_success), Toast.LENGTH_LONG);
                     toast.show();
                 }
