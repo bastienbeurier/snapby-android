@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.androidquery.AQuery;
@@ -90,10 +91,9 @@ public class MainActivity extends SlidingMapActivity {
         setContentView(R.layout.main);
         displayMainActionBar();
         setSlidingMenuOptions();
+        setGlobalShoutsFeed();
 
         this.aq = new AQuery(this);
-
-        appPrefs = new AppPreferences(getApplicationContext());
 
         builder = new CameraPosition.Builder();
         builder.zoom(MainActivity.CLICK_ON_SHOUT_ZOOM);
@@ -185,8 +185,6 @@ public class MainActivity extends SlidingMapActivity {
                 initializeCamera(bestLoc);
             }
         }
-
-        setGlobalShoutsFeed();
     }
 
     @Override
@@ -286,6 +284,7 @@ public class MainActivity extends SlidingMapActivity {
     /** If no map already present, set up map with settings, event listener, ... Return true if a new map is set */
     private boolean setUpMapIfNeeded() {
         if (mMap == null) {
+            Log.d("BAB", "Map instantiation");
             //Instantiate map
             mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
@@ -591,6 +590,8 @@ public class MainActivity extends SlidingMapActivity {
         EditText userNameView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_name);
         final EditText descriptionView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_descr);
         final TextView charCountView = (TextView) dialog.findViewById(R.id.create_shout_descr_dialog_count);
+
+        appPrefs = new AppPreferences(getApplicationContext());
 
         String savedUserName = appPrefs.getUserNamePref();
         if (savedUserName.length() > 0) {

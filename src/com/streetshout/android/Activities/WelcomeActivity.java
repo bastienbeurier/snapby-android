@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.LocationUtils;
@@ -23,6 +24,8 @@ public class WelcomeActivity extends Activity {
     private Thread thread = null;
 
     private boolean locationFound = false;
+
+    private boolean mainActivityAlreadyLaunched = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +48,11 @@ public class WelcomeActivity extends Activity {
                 //When we have the user location, start MainActivity
                 Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
                 i.putExtra("firstLocation", location);
-                startActivity(i);
-                WelcomeActivity.this.finish();
+                if (!mainActivityAlreadyLaunched) {
+                    startActivity(i);
+                    WelcomeActivity.this.finish();
+                    mainActivityAlreadyLaunched = true;
+                }
             }
 
             @Override
@@ -106,12 +112,15 @@ public class WelcomeActivity extends Activity {
                 @Override
                 public void run() {
                     try {
-                        sleep(5000);
+                        sleep(15000);
 
                         //Waiting to long for user location, start activity (retrieve city somehow?)
                         Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
-                        startActivity(i);
-                        WelcomeActivity.this.finish();
+                        if (!mainActivityAlreadyLaunched) {
+                            startActivity(i);
+                            WelcomeActivity.this.finish();
+                            mainActivityAlreadyLaunched = true;
+                        }
 
                         interrupt();
                     } catch (Exception e) {
