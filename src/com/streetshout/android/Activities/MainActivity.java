@@ -3,10 +3,8 @@ package com.streetshout.android.Activities;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -42,17 +40,17 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
     public static final int CLICK_ON_SHOUT_ZOOM = 16;
 
-    private boolean shout_from_anywhere = false;
-    private boolean no_twitter = true;
+    public static final int REGULAR_MODE = 0;
+    public static final int SHOUT_LOCATION_MODE = 1;
+    public static final int SHOUT_CONTENT_MODE = 2;
 
-    /** Required recentness and accuracy of the user position for creating a new shout */
-    private static final int REQUIRED_RECENTNESS = 1000 * 60 * 2;
+    private boolean no_twitter = true;
 
     /** Zoom for the initial camera position when we have the user location */
     private static final int INITIAL_ZOOM = 11;
 
     /** Minimum radius around the user's location where he can create shout **/
-    private static final int MIN_SHOUT_RADIUS = 200;
+    private static final int SHOUT_RADIUS = 300;
 
     /** Location manager that handles the network services */
     private LocationManager locationManager = null;
@@ -79,9 +77,23 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     private  AppPreferences appPrefs = null;
 
     /** Permanent toast to display intructions to the user while creating a shout */
-    PermanentToast permanentToast = null;
+    private PermanentToast permanentToast = null;
 
-    ListView feedListView = null;
+    private ListView feedListView = null;
+
+    private int mode = REGULAR_MODE;
+
+    private Location shoutAccurateLocation = null;
+
+    private Location shoutInitialLocation = null;
+
+    private Marker shoutLocationArrow = null;
+
+    private GoogleMap.OnMarkerClickListener storeClickedMarker = null;
+
+    private Marker currentOpenInfoWindow = null;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -167,6 +179,8 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     protected void onPause() {
         super.onStop();
 
+        mMap.setOnMyLocationChangeListener(null);
+
         if (permanentToast != null) {
             permanentToast.interrupt();
         }
@@ -184,19 +198,6 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     }
 
     private void setSpecialCapabilities() {
-        ToggleButton adminToggle = (ToggleButton) findViewById(R.id.admin_toggle);
-        if (ADMIN)  {
-            adminToggle.setVisibility(View.VISIBLE);
-            adminToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    shout_from_anywhere = isChecked;
-                }
-            });
-        } else {
-            adminToggle.setVisibility(View.GONE);
-        }
-
         ToggleButton ffToggle = (ToggleButton) findViewById(R.id.family_friends_toggle);
         if (FAMILY_AND_FRIENDS)  {
             ffToggle.setVisibility(View.VISIBLE);
@@ -232,16 +233,12 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         mainActionBarView.findViewById(R.id.create_shout_item_menu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shout_from_anywhere) {
-                    getNewShoutDescription(bestLoc, null, null);
+                if (bestLoc != null) {
+                    shoutInitialLocation = bestLoc;
+                    startShoutCreationProcess();
                 } else {
-
-                    if (bestLoc != null && (System.currentTimeMillis() - bestLoc.getTime() < REQUIRED_RECENTNESS)) {
-                        startShoutCreationProcess(MainActivity.this.bestLoc);
-                    } else {
-                        Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
+                    Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
+                    toast.show();
                 }
             }
         });
@@ -281,6 +278,21 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             //Set location listener
             mMap.setOnMyLocationChangeListener(this);
 
+            //SetAdminCapabilities
+            if (ADMIN) {
+                setAdminCapabilities();
+            }
+
+            storeClickedMarker = new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    currentOpenInfoWindow = marker;
+                    return false;
+                }
+            };
+
+            mMap.setOnMarkerClickListener(storeClickedMarker);
+
             // Gets the my location button
             View myLocationButton = findViewById(2);
 
@@ -318,6 +330,23 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             return true;
         }
         return false;
+    }
+
+    private void setAdminCapabilities() {
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                shoutAccurateLocation = new Location("");
+                shoutAccurateLocation.setLatitude(latLng.latitude);
+                shoutAccurateLocation.setLongitude(latLng.longitude);
+                getNewShoutDescription();
+
+                if (permanentToast != null) {
+                    permanentToast.interrupt();
+                    permanentToast = null;
+                }
+            }
+        });
     }
 
     @Override
@@ -365,97 +394,114 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         }
     }
 
-    private void startShoutCreationProcess(Location newShoutLoc) {
-        int shoutRadius = Math.max((int) newShoutLoc.getAccuracy(), MIN_SHOUT_RADIUS);
+    private void startShoutCreationProcess() {
+        mode = SHOUT_LOCATION_MODE;
 
-        Circle newShoutCircle = setShoutPerimeterCircle(shoutRadius, newShoutLoc);
+        setShoutPerimeter();
 
-        Marker newShoutMarker = getShoutAccuratePosition(shoutRadius, newShoutLoc);
+        displayDoneDiscardActionBar();
 
-        displayDoneDiscardActionBar(newShoutLoc, newShoutCircle, newShoutMarker);
+        GoogleMap.OnMapClickListener updateShoutLocOnClick = new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                //Convert LatLng to Location
+                shoutAccurateLocation = new Location("");
+                shoutAccurateLocation.setLatitude(latLng.latitude);
+                shoutAccurateLocation.setLongitude(latLng.longitude);
+                updateShoutAccuratePosition();
+            }
+        };
+
+        GoogleMap.OnMarkerDragListener updateShoutLocOnDrag = new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {}
+
+            @Override
+            public void onMarkerDrag(Marker marker) {}
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                shoutAccurateLocation = new Location("");
+                shoutAccurateLocation.setLatitude(marker.getPosition().latitude);
+                shoutAccurateLocation.setLongitude(marker.getPosition().longitude);
+                updateShoutAccuratePosition();
+            }
+        };
+
+        GoogleMap.OnMarkerClickListener disableMarkerClick = new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {return true;}
+        };
+
+        mMap.setOnMapClickListener(updateShoutLocOnClick);
+        mMap.setOnMarkerDragListener(updateShoutLocOnDrag);
+        mMap.setOnMarkerClickListener(disableMarkerClick);
+
+        if (currentOpenInfoWindow != null) {
+            currentOpenInfoWindow.hideInfoWindow();
+            currentOpenInfoWindow = null;
+        }
     }
 
-    private void endShoutCreationProcess(Circle shoutRadiusCircle, Marker newShoutMarker) {
-        //Remove circle and position marker
-        if (shoutRadiusCircle != null) {
-            shoutRadiusCircle.remove();
+    public void updateShoutAccuratePosition() {
+        if (mode == SHOUT_LOCATION_MODE) {
+            if (shoutLocationArrow != null) {
+                shoutLocationArrow.remove();
+                shoutLocationArrow = null;
+            }
+
+            //Display marker the user is going to drag to specify his accurate position
+            MarkerOptions marker = new MarkerOptions();
+            marker.position(new LatLng(shoutAccurateLocation.getLatitude(), shoutAccurateLocation.getLongitude()));
+            marker.draggable(true);
+            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_arrow));
+            shoutLocationArrow = mMap.addMarker(marker);
+
+
+        }
+    }
+
+    private void endShoutCreationProcess() {
+        mode = REGULAR_MODE;
+
+        if (shoutLocationArrow != null) {
+            shoutLocationArrow.remove();
+            shoutLocationArrow = null;
         }
 
-        if (newShoutMarker != null) {
-            newShoutMarker.remove();
-        }
+        UiSettings settings = mMap.getUiSettings();
+        settings.setZoomGesturesEnabled(true);
+        settings.setScrollGesturesEnabled(true);
+
+        mMap.setOnMapClickListener(null);
+        mMap.setOnMarkerDragListener(null);
+        mMap.setOnMarkerClickListener(storeClickedMarker);
 
         //Bring initial action bar back
         displayMainActionBar();
     }
 
     /** Display on the map the zone where the user will be able to drag his shout */
-    private Circle setShoutPerimeterCircle(int shoutRadius, Location newShoutLoc) {
+    private void setShoutPerimeter() {
         /**Shout radius is the perimeter where the user could be due to location inaccuracy (there is a minimum radius
         if location is very accurate) */
 
         //User instructions in a toast
         final Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_instructions), Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, GeneralUtils.getWindowHeight(this) / 2 - 100);
         permanentToast = new PermanentToast(toast);
         permanentToast.start();
 
         //Compute bouds of this perimeter
-        LatLng[] boundsResult = LocationUtils.getLatLngBounds(shoutRadius, newShoutLoc);
+        LatLng[] boundsResult = LocationUtils.getLatLngBounds(SHOUT_RADIUS, shoutInitialLocation);
         LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
 
         //Update the camera to fit this perimeter
-        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, shoutRadius/15);
+        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, SHOUT_RADIUS/15);
         mMap.moveCamera(update);
 
-        //Draw the circle where the user will be able to drag is shout
-        CircleOptions circleOptions = new CircleOptions();
-        circleOptions.center(LocationUtils.toLatLng(newShoutLoc)).radius(shoutRadius).strokeWidth(0).fillColor(Color.parseColor("#66327CCB"));
-        Circle shoutRadiusCircle = mMap.addCircle(circleOptions);
-
-        return shoutRadiusCircle;
-    }
-
-    /** Let the user indicate the accurate position of his shout by dragging a marker within the shout radius */
-    private Marker getShoutAccuratePosition(final int shoutRadius, final Location newShoutLoc) {
-        //Display marker the user is going to drag to specify his accurate position
-        MarkerOptions marker = new MarkerOptions();
-        marker.position(new LatLng(newShoutLoc.getLatitude(), newShoutLoc.getLongitude()));
-        marker.draggable(true);
-        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_arrow));
-        Marker newShoutMarker = mMap.addMarker(marker);
-
-        final double initialLat = newShoutLoc.getLatitude();
-        final double initialLng = newShoutLoc.getLongitude();
-
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker marker) {
-                //Nothing
-            }
-
-            @Override
-            public void onMarkerDrag(Marker marker) {
-                //Nothing
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-                float[] distance = new float[] {0};
-                Location.distanceBetween(initialLat, initialLng, marker.getPosition().latitude, marker.getPosition().longitude, distance);
-
-                //If user drags marker outside of the shoutRadius, bring back shout marker to initial position
-                if (distance[0] > shoutRadius) {
-                    marker.setPosition(LocationUtils.toLatLng(newShoutLoc));
-                //Else update shout position
-                } else {
-                    newShoutLoc.setLatitude(marker.getPosition().latitude);
-                    newShoutLoc.setLongitude(marker.getPosition().longitude);
-                }
-            }
-        });
-
-        return newShoutMarker;
+        UiSettings settings = mMap.getUiSettings();
+        settings.setZoomGesturesEnabled(false);
+        settings.setScrollGesturesEnabled(false);
     }
 
     /** Display shout on the map and add shout id to current shouts */
@@ -477,7 +523,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         mMap.addMarker(marker);
     }
 
-    private void displayDoneDiscardActionBar(final Location newShoutLoc, final Circle newShoutCircle, final Marker newShoutMarker) {
+    private void displayDoneDiscardActionBar() {
         LayoutInflater inflater = (LayoutInflater) getActionBar().getThemedContext().getSystemService(LAYOUT_INFLATER_SERVICE);
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -490,8 +536,9 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             @Override
             public void onClick(View v) {
                 permanentToast.interrupt();
+                permanentToast = null;
                 actionBar.hide();
-                getNewShoutDescription(newShoutLoc, newShoutCircle, newShoutMarker);
+                getNewShoutDescription();
             }
         });
 
@@ -500,7 +547,8 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             @Override
             public void onClick(View v) {
                 permanentToast.interrupt();
-                endShoutCreationProcess(newShoutCircle, newShoutMarker);
+                permanentToast = null;
+                endShoutCreationProcess();
             }
         });
 
@@ -508,7 +556,9 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         actionBar.show();
     }
 
-    private void getNewShoutDescription(final Location newShoutLoc, final Circle shoutRadiusCircle, final Marker newShoutMarker) {
+    private void getNewShoutDescription() {
+        mode = SHOUT_CONTENT_MODE;
+
         LayoutInflater inflater = this.getLayoutInflater();
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -526,7 +576,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         //DISMISS: MainActivity without user location
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                endShoutCreationProcess(shoutRadiusCircle, newShoutMarker);
+                endShoutCreationProcess();
             }
         });
 
@@ -541,12 +591,19 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
                     //For some reason, the event get fired twice. This is a hack to send the shout only once.
                     if (canCreateShout) {
                         canCreateShout = false;
-                        validateShoutInfo((AlertDialog) dialog, newShoutLoc, shoutRadiusCircle, newShoutMarker);
+                        validateShoutInfo((AlertDialog) dialog);
                     } else {
                         canCreateShout = true;
                     }
                 }
                 return false;
+            }
+        });
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                endShoutCreationProcess();
             }
         });
 
@@ -568,14 +625,10 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
         descriptionView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -588,13 +641,13 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateShoutInfo(dialog, newShoutLoc, shoutRadiusCircle, newShoutMarker);
+                validateShoutInfo(dialog);
             }
         });
 
     }
 
-    private void validateShoutInfo(AlertDialog dialog, final Location newShoutLoc, final Circle shoutRadiusCircle, final Marker newShoutMarker) {
+    private void validateShoutInfo(AlertDialog dialog) {
         boolean errors = false;
 
         EditText userNameView = (EditText) dialog.findViewById(R.id.create_shout_descr_dialog_name);
@@ -627,28 +680,23 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
         if (!errors) {
             dialog.dismiss();
-            createNewShoutFromInfo(userName, description, newShoutLoc);
-            endShoutCreationProcess(shoutRadiusCircle, newShoutMarker);
+            createNewShoutFromInfo(userName, description);
+            endShoutCreationProcess();
         }
     }
 
     /** User confirmed shout creation after scpecifying accurate location and shout description */
-    public void createNewShoutFromInfo(String userName, String description, final Location newShoutLoc) {
+    public void createNewShoutFromInfo(String userName, String description) {
         double lat;
         double lng;
 
         //Save user name in prefs
         appPrefs.setUserNamePref(userName);
 
-        //If a admin capabilities, create shout in the middle on the map
-        if (shout_from_anywhere) {
-            lat = mMap.getCameraPosition().target.latitude;
-            lng = mMap.getCameraPosition().target.longitude;
-        //Else get the location specified by the user
-        } else {
-            lat = newShoutLoc.getLatitude();
-            lng = newShoutLoc.getLongitude();
-        }
+        lat = shoutAccurateLocation == null ? shoutInitialLocation.getLatitude() : shoutAccurateLocation.getLatitude();
+        lng = shoutAccurateLocation == null ? shoutInitialLocation.getLongitude() : shoutAccurateLocation.getLongitude();
+        shoutInitialLocation = null;
+        shoutAccurateLocation = null;
 
         final Toast processingToast = Toast.makeText(MainActivity.this, getString(R.string.shout_processing), Toast.LENGTH_LONG);
         processingToast.show();

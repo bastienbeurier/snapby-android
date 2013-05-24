@@ -16,7 +16,7 @@
     <string name="create_shout_button">Tap to shout!</string>
     <string name="create_shout_success">Congrats for shouting your truth!</string>
     <string name="shout_processing">Your shout is being processed</string>
-    <string name="create_shout_instructions">Drag the arrow anywhere inside the blue area, then press DONE.</string>
+    <string name="create_shout_instructions">Tap on the map to choose a shout location around you, then tap DONE.</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="powered_by_twitter">(powered by Twitter)</string>
