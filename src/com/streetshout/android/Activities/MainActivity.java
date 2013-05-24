@@ -56,35 +56,14 @@ import java.util.Set;
 
 
 public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLocationChangeListener {
-
-    private static final boolean ADMIN = true;
-    public static final int MAX_USER_NAME_LENGTH = 20;
-    public static final int MAX_DESCRIPTION_LENGTH = 140;
-
-    public static final int CLICK_ON_SHOUT_ZOOM = 16;
-
-    public static final int REGULAR_MODE = 0;
-    public static final int SHOUT_LOCATION_MODE = 1;
-    public static final int SHOUT_CONTENT_MODE = 2;
-
     private boolean no_twitter = true;
 
-    /** Zoom for the initial camera position when we have the user location */
-    private static final int INITIAL_ZOOM = 11;
-
-    /** Minimum radius around the user's location where he can create shout **/
-    private static final int SHOUT_RADIUS = 300;
-
-    /** Location manager that handles the network services */
     private LocationManager locationManager = null;
 
-    /** Best user location that we have right now */
-    private Location bestLoc = null;
+    private Location myLocation = null;
 
-    /** Aquery instance to handle ajax calls to the API */
     private AQuery aq = null;
 
-    /** Google map instance */
     private GoogleMap mMap;
 
     /** Set of shout ids to keep track of shouts already added to the map */
@@ -97,14 +76,13 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
     private CameraPosition.Builder builder = null;
 
-    private  AppPreferences appPrefs = null;
+    private AppPreferences appPrefs = null;
 
-    /** Permanent toast to display intructions to the user while creating a shout */
     private PermanentToast permanentToast = null;
 
     private ListView feedListView = null;
 
-    private int mode = REGULAR_MODE;
+    private int mode = Constants.REGULAR_MODE;
 
     private Location shoutAccurateLocation = null;
 
@@ -127,13 +105,21 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         this.aq = new AQuery(this);
 
         builder = new CameraPosition.Builder();
-        builder.zoom(MainActivity.CLICK_ON_SHOUT_ZOOM);
+        builder.zoom(Constants.CLICK_ON_SHOUT_ZOOM);
 
         markedShouts = new HashSet<Integer>();
 
         if (savedInstanceState != null) {
             savedCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
+    }
+
+    //See if I still have leak error message, I should find the leak anyway
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mMap = null;
     }
 
     private void setSlidingMenuOptions() {
@@ -171,15 +157,19 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
         //This is where the map is instantiated
         boolean newMap = setUpMapIfNeeded();
-        bestLoc = getFirstUserLocation();
+        myLocation = getFirstUserLocation();
+
+        if (mode == Constants.SHOUT_LOCATION_MODE && permanentToast != null) {
+            permanentToast.start();
+        }
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         if (newMap) {
             if (savedCameraPosition != null) {
                 initializeCameraWithCameraPosition(savedCameraPosition);
                 savedCameraPosition = null;
-            } else if (bestLoc != null) {
-                initializeCamera(bestLoc);
+            } else if (myLocation != null) {
+                initializeCamera(myLocation);
             }
         }
     }
@@ -214,9 +204,8 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         super.onSaveInstanceState(outState);
     }
 
-    /** Set initial camera position on the user location */
     private void initializeCamera(Location location) {
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(location), INITIAL_ZOOM);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(location), Constants.INITIAL_ZOOM);
         mMap.moveCamera(update);
     }
 
@@ -235,8 +224,8 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         mainActionBarView.findViewById(R.id.create_shout_item_menu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bestLoc != null) {
-                    shoutInitialLocation = bestLoc;
+                if (myLocation != null) {
+                    shoutInitialLocation = myLocation;
                     startShoutCreationProcess();
                 } else {
                     Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
@@ -256,7 +245,6 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         actionBar.show();
     }
 
-    /** If no map already present, set up map with settings, event listener, ... Return true if a new map is set */
     private boolean setUpMapIfNeeded() {
         if (mMap == null) {
             //Instantiate map
@@ -281,7 +269,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             mMap.setOnMyLocationChangeListener(this);
 
             //SetAdminCapabilities
-            if (ADMIN) {
+            if (Constants.ADMIN) {
                 setAdminCapabilities();
             }
 
@@ -309,12 +297,9 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
                 myLocationButton.setLayoutParams(layoutParams);
             }
 
-            /** Set camera move listener that sends requests to populate the map to the MapRequestHandler and listen for
-             its response */
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
-                //Set listener and send calls to the MapRequestHandler
                 pullShouts(cameraPosition);
                 }
             });
@@ -336,7 +321,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
     private void setAdminCapabilities() {
         ToggleButton ffToggle = (ToggleButton) findViewById(R.id.family_friends_toggle);
-        if (ADMIN)  {
+        if (Constants.ADMIN)  {
             ffToggle.setVisibility(View.VISIBLE);
             ffToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -366,10 +351,9 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
     @Override
     public void onMyLocationChange(Location location) {
-        bestLoc = location;
+        myLocation = location;
     }
 
-    /** Set listener for MapRequestHandler responses and add requests to this handler */
     private void pullShouts(CameraPosition cameraPosition) {
         MapRequestHandler mapReqHandler = new MapRequestHandler();
 
@@ -410,7 +394,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     }
 
     private void startShoutCreationProcess() {
-        mode = SHOUT_LOCATION_MODE;
+        mode = Constants.SHOUT_LOCATION_MODE;
 
         setShoutPerimeter();
 
@@ -459,7 +443,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     }
 
     public void updateShoutAccuratePosition() {
-        if (mode == SHOUT_LOCATION_MODE) {
+        if (mode == Constants.SHOUT_LOCATION_MODE) {
             if (shoutLocationArrow != null) {
                 shoutLocationArrow.remove();
                 shoutLocationArrow = null;
@@ -475,7 +459,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     }
 
     private void endShoutCreationProcess() {
-        mode = REGULAR_MODE;
+        mode = Constants.REGULAR_MODE;
 
         if (shoutLocationArrow != null) {
             shoutLocationArrow.remove();
@@ -505,11 +489,11 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         permanentToast.start();
 
         //Compute bouds of this perimeter
-        LatLng[] boundsResult = LocationUtils.getLatLngBounds(SHOUT_RADIUS, shoutInitialLocation);
+        LatLng[] boundsResult = LocationUtils.getLatLngBounds(Constants.SHOUT_RADIUS, shoutInitialLocation);
         LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
 
         //Update the camera to fit this perimeter
-        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, SHOUT_RADIUS/15);
+        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS/15);
         mMap.moveCamera(update);
 
         UiSettings settings = mMap.getUiSettings();
@@ -570,7 +554,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     }
 
     private void getNewShoutDescription() {
-        mode = SHOUT_CONTENT_MODE;
+        mode = Constants.SHOUT_CONTENT_MODE;
 
         LayoutInflater inflater = this.getLayoutInflater();
 
@@ -646,7 +630,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             @Override
             public void afterTextChanged(Editable s) {
                 descriptionView.setError(null);
-                charCountView.setText((MAX_DESCRIPTION_LENGTH - s.length()) + " " + getString(R.string.characters));
+                charCountView.setText((Constants.MAX_DESCRIPTION_LENGTH - s.length()) + " " + getString(R.string.characters));
             }
         });
 
@@ -676,7 +660,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             errors = true;
         }
 
-        if (userName.length() > MAX_USER_NAME_LENGTH) {
+        if (userName.length() > Constants.MAX_USER_NAME_LENGTH) {
             userNameView.setError(getString(R.string.name_too_long));
             errors = true;
         }
@@ -686,7 +670,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             errors = true;
         }
 
-        if (description.length() > MAX_DESCRIPTION_LENGTH) {
+        if (description.length() > Constants.MAX_DESCRIPTION_LENGTH) {
             descriptionView.setError(getString(R.string.description_too_long));
             errors = true;
         }
