@@ -21,6 +21,7 @@ import com.streetshout.android.Custom.ShoutBaseAdapter;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.ApiUtils;
+import com.streetshout.android.Utils.Constants;
 import com.streetshout.android.Utils.TimeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +48,7 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
         this.map = map;
 
         builder = new CameraPosition.Builder();
-        builder.zoom(MainActivity.CLICK_ON_SHOUT_ZOOM);
+        builder.zoom(Constants.CLICK_ON_SHOUT_ZOOM);
     }
 
     @Override

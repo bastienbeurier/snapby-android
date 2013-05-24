@@ -17,7 +17,8 @@
             android:textOn="on"
             android:textOff="off"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:visibility="gone"/>
 
     <!--Hack for bug due to SlidingMapActivity-->
     <View

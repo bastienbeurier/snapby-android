@@ -2,11 +2,15 @@ package com.streetshout.android.Activities;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -94,6 +98,8 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
     private Marker currentOpenInfoWindow = null;
 
+    private ConnectivityManager connectivityManager = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +110,9 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
         this.aq = new AQuery(this);
 
+        this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+
         builder = new CameraPosition.Builder();
         builder.zoom(Constants.CLICK_ON_SHOUT_ZOOM);
 
@@ -112,14 +121,8 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         if (savedInstanceState != null) {
             savedCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
-    }
 
-    //See if I still have leak error message, I should find the leak anyway
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        mMap = null;
+        checkLocationServicesEnabled();
     }
 
     private void setSlidingMenuOptions() {
@@ -148,6 +151,11 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     @Override
     public void toggle() {
         refreshShoutFeed();
+        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+            feedListView.setEmptyView(findViewById(R.id.no_connection_feed_view));
+        } else {
+            feedListView.setEmptyView(findViewById(R.id.empty_feed_view));
+        }
         super.toggle();
     }
 
@@ -159,7 +167,9 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         boolean newMap = setUpMapIfNeeded();
         myLocation = getFirstUserLocation();
 
-        if (mode == Constants.SHOUT_LOCATION_MODE && permanentToast != null) {
+        if (mode == Constants.SHOUT_LOCATION_MODE) {
+            Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_instructions), Toast.LENGTH_LONG);
+            permanentToast = new PermanentToast(toast);
             permanentToast.start();
         }
 
@@ -224,12 +234,15 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         mainActionBarView.findViewById(R.id.create_shout_item_menu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (myLocation != null) {
+                if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+                    Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+                    toast.show();
+                } else if (myLocation == null) {
+                    Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_location), Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
                     shoutInitialLocation = myLocation;
                     startShoutCreationProcess();
-                } else {
-                    Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
-                    toast.show();
                 }
             }
         });
@@ -469,6 +482,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         UiSettings settings = mMap.getUiSettings();
         settings.setZoomGesturesEnabled(true);
         settings.setScrollGesturesEnabled(true);
+        settings.setMyLocationButtonEnabled(true);
 
         mMap.setOnMapClickListener(null);
         mMap.setOnMarkerDragListener(null);
@@ -484,7 +498,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         if location is very accurate) */
 
         //User instructions in a toast
-        final Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_instructions), Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(MainActivity.this, getString(R.string.create_shout_instructions), Toast.LENGTH_LONG);
         permanentToast = new PermanentToast(toast);
         permanentToast.start();
 
@@ -499,6 +513,8 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         UiSettings settings = mMap.getUiSettings();
         settings.setZoomGesturesEnabled(false);
         settings.setScrollGesturesEnabled(false);
+
+        settings.setMyLocationButtonEnabled(false);
     }
 
     /** Display shout on the map and add shout id to current shouts */
@@ -534,8 +550,14 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             public void onClick(View v) {
                 permanentToast.interrupt();
                 permanentToast = null;
-                actionBar.hide();
-                getNewShoutDescription();
+                if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() != null) {
+                    actionBar.hide();
+                    getNewShoutDescription();
+                } else {
+                    Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+                    toast.show();
+                    endShoutCreationProcess();
+                }
             }
         });
 
@@ -675,7 +697,12 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             errors = true;
         }
 
-        if (!errors) {
+        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+            dialog.dismiss();
+            Toast toast = Toast.makeText(MainActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+            toast.show();
+            endShoutCreationProcess();}
+        else if (!errors) {
             dialog.dismiss();
             createNewShoutFromInfo(userName, description);
             endShoutCreationProcess();
@@ -719,5 +746,34 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
                 }
             }
         });
+    }
+
+    private void checkLocationServicesEnabled() {
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {}
+
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {}
+
+        if(!gps_enabled && !network_enabled){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle(getText(R.string.no_location_dialog_title));
+            dialog.setMessage(getText(R.string.no_location_dialog_message));
+            dialog.setPositiveButton(getText(R.string.settings), new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    Intent settings = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    MainActivity.this.startActivity(settings);
+                }
+            });
+            dialog.setNegativeButton(getText(R.string.skip), null);
+            dialog.show();
+        }
     }
 }
