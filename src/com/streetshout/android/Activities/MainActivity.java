@@ -9,14 +9,35 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.*;
-import android.widget.*;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingMapActivity;
 import com.streetshout.android.Adapters.MapWindowAdapter;
@@ -29,12 +50,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 
 public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLocationChangeListener {
 
     private static final boolean ADMIN = true;
-    private static final boolean FAMILY_AND_FRIENDS = false;
     public static final int MAX_USER_NAME_LENGTH = 20;
     public static final int MAX_DESCRIPTION_LENGTH = 140;
 
@@ -93,8 +116,6 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
     private Marker currentOpenInfoWindow = null;
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,8 +134,6 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         if (savedInstanceState != null) {
             savedCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
-
-        setSpecialCapabilities();
     }
 
     private void setSlidingMenuOptions() {
@@ -179,8 +198,6 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     protected void onPause() {
         super.onStop();
 
-        mMap.setOnMyLocationChangeListener(null);
-
         if (permanentToast != null) {
             permanentToast.interrupt();
         }
@@ -195,21 +212,6 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("cameraPosition", mMap.getCameraPosition());
         super.onSaveInstanceState(outState);
-    }
-
-    private void setSpecialCapabilities() {
-        ToggleButton ffToggle = (ToggleButton) findViewById(R.id.family_friends_toggle);
-        if (FAMILY_AND_FRIENDS)  {
-            ffToggle.setVisibility(View.VISIBLE);
-            ffToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                no_twitter = isChecked;
-                }
-            });
-        } else {
-            ffToggle.setVisibility(View.GONE);
-        }
     }
 
     /** Set initial camera position on the user location */
@@ -333,6 +335,19 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     }
 
     private void setAdminCapabilities() {
+        ToggleButton ffToggle = (ToggleButton) findViewById(R.id.family_friends_toggle);
+        if (ADMIN)  {
+            ffToggle.setVisibility(View.VISIBLE);
+            ffToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    no_twitter = isChecked;
+                }
+            });
+        } else {
+            ffToggle.setVisibility(View.GONE);
+        }
+
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -456,8 +471,6 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             marker.draggable(true);
             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_arrow));
             shoutLocationArrow = mMap.addMarker(marker);
-
-
         }
     }
 
