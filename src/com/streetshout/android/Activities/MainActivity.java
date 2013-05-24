@@ -4,14 +4,13 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import com.androidquery.AQuery;
@@ -19,9 +18,10 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
-import com.google.android.maps.MyLocationOverlay;
+
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingMapActivity;
+import com.streetshout.android.Adapters.MapWindowAdapter;
 import com.streetshout.android.Adapters.ShoutFeedEndlessAdapter;
 import com.streetshout.android.Custom.PermanentToast;
 import com.streetshout.android.Models.ShoutModel;
@@ -33,7 +33,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 
-public class MainActivity extends SlidingMapActivity {
+public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLocationChangeListener {
 
     private static final boolean ADMIN = true;
     private static final boolean FAMILY_AND_FRIENDS = false;
@@ -56,9 +56,6 @@ public class MainActivity extends SlidingMapActivity {
 
     /** Location manager that handles the network services */
     private LocationManager locationManager = null;
-
-    /** Location listener to get location from network services */
-    private LocationListener locationListener = null;
 
     /** Best user location that we have right now */
     private Location bestLoc = null;
@@ -141,44 +138,12 @@ public class MainActivity extends SlidingMapActivity {
     protected void onResume() {
         super.onResume();
 
-        //Set up location service
-        this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
-
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                //If location is significantly better, update bestLoc
-                if (LocationUtils.isBetterLocation(location, MainActivity.this.bestLoc)) {
-                    MainActivity.this.bestLoc = location;
-                }
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            @Override
-            public void onProviderEnabled(String provider) {}
-
-            @Override
-            public void onProviderDisabled(String provider) {}
-        };
-
-        //Set up network services for location updates
-        final boolean networkEnabled = this.locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        if (networkEnabled) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 10 ,locationListener);
-        }
-
         //This is where the map is instantiated
         boolean newMap = setUpMapIfNeeded();
+        bestLoc = getFirstUserLocation();
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         if (newMap) {
-            if (bestLoc == null && getIntent().hasExtra("firstLocation")) {
-                bestLoc = getIntent().getParcelableExtra("firstLocation");
-            }
-
             if (savedCameraPosition != null) {
                 initializeCameraWithCameraPosition(savedCameraPosition);
                 savedCameraPosition = null;
@@ -188,10 +153,20 @@ public class MainActivity extends SlidingMapActivity {
         }
     }
 
+    private Location getFirstUserLocation() {
+        if (locationManager == null) {
+            this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+        }
+
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, true);
+        return locationManager.getLastKnownLocation(provider);
+    }
+
     @Override
     protected void onPause() {
         super.onStop();
-        locationManager.removeUpdates(locationListener);
+
         if (permanentToast != null) {
             permanentToast.interrupt();
         }
@@ -285,7 +260,6 @@ public class MainActivity extends SlidingMapActivity {
     /** If no map already present, set up map with settings, event listener, ... Return true if a new map is set */
     private boolean setUpMapIfNeeded() {
         if (mMap == null) {
-            Log.d("BAB", "Map instantiation");
             //Instantiate map
             mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 
@@ -303,6 +277,9 @@ public class MainActivity extends SlidingMapActivity {
 
             //Set user location
             mMap.setMyLocationEnabled(true);
+
+            //Set location listener
+            mMap.setOnMyLocationChangeListener(this);
 
             // Gets the my location button
             View myLocationButton = findViewById(2);
@@ -328,41 +305,7 @@ public class MainActivity extends SlidingMapActivity {
                 }
             });
 
-            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                // Use default InfoWindow frame
-                @Override
-                public View getInfoWindow(Marker marker) {
-                    return null;
-                }
-
-                // Defines the contents of the InfoWindow
-                @Override
-                public View getInfoContents(Marker marker) {
-
-                    if (marker.getTitle() == null && marker.getSnippet() == null) {
-                        return null;
-                    }
-
-                    // Getting view from the layout file info_window_layout
-                    View v = getLayoutInflater().inflate(R.layout.map_info_window, null);
-
-                    // Getting reference to the TextView to set title
-                    TextView userNameView = (TextView) v.findViewById(R.id.map_info_window_title);
-                    TextView descriptionView = (TextView) v.findViewById(R.id.map_info_window_body);
-                    TextView timeStampView = (TextView) v.findViewById(R.id.map_info_window_stamp);
-
-                    userNameView.setText(marker.getTitle());
-
-                    String[] descriptionAndStamp = TextUtils.split(marker.getSnippet(), GeneralUtils.STAMP_DIVIDER);
-
-                    descriptionView.setText(descriptionAndStamp[0]);
-                    timeStampView.setText(descriptionAndStamp[1]);
-
-                    // Returning the view containing InfoWindow contents
-                    return v;
-                }
-
-            });
+            mMap.setInfoWindowAdapter(new MapWindowAdapter(this));
 
             mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
@@ -375,6 +318,11 @@ public class MainActivity extends SlidingMapActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onMyLocationChange(Location location) {
+        bestLoc = location;
     }
 
     /** Set listener for MapRequestHandler responses and add requests to this handler */
