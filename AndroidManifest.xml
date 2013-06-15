@@ -30,6 +30,6 @@
         </activity>
         <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
-                android:value="AIzaSyAI4Q51HB6f1nEaSfuNtm-dOuVaIvka19s"/>
+                android:value="AIzaSyAhJpucfrY791-bMEQHP0tbEe4gIIYcctQ"/>
     </application>
 </manifest>
