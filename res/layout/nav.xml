@@ -4,12 +4,18 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-    <LinearLayout android:id="@+id/empty_feed_view"
-                  android:layout_weight="1"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical">
-    </LinearLayout>
+
+    <fragment android:name="com.streetshout.android.Fragments.ShoutFragment"
+              android:id="@+id/shout_fragment"
+              android:layout_weight="1"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" />
+
+    <fragment android:name="com.streetshout.android.Fragments.FeedFragment"
+              android:id="@+id/feed_fragment"
+              android:layout_weight="1"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/map"
