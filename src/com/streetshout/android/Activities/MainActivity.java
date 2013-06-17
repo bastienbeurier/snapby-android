@@ -376,7 +376,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
 
     @Override
     protected void onPause() {
-        super.onStop();
+        super.onPause();
 
         if (permanentToast != null) {
             permanentToast.interrupt();
