@@ -6,17 +6,26 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <LinearLayout android:id="@+id/feed_content"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical"
-                  android:background="@android:color/holo_orange_light">
-    </LinearLayout>
+    <ListView
+            android:id="@id/android:list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/darkGrey"
+            android:divider="@android:color/transparent"/>
+
+    <TextView
+            android:id="@id/android:empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:text="@string/empty_feed"/>
+
 
     <LinearLayout android:id="@+id/feed_bar"
                   android:layout_height="@dimen/center_bar_heigh"
                   android:layout_width="match_parent"
-                  android:orientation="vertical"
+                  android:orientation="horizontal"
                   android:background="@android:color/white">
     </LinearLayout>
 

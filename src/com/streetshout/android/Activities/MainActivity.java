@@ -174,7 +174,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
     }
 
     private void refreshShoutFeed() {
-        feedListView.setAdapter(new ShoutFeedEndlessAdapter(MainActivity.this, aq, mMap));
+        feedListView.setAdapter(new ShoutFeedEndlessAdapter(MainActivity.this, aq));
     }
 
     private void checkLocationServicesEnabled() {
