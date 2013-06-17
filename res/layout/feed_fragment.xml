@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_weight="1"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
@@ -20,13 +19,5 @@
             android:textSize="16dp"
             android:textStyle="bold"
             android:text="@string/empty_feed"/>
-
-
-    <LinearLayout android:id="@+id/feed_bar"
-                  android:layout_height="@dimen/center_bar_heigh"
-                  android:layout_width="match_parent"
-                  android:orientation="horizontal"
-                  android:background="@android:color/white">
-    </LinearLayout>
 
 </LinearLayout>
