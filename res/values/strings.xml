@@ -15,6 +15,7 @@
     <string name="characters">characters</string>
     <string name="create_shout_button">Tap to shout!</string>
     <string name="create_shout_success">Congrats for shouting your truth!</string>
+    <string name="create_shout_failure">Sorry, your shout failed!</string>
     <string name="shout_processing">Your shout is being processed</string>
     <string name="create_shout_instructions">Tap on the map to choose a shout location around you, then tap DONE.</string>
     <string name="done">Done</string>

@@ -11,6 +11,8 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
+import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.*;
@@ -30,6 +32,8 @@ import java.util.List;
 import java.util.Set;
 
 public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
+
+    private static int CREATE_SHOUT_CODE = 11101;
 
     private ConnectivityManager connectivityManager = null;
 
@@ -222,5 +226,33 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         displayedShouts.add(shout.id);
         mMap.addMarker(marker);
+    }
+
+    public void createShout(View view) {
+        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+            Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+            toast.show();
+        } else if (myLocation == null) {
+            Toast toast = Toast.makeText(this, getString(R.string.no_location), Toast.LENGTH_SHORT);
+            toast.show();
+        } else {
+            Intent createShout = new Intent(this, CreateShoutActivity.class);
+            createShout.putExtra("myLocation", myLocation);
+            startActivityForResult(createShout, CREATE_SHOUT_CODE);
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == CREATE_SHOUT_CODE) {
+
+            if(resultCode == RESULT_OK){
+                Toast toast = Toast.makeText(this, getString(R.string.create_shout_success), Toast.LENGTH_LONG);
+                toast.show();
+
+                //TODO: Redirect to shout
+                //TODO: Display shout on map
+            }
+        }
     }
 }

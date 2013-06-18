@@ -2,13 +2,11 @@ package com.streetshout.android.Fragments;
 
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import com.androidquery.AQuery;
 import com.streetshout.android.Adapters.ShoutFeedEndlessAdapter;

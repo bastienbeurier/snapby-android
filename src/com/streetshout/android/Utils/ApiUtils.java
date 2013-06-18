@@ -25,6 +25,8 @@ public class ApiUtils {
         params.put("lat", lat);
         params.put("lng", lng);
 
+        cb.timeout(10000);
+
         aq.ajax(url, params, JSONObject.class, cb);
     }
 

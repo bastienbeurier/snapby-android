@@ -567,7 +567,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
             }
         });
 
-        actionBar.setCustomView(customActionBarView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+        actionBar.setCustomView(customActionBarView, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         actionBar.show();
     }
 
@@ -579,7 +579,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle(getString(R.string.create_shout_dialog_title));
-        builder.setView(inflater.inflate(R.layout.create_shout, null));
+        builder.setView(inflater.inflate(R.layout.create_shout_dialog, null));
 
         //OK: Redirect user to edit location settings
         builder.setPositiveButton(R.string.shout, new DialogInterface.OnClickListener() {
