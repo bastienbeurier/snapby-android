@@ -37,7 +37,7 @@ import com.streetshout.android.Utils.LocationUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CreateShoutActivity extends Activity {
+public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
     private static int SHOUT_DESCR_LINES = 6;
 
     private AppPreferences appPrefs = null;
@@ -100,6 +100,11 @@ public class CreateShoutActivity extends Activity {
         });
     }
 
+    @Override
+    public void onMyLocationChange(Location location) {
+        myLocation = location;
+    }
+
     private void setUpMap() {
         mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.shout_map)).getMap();
 
@@ -112,6 +117,12 @@ public class CreateShoutActivity extends Activity {
         settings.setTiltGesturesEnabled(false);
         settings.setScrollGesturesEnabled(false);
         settings.setZoomGesturesEnabled(false);
+
+        //Set user location
+        mMap.setMyLocationEnabled(true);
+
+        //Set location listener
+        mMap.setOnMyLocationChangeListener(this);
 
         //Disable clicking on markers
         GoogleMap.OnMarkerClickListener disableMarkerClick = new GoogleMap.OnMarkerClickListener() {
@@ -143,12 +154,6 @@ public class CreateShoutActivity extends Activity {
                 mMap.setOnCameraChangeListener(null);
             }
         });
-
-        //Display marker for my location
-        MarkerOptions marker = new MarkerOptions();
-        marker.position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude()));
-        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_arrow));
-        mMap.addMarker(marker);
     }
 
     private void letUserRefineShoutPosition() {
@@ -196,6 +201,7 @@ public class CreateShoutActivity extends Activity {
         marker.position(new LatLng(shoutAccurateLocation.getLatitude(), shoutAccurateLocation.getLongitude()));
         marker.draggable(true);
         marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_arrow));
+        marker.anchor((float) 0.43, (float) 0.95);
         shoutLocationArrow = mMap.addMarker(marker);
     }
 

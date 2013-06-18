@@ -48,7 +48,7 @@ public class ShoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (currentDisplayedShout != null) {
-                    shoutSelectedListener.onShoutSelected(currentDisplayedShout.lat, currentDisplayedShout.lng);
+                    shoutSelectedListener.onShoutSelected(currentDisplayedShout);
                 }
             }
         });
@@ -73,6 +73,6 @@ public class ShoutFragment extends Fragment {
     }
 
     public interface OnShoutSelectedListener {
-        public void onShoutSelected(double lat, double lng);
+        public void onShoutSelected(ShoutModel shout);
     }
 }

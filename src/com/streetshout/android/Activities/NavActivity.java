@@ -20,6 +20,7 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.Fragments.FeedFragment;
 import com.streetshout.android.Fragments.ShoutFragment;
@@ -30,9 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener {
 
@@ -49,7 +49,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private CameraPosition.Builder builder = null;
 
     /** Set of shout ids to keep track of shouts already added to the map */
-    private Set<Integer> displayedShouts = null;
+    private HashMap<Integer, ShoutModel> displayedShouts = null;
+
+    private HashMap<String, Integer> markerIdToShoutId = null;
 
     private Location myLocation = null;
 
@@ -72,7 +74,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         builder = new CameraPosition.Builder();
         builder.zoom(Constants.CLICK_ON_SHOUT_ZOOM);
 
-        displayedShouts = new HashSet<Integer>();
+        displayedShouts = new HashMap<Integer, ShoutModel>();
+        markerIdToShoutId = new HashMap<String, Integer>();
 
         feedFragment = (FeedFragment) getFragmentManager().findFragmentById(R.id.feed_fragment);
         shoutFragment = (ShoutFragment) getFragmentManager().findFragmentById(R.id.shout_fragment);
@@ -175,6 +178,21 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 }
             });
 
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                public boolean onMarkerClick(Marker marker) {
+                    ShoutModel shout = displayedShouts.get(markerIdToShoutId.get(marker.getId()));
+
+                    shoutFragment.displayShout(shout);
+
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.hide(feedFragment);
+                    ft.show(shoutFragment);
+                    ft.commit();
+
+                    return false;
+                }
+            });
+
             return true;
         }
 
@@ -230,20 +248,23 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         for (ShoutModel shout: shouts) {
             //Check that the shout is not already marked on the map
-            if (!displayedShouts.contains(shout.id)) {
+            if (!displayedShouts.containsKey(shout.id)) {
                 displayShoutOnMap(shout);
             }
         }
     }
 
     private void displayShoutOnMap(ShoutModel shout) {
-        MarkerOptions marker = new MarkerOptions();
+        MarkerOptions markerOptions = new MarkerOptions();
 
-        marker.position(new LatLng(shout.lat, shout.lng));
-        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
+        markerOptions.position(new LatLng(shout.lat, shout.lng));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
+        markerOptions.anchor((float) 0.2, (float) 0.6);
 
-        displayedShouts.add(shout.id);
-        mMap.addMarker(marker);
+        displayedShouts.put(shout.id, shout);
+        Marker marker = mMap.addMarker(markerOptions);
+
+        markerIdToShoutId.put(marker.getId(), shout.id);
     }
 
     public void createShout(View view) {
@@ -268,8 +289,15 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 Toast toast = Toast.makeText(this, getString(R.string.create_shout_success), Toast.LENGTH_LONG);
                 toast.show();
 
-                //TODO: Redirect to shout
-                //TODO: Display shout on map
+                ShoutModel shout = data.getParcelableExtra("newShout");
+
+                displayShoutOnMap(shout);
+
+                animateCameraToShout(shout);
+
+                shoutFragment.displayShout(shout);
+
+                showFragment(R.id.shout_fragment);
             }
         }
     }
@@ -278,24 +306,33 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     public void onFeedShoutSelected(JSONObject rawShout) {
         final ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
 
-        //Move Camera
-        CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(shout.lat, shout.lng)).build());
-        mMap.animateCamera(update);
+        animateCameraToShout(shout);
 
         shoutFragment.displayShout(shout);
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.hide(feedFragment);
-        ft.show(shoutFragment);
-        ft.commit();
-
-        //TODO: Display shout fragment
+        showFragment(R.id.shout_fragment);
     }
 
     @Override
-    public void onShoutSelected(double lat, double lng) {
-        //Move Camera
-        CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(lat, lng)).build());
+    public void onShoutSelected(ShoutModel shout) {
+        animateCameraToShout(shout);
+    }
+
+    private void animateCameraToShout(ShoutModel shout) {
+        CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(shout.lat, shout.lng)).build());
         mMap.animateCamera(update);
+    }
+
+    private void showFragment(int fragmentId) {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        if (fragmentId == R.id.feed_fragment) {
+
+        } else if (fragmentId == R.id.shout_fragment) {
+            ft.hide(feedFragment);
+            ft.show(shoutFragment);
+        }
+
+        ft.commit();
     }
 }
