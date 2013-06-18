@@ -280,7 +280,7 @@ public class CreateShoutActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menyItem) {
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
         Intent returnIntent = new Intent();
         setResult(RESULT_CANCELED, returnIntent);
         finish();

@@ -20,7 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ShoutFeedAdapter extends ShoutBaseAdapter{
+public class ShoutFeedAdapter extends ShoutBaseAdapter {
     static final int DEFAULT_PAGE_SIZE = 20;
 
     private Context context = null;

@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/shout_fragment_container"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:visibility="gone">
-
-    <LinearLayout android:id="@+id/shout_content"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:orientation="vertical"
-                  android:background="@android:color/holo_orange_light">
-    </LinearLayout>
+              android:background="@drawable/button_dark">
+    <TextView
+            android:id="@+id/shout_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@color/lightGrey"/>
+    <TextView
+            android:id="@+id/shout_body"
+            android:layout_width="@dimen/map_info_window_size"
+            android:layout_height="wrap_content"
+            android:textColor="@color/lightGrey"/>
+    <TextView
+            android:id="@+id/shout_stamp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="11dp"
+            android:gravity="right"/>
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.streetshout.android.Activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.streetshout.android.Fragments.FeedFragment;
+import com.streetshout.android.Fragments.ShoutFragment;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.*;
@@ -31,7 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
+public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener {
 
     private static int CREATE_SHOUT_CODE = 11101;
 
@@ -43,12 +46,18 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private GoogleMap mMap = null;
 
+    private CameraPosition.Builder builder = null;
+
     /** Set of shout ids to keep track of shouts already added to the map */
     private Set<Integer> displayedShouts = null;
 
     private Location myLocation = null;
 
     private CameraPosition savedCameraPosition = null;
+
+    private FeedFragment feedFragment = null;
+
+    private ShoutFragment shoutFragment = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +69,16 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
+        builder = new CameraPosition.Builder();
+        builder.zoom(Constants.CLICK_ON_SHOUT_ZOOM);
+
         displayedShouts = new HashSet<Integer>();
+
+        feedFragment = (FeedFragment) getFragmentManager().findFragmentById(R.id.feed_fragment);
+        shoutFragment = (ShoutFragment) getFragmentManager().findFragmentById(R.id.shout_fragment);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.hide(shoutFragment);
+        ft.commit();
 
         if (savedInstanceState != null) {
             savedCameraPosition = savedInstanceState.getParcelable("cameraPosition");
@@ -254,5 +272,30 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 //TODO: Display shout on map
             }
         }
+    }
+
+    @Override
+    public void onFeedShoutSelected(JSONObject rawShout) {
+        final ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
+
+        //Move Camera
+        CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(shout.lat, shout.lng)).build());
+        mMap.animateCamera(update);
+
+        shoutFragment.displayShout(shout);
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.hide(feedFragment);
+        ft.show(shoutFragment);
+        ft.commit();
+
+        //TODO: Display shout fragment
+    }
+
+    @Override
+    public void onShoutSelected(double lat, double lng) {
+        //Move Camera
+        CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(lat, lng)).build());
+        mMap.animateCamera(update);
     }
 }

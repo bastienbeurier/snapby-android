@@ -35,4 +35,5 @@
     <string name="hours_ago">hours ago</string>
     <string name="just_now">just now</string>
     <string name="no_connection">No internet connection</string>
+    <string name="no_shout_displayed">No shout displayed...</string>
 </resources>
