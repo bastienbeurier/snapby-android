@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -37,6 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CreateShoutActivity extends Activity {
+    private static int SHOUT_DESCR_LINES = 6;
+
     private AppPreferences appPrefs = null;
 
     private ConnectivityManager connectivityManager = null;
@@ -54,6 +57,7 @@ public class CreateShoutActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_shout);
+        getActionBar().setHomeButtonEnabled(true);
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -68,6 +72,8 @@ public class CreateShoutActivity extends Activity {
         //Set user name if we have it
         EditText userNameView = (EditText) findViewById(R.id.shout_descr_dialog_name);
         final EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
+        descriptionView.setHorizontallyScrolling(false);
+        descriptionView.setLines(SHOUT_DESCR_LINES);
         final TextView charCountView = (TextView) findViewById(R.id.shout_descr_dialog_count);
 
         appPrefs = new AppPreferences(getApplicationContext());
@@ -193,12 +199,6 @@ public class CreateShoutActivity extends Activity {
         shoutLocationArrow = mMap.addMarker(marker);
     }
 
-    public void cancelShout(View view) {
-        Intent returnIntent = new Intent();
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-    }
-
     public void validateShoutInfo(View view) {
         boolean errors = false;
 
@@ -277,5 +277,13 @@ public class CreateShoutActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menyItem) {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
+        return true;
     }
 }

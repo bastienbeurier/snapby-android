@@ -21,8 +21,9 @@
                   android:hint="@string/create_shout_dialog_name" />
 
         <EditText android:id="@+id/shout_descr_dialog_descr"
-                  android:singleLine="false"
-                  android:inputType="textMultiLine|textCapSentences"
+                  android:inputType="textCapSentences"
+                  android:imeOptions="actionDone"
+                  android:gravity="top|left"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:layout_marginLeft="4dp"
@@ -54,19 +55,9 @@
                   android:orientation="horizontal"
                   android:layout_gravity="bottom">
 
-        <Button android:id="@+id/cancel_shout_button"
-                android:layout_height="60dp"
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:text="Cancel"
-                android:background="@color/lightGrey"
-                android:layout_margin="15dp"
-                android:onClick="cancelShout"/>
-
         <Button android:id="@+id/create_shout_button"
                 android:layout_height="60dp"
                 android:layout_width="match_parent"
-                android:layout_weight="1"
                 android:text="Create"
                 android:background="@color/lightGrey"
                 android:layout_margin="15dp"
