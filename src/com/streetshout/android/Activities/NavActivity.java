@@ -187,6 +187,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.hide(feedFragment);
                     ft.show(shoutFragment);
+
+                    ft.addToBackStack(null);
                     ft.commit();
 
                     return false;
@@ -333,6 +335,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             ft.show(shoutFragment);
         }
 
+        ft.addToBackStack(null);
         ft.commit();
     }
 }
