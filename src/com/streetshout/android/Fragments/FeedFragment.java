@@ -54,7 +54,7 @@ public class FeedFragment extends ListFragment {
     }
 
     public interface OnFeedShoutSelectedListener {
-        public void onFeedShoutSelected(JSONObject rawShout);
+        public void onFeedShoutSelected(ShoutModel shout);
     }
 
     @Override
@@ -69,6 +69,6 @@ public class FeedFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        shoutSelectedListener.onFeedShoutSelected((JSONObject) getListAdapter().getItem(position));
+        shoutSelectedListener.onFeedShoutSelected((ShoutModel) getListAdapter().getItem(position));
     }
 }

@@ -259,16 +259,31 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     private void addShoutsOnMap(List<ShoutModel> shouts) {
+        displayedShoutModels.clear();
+        HashMap<Integer, Marker> newDisplayedShoutMarkers = new HashMap<Integer, Marker>();
 
         for (ShoutModel shout: shouts) {
+            displayedShoutModels.put(shout.id, shout);
+
             //Check that the shout is not already marked on the map
-            if (!displayedShoutModels.containsKey(shout.id)) {
-                displayShoutOnMap(shout);
+            if (!displayedShoutMarkers.containsKey(shout.id)) {
+                Marker shoutMarker = displayShoutOnMap(shout);
+                newDisplayedShoutMarkers.put(shout.id, shoutMarker);
+            //If he is, re-use the marker
+            } else {
+                newDisplayedShoutMarkers.put(shout.id, displayedShoutMarkers.get(shout.id));
+                displayedShoutMarkers.remove(shout.id);
             }
         }
+
+        for (HashMap.Entry<Integer, Marker> entry: displayedShoutMarkers.entrySet()) {
+            entry.getValue().remove();
+        }
+
+        displayedShoutMarkers = newDisplayedShoutMarkers;
     }
 
-    private void displayShoutOnMap(ShoutModel shout) {
+    private Marker displayShoutOnMap(ShoutModel shout) {
         MarkerOptions markerOptions = new MarkerOptions();
 
         markerOptions.position(new LatLng(shout.lat, shout.lng));
@@ -276,10 +291,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         markerOptions.anchor((float) 0.2, (float) 0.6);
         markerOptions.title(Integer.toString(shout.id));
 
-        Marker marker = mMap.addMarker(markerOptions);
-        displayedShoutModels.put(shout.id, shout);
-        displayedShoutMarkers.put(shout.id, marker);
-
+        return mMap.addMarker(markerOptions);
     }
 
     public void createShout(View view) {
@@ -306,9 +318,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
                 ShoutModel shout = data.getParcelableExtra("newShout");
 
-                displayShoutOnMap(shout);
-
-                Marker shoutMarker = displayedShoutMarkers.get(shout.id);
+                displayedShoutModels.put(shout.id, shout);
+                Marker shoutMarker = displayShoutOnMap(shout);
+                displayedShoutMarkers.put(shout.id, shoutMarker);
 
                 selectShout(shout, shoutMarker, CREATE_ACTIVITY_ID);
             }
@@ -316,9 +328,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     @Override
-    public void onFeedShoutSelected(JSONObject rawShout) {
-        final ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
-
+    public void onFeedShoutSelected(ShoutModel shout) {
         Marker shoutMarker = displayedShoutMarkers.get(shout.id);
 
         selectShout(shout, shoutMarker, FEED_FRAGMENT_ID);
@@ -358,14 +368,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     private void selectShout(ShoutModel shout, Marker marker, int id) {
-        if (id == MAP_FRAGMENT_ID) {
-            animateCameraToShout(shout, false);
-        }
-
-        if (id == CREATE_ACTIVITY_ID) {
-            animateCameraToShout(shout, true);
-        }
-
         if (currentlySelectedShout != -1) {
             deselectShout(currentlySelectedShout);
         }
@@ -379,9 +381,24 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         //Hack to make to the marker come to front when click (warning! to work, a marker title must be set)
         marker.showInfoWindow();
+
+        //At the end to avoid creating thread conflicts on the shout hashmaps
+        if (id == MAP_FRAGMENT_ID) {
+            animateCameraToShout(shout, false);
+        } else if (id == CREATE_ACTIVITY_ID) {
+            animateCameraToShout(shout, true);
+        }
     }
 
     private void deselectShout(int shoutId) {
         displayedShoutMarkers.get(shoutId).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
+    }
+
+    public void showFeedFragment(View view) {
+        showFragment(FEED_FRAGMENT_ID);
+        if (currentlySelectedShout != -1) {
+            deselectShout(currentlySelectedShout);
+            currentlySelectedShout = -1;
+        }
     }
 }
