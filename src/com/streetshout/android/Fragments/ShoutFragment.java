@@ -54,7 +54,7 @@ public class ShoutFragment extends Fragment {
         });
     }
 
-    public void displayShout(ShoutModel shout) {
+    public void displayShoutInFragment(ShoutModel shout) {
         currentDisplayedShout = shout;
 
         userNameView.setText(shout.displayName);

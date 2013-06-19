@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.streetshout.android.Adapters.MapWindowAdapter;
 import com.streetshout.android.Fragments.FeedFragment;
 import com.streetshout.android.Fragments.ShoutFragment;
 import com.streetshout.android.Models.ShoutModel;
@@ -49,9 +50,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private CameraPosition.Builder builder = null;
 
     /** Set of shout ids to keep track of shouts already added to the map */
-    private HashMap<Integer, ShoutModel> displayedShouts = null;
+    private HashMap<Integer, ShoutModel> displayedShoutModels = null;
 
-    private HashMap<String, Integer> markerIdToShoutId = null;
+    private HashMap<Integer, Marker>  displayedShoutMarkers = null;
 
     private Location myLocation = null;
 
@@ -72,10 +73,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         builder = new CameraPosition.Builder();
-        builder.zoom(Constants.CLICK_ON_SHOUT_ZOOM);
 
-        displayedShouts = new HashMap<Integer, ShoutModel>();
-        markerIdToShoutId = new HashMap<String, Integer>();
+        displayedShoutModels = new HashMap<Integer, ShoutModel>();
+        displayedShoutMarkers = new HashMap<Integer, Marker>();
 
         feedFragment = (FeedFragment) getFragmentManager().findFragmentById(R.id.feed_fragment);
         shoutFragment = (ShoutFragment) getFragmentManager().findFragmentById(R.id.shout_fragment);
@@ -178,20 +178,22 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 }
             });
 
+            mMap.setInfoWindowAdapter(new MapWindowAdapter(this));
+
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
                 public boolean onMarkerClick(Marker marker) {
-                    ShoutModel shout = displayedShouts.get(markerIdToShoutId.get(marker.getId()));
+                    ShoutModel shout = displayedShoutModels.get(Integer.parseInt(marker.getTitle()));
 
-                    shoutFragment.displayShout(shout);
+                    animateCameraToShout(shout, false);
 
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.hide(feedFragment);
-                    ft.show(shoutFragment);
+                    shoutFragment.displayShoutInFragment(shout);
 
-                    ft.addToBackStack(null);
-                    ft.commit();
+                    showFragment(R.id.shout_fragment);
 
-                    return false;
+                    marker.showInfoWindow();
+
+                    return true;
                 }
             });
 
@@ -250,7 +252,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         for (ShoutModel shout: shouts) {
             //Check that the shout is not already marked on the map
-            if (!displayedShouts.containsKey(shout.id)) {
+            if (!displayedShoutModels.containsKey(shout.id)) {
                 displayShoutOnMap(shout);
             }
         }
@@ -262,11 +264,12 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         markerOptions.position(new LatLng(shout.lat, shout.lng));
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
         markerOptions.anchor((float) 0.2, (float) 0.6);
+        markerOptions.title(Integer.toString(shout.id));
 
-        displayedShouts.put(shout.id, shout);
         Marker marker = mMap.addMarker(markerOptions);
+        displayedShoutModels.put(shout.id, shout);
+        displayedShoutMarkers.put(shout.id, marker);
 
-        markerIdToShoutId.put(marker.getId(), shout.id);
     }
 
     public void createShout(View view) {
@@ -295,9 +298,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
                 displayShoutOnMap(shout);
 
-                animateCameraToShout(shout);
+                animateCameraToShout(shout, true);
 
-                shoutFragment.displayShout(shout);
+                shoutFragment.displayShoutInFragment(shout);
 
                 showFragment(R.id.shout_fragment);
             }
@@ -308,20 +311,26 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     public void onFeedShoutSelected(JSONObject rawShout) {
         final ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
 
-        animateCameraToShout(shout);
+        Marker shoutMarker = displayedShoutMarkers.get(shout.id);
 
-        shoutFragment.displayShout(shout);
-
-        showFragment(R.id.shout_fragment);
+        selectShout(shout, shoutMarker, R.id.feed_fragment);
     }
 
+    //TODO: change name
     @Override
     public void onShoutSelected(ShoutModel shout) {
-        animateCameraToShout(shout);
+        animateCameraToShout(shout, true);
     }
 
-    private void animateCameraToShout(ShoutModel shout) {
-        CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(shout.lat, shout.lng)).build());
+    private void animateCameraToShout(ShoutModel shout, boolean zoomToShout) {
+        CameraUpdate update = null;
+
+        if (zoomToShout) {
+            update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.CLICK_ON_SHOUT_ZOOM);
+        } else {
+            update = CameraUpdateFactory.newLatLng(new LatLng(shout.lat, shout.lng));
+        }
+
         mMap.animateCamera(update);
     }
 
@@ -329,7 +338,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
         if (fragmentId == R.id.feed_fragment) {
-
+            ft.hide(shoutFragment);
+            ft.show(feedFragment);
         } else if (fragmentId == R.id.shout_fragment) {
             ft.hide(feedFragment);
             ft.show(shoutFragment);
@@ -337,5 +347,16 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    private void selectShout(ShoutModel shout, Marker marker, int fragmentId) {
+        if (fragmentId == R.id.map) {
+            animateCameraToShout(shout, false);
+        }
+        shoutFragment.displayShoutInFragment(shout);
+        showFragment(R.id.shout_fragment);
+
+        //Hack to make to the marker come to front when click (warning! to work, a marker title must be set)
+        marker.showInfoWindow();
     }
 }
