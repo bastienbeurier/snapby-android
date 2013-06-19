@@ -39,6 +39,14 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private static int CREATE_SHOUT_CODE = 11101;
 
+    private static int FEED_FRAGMENT_ID = R.id.feed_fragment;
+
+    private static int MAP_FRAGMENT_ID = R.id.map;
+
+    private static int SHOUT_FRAGMENT_ID = R.id.shout_fragment;
+
+    private static int CREATE_ACTIVITY_ID = 33312;
+
     private ConnectivityManager connectivityManager = null;
 
     private LocationManager locationManager = null;
@@ -61,6 +69,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private FeedFragment feedFragment = null;
 
     private ShoutFragment shoutFragment = null;
+
+    private int currentlySelectedShout = -1;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,13 +195,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 public boolean onMarkerClick(Marker marker) {
                     ShoutModel shout = displayedShoutModels.get(Integer.parseInt(marker.getTitle()));
 
-                    animateCameraToShout(shout, false);
-
-                    shoutFragment.displayShoutInFragment(shout);
-
-                    showFragment(R.id.shout_fragment);
-
-                    marker.showInfoWindow();
+                    selectShout(shout, marker, MAP_FRAGMENT_ID);
 
                     return true;
                 }
@@ -298,11 +302,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
                 displayShoutOnMap(shout);
 
-                animateCameraToShout(shout, true);
+                Marker shoutMarker = displayedShoutMarkers.get(shout.id);
 
-                shoutFragment.displayShoutInFragment(shout);
-
-                showFragment(R.id.shout_fragment);
+                selectShout(shout, shoutMarker, CREATE_ACTIVITY_ID);
             }
         }
     }
@@ -313,7 +315,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         Marker shoutMarker = displayedShoutMarkers.get(shout.id);
 
-        selectShout(shout, shoutMarker, R.id.feed_fragment);
+        selectShout(shout, shoutMarker, FEED_FRAGMENT_ID);
     }
 
     //TODO: change name
@@ -337,10 +339,10 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private void showFragment(int fragmentId) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-        if (fragmentId == R.id.feed_fragment) {
+        if (fragmentId == FEED_FRAGMENT_ID) {
             ft.hide(shoutFragment);
             ft.show(feedFragment);
-        } else if (fragmentId == R.id.shout_fragment) {
+        } else if (fragmentId == SHOUT_FRAGMENT_ID) {
             ft.hide(feedFragment);
             ft.show(shoutFragment);
         }
@@ -349,14 +351,31 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         ft.commit();
     }
 
-    private void selectShout(ShoutModel shout, Marker marker, int fragmentId) {
-        if (fragmentId == R.id.map) {
+    private void selectShout(ShoutModel shout, Marker marker, int id) {
+        if (id == MAP_FRAGMENT_ID) {
             animateCameraToShout(shout, false);
         }
+
+        if (id == CREATE_ACTIVITY_ID) {
+            animateCameraToShout(shout, true);
+        }
+
+        if (currentlySelectedShout != -1) {
+            deselectShout(currentlySelectedShout);
+        }
+
+        currentlySelectedShout = shout.id;
+
+        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
+
         shoutFragment.displayShoutInFragment(shout);
-        showFragment(R.id.shout_fragment);
+        showFragment(SHOUT_FRAGMENT_ID);
 
         //Hack to make to the marker come to front when click (warning! to work, a marker title must be set)
         marker.showInfoWindow();
+    }
+
+    private void deselectShout(int shoutId) {
+        displayedShoutMarkers.get(shoutId).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
     }
 }
