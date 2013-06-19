@@ -416,7 +416,7 @@ public class MainActivity extends SlidingMapActivity implements GoogleMap.OnMyLo
         });
 
         //Add a request to populate the map with shouts
-        mapReqHandler.addMapRequest(this, aq, cameraPosition, no_twitter);
+        mapReqHandler.addMapRequest(aq, mMap.getProjection().getVisibleRegion().latLngBounds);
     }
 
     private void addShoutsOnMap(List<ShoutModel> shouts) {

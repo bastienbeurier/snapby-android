@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -57,8 +56,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private GoogleMap mMap = null;
 
-    private CameraPosition.Builder builder = null;
-
     /** Set of shout ids to keep track of shouts already added to the map */
     private HashMap<Integer, ShoutModel> displayedShoutModels = null;
 
@@ -83,8 +80,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        builder = new CameraPosition.Builder();
 
         displayedShoutModels = new HashMap<Integer, ShoutModel>();
         displayedShoutMarkers = new HashMap<Integer, Marker>();
@@ -255,7 +250,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         });
 
         //Add a request to populate the map with shouts
-        mapReqHandler.addMapRequest(this, aq, cameraPosition, true);
+        mapReqHandler.addMapRequest(aq, mMap.getProjection().getVisibleRegion().latLngBounds);
     }
 
     private void addShoutsOnMap(List<ShoutModel> shouts) {
