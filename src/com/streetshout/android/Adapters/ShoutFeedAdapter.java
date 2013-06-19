@@ -29,16 +29,11 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter {
 
     private JSONArray items = null;
 
-    private CameraPosition.Builder builder = null;
-
     int page = 1;
 
     public ShoutFeedAdapter(Context context, AQuery aq) {
         this.context = context;
         this.aq = aq;
-
-        builder = new CameraPosition.Builder();
-        builder.zoom(Constants.CLICK_ON_SHOUT_ZOOM);
     }
 
     @Override

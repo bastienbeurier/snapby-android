@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -32,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -230,6 +232,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private void pullShouts(CameraPosition cameraPosition) {
         MapRequestHandler mapReqHandler = new MapRequestHandler();
 
+        feedFragment.showFeedProgressBar();
+
         //Set listener to catch API response from the MapRequestHandler
         mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
             @Override
@@ -239,8 +243,10 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                     try {
                         rawResult = object.getJSONArray("result");
 
-                        List<ShoutModel> shouts = ShoutModel.rawShoutsToInstances(rawResult);
+                        ArrayList<ShoutModel> shouts = ShoutModel.rawShoutsToInstances(rawResult);
                         addShoutsOnMap(shouts);
+                        feedFragment.hideFeedProgressBar();
+                        feedFragment.setAdapter(NavActivity.this, shouts);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

@@ -27,7 +27,7 @@
     <string name="description_too_long">Please enter a shout of less than 140 characters.</string>
     <string name="loading">Loading...</string>
     <string name="feed_header">LATEST SHOUTS</string>
-    <string name="empty_feed">Nobody shouted recently or there is a connection problem...</string>
+    <string name="empty_feed">No shouts in this area...</string>
     <string name="no_location">No location available</string>
     <string name="minute_ago">min ago</string>
     <string name="minutes_ago">mins ago</string>

@@ -38,8 +38,8 @@ public class ShoutModel implements Parcelable {
     public String displayName = "";
 
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
-    public static List<ShoutModel> rawShoutsToInstances(JSONArray rawShouts) {
-        List<ShoutModel> shouts = new ArrayList<ShoutModel>();
+    public static ArrayList<ShoutModel> rawShoutsToInstances(JSONArray rawShouts) {
+        ArrayList<ShoutModel> shouts = new ArrayList<ShoutModel>();
 
         int len = rawShouts.length();
         for (int i = 0; i < len; i++) {
