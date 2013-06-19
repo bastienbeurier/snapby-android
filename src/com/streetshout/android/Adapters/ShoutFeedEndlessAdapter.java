@@ -7,7 +7,7 @@ import com.streetshout.android.Custom.ShoutBaseEndlessAdapter;
 
 public class ShoutFeedEndlessAdapter extends ShoutBaseEndlessAdapter{
 
-    public ShoutFeedEndlessAdapter(Context context, AQuery aq, GoogleMap map) {
-        super(new ShoutFeedAdapter(context, aq, map));
+    public ShoutFeedEndlessAdapter(Context context, AQuery aq) {
+        super(new ShoutFeedAdapter(context, aq));
     }
 }

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="ShoutStyle" parent="@android:style/Theme.Holo">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:actionBarStyle">@style/ShoutStyle.ActionBar</item>
     </style>
 
-    <style name="ShoutStyle.ActionBar" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@color/darkGrey</item>
-        <item name="android:displayOptions"></item>
+    <style name="ShoutStyle.NoBar" parent="ShoutStyle">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="NoTitleText">

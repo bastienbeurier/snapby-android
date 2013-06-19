@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/shout_fragment_container"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
               android:orientation="vertical"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content">
+              android:background="@drawable/button_dark">
     <TextView
-            android:id="@+id/map_info_window_title"
+            android:id="@+id/shout_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
@@ -13,15 +15,19 @@
             android:textStyle="bold"
             android:textColor="@color/lightGrey"/>
     <TextView
-            android:id="@+id/map_info_window_body"
+            android:id="@+id/shout_body"
             android:layout_width="@dimen/map_info_window_size"
             android:layout_height="wrap_content"
             android:textColor="@color/lightGrey"/>
     <TextView
-            android:id="@+id/map_info_window_stamp"
+            android:id="@+id/shout_stamp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="11dp"
             android:gravity="right"/>
-
+    <Button android:id="@+id/back_to_feed"
+            android:layout_height="40dp"
+            android:layout_width="40dp"
+            android:text="Back"
+            android:onClick="showFeedFragment"/>
 </LinearLayout>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Shout</string>
+    <string name="app_name">Street Shout</string>
     <string name="create_shout">Create</string>
     <string name="settings">Settings</string>
     <string name="skip">Skip</string>
@@ -15,6 +15,7 @@
     <string name="characters">characters</string>
     <string name="create_shout_button">Tap to shout!</string>
     <string name="create_shout_success">Congrats for shouting your truth!</string>
+    <string name="create_shout_failure">Sorry, your shout failed!</string>
     <string name="shout_processing">Your shout is being processed</string>
     <string name="create_shout_instructions">Tap on the map to choose a shout location around you, then tap DONE.</string>
     <string name="done">Done</string>
@@ -26,7 +27,7 @@
     <string name="description_too_long">Please enter a shout of less than 140 characters.</string>
     <string name="loading">Loading...</string>
     <string name="feed_header">LATEST SHOUTS</string>
-    <string name="empty_feed">Nobody shouted recently or there is a connection problem...</string>
+    <string name="empty_feed">No shouts in this area...</string>
     <string name="no_location">No location available</string>
     <string name="minute_ago">min ago</string>
     <string name="minutes_ago">mins ago</string>
@@ -34,4 +35,5 @@
     <string name="hours_ago">hours ago</string>
     <string name="just_now">just now</string>
     <string name="no_connection">No internet connection</string>
+    <string name="no_shout_displayed">No shout displayed...</string>
 </resources>

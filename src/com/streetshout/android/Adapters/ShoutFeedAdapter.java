@@ -2,21 +2,14 @@ package com.streetshout.android.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.streetshout.android.Activities.MainActivity;
 import com.streetshout.android.Custom.ShoutBaseAdapter;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
@@ -27,7 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ShoutFeedAdapter extends ShoutBaseAdapter{
+public class ShoutFeedAdapter extends ShoutBaseAdapter {
     static final int DEFAULT_PAGE_SIZE = 20;
 
     private Context context = null;
@@ -36,19 +29,11 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
 
     private JSONArray items = null;
 
-    private CameraPosition.Builder builder = null;
-
-    private GoogleMap map = null;
-
     int page = 1;
 
-    public ShoutFeedAdapter(Context context, AQuery aq, GoogleMap map) {
+    public ShoutFeedAdapter(Context context, AQuery aq) {
         this.context = context;
         this.aq = aq;
-        this.map = map;
-
-        builder = new CameraPosition.Builder();
-        builder.zoom(Constants.CLICK_ON_SHOUT_ZOOM);
     }
 
     @Override
@@ -77,19 +62,12 @@ public class ShoutFeedAdapter extends ShoutBaseAdapter{
         final ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
 
         if (shout != null) {
-            ((TextView) shoutView.findViewById(R.id.feed_shout_item_title)).setText(shout.displayName);
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_body)).setText(shout.description);
-            ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(TimeUtils.shoutAgeToString((Activity) context, TimeUtils.getShoutAge(shout.created)));
-        }
 
-        shoutView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CameraUpdate update = CameraUpdateFactory.newCameraPosition(builder.target(new LatLng(shout.lat, shout.lng)).build());
-                map.animateCamera(update);
-                ((MainActivity) context).toggle();
-            }
-        });
+            String shoutStamp = TimeUtils.shoutAgeToString((Activity) context, TimeUtils.getShoutAge(shout.created));
+            shoutStamp += " by " + shout.displayName;
+            ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(shoutStamp);
+        }
 
         return shoutView;
     }

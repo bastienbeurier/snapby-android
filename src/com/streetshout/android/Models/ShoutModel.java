@@ -1,5 +1,7 @@
 package com.streetshout.android.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.streetshout.android.Utils.ApiUtils;
@@ -13,7 +15,7 @@ import java.util.List;
 /**
  * Model for shouts
  */
-public class ShoutModel {
+public class ShoutModel implements Parcelable {
 
     /** Shout id */
     public int id = 0;
@@ -36,8 +38,8 @@ public class ShoutModel {
     public String displayName = "";
 
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
-    public static List<ShoutModel> rawShoutsToInstances(JSONArray rawShouts) {
-        List<ShoutModel> shouts = new ArrayList<ShoutModel>();
+    public static ArrayList<ShoutModel> rawShoutsToInstances(JSONArray rawShouts) {
+        ArrayList<ShoutModel> shouts = new ArrayList<ShoutModel>();
 
         int len = rawShouts.length();
         for (int i = 0; i < len; i++) {
@@ -84,5 +86,64 @@ public class ShoutModel {
     /** User creates a new shout */
     public static void createShout(AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
         ApiUtils.createShout(aq, lat, lng, userName, description, cb);
+    }
+
+    /**
+     * To implement Parcelable interface
+     */
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * To implement Parcelable interface
+     */
+    public static final Parcelable.Creator<ShoutModel> CREATOR = new Parcelable.Creator<ShoutModel>() {
+        public ShoutModel createFromParcel(Parcel in) {
+            return new ShoutModel(in);
+        }
+
+        public ShoutModel[] newArray(int size) {
+            return new ShoutModel[size];
+        }
+    };
+
+    /**
+     * To implement Parcelable interface
+     */
+    private ShoutModel(Parcel in) {
+        readFromParcel(in);
+    }
+
+    /**
+     * Default constructor
+     */
+    public ShoutModel() {
+    }
+
+    /**
+     * To implement Parcelable interface
+     */
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(description);
+        out.writeString(created);
+        out.writeString(source);
+        out.writeString(displayName);
+        out.writeInt(id);
+        out.writeDouble(lat);
+        out.writeDouble(lng);
+    }
+
+    /**
+     * To implement Parcelable interface
+     */
+    public void readFromParcel(Parcel in) {
+        description = in.readString();
+        created = in.readString();
+        source = in.readString();
+        displayName = in.readString();
+        id = in.readInt();
+        lat = in.readDouble();
+        lng = in.readDouble();
     }
 }

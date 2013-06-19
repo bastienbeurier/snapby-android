@@ -25,15 +25,15 @@ public class ApiUtils {
         params.put("lat", lat);
         params.put("lng", lng);
 
+        cb.timeout(10000);
+
         aq.ajax(url, params, JSONObject.class, cb);
     }
 
     /** API call to retrieve shouts in a zone of the map */
-    public static void pullShoutsInZone(AQuery aq, int radius, double lat, double lng, boolean ff_super_powers, AjaxCallback<JSONObject> cb) {
-        int noTwitter = ff_super_powers ? 1 : 0;
-
-        String url = SITEURL + "/zone_shouts.json?lat=" + String.valueOf(lat) + "&lng=" + String.valueOf(lng)
-                                                                                  + "&radius=" + String.valueOf(radius) + "&notwitter=" + noTwitter;
+    public static void pullShoutsInZone(AQuery aq, double neLat, double neLng, double swLat, double swLng, AjaxCallback<JSONObject> cb) {
+        String url = SITEURL + "/bound_box_shouts.json?neLat=" + String.valueOf(neLat) + "&neLng=" + String.valueOf(neLng)
+                                                   + "&swLat=" + String.valueOf(swLat) + "&swLng=" + String.valueOf(swLng);
 
         aq.ajax(url, JSONObject.class, cb);
     }
