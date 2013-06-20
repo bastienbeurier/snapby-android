@@ -2,6 +2,7 @@ package com.streetshout.android.Fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.GeneralUtils;
+import com.streetshout.android.Utils.LocationUtils;
 import com.streetshout.android.Utils.TimeUtils;
 import org.json.JSONObject;
 
@@ -54,12 +56,20 @@ public class ShoutFragment extends Fragment {
         });
     }
 
-    public void displayShoutInFragment(ShoutModel shout) {
+    public void displayShoutInFragment(ShoutModel shout, Location myLocation) {
         currentDisplayedShout = shout;
 
         userNameView.setText(shout.displayName);
         descriptionView.setText(shout.description);
-        timeStampView.setText(TimeUtils.shoutAgeToString(getActivity(), TimeUtils.getShoutAge(shout.created)));
+        String shoutStamp = TimeUtils.shoutAgeToString(getActivity(), TimeUtils.getShoutAge(shout.created));
+        if (myLocation != null) {
+            Location shoutLocation = new Location("");
+            shoutLocation.setLatitude(shout.lat);
+            shoutLocation.setLongitude(shout.lng);
+            shoutStamp += ", " + LocationUtils.formatedDistanceInMeters(myLocation, shoutLocation);
+        }
+
+        timeStampView.setText(shoutStamp);
     }
 
     @Override

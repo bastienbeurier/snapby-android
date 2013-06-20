@@ -2,6 +2,7 @@ package com.streetshout.android.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
+import com.streetshout.android.Utils.LocationUtils;
 import com.streetshout.android.Utils.TimeUtils;
 
 import java.util.ArrayList;
@@ -19,9 +21,12 @@ public class NewShoutFeedAdapter extends BaseAdapter {
 
     private ArrayList<ShoutModel> items = null;
 
-    public NewShoutFeedAdapter(Context context, ArrayList<ShoutModel> shouts) {
+    private Location myLocation = null;
+
+    public NewShoutFeedAdapter(Context context, ArrayList<ShoutModel> shouts, Location myLocation) {
         this.context = context;
         this.items = shouts;
+        this.myLocation = myLocation;
     }
 
     @Override
@@ -40,6 +45,14 @@ public class NewShoutFeedAdapter extends BaseAdapter {
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_body)).setText(shout.description);
 
             String shoutStamp = TimeUtils.shoutAgeToString((Activity) context, TimeUtils.getShoutAge(shout.created));
+
+            if (myLocation != null) {
+                Location shoutLocation = new Location("");
+                shoutLocation.setLatitude(shout.lat);
+                shoutLocation.setLongitude(shout.lng);
+                shoutStamp += ", " + LocationUtils.formatedDistanceInMeters(myLocation, shoutLocation) + ",";
+            }
+
             shoutStamp += " by " + shout.displayName;
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(shoutStamp);
         }

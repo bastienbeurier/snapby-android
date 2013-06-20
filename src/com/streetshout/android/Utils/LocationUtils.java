@@ -78,12 +78,21 @@ public class LocationUtils {
         return new LatLng[] {southWest, northEast};
     }
 
-    /** For a given Google Map zoom level and a screen display, returns the max height/width distance in kilometers*/
-    public static int zoomToKm(float zoom, Display display) {
-        Point size = new Point();
-        display.getSize(size);
-        int maxPixels = Math.max(size.x, size.y);
+    public static String formatedDistanceInMeters(Location loc1, Location loc2) {
+        int distance = (int) (loc1.distanceTo(loc2));
 
-        return (int) ((EARTH_CIRCUMFERENCE / 1000) / Math.pow(2, Math.round(zoom) - 1)) * (maxPixels / (256 * 3));
+        if (distance < 10) {
+            return "10m away";
+        } else if (distance < 100) {
+            return (Math.round(distance / 10.0) * 10) + "m away";
+        } else if (distance < 1000) {
+            return (Math.round(distance / 100.0) * 100) + "m away";
+        } else if (distance < 10000) {
+            return (Math.round(distance / 1000.0)) + "km away";
+        } else if (distance < 100000 ) {
+            return (Math.round(distance / 10000.0) * 10) + " kms away";
+        } else {
+            return "far away";
+        }
     }
 }

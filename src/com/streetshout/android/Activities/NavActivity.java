@@ -241,7 +241,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                         ArrayList<ShoutModel> shouts = ShoutModel.rawShoutsToInstances(rawResult);
                         addShoutsOnMap(shouts);
                         feedFragment.hideFeedProgressBar();
-                        feedFragment.setAdapter(NavActivity.this, shouts);
+                        feedFragment.setAdapter(NavActivity.this, shouts, myLocation);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -282,7 +282,11 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         MarkerOptions markerOptions = new MarkerOptions();
 
         markerOptions.position(new LatLng(shout.lat, shout.lng));
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
+        if (shout.id != currentlySelectedShout) {
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
+        } else {
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
+        }
         markerOptions.anchor((float) 0.2, (float) 0.6);
         markerOptions.title(Integer.toString(shout.id));
 
@@ -371,7 +375,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
 
-        shoutFragment.displayShoutInFragment(shout);
+        shoutFragment.displayShoutInFragment(shout, myLocation);
         showFragment(SHOUT_FRAGMENT_ID);
 
         //Hack to make to the marker come to front when click (warning! to work, a marker title must be set)
@@ -386,7 +390,10 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     private void deselectShout(int shoutId) {
-        displayedShoutMarkers.get(shoutId).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
+        Marker marker = displayedShoutMarkers.get(shoutId);
+        if (marker != null) {
+            marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
+        }
     }
 
     public void showFeedFragment(View view) {

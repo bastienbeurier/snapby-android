@@ -3,6 +3,7 @@ package com.streetshout.android.Fragments;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,8 +50,8 @@ public class FeedFragment extends ListFragment {
         feedWrapperView.setVisibility(View.VISIBLE);
     }
 
-    public void setAdapter(Activity activity, ArrayList<ShoutModel> shouts) {
-        setListAdapter(new NewShoutFeedAdapter(activity, shouts));
+    public void setAdapter(Activity activity, ArrayList<ShoutModel> shouts, Location myLocation) {
+        setListAdapter(new NewShoutFeedAdapter(activity, shouts, myLocation));
     }
 
     public interface OnFeedShoutSelectedListener {
