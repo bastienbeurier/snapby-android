@@ -3,6 +3,7 @@ package com.streetshout.android.Receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import com.urbanairship.push.PushManager;
 
 public class PushNotificationReceiver extends BroadcastReceiver {

@@ -1,5 +1,7 @@
 package com.streetshout.android.Utils;
 
+import android.content.Context;
+import android.location.Location;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import org.json.JSONObject;
@@ -38,11 +40,17 @@ public class ApiUtils {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void retrieveFeedShouts(AQuery aq, int page, int perPage, AjaxCallback<JSONObject> cb) {
-        String url = SITEURL + "/global_feed_shouts.json?page=" + String.valueOf(page) + "&per_page=" + String.valueOf(perPage);
+    public static void sendNoficationInfo(Context context, AQuery aq, Location lastLocation) {
+        String url = SITEURL + "/notification_info";
 
-        cb.url(url).type(JSONObject.class);
+        Map<String, Object> params = PushNotifications.getDeviceInfo(context);
+        params.put("lat", lastLocation.getLatitude());
+        params.put("lng", lastLocation.getLongitude());
+        //TODO: add a param for notification radius pref and prefered location
 
-        aq.sync(cb);
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+
+        aq.ajax(url, params, JSONObject.class, cb);
     }
+
 }

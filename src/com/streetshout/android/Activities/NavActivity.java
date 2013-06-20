@@ -79,11 +79,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav);
 
-        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
-        UAirship.takeOff(getApplication(), options);
-        PushManager.enablePush();
-        String apid = PushManager.shared().getAPID();
-        Log.d("BAB", "My Application onCreate - App APID: " + apid);
+        PushNotifications.initialize(getApplication());
 
         this.aq = new AQuery(this);
 

@@ -3,6 +3,8 @@ package com.streetshout.android.Utils;
 public class Constants {
     public static final boolean ADMIN = false;
 
+    public static final String API = "1.0";
+
     public static final int MAX_USER_NAME_LENGTH = 20;
     public static final int MAX_DESCRIPTION_LENGTH = 140;
 
