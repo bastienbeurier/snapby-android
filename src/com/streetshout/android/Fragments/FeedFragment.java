@@ -9,13 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import com.androidquery.AQuery;
 import com.streetshout.android.Adapters.NewShoutFeedAdapter;
-import com.streetshout.android.Adapters.ShoutFeedEndlessAdapter;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 

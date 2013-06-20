@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -28,6 +29,9 @@ import com.streetshout.android.Fragments.ShoutFragment;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.*;
+import com.urbanairship.AirshipConfigOptions;
+import com.urbanairship.UAirship;
+import com.urbanairship.push.PushManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,6 +78,12 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav);
+
+        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(this);
+        UAirship.takeOff(getApplication(), options);
+        PushManager.enablePush();
+        String apid = PushManager.shared().getAPID();
+        Log.d("BAB", "My Application onCreate - App APID: " + apid);
 
         this.aq = new AQuery(this);
 

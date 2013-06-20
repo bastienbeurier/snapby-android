@@ -1,31 +1,17 @@
 package com.streetshout.android.Utils;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Point;
 import android.location.Location;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.Display;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Tools relative to location.
  */
 public class LocationUtils {
-
     private static final double MIN_LAT = -90;
     private static final double MAX_LAT = 90;
     private static final double MIN_LNG = -180;
     private static final double MAX_LNG = 180;
     private static final double EARTH_RADIUS = 6370997;
-    private static final double EARTH_CIRCUMFERENCE = EARTH_RADIUS * 2 * Math.PI;
-
-    /** Redirects the users to his settings to enable location services */
-    public static void enableLocationSettings(Context ctx) {
-        Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        ctx.startActivity(settingsIntent);
-    }
 
     /** Given a Location object, returns a LatLng*/
     public static LatLng toLatLng(Location loc) {
