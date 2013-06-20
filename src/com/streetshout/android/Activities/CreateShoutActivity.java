@@ -143,9 +143,6 @@ public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocat
         LatLng[] boundsResult = LocationUtils.getLatLngBounds(Constants.SHOUT_RADIUS, myLocation);
         final LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
 
-        //Update the camera to fit this perimeter
-        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15);
-
         //Update the camera to fit this perimeter (use of listener is a hack to know when map is loaded)
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
