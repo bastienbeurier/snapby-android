@@ -149,6 +149,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         boolean newMap = setUpMapIfNeeded();
         myLocation = getMyInitialLocation();
+        ApiUtils.sendDeviceInfo(this, aq, myLocation, null);
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         if (newMap) {
@@ -159,6 +160,13 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 initializeCameraWithLocation(myLocation);
             }
         }
+    }
+
+    @Override
+    protected void onPause () {
+        super.onPause();
+
+        ApiUtils.sendDeviceInfo(this, aq, myLocation, null);
     }
 
     private boolean setUpMapIfNeeded() {
