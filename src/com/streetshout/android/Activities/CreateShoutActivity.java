@@ -37,7 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
-    private static int SHOUT_DESCR_LINES = 6;
+    private static int SHOUT_DESCR_LINES = 4;
 
     private AppPreferences appPrefs = null;
 
@@ -56,7 +56,8 @@ public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocat
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_shout);
-        getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowHomeEnabled(false);
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 

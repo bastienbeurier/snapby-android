@@ -417,4 +417,10 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             currentlySelectedShout = -1;
         }
     }
+
+    public void shareShout(View v) {
+        //TODO: remove
+        Toast toast = Toast.makeText(this, "NOT YET IMPLEMENTED!!!", Toast.LENGTH_SHORT);
+        toast.show();
+    }
 }

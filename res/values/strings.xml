@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Street Shout</string>
-    <string name="create_shout">Create</string>
     <string name="settings">Settings</string>
     <string name="skip">Skip</string>
     <string name="shout">Shout</string>
@@ -37,4 +36,7 @@
     <string name="no_connection">No internet connection</string>
     <string name="no_shout_displayed">No shout displayed...</string>
     <string name="status_bar_notification_title">New shout in area of interest</string>
+    <string name="create_shout_map_instruction">Tap where you want to shout on the map:</string>
+    <string name="create_shout_activity_title">Create a shout</string>
+    <string name="create_shout_button">Shout!</string>
 </resources>

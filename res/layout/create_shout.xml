@@ -15,8 +15,8 @@
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:layout_marginTop="16dp"
-                  android:layout_marginLeft="4dp"
-                  android:layout_marginRight="4dp"
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginRight="10dp"
                   android:layout_marginBottom="4dp"
                   android:hint="@string/create_shout_dialog_name" />
 
@@ -26,8 +26,8 @@
                   android:gravity="top|left"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:layout_marginLeft="4dp"
-                  android:layout_marginRight="4dp"
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginRight="10dp"
                   android:layout_marginBottom="4dp"
                   android:hint="@string/create_shout_dialog" />
 
@@ -41,14 +41,29 @@
 
     </LinearLayout>
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/shout_map"
-              android:layout_weight="1"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_marginRight="15dp"
-              android:layout_marginLeft="15dp"
-              class="com.google.android.gms.maps.MapFragment" />
+    <LinearLayout android:orientation="vertical"
+                  android:layout_height="match_parent"
+                  android:layout_width="match_parent"
+                  android:layout_weight="1">
+
+        <TextView android:text="@string/create_shout_map_instruction"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="4dp"
+                  android:layout_marginLeft="10dp"/>
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/shout_map"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:layout_weight="1"
+                  android:layout_marginRight="10dp"
+                  android:layout_marginLeft="10dp"
+                  class="com.google.android.gms.maps.MapFragment" />
+
+    </LinearLayout>
+
+
 
     <LinearLayout android:layout_height="wrap_content"
                   android:layout_width="match_parent"
@@ -58,9 +73,12 @@
         <Button android:id="@+id/create_shout_button"
                 android:layout_height="60dp"
                 android:layout_width="match_parent"
-                android:text="Create"
+                android:text="@string/create_shout_button"
                 android:background="@color/lightGrey"
-                android:layout_margin="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:onClick="validateShoutInfo"/>
 
     </LinearLayout>

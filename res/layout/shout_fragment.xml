@@ -4,30 +4,65 @@
               android:id="@+id/shout_fragment_container"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:background="@drawable/button_dark">
-    <TextView
-            android:id="@+id/shout_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            android:textColor="@color/lightGrey"/>
-    <TextView
-            android:id="@+id/shout_body"
-            android:layout_width="@dimen/map_info_window_size"
-            android:layout_height="wrap_content"
-            android:textColor="@color/lightGrey"/>
-    <TextView
-            android:id="@+id/shout_stamp"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="11dp"
-            android:gravity="right"/>
-    <Button android:id="@+id/back_to_feed"
-            android:layout_height="40dp"
-            android:layout_width="40dp"
-            android:text="Back"
-            android:onClick="showFeedFragment"/>
+              android:orientation="horizontal">
+
+    <FrameLayout android:layout_height="match_parent"
+                 android:layout_width="wrap_content"
+                 android:layout_marginLeft="5dp"
+                 android:onClick="showFeedFragment"
+                 android:background="@drawable/button_dark">
+         <ImageView android:id="@+id/back_to_feed"
+                    android:layout_height="35dp"
+                    android:layout_width="35dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_navigation_back"/>
+    </FrameLayout>
+
+    <LinearLayout android:id="@+id/shout_container"
+                  android:layout_height="fill_parent"
+                  android:layout_width="match_parent"
+                  android:orientation="vertical"
+                  android:layout_weight="1"
+                  android:background="@drawable/button_dark">
+        <TextView
+                android:id="@+id/shout_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="26dp"
+                android:textStyle="bold"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
+        <TextView
+                android:id="@+id/shout_body"
+                android:textSize="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
+
+        <TextView
+                android:id="@+id/shout_stamp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="14dp"
+                android:gravity="bottom|right"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"/>
+    </LinearLayout>
+
+    <FrameLayout android:layout_height="match_parent"
+                 android:layout_width="wrap_content"
+                 android:layout_marginRight="5dp"
+                 android:onClick="shareShout"
+                 android:background="@drawable/button_dark">
+
+        <ImageView android:id="@+id/share_shout"
+                android:layout_height="35dp"
+                android:layout_width="35dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_action_share"/>
+    </FrameLayout>
 </LinearLayout>

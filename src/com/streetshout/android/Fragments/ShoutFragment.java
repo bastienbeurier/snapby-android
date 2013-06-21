@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -46,7 +47,7 @@ public class ShoutFragment extends Fragment {
 
         userNameView.setText(getString(R.string.no_shout_displayed));
 
-        getView().setOnClickListener(new View.OnClickListener() {
+        getView().findViewById(R.id.shout_container).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentDisplayedShout != null) {
@@ -60,7 +61,7 @@ public class ShoutFragment extends Fragment {
         currentDisplayedShout = shout;
 
         userNameView.setText(shout.displayName);
-        descriptionView.setText(shout.description);
+        descriptionView.setText('"' + shout.description + '"');
         String shoutStamp = TimeUtils.shoutAgeToString(getActivity(), TimeUtils.getShoutAge(shout.created));
         if (myLocation != null) {
             Location shoutLocation = new Location("");

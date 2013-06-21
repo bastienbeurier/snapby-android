@@ -6,12 +6,13 @@
               android:layout_height="match_parent"
               android:background="@color/lightGrey">
 
-    <ImageButton
+    <ImageView
             android:id="@+id/create_shout_item_menu"
             android:layout_width="@dimen/action_bar_icon_width"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_create_shout"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/button_dark"
+            android:padding="7dp"
             android:onClick="createShout"/>
 </LinearLayout>

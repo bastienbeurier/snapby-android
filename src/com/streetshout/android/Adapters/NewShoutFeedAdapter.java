@@ -42,7 +42,7 @@ public class NewShoutFeedAdapter extends BaseAdapter {
         final ShoutModel shout = items.get(position);
 
         if (shout != null) {
-            ((TextView) shoutView.findViewById(R.id.feed_shout_item_body)).setText(shout.description);
+            ((TextView) shoutView.findViewById(R.id.feed_shout_item_body)).setText('"' + shout.description + '"');
 
             String shoutStamp = TimeUtils.shoutAgeToString((Activity) context, TimeUtils.getShoutAge(shout.created));
 
