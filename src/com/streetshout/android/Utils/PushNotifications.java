@@ -15,6 +15,11 @@ public class PushNotifications {
     public static void initialize(Application appCtx) {
         //Start Urban Airship push notifications
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(appCtx);
+        if (Constants.PRODUCTION) {
+            options.inProduction = true;
+        } else {
+            options.inProduction = false;
+        }
         UAirship.takeOff(appCtx, options);
 
 //        // Status bar Icon

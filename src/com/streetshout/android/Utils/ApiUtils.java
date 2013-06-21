@@ -15,7 +15,7 @@ import java.util.Map;
 public class ApiUtils {
 
     /** street-shout-web URL for API calls */
-    public static String SITEURL = "http://street-shout.herokuapp.com";
+    public static String SITEURL = Constants.PRODUCTION ? "http://street-shout.herokuapp.com" : "http://dev-street-shout.herokuapp.com";
 
     /** API call to create a new shout */
     public static void createShout(AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
