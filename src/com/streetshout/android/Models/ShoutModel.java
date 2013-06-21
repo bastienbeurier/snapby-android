@@ -1,5 +1,6 @@
 package com.streetshout.android.Models;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.androidquery.AQuery;
@@ -84,8 +85,8 @@ public class ShoutModel implements Parcelable {
     }
 
     /** User creates a new shout */
-    public static void createShout(AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
-        ApiUtils.createShout(aq, lat, lng, userName, description, cb);
+    public static void createShout(Context ctx, AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
+        ApiUtils.createShout(ctx, aq, lat, lng, userName, description, cb);
     }
 
     /**

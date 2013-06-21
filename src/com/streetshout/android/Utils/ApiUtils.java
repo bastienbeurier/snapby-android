@@ -18,7 +18,7 @@ public class ApiUtils {
     public static String SITEURL = Constants.PRODUCTION ? "http://street-shout.herokuapp.com" : "http://dev-street-shout.herokuapp.com";
 
     /** API call to create a new shout */
-    public static void createShout(AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
+    public static void createShout(Context ctx, AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
         String url = SITEURL + "/shouts.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
@@ -26,6 +26,7 @@ public class ApiUtils {
         params.put("description", description);
         params.put("lat", lat);
         params.put("lng", lng);
+        params.put("device_id", GeneralUtils.getDeviceId(ctx));
 
         cb.timeout(10000);
 

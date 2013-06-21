@@ -71,7 +71,7 @@ public class PushNotifications {
     public static HashMap<String, Object> getDeviceInfo(Context ctx) {
         HashMap<String, Object> deviceInfo = new HashMap<String, Object>();
 
-        deviceInfo.put("device_id", Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID));
+        deviceInfo.put("device_id", GeneralUtils.getDeviceId(ctx));
         deviceInfo.put("push_token", PushNotifications.getPushToken());
         deviceInfo.put("device_model", Build.BRAND + " " + Build.PRODUCT);
         deviceInfo.put("os_version", Build.VERSION.RELEASE);

@@ -4,6 +4,7 @@ package com.streetshout.android.Utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.provider.Settings;
 
 public class GeneralUtils {
     public static String getAppVersion(Context ctx) {
@@ -15,5 +16,9 @@ public class GeneralUtils {
         }
 
         return null;
+    }
+
+    public static String getDeviceId(Context ctx) {
+        return Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 }

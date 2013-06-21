@@ -250,7 +250,7 @@ public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocat
 
         final ProgressDialog dialog = ProgressDialog.show(CreateShoutActivity.this, "",getString(R.string.shout_processing), false);
 
-        ShoutModel.createShout(aq, lat, lng, userName, description, new AjaxCallback<JSONObject>() {
+        ShoutModel.createShout(CreateShoutActivity.this, aq, lat, lng, userName, description, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
