@@ -4,8 +4,6 @@ import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
 import android.os.Build;
-import android.provider.Settings;
-import android.util.Log;
 import com.streetshout.android.R;
 import com.streetshout.android.Receivers.PushNotificationReceiver;
 import com.urbanairship.AirshipConfigOptions;
@@ -60,8 +58,6 @@ public class PushNotifications {
 
         // enable or disable
         PushManager.enablePush();
-        //TODO: DELETE
-        Log.d("BAB", "My Application onCreate - App APID: " + getPushToken());
     }
 
     public static String getPushToken() {

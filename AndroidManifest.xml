@@ -37,7 +37,7 @@
               android:targetSdkVersion="17"/>
 
     <!--Application-->
-    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:theme="@style/ShoutStyle">
+    <application android:name=".Utils.StreetShoutApplication" android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:theme="@style/ShoutStyle">
         <uses-library android:name="com.google.android.maps" />
         <activity android:name=".Activities.NavActivity"
                   android:label="@string/app_name"

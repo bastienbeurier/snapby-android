@@ -29,9 +29,6 @@ import com.streetshout.android.Fragments.ShoutFragment;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.Utils.*;
-import com.urbanairship.AirshipConfigOptions;
-import com.urbanairship.UAirship;
-import com.urbanairship.push.PushManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +48,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private static int SHOUT_FRAGMENT_ID = R.id.shout_fragment;
 
     private static int CREATE_ACTIVITY_ID = 33312;
+
+    private static int NOTIFICATION_REDIRECTION_ID = 33313;
 
     private ConnectivityManager connectivityManager = null;
 
@@ -75,11 +74,11 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private int currentlySelectedShout = -1;
 
+    private boolean notificationRedirectionExpired = false;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav);
-
-        PushNotifications.initialize(getApplication());
 
         this.aq = new AQuery(this);
 
@@ -147,9 +146,36 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     protected void onResume() {
         super.onResume();
 
+
         boolean newMap = setUpMapIfNeeded();
         myLocation = getMyInitialLocation();
         ApiUtils.sendDeviceInfo(this, aq, myLocation, null);
+
+        //Handles case when user clicked a shout notification
+        Log.d("BAB", "Check for redirection!");
+        if (getIntent().hasExtra("notificationShout")) {
+            Log.d("BAB", "Has extra!");
+            if (!notificationRedirectionExpired) {
+                JSONObject rawShout = null;
+                try {
+                    rawShout = new JSONObject(getIntent().getStringExtra("notificationShout"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
+                if (!displayedShoutModels.containsKey(shout.id)) {
+                    Marker marker = displayShoutOnMap(shout);
+                    displayedShoutMarkers.put(shout.id, marker);
+                }
+                deselectShout(currentlySelectedShout);
+                Log.d("BAB", "Shout select the shout and return!");
+                selectShout(shout, displayedShoutMarkers.get(shout.id), NOTIFICATION_REDIRECTION_ID);
+
+                notificationRedirectionExpired = true;
+                return;
+            }
+        }
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         if (newMap) {
@@ -380,7 +406,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         ft.commit();
     }
 
-    private void selectShout(ShoutModel shout, Marker marker, int id) {
+    private void selectShout(ShoutModel shout, Marker marker, int selectionSource) {
         if (currentlySelectedShout != -1) {
             deselectShout(currentlySelectedShout);
         }
@@ -396,10 +422,13 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         marker.showInfoWindow();
 
         //At the end to avoid creating thread conflicts on the shout hashmaps
-        if (id == MAP_FRAGMENT_ID) {
+        if (selectionSource == MAP_FRAGMENT_ID) {
             animateCameraToShout(shout, false);
-        } else if (id == CREATE_ACTIVITY_ID) {
+        } else if (selectionSource == CREATE_ACTIVITY_ID) {
             animateCameraToShout(shout, true);
+        } else if (selectionSource == NOTIFICATION_REDIRECTION_ID) {
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.NOTIFICATION_REDIRECTION_ZOOM);
+            mMap.animateCamera(update);
         }
     }
 

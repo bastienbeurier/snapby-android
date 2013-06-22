@@ -1,23 +1,17 @@
 package com.streetshout.android.Receivers;
 
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import com.streetshout.android.Activities.NavActivity;
+import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
 public class PushNotificationReceiver extends BroadcastReceiver {
+    public static String TAG = "PushNotificationReceiver";
 
-    /**
-     * Logging tag
-     */
-    public static String TAG = "PushNotificationsReceiver";
-
-    /**
-     * The method which receives broadcasts for receiver com.gogobot.gogodroid.PushNotificationsReceiver
-     * @param context the current context of the receiver (may or may not be the app)
-     * @param intent the intent which caused the receiver to react
-     */
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
@@ -27,12 +21,13 @@ public class PushNotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    /**
-     * Handle when a notification is opened
-     * @param context the current context of the receiver (may or may not be the app)
-     * @param intent the intent which caused the receiver to react
-     */
     private void handleOpen(Context context, Intent intent)  {
-
+        if(intent.getStringExtra("shout") != null) {
+            Application app	= (Application) UAirship.shared().getApplicationContext();
+            Intent start = new Intent(app, NavActivity.class);
+            start.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            start.putExtra("notificationShout", intent.getStringExtra("shout"));
+            app.startActivity(start);
+        }
     }
 }
