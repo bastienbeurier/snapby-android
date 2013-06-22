@@ -67,16 +67,14 @@ public class LocationUtils {
     public static String formatedDistanceInMeters(Location loc1, Location loc2) {
         int distance = (int) (loc1.distanceTo(loc2));
 
-        if (distance < 10) {
-            return "10m away";
-        } else if (distance < 100) {
-            return (Math.round(distance / 10.0) * 10) + "m away";
+        if (distance < 100) {
+            return "< 100 meters away";
         } else if (distance < 1000) {
-            return (Math.round(distance / 100.0) * 100) + "m away";
+            return (Math.round(distance / 100.0) * 100) + " meters away";
         } else if (distance < 10000) {
             return (Math.round(distance / 1000.0)) + "km away";
         } else if (distance < 100000 ) {
-            return (Math.round(distance / 10000.0) * 10) + " kms away";
+            return (Math.round(distance / 10000.0) * 10) + "kms away";
         } else {
             return "far away";
         }

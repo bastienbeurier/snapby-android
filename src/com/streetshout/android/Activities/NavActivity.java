@@ -74,8 +74,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private int currentlySelectedShout = -1;
 
-    private boolean notificationRedirectionExpired = false;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav);
@@ -152,26 +150,23 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         ApiUtils.sendDeviceInfo(this, aq, myLocation, null);
 
         //Handles case when user clicked a shout notification
-        if (getIntent().hasExtra("notificationShout")) {
-            if (!notificationRedirectionExpired) {
-                JSONObject rawShout = null;
-                try {
-                    rawShout = new JSONObject(getIntent().getStringExtra("notificationShout"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
-                if (!displayedShoutModels.containsKey(shout.id)) {
-                    Marker marker = displayShoutOnMap(shout);
-                    displayedShoutMarkers.put(shout.id, marker);
-                }
-                deselectShout(currentlySelectedShout);
-                selectShout(shout, displayedShoutMarkers.get(shout.id), NOTIFICATION_REDIRECTION_ID);
-
-                notificationRedirectionExpired = true;
-                return;
+        if (savedCameraPosition == null && getIntent().hasExtra("notificationShout")) {
+            JSONObject rawShout = null;
+            try {
+                rawShout = new JSONObject(getIntent().getStringExtra("notificationShout"));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
+            if (!displayedShoutModels.containsKey(shout.id)) {
+                Marker marker = displayShoutOnMap(shout);
+                displayedShoutMarkers.put(shout.id, marker);
+            }
+            deselectShout(currentlySelectedShout);
+            selectShout(shout, displayedShoutMarkers.get(shout.id), NOTIFICATION_REDIRECTION_ID);
+
+            return;
         }
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
