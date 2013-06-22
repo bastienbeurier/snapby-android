@@ -152,9 +152,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         ApiUtils.sendDeviceInfo(this, aq, myLocation, null);
 
         //Handles case when user clicked a shout notification
-        Log.d("BAB", "Check for redirection!");
         if (getIntent().hasExtra("notificationShout")) {
-            Log.d("BAB", "Has extra!");
             if (!notificationRedirectionExpired) {
                 JSONObject rawShout = null;
                 try {
@@ -169,7 +167,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                     displayedShoutMarkers.put(shout.id, marker);
                 }
                 deselectShout(currentlySelectedShout);
-                Log.d("BAB", "Shout select the shout and return!");
                 selectShout(shout, displayedShoutMarkers.get(shout.id), NOTIFICATION_REDIRECTION_ID);
 
                 notificationRedirectionExpired = true;
