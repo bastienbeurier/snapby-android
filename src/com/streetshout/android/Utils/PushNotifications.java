@@ -38,6 +38,11 @@ public class PushNotifications {
                 notification.contentView.setImageViewResource(android.R.id.icon, R.drawable.ic_stat_notify_shout);
                 return notification;
             }
+
+            @Override
+            public int getNextId(String alert, Map<String, String> extras) {
+                return 1001; // Always update the single notification
+            }
         };
 
         nb.appName = appCtx.getString(R.string.status_bar_notification_title);
