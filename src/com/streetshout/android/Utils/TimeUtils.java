@@ -32,7 +32,11 @@ public class TimeUtils {
         if (age > 0) {
             long hours = age / ONE_HOUR;
             if (hours > 1) {
-                return String.valueOf(hours) + " " + activity.getString(R.string.hours_ago);
+                String result = String.valueOf(hours) + " " + activity.getString(R.string.hours_ago);
+                if (age > Constants.SHOUT_DURATION) {
+                    result += " (expired)";
+                }
+                return result;
             } else if (hours == 1) {
                 return String.valueOf(hours) + " " + activity.getString(R.string.hour_ago);
             } else {
