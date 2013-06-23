@@ -1,7 +1,12 @@
 package com.streetshout.android.Utils;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.util.List;
 
 /**
  * Tools relative to location.
@@ -78,5 +83,20 @@ public class LocationUtils {
         } else {
             return "far away";
         }
+    }
+
+    public static Address geocodeAddress(Geocoder geocoder, String address, LatLngBounds latLngBounds) {
+        Address result = null;
+
+        try {
+            List<Address> addressList = geocoder.getFromLocationName(address, 1, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude);
+            if (addressList != null && addressList.size() > 0 && addressList.get(0) != null) {
+                result = addressList.get(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }

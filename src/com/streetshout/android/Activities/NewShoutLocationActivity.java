@@ -4,11 +4,17 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -44,6 +50,10 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
 
     private AQuery aq = null;
 
+    private Geocoder geocoder = null;
+
+    private LatLngBounds mapLatLngBounds = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_shout_location);
@@ -57,9 +67,47 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
 
         myLocation = getIntent().getParcelableExtra("myLocation");
 
+        geocoder = new Geocoder(this);
+
         setUpMap();
         setUpCameraPosition();
         letUserRefineShoutPosition();
+
+        EditText addressView = (EditText) findViewById(R.id.shout_address_view);
+
+        addressView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId== EditorInfo.IME_ACTION_DONE){
+                    Address address = LocationUtils.geocodeAddress(geocoder, v.getText().toString(), mapLatLngBounds);
+
+                    if (address != null) {
+                        try {
+                            double addressLat = address.getLatitude();
+                            double addressLng = address.getLongitude();
+
+
+                            if (addressLat > mapLatLngBounds.southwest.latitude
+                                    && addressLat < mapLatLngBounds.northeast.latitude
+                                    && addressLng > mapLatLngBounds.southwest.longitude
+                                    && addressLng < mapLatLngBounds.northeast.longitude) {
+                                updateShoutAccuratePosition(addressLat, addressLng);
+                                Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.new_shout_geocoding_successful), Toast.LENGTH_SHORT);
+                                toast.show();
+                                return false;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.new_shout_geocoding_failed), Toast.LENGTH_SHORT);
+                    toast.show();
+                    v.setText("");
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -111,6 +159,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
             public void onCameraChange(CameraPosition arg0) {
                 mMap.setOnCameraChangeListener(null);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
+                mapLatLngBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
                 updateShoutAccuratePosition(myLocation.getLatitude(), myLocation.getLongitude());
             }
         });
@@ -150,8 +199,6 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
         mMap.setOnMarkerDragListener(updateShoutLocOnDrag);
         mMap.setOnMapLongClickListener(updateShoutLocOnLongClick);
     }
-
-
 
     private void updateShoutAccuratePosition(double lat, double lng) {
         shoutLocation = new Location("");

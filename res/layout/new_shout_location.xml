@@ -37,6 +37,7 @@
               android:layout_marginLeft="30dp"
               android:layout_marginRight="30dp"
               android:layout_marginBottom="30dp"
+              android:imeOptions="actionDone"
               android:hint="@string/new_shout_location_address_hint"
               android:textSize="16dp"/>
 

@@ -42,4 +42,6 @@
     <string name="create_shout_button">Shout!</string>
     <string name="new_shout_next_step">Next</string>
     <string name="new_shout_location_address_hint">ex: Disneyland or 150 Market Street</string>
+    <string name="new_shout_geocoding_successful">Shout location updated on map!</string>
+    <string name="new_shout_geocoding_failed">Location invalid or not nearby</string>
 </resources>
