@@ -7,13 +7,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -30,74 +25,41 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.Models.ShoutModel;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.AppPreferences;
 import com.streetshout.android.Utils.Constants;
 import com.streetshout.android.Utils.LocationUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
-    private static int SHOUT_DESCR_LINES = 4;
-
-    private AppPreferences appPrefs = null;
-
-    private ConnectivityManager connectivityManager = null;
+public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
 
     private Location myLocation = null;
 
-    private Location shoutAccurateLocation = null;
+    private Location shoutLocation = null;
 
     private GoogleMap mMap = null;
 
     private Marker shoutLocationArrow = null;
 
+    private ConnectivityManager connectivityManager = null;
+
     private AQuery aq = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_shout);
+        setContentView(R.layout.new_shout_location);
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayShowHomeEnabled(false);
 
-        this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
         aq = new AQuery(this);
+
+        this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         myLocation = getIntent().getParcelableExtra("myLocation");
 
         setUpMap();
         setUpCameraPosition();
         letUserRefineShoutPosition();
-
-        //Set user name if we have it
-        EditText userNameView = (EditText) findViewById(R.id.shout_descr_dialog_name);
-        final EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
-        descriptionView.setHorizontallyScrolling(false);
-        descriptionView.setLines(SHOUT_DESCR_LINES);
-        final TextView charCountView = (TextView) findViewById(R.id.shout_descr_dialog_count);
-
-        appPrefs = new AppPreferences(getApplicationContext());
-
-        String savedUserName = appPrefs.getUserNamePref();
-        if (savedUserName.length() > 0) {
-            userNameView.setText(savedUserName);
-            userNameView.clearFocus();
-            descriptionView.requestFocus();
-        }
-
-        descriptionView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                descriptionView.setError(null);
-                charCountView.setText((Constants.MAX_DESCRIPTION_LENGTH - s.length()) + " " + getString(R.string.characters));
-            }
-        });
     }
 
     @Override
@@ -147,8 +109,9 @@ public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocat
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition arg0) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
                 mMap.setOnCameraChangeListener(null);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
+                updateShoutAccuratePosition(myLocation.getLatitude(), myLocation.getLongitude());
             }
         });
     }
@@ -158,11 +121,7 @@ public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocat
         GoogleMap.OnMapClickListener updateShoutLocOnClick = new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                //Convert LatLng to Location
-                shoutAccurateLocation = new Location("");
-                shoutAccurateLocation.setLatitude(latLng.latitude);
-                shoutAccurateLocation.setLongitude(latLng.longitude);
-                updateShoutAccuratePosition();
+                updateShoutAccuratePosition(latLng.latitude, latLng.longitude);
             }
         };
 
@@ -176,18 +135,29 @@ public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocat
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                shoutAccurateLocation = new Location("");
-                shoutAccurateLocation.setLatitude(marker.getPosition().latitude);
-                shoutAccurateLocation.setLongitude(marker.getPosition().longitude);
-                updateShoutAccuratePosition();
+                updateShoutAccuratePosition(marker.getPosition().latitude, marker.getPosition().longitude);
+            }
+        };
+
+        GoogleMap.OnMapLongClickListener updateShoutLocOnLongClick = new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                updateShoutAccuratePosition(latLng.latitude, latLng.longitude);
             }
         };
 
         mMap.setOnMapClickListener(updateShoutLocOnClick);
         mMap.setOnMarkerDragListener(updateShoutLocOnDrag);
+        mMap.setOnMapLongClickListener(updateShoutLocOnLongClick);
     }
 
-    private void updateShoutAccuratePosition() {
+
+
+    private void updateShoutAccuratePosition(double lat, double lng) {
+        shoutLocation = new Location("");
+        shoutLocation.setLatitude(lat);
+        shoutLocation.setLongitude(lng);
+
         if (shoutLocationArrow != null) {
             shoutLocationArrow.remove();
             shoutLocationArrow = null;
@@ -195,68 +165,38 @@ public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocat
 
         //Display marker the user is going to drag to specify his accurate position
         MarkerOptions marker = new MarkerOptions();
-        marker.position(new LatLng(shoutAccurateLocation.getLatitude(), shoutAccurateLocation.getLongitude()));
+        marker.position(new LatLng(shoutLocation.getLatitude(), shoutLocation.getLongitude()));
         marker.draggable(true);
         marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_arrow));
-        marker.anchor((float) 0.43, (float) 0.95);
+        marker.anchor((float) 0.49, (float) 0.95);
         shoutLocationArrow = mMap.addMarker(marker);
     }
 
-    public void validateShoutInfo(View view) {
-        boolean errors = false;
-
-        EditText userNameView = (EditText) findViewById(R.id.shout_descr_dialog_name);
-        EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
-        userNameView.setError(null);
-        descriptionView.setError(null);
-
-        String userName = userNameView.getText().toString();
-        String description = descriptionView.getText().toString();
-
-        if (userName.length() == 0) {
-            userNameView.setError(getString(R.string.name_not_empty));
-            errors = true;
-        }
-
-        if (userName.length() > Constants.MAX_USER_NAME_LENGTH) {
-            userNameView.setError(getString(R.string.name_too_long));
-            errors = true;
-        }
-
-        if (description.length() == 0) {
-            descriptionView.setError(getString(R.string.description_not_empty));
-            errors = true;
-        }
-
-        if (description.length() > Constants.MAX_DESCRIPTION_LENGTH) {
-            descriptionView.setError(getString(R.string.description_too_long));
-            errors = true;
-        }
-
-        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-            Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
-            toast.show();
-        } else if (!errors) {
-            createNewShoutFromInfo(userName, description);
-        }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
+        finish();
+        return true;
     }
 
     /** User confirmed shout creation after scpecifying accurate location and shout description */
-    public void createNewShoutFromInfo(String userName, String description) {
-        //Save user name in prefs
-        appPrefs.setUserNamePref(userName);
+    public void createNewShoutFromInfo(View view) {
+        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+            Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
 
-        double lat = shoutAccurateLocation == null ? myLocation.getLatitude() : shoutAccurateLocation.getLatitude();
-        double lng = shoutAccurateLocation == null ? myLocation.getLongitude() : shoutAccurateLocation.getLongitude();
+        String userName = getIntent().getStringExtra("userName");
+        String shoutDescription = getIntent().getStringExtra("shoutDescription");
 
-        final ProgressDialog dialog = ProgressDialog.show(CreateShoutActivity.this, "",getString(R.string.shout_processing), false);
+        final ProgressDialog dialog = ProgressDialog.show(NewShoutLocationActivity.this, "",getString(R.string.shout_processing), false);
 
-        ShoutModel.createShout(CreateShoutActivity.this, aq, lat, lng, userName, description, new AjaxCallback<JSONObject>() {
+        ShoutModel.createShout(NewShoutLocationActivity.this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
-
-                Log.d("BAB", "object: " + object);
 
                 if (status.getError() == null && object != null) {
                     JSONObject rawShout = null;
@@ -275,18 +215,10 @@ public class CreateShoutActivity extends Activity implements GoogleMap.OnMyLocat
                     finish();
                 } else {
                     dialog.cancel();
-                    Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
                     toast.show();
                 }
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        Intent returnIntent = new Intent();
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-        return true;
     }
 }

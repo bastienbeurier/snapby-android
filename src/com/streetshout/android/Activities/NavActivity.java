@@ -38,7 +38,7 @@ import java.util.List;
 
 public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener {
 
-    private static int CREATE_SHOUT_CODE = 11101;
+
 
     private static int FEED_FRAGMENT_ID = R.id.feed_fragment;
 
@@ -332,15 +332,15 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             Toast toast = Toast.makeText(this, getString(R.string.no_location), Toast.LENGTH_SHORT);
             toast.show();
         } else {
-            Intent createShout = new Intent(this, CreateShoutActivity.class);
+            Intent createShout = new Intent(this, NewShoutContentActivity.class);
             createShout.putExtra("myLocation", myLocation);
-            startActivityForResult(createShout, CREATE_SHOUT_CODE);
+            startActivityForResult(createShout, Constants.CREATE_SHOUT_REQUEST);
         }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == CREATE_SHOUT_CODE) {
+        if (requestCode == Constants.CREATE_SHOUT_REQUEST) {
 
             if(resultCode == RESULT_OK){
                 Toast toast = Toast.makeText(this, getString(R.string.create_shout_success), Toast.LENGTH_LONG);

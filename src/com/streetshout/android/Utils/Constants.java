@@ -13,7 +13,6 @@ public class Constants {
     /** Zoom level set when a user clicks on a shout**/
     public static final int CLICK_ON_SHOUT_IN_SHOUT = 16;
     public static final int CLICK_ON_SHOUT_IN_MAP_OR_FEED = 12;
-    public static final int CLICK_ON_SHOUT_IN_FEED = 12;
     public static final int REDIRECTION_FROM_CREATE_SHOUT = 16;
     public static final int REDIRECTION_FROM_NOTIFICATION = 12;
 
@@ -22,4 +21,10 @@ public class Constants {
 
     /** Minimum radius around the user's location where he can create shout **/
     public static final int SHOUT_RADIUS = 300;
+
+    /** StartActivityForResult codes **/
+    public static final int NEW_SHOUT_CONTENT_ACTIVITY_REQUEST = 13450;
+    public static final int CREATE_SHOUT_REQUEST = 11101;
+
+
 }

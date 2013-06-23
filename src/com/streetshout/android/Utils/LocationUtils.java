@@ -68,7 +68,7 @@ public class LocationUtils {
         int distance = (int) (loc1.distanceTo(loc2));
 
         if (distance < 100) {
-            return "< 100 meters away";
+            return "nearby";
         } else if (distance < 1000) {
             return (Math.round(distance / 100.0) * 100) + " meters away";
         } else if (distance < 10000) {

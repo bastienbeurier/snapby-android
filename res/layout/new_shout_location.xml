@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView android:text="@string/create_shout_map_instruction"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="10dp"
+              android:layout_marginTop="10dp"
+              android:layout_marginBottom="20dp"
+              android:textSize="18dp"/>
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/shout_map"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_weight="1"
+              android:layout_marginRight="30dp"
+              android:layout_marginLeft="30dp"
+              android:layout_marginBottom="30dp"
+              class="com.google.android.gms.maps.MapFragment" />
+
+    <TextView android:text="@string/create_shout_address_instruction"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="10dp"
+              android:layout_marginLeft="10dp"
+              android:textSize="18dp"/>
+
+    <EditText android:id="@+id/shout_address_view"
+              android:inputType="textPostalAddress"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="30dp"
+              android:layout_marginRight="30dp"
+              android:layout_marginBottom="30dp"
+              android:hint="@string/new_shout_location_address_hint"
+              android:textSize="16dp"/>
+
+    <Button android:id="@+id/create_shout_button"
+            android:layout_height="60dp"
+            android:layout_width="match_parent"
+            android:text="@string/create_shout_button"
+            android:background="@color/lightGrey"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:onClick="createNewShoutFromInfo"/>
+</LinearLayout>
