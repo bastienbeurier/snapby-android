@@ -9,7 +9,7 @@
     <FrameLayout android:layout_height="match_parent"
                  android:layout_width="wrap_content"
                  android:layout_marginLeft="5dp"
-                 android:onClick="showFeedFragment"
+                 android:onClick="backFromShoutFragment"
                  android:background="@drawable/button_dark">
          <ImageView android:id="@+id/back_to_feed"
                     android:layout_height="35dp"
@@ -56,7 +56,7 @@
     <FrameLayout android:layout_height="match_parent"
                  android:layout_width="wrap_content"
                  android:layout_marginRight="5dp"
-                 android:onClick="shareShout"
+                 android:onClick="shareShoutFromShoutFragment"
                  android:background="@drawable/button_dark">
 
         <ImageView android:id="@+id/share_shout"

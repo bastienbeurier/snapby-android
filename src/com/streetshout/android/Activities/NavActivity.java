@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -66,7 +65,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private Location myLocation = null;
 
-    private CameraPosition savedCameraPosition = null;
+    private CameraPosition savedInstanceStateCameraPosition = null;
 
     private FeedFragment feedFragment = null;
 
@@ -94,7 +93,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         ft.commit();
 
         if (savedInstanceState != null) {
-            savedCameraPosition = savedInstanceState.getParcelable("cameraPosition");
+            savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
 
         checkLocationServicesEnabled();
@@ -150,7 +149,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         ApiUtils.sendDeviceInfo(this, aq, myLocation, null);
 
         //Handles case when user clicked a shout notification
-        if (savedCameraPosition == null && getIntent().hasExtra("notificationShout")) {
+        if (savedInstanceStateCameraPosition == null && getIntent().hasExtra("notificationShout")) {
             JSONObject rawShout = null;
             try {
                 rawShout = new JSONObject(getIntent().getStringExtra("notificationShout"));
@@ -171,9 +170,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         if (newMap) {
-            if (savedCameraPosition != null) {
-                initializeCameraWithCameraPosition(savedCameraPosition);
-                savedCameraPosition = null;
+            if (savedInstanceStateCameraPosition != null) {
+                initializeCameraWithCameraPosition(savedInstanceStateCameraPosition);
+                savedInstanceStateCameraPosition = null;
             } else if (myLocation != null) {
                 initializeCameraWithLocation(myLocation);
             }
@@ -368,14 +367,14 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     //TODO: change name
     @Override
     public void onShoutSelected(ShoutModel shout) {
-        animateCameraToShout(shout, true);
+        animateCameraToShout(shout, Constants.CLICK_ON_SHOUT_IN_SHOUT);
     }
 
-    private void animateCameraToShout(ShoutModel shout, boolean zoomToShout) {
+    private void animateCameraToShout(ShoutModel shout, Integer zoomLevel) {
         CameraUpdate update = null;
 
-        if (zoomToShout) {
-            update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.CLICK_ON_SHOUT_ZOOM);
+        if (zoomLevel != null) {
+            update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), zoomLevel);
         } else {
             update = CameraUpdateFactory.newLatLng(new LatLng(shout.lat, shout.lng));
         }
@@ -414,12 +413,16 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         marker.showInfoWindow();
 
         //At the end to avoid creating thread conflicts on the shout hashmaps
-        if (selectionSource == MAP_FRAGMENT_ID) {
-            animateCameraToShout(shout, false);
+        if (selectionSource == MAP_FRAGMENT_ID || selectionSource == FEED_FRAGMENT_ID) {
+            if (mMap.getCameraPosition().zoom <= Constants.CLICK_ON_SHOUT_IN_MAP_OR_FEED - 1) {
+                animateCameraToShout(shout, Constants.CLICK_ON_SHOUT_IN_MAP_OR_FEED);
+            } else {
+                animateCameraToShout(shout, null);
+            }
         } else if (selectionSource == CREATE_ACTIVITY_ID) {
-            animateCameraToShout(shout, true);
+            animateCameraToShout(shout, Constants.REDIRECTION_FROM_CREATE_SHOUT);
         } else if (selectionSource == NOTIFICATION_REDIRECTION_ID) {
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.NOTIFICATION_REDIRECTION_ZOOM);
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.REDIRECTION_FROM_NOTIFICATION);
             mMap.animateCamera(update);
         }
     }
@@ -431,7 +434,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
     }
 
-    public void showFeedFragment(View view) {
+    public void backFromShoutFragment(View view) {
         showFragment(FEED_FRAGMENT_ID);
         if (currentlySelectedShout != -1) {
             deselectShout(currentlySelectedShout);
@@ -439,9 +442,15 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
     }
 
-    public void shareShout(View v) {
+    public void shareShoutFromShoutFragment(View v) {
         //TODO: remove
         Toast toast = Toast.makeText(this, "NOT YET IMPLEMENTED!!!", Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        backFromShoutFragment(null);
     }
 }
