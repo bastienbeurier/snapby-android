@@ -9,6 +9,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
+
+    private static final int UPDATE_SHOUT_LOCATION = 1437;
 
     private Location myLocation = null;
 
@@ -78,32 +82,8 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
         addressView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId== EditorInfo.IME_ACTION_DONE){
-                    Address address = LocationUtils.geocodeAddress(geocoder, v.getText().toString(), mapLatLngBounds);
-
-                    if (address != null) {
-                        try {
-                            double addressLat = address.getLatitude();
-                            double addressLng = address.getLongitude();
-
-
-                            if (addressLat > mapLatLngBounds.southwest.latitude
-                                    && addressLat < mapLatLngBounds.northeast.latitude
-                                    && addressLng > mapLatLngBounds.southwest.longitude
-                                    && addressLng < mapLatLngBounds.northeast.longitude) {
-                                updateShoutAccuratePosition(addressLat, addressLng);
-                                Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.new_shout_geocoding_successful), Toast.LENGTH_SHORT);
-                                toast.show();
-                                return false;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.new_shout_geocoding_failed), Toast.LENGTH_SHORT);
-                    toast.show();
-                    v.setText("");
+                if (actionId== EditorInfo.IME_ACTION_DONE) {
+                    geocodeAddress(v);
                 }
                 return false;
             }
@@ -238,7 +218,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
         String userName = getIntent().getStringExtra("userName");
         String shoutDescription = getIntent().getStringExtra("shoutDescription");
 
-        final ProgressDialog dialog = ProgressDialog.show(NewShoutLocationActivity.this, "",getString(R.string.shout_processing), false);
+        final ProgressDialog createShoutDialog = ProgressDialog.show(NewShoutLocationActivity.this, "",getString(R.string.shout_processing), false);
 
         ShoutModel.createShout(NewShoutLocationActivity.this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, new AjaxCallback<JSONObject>() {
             @Override
@@ -254,18 +234,76 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
                         e.printStackTrace();
                     }
 
-                    dialog.cancel();
+                    createShoutDialog.cancel();
 
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("newShout", ShoutModel.rawShoutToInstance(rawShout));
                     setResult(RESULT_OK, returnIntent);
                     finish();
                 } else {
-                    dialog.cancel();
+                    createShoutDialog.cancel();
                     Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
                     toast.show();
                 }
             }
         });
+    }
+
+    private void geocodeAddress(final TextView editTextView) {
+        String dialogText = String.format(getString(R.string.address_geocoding_processing), '"' + editTextView.getText().toString() + '"');
+        final ProgressDialog addressDialog = ProgressDialog.show(NewShoutLocationActivity.this, "", dialogText, false);
+
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == UPDATE_SHOUT_LOCATION) {
+                    Address address = (Address) msg.obj;
+
+                    if (address != null) {
+                        try {
+                            double addressLat = address.getLatitude();
+                            double addressLng = address.getLongitude();
+
+
+                            if (addressLat > mapLatLngBounds.southwest.latitude
+                                    && addressLat < mapLatLngBounds.northeast.latitude
+                                    && addressLng > mapLatLngBounds.southwest.longitude
+                                    && addressLng < mapLatLngBounds.northeast.longitude) {
+                                updateShoutAccuratePosition(addressLat, addressLng);
+                                addressDialog.cancel();
+                                Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.new_shout_geocoding_successful), Toast.LENGTH_SHORT);
+                                toast.show();
+                                return;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    addressDialog.cancel();
+                    editTextView.setError(getString(R.string.new_shout_geocoding_failed));
+                    editTextView.setText("");
+                }
+
+                super.handleMessage(msg);
+            }
+        };
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Address address = LocationUtils.geocodeAddress(geocoder, editTextView.getText().toString(), mapLatLngBounds);
+                    Message msg = handler.obtainMessage();
+                    msg.what = UPDATE_SHOUT_LOCATION;
+                    msg.obj = address;
+                    handler.sendMessage(msg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
     }
 }
