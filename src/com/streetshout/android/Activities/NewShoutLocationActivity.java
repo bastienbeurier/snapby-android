@@ -194,8 +194,8 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
         MarkerOptions marker = new MarkerOptions();
         marker.position(new LatLng(shoutLocation.getLatitude(), shoutLocation.getLongitude()));
         marker.draggable(true);
-        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.location_arrow));
-        marker.anchor((float) 0.49, (float) 0.95);
+        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
+        marker.anchor((float) 0.5, (float) 0.95);
         shoutLocationArrow = mMap.addMarker(marker);
     }
 

@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -198,7 +199,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             UiSettings settings = mMap.getUiSettings();
             settings.setZoomControlsEnabled(false);
             settings.setCompassEnabled(true);
-            settings.setMyLocationButtonEnabled(true);
+            settings.setMyLocationButtonEnabled(false);
             settings.setRotateGesturesEnabled(false);
             settings.setTiltGesturesEnabled(false);
 
@@ -226,6 +227,31 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                     selectShout(shout, marker, MAP_FRAGMENT_ID);
 
                     return true;
+                }
+            });
+
+            findViewById(R.id.my_location_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (myLocation != null) {
+                        CameraUpdate update = null;
+                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_SHOUT_IN_MAP_OR_FEED) {
+                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_SHOUT_IN_MAP_OR_FEED);
+                        } else {
+                            update = CameraUpdateFactory.newLatLng(LocationUtils.toLatLng(myLocation));
+                        }
+                        mMap.animateCamera(update);
+                    } else {
+                        Toast toast = Toast.makeText(NavActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
+
+            findViewById(R.id.dezoom_to_world_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(0));
                 }
             });
 
@@ -318,7 +344,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         } else {
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
         }
-        markerOptions.anchor((float) 0.2, (float) 0.6);
         markerOptions.title(Integer.toString(shout.id));
 
         return mMap.addMarker(markerOptions);

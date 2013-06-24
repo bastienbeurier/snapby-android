@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/lightGrey">
+              android:layout_height="wrap_content"
+              android:background="@android:color/transparent">
+              <!--android:background="@drawable/nav_bar_selector">-->
+
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="@dimen/nav_bar_heigh"
+                  android:layout_centerVertical="true"
+                  android:background="@drawable/nav_bar_selector">
+    </LinearLayout>
 
     <ImageView
             android:id="@+id/create_shout_item_menu"
-            android:layout_width="@dimen/action_bar_icon_width"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/create_shout_button_size"
+            android:layout_height="@dimen/create_shout_button_size"
             android:src="@drawable/ic_action_create_shout"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/button_dark"
-            android:padding="7dp"
-            android:onClick="createShout"/>
-</LinearLayout>
+            android:layout_centerHorizontal="true"
+            android:padding="10dp"
+            android:onClick="createShout"
+            android:background="@drawable/create_shout_button_selector"/>
+</RelativeLayout>

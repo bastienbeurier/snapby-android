@@ -1,31 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <fragment android:name="com.streetshout.android.Fragments.ShoutFragment"
-              android:id="@+id/shout_fragment"
-              android:layout_weight="1.2"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
 
-    <fragment android:name="com.streetshout.android.Fragments.FeedFragment"
-              android:id="@+id/feed_fragment"
-              android:layout_weight="1.2"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent" />
+        <fragment android:name="com.streetshout.android.Fragments.ShoutFragment"
+                  android:id="@+id/shout_fragment"
+                  android:layout_weight="1.2"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent" />
 
-    <fragment android:name="com.streetshout.android.Fragments.BarFragment"
-              android:id="@+id/bar_fragment"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/action_bar_heigh" />
+        <fragment android:name="com.streetshout.android.Fragments.FeedFragment"
+                  android:id="@+id/feed_fragment"
+                  android:layout_weight="1.2"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent" />
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/map"
-              android:layout_weight="0.8"
+        <RelativeLayout android:id="@+id/map_fragment_container"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:layout_weight="0.8">
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:id="@+id/map"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      class="com.google.android.gms.maps.MapFragment" />
+
+            <LinearLayout android:layout_height="wrap_content"
+                          android:layout_width="wrap_content"
+                          android:orientation="vertical"
+                          android:layout_marginTop="30dp"
+                          android:layout_marginLeft="15dp">
+
+                <ImageView
+                        android:id="@+id/my_location_button"
+                        android:layout_width="@dimen/map_button_size"
+                        android:layout_height="@dimen/map_button_size"
+                        android:background="@drawable/map_button_selector"
+                        android:src="@drawable/my_location_map_icon"
+                        android:padding="6dp"/>
+
+                <ImageView
+                        android:id="@+id/dezoom_to_world_button"
+                        android:layout_width="@dimen/map_button_size"
+                        android:layout_height="@dimen/map_button_size"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/map_button_selector"
+                        android:src="@drawable/world_map_icon"
+                        android:padding="4dp"/>
+
+                <ImageView
+                        android:id="@+id/address_search_button"
+                        android:layout_width="@dimen/map_button_size"
+                        android:layout_height="@dimen/map_button_size"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/map_button_selector"
+                        android:src="@drawable/search_map_icon"
+                        android:padding="4dp"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/settings_button"
+                android:layout_width="@dimen/map_button_size"
+                android:layout_height="@dimen/map_button_size"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="30dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/map_button_selector"
+                android:src="@drawable/settings_map_icon"
+                android:padding="4dp"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:orientation="vertical"
+                 android:background="@android:color/transparent">
+
+        <View android:layout_height="match_parent"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              class="com.google.android.gms.maps.MapFragment" />
-</LinearLayout>
+              android:layout_weight="1.2" />
+
+        <View android:layout_height="40dp"
+              android:layout_width="match_parent"/>
+
+        <fragment android:name="com.streetshout.android.Fragments.BarFragment"
+                  android:id="@+id/bar_fragment"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"/>
+
+        <View android:layout_height="match_parent"
+              android:layout_width="match_parent"
+              android:layout_weight="0.8" />
+    </LinearLayout>
+</RelativeLayout>

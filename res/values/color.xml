@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="darkGrey">#CC272727</color>
-    <color name="shoutBlue">#327CCB</color>
-    <color name="lightGrey">#333333</color>
+    <color name="black">#000000</color>
+    <color name="blackLighter">#1b1b1b</color>
+    <color name="darkGrey">#CC343434</color>
+    <color name="shoutBlue">#63bef5</color>
+    <color name="mediumGrey">#333333</color>
+    <color name="semiTransparentWhite">#AAffffff</color>
+    <color name="lightGrey">#999999</color>
 </resources>
