@@ -45,10 +45,17 @@ public class AddressSearchFragment extends Fragment {
 
         addressSearchView = (EditText) getView().findViewById(R.id.nav_search_address_view);
 
+        addressSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((EditText) v).setError(null);
+            }
+        });
+
         addressSearchView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId== EditorInfo.IME_ACTION_DONE) {
+                if (actionId== EditorInfo.IME_ACTION_SEARCH) {
                     geocodeAddress(v);
                 }
                 return false;

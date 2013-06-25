@@ -44,7 +44,7 @@
                   android:inputType="textPostalAddress"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:imeOptions="actionDone"
+                  android:imeOptions="actionSearch"
                   android:hint="@string/search_location_hint"
                   android:textSize="16dp"/>
 
