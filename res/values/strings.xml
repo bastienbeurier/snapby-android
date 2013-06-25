@@ -38,11 +38,15 @@
     <string name="status_bar_notification_title">New shout in area of interest</string>
     <string name="create_shout_map_instruction">Drag arrow to refine location...</string>
     <string name="create_shout_address_instruction">...or enter nearby address</string>
+    <string name="nav_activity_address_instruction">Go to address or location:</string>
     <string name="create_shout_activity_title">Create a shout</string>
     <string name="create_shout_button">Shout!</string>
     <string name="new_shout_next_step">Next</string>
     <string name="new_shout_location_address_hint">ex: Revolution Cafe or 150 Market Street</string>
-    <string name="address_geocoding_processing">Searching for %s nearby...</string>
+    <string name="search_location_hint">ex: 150 Marker Street, San Francisco</string>
+    <string name="nav_address_geocoding_processing">Searching for %s...</string>
+    <string name="create_shout_address_geocoding_processing">Searching for %s nearby...</string>
     <string name="new_shout_geocoding_successful">Shout location updated on map</string>
-    <string name="new_shout_geocoding_failed">Invalid or not nearby location</string>
+    <string name="new_shout_geocoding_failed">Not found or not nearby location</string>
+    <string name="address_geocoding_failed">Location not found</string>
 </resources>

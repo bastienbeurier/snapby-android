@@ -79,6 +79,13 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
 
         EditText addressView = (EditText) findViewById(R.id.shout_address_view);
 
+        addressView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((EditText) v).setError(null);
+            }
+        });
+
         addressView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -250,7 +257,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
     }
 
     private void geocodeAddress(final TextView editTextView) {
-        String dialogText = String.format(getString(R.string.address_geocoding_processing), '"' + editTextView.getText().toString() + '"');
+        String dialogText = String.format(getString(R.string.create_shout_address_geocoding_processing), '"' + editTextView.getText().toString() + '"');
         final ProgressDialog addressDialog = ProgressDialog.show(NewShoutLocationActivity.this, "", dialogText, false);
 
         final Handler handler = new Handler(){

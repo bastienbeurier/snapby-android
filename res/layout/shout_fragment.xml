@@ -9,15 +9,17 @@
 
     <FrameLayout android:layout_height="match_parent"
                  android:layout_width="45dp"
-                 android:onClick="backFromShoutFragment"
+                 android:onClick="onBackPressed"
+
                  android:background="@drawable/blue_highlight_button_selector">
-         <ImageView android:id="@+id/back_to_feed"
+         <ImageView android:id="@+id/back_to_feed_from_shout_fragment"
                     android:layout_height="35dp"
                     android:layout_width="match_parent"
                     android:layout_marginRight="5dp"
                     android:layout_marginLeft="5dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_navigation_back"/>
+
     </FrameLayout>
 
     <View   android:layout_height="match_parent"

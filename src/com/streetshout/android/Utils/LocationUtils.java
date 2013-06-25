@@ -89,7 +89,13 @@ public class LocationUtils {
         Address result = null;
 
         try {
-            List<Address> addressList = geocoder.getFromLocationName(address, 1, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude);
+            List<Address> addressList = null;
+            if (latLngBounds != null) {
+                addressList = geocoder.getFromLocationName(address, 1, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude);
+            } else {
+                addressList = geocoder.getFromLocationName(address, 1);
+            }
+
             if (addressList != null && addressList.size() > 0 && addressList.get(0) != null) {
                 result = addressList.get(0);
             }

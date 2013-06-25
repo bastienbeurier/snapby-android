@@ -2,6 +2,7 @@ package com.streetshout.android.Activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +13,6 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.Adapters.MapWindowAdapter;
+import com.streetshout.android.Fragments.AddressSearchFragment;
 import com.streetshout.android.Fragments.FeedFragment;
 import com.streetshout.android.Fragments.ShoutFragment;
 import com.streetshout.android.Models.ShoutModel;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener {
+public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener, AddressSearchFragment.OnAddressValidateListener {
 
 
 
@@ -46,6 +47,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private static int MAP_FRAGMENT_ID = R.id.map;
 
     private static int SHOUT_FRAGMENT_ID = R.id.shout_fragment;
+
+    private static int ADDRESS_SEARCH_FRAGMENT_ID = R.id.address_search_fragment;
 
     private static int CREATE_ACTIVITY_ID = 33312;
 
@@ -72,7 +75,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private ShoutFragment shoutFragment = null;
 
-    private int currentlySelectedShout = -1;
+    private AddressSearchFragment addressSearchFragment = null;
+
+    public int currentlySelectedShout = -1;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,8 +94,10 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         feedFragment = (FeedFragment) getFragmentManager().findFragmentById(R.id.feed_fragment);
         shoutFragment = (ShoutFragment) getFragmentManager().findFragmentById(R.id.shout_fragment);
+        addressSearchFragment = (AddressSearchFragment) getFragmentManager().findFragmentById(R.id.address_search_fragment);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.hide(shoutFragment);
+        ft.hide(addressSearchFragment);
         ft.commit();
 
         if (savedInstanceState != null) {
@@ -158,15 +165,16 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 e.printStackTrace();
             }
 
-            ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
-            if (!displayedShoutModels.containsKey(shout.id)) {
-                Marker marker = displayShoutOnMap(shout);
-                displayedShoutMarkers.put(shout.id, marker);
+            if (rawShout != null) {
+                ShoutModel shout = ShoutModel.rawShoutToInstance(rawShout);
+                if (!displayedShoutModels.containsKey(shout.id)) {
+                    Marker marker = displayShoutOnMap(shout);
+                    displayedShoutMarkers.put(shout.id, marker);
+                    displayedShoutModels.put(shout.id, shout);
+                }
+                selectShout(shout, displayedShoutMarkers.get(shout.id), NOTIFICATION_REDIRECTION_ID);
+                return;
             }
-            deselectShout(currentlySelectedShout);
-            selectShout(shout, displayedShoutMarkers.get(shout.id), NOTIFICATION_REDIRECTION_ID);
-
-            return;
         }
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
@@ -252,6 +260,22 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 @Override
                 public void onClick(View v) {
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(0));
+                }
+            });
+
+            findViewById(R.id.address_search_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showSearchAddressFragment();
+                }
+            });
+
+            findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO: remove
+                    Toast toast = Toast.makeText(NavActivity.this, "NOT YET IMPLEMENTED!!!", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             });
 
@@ -395,6 +419,22 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         animateCameraToShout(shout, Constants.CLICK_ON_SHOUT_IN_SHOUT);
     }
 
+    @Override
+    public void onAddressValidate(double lat, double lng) {
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), Constants.SEARCH_ADDRESS_IN_NAV);
+        mMap.animateCamera(update, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                onBackPressed();
+            }
+
+            @Override
+            public void onCancel() {
+                onBackPressed();
+            }
+        });
+    }
+
     private void animateCameraToShout(ShoutModel shout, Integer zoomLevel) {
         CameraUpdate update = null;
 
@@ -407,37 +447,58 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         mMap.animateCamera(update);
     }
 
+    private void showShoutFragment(int shoutId, Marker shoutMarker) {
+        this.deselectShoutIfAnySelected();
+        this.currentlySelectedShout = shoutId;
+
+        shoutMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
+
+        showFragment(SHOUT_FRAGMENT_ID);
+    }
+
+    private void showSearchAddressFragment() {
+        this.deselectShoutIfAnySelected();
+        addressSearchFragment.setFocusOnSearchAddressView();
+
+        showFragment(ADDRESS_SEARCH_FRAGMENT_ID);
+    }
+
     private void showFragment(int fragmentId) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
+        ft.hide(visibleFrament());
+
         if (fragmentId == FEED_FRAGMENT_ID) {
-            ft.hide(shoutFragment);
             ft.show(feedFragment);
-        } else if (fragmentId == SHOUT_FRAGMENT_ID) {
-            ft.hide(feedFragment);
+        } if (fragmentId == SHOUT_FRAGMENT_ID) {
             ft.show(shoutFragment);
+        } else if (fragmentId == ADDRESS_SEARCH_FRAGMENT_ID) {
+            ft.show(addressSearchFragment);
         }
 
-        ft.addToBackStack(null);
         ft.commit();
     }
 
-    private void selectShout(ShoutModel shout, Marker marker, int selectionSource) {
-        if (currentlySelectedShout != -1) {
-            deselectShout(currentlySelectedShout);
+    private Fragment visibleFrament() {
+        if (shoutFragment.isVisible()) {
+            return shoutFragment;
+        } else if (addressSearchFragment.isVisible()) {
+            return addressSearchFragment;
+        //Warning: when activity launched by notification, no fragment is visible and this method is called, in this
+        //case the feedFragment should be returned.
+        } else {
+            return feedFragment;
         }
+    }
 
-        currentlySelectedShout = shout.id;
-
-        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
-
+    private void selectShout(ShoutModel shout, Marker marker, int selectionSource) {
         shoutFragment.displayShoutInFragment(shout, myLocation);
-        showFragment(SHOUT_FRAGMENT_ID);
+        showShoutFragment(shout.id, marker);
 
         //Hack to make to the marker come to front when click (warning! to work, a marker title must be set)
         marker.showInfoWindow();
 
-        //At the end to avoid creating thread conflicts on the shout hashmaps
+        //How the camera reacts: at the end to avoid creating thread conflicts on the shout hashmaps
         if (selectionSource == MAP_FRAGMENT_ID || selectionSource == FEED_FRAGMENT_ID) {
             if (mMap.getCameraPosition().zoom <= Constants.CLICK_ON_SHOUT_IN_MAP_OR_FEED - 1) {
                 animateCameraToShout(shout, Constants.CLICK_ON_SHOUT_IN_MAP_OR_FEED);
@@ -452,17 +513,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
     }
 
-    private void deselectShout(int shoutId) {
-        Marker marker = displayedShoutMarkers.get(shoutId);
-        if (marker != null) {
-            marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
-        }
-    }
-
-    public void backFromShoutFragment(View view) {
-        showFragment(FEED_FRAGMENT_ID);
-        if (currentlySelectedShout != -1) {
-            deselectShout(currentlySelectedShout);
+    public void deselectShoutIfAnySelected() {
+        if (currentlySelectedShout != -1 && displayedShoutMarkers.containsKey(currentlySelectedShout)) {
+            displayedShoutMarkers.get(currentlySelectedShout).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.shout_marker));
             currentlySelectedShout = -1;
         }
     }
@@ -473,9 +526,24 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         toast.show();
     }
 
+    public void onBackPressed(View v) {
+        onBackPressed();
+    }
+
     @Override
     public void onBackPressed() {
+        if (visibleFrament() == addressSearchFragment) {
+            showFragment(FEED_FRAGMENT_ID);
+            addressSearchFragment.removeFocusFromSearchAddressView();
+            return;
+        }
+
+        if (visibleFrament() == shoutFragment) {
+            showFragment(FEED_FRAGMENT_ID);
+            deselectShoutIfAnySelected();
+            return;
+        }
+
         super.onBackPressed();
-        backFromShoutFragment(null);
     }
 }
