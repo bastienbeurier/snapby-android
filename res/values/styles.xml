@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="ShoutStyle" parent="@android:style/Theme.Holo">
+        <item name="android:actionBarStyle">@style/StreetShoutActionBar</item>
+    </style>
+
+    <style name="StreetShoutActionBar" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@drawable/action_bar_background</item>
+        <item name="android:titleTextStyle">@style/ActionBarText</item>
     </style>
 
     <style name="ShoutStyle.NoBar" parent="ShoutStyle">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="ActionBarText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/darkerShoutBlue</item>
     </style>
 
     <style name="NoTitleText">

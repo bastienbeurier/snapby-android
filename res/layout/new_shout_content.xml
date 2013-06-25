@@ -3,7 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="@color/darkGrey">
 
     <EditText android:id="@+id/shout_descr_dialog_name"
               android:inputType="textPersonName"
@@ -42,7 +43,8 @@
             android:layout_height="60dp"
             android:layout_width="match_parent"
             android:text="@string/new_shout_next_step"
-            android:background="@color/mediumGrey"
+            android:textColor="@color/darkerShoutBlue"
+            android:background="@drawable/rounded_button"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="15dp"
