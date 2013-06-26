@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/darkGrey"
+              android:paddingTop="10dp">
+
+    <LinearLayout android:layout_height="wrap_content"
+                  android:layout_width="match_parent"
+                  android:orientation="vertical"
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginRight="10dp"
+                  android:padding="1dp"
+                  android:background="@drawable/form_wrapper_borders">
+
+        <LinearLayout android:layout_height="60dp"
+                      android:layout_width="match_parent"
+                      style="@style/PreferenceButton"
+                      android:orientation="horizontal">
+
+            <TextView android:layout_height="match_parent"
+                      android:layout_width="match_parent"
+                      android:layout_weight="1"
+                      android:textColor="@android:color/white"
+                      android:textSize="14sp"
+                      android:gravity="left|center_vertical"
+                      android:text="@string/notification_preference_button"/>
+
+            <Spinner android:id="@+id/notification_preference_spinner"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:textSize="14sp"
+                     android:layout_gravity="center_vertical"
+                     android:layout_marginRight="10dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_height="60dp"
+                      android:layout_width="match_parent"
+                      style="@style/PreferenceButton"
+                      android:orientation="horizontal">
+
+            <TextView android:layout_height="match_parent"
+                      android:layout_width="match_parent"
+                      android:layout_weight="1"
+                      android:textColor="@android:color/white"
+                      android:textSize="14sp"
+                      android:gravity="left|center_vertical"
+                      android:text="@string/distance_unit_preference_button"/>
+
+            <Spinner android:id="@+id/distance_preference_spinner"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:textSize="14sp"
+                     android:layout_gravity="center_vertical"
+                     android:layout_marginRight="10dp"/>
+
+        </LinearLayout>
+
+        <Button
+                android:id="@+id/feedback_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                style="@style/PreferenceButton"
+                android:text="@string/feedback_preference_button"/>
+
+        <Button
+                android:id="@+id/rate_me_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                style="@style/PreferenceButton"
+                android:text="@string/rate_me_preference_button"/>
+
+    </LinearLayout>
+
+</LinearLayout>

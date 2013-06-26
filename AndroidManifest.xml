@@ -57,6 +57,9 @@
         <activity android:name=".Activities.NewShoutContentActivity"
                   android:label="New Shout (1/2): Content"
                   android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.SettingsActivity"
+                  android:label="Settings"
+                  android:screenOrientation="portrait"/>
         <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
                 android:value="AIzaSyAhJpucfrY791-bMEQHP0tbEe4gIIYcctQ"/>

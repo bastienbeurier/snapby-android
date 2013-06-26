@@ -6,7 +6,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class AppPreferences {
-    private static final String USER_NAME = "saved_user_name";
+    private static final String USER_NAME = "ss_saved_user_name";
+
+    private static final String DISTANCE_UNIT = "ss_saved_distance_unit";
+
+    private static final String NOTIFICATION_PREF = "ss_saved_notification_pref";
 
     private static final String APP_SHARED_PREFS = AppPreferences.class.getSimpleName();
 
@@ -25,6 +29,24 @@ public class AppPreferences {
 
     public void setUserNamePref(String value) {
         prefsEditor.putString(USER_NAME, value);
+        prefsEditor.commit();
+    }
+
+    public int getDistanceUnitPref() {
+        return sharedPrefs.getInt(DISTANCE_UNIT, -1);
+    }
+
+    public void setDistanceUnitPref(int value) {
+        prefsEditor.putInt(DISTANCE_UNIT, value);
+        prefsEditor.commit();
+    }
+
+    public int getNotificationPref() {
+        return sharedPrefs.getInt(NOTIFICATION_PREF, -1);
+    }
+
+    public void setNotificationPref(int value) {
+        prefsEditor.putInt(NOTIFICATION_PREF, value);
         prefsEditor.commit();
     }
 }

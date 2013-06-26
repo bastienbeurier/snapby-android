@@ -154,7 +154,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         boolean newMap = setUpMapIfNeeded();
         myLocation = getMyInitialLocation();
-        ApiUtils.sendDeviceInfo(this, aq, myLocation, null);
+        ApiUtils.sendDeviceInfo(this, aq, myLocation);
 
         //Handles case when user clicked a shout notification
         if (savedInstanceStateCameraPosition == null && getIntent().hasExtra("notificationShout")) {
@@ -192,7 +192,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     protected void onPause () {
         super.onPause();
 
-        ApiUtils.sendDeviceInfo(this, aq, myLocation, null);
+        ApiUtils.sendDeviceInfo(this, aq, myLocation);
     }
 
     private boolean setUpMapIfNeeded() {
@@ -273,9 +273,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO: remove
-                    Toast toast = Toast.makeText(NavActivity.this, "NOT YET IMPLEMENTED!!!", Toast.LENGTH_SHORT);
-                    toast.show();
+                    Intent settings = new Intent(NavActivity.this, SettingsActivity.class);
+                    startActivityForResult(settings, Constants.SETTINGS_REQUEST);
                 }
             });
 

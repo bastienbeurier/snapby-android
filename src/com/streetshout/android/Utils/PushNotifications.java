@@ -52,7 +52,7 @@ public class PushNotifications {
                     if (provider != null) {
                         Location location = locationManager.getLastKnownLocation(provider);
                         if (location != null) {
-                            ApiUtils.sendDeviceInfo(appCtx, aq, location, null);
+                            ApiUtils.sendDeviceInfo(appCtx, aq, location);
                         }
                     }
                 }

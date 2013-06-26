@@ -49,4 +49,8 @@
     <string name="new_shout_geocoding_successful">Shout location updated on map</string>
     <string name="new_shout_geocoding_failed">Not found or not nearby location</string>
     <string name="address_geocoding_failed">Location not found</string>
+    <string name="notification_preference_button">Notifications</string>
+    <string name="distance_unit_preference_button">Distance unit</string>
+    <string name="feedback_preference_button">Feedback or bug report</string>
+    <string name="rate_me_preference_button">Rate me!</string>
 </resources>

@@ -41,7 +41,7 @@ public class ApiUtils {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void sendDeviceInfo(Context context, AQuery aq, Location lastLocation, Integer notificationRadius) {
+    public static void sendDeviceInfo(Context context, AQuery aq, Location lastLocation) {
         String url = SITEURL + "/update_device_info";
 
         Map<String, Object> params = PushNotifications.getDeviceInfo(context);
@@ -50,9 +50,8 @@ public class ApiUtils {
             params.put("lng", lastLocation.getLongitude());
         }
 
-        if (notificationRadius != null) {
-            params.put("notification_radius", Integer.toString(notificationRadius));
-        }
+        AppPreferences appPrefs = new AppPreferences(context.getApplicationContext());
+        params.put("notification_radius", Integer.toString(appPrefs.getNotificationPref()));
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 

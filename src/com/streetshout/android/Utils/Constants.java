@@ -28,4 +28,5 @@ public class Constants {
     /** StartActivityForResult codes **/
     public static final int NEW_SHOUT_CONTENT_ACTIVITY_REQUEST = 13450;
     public static final int CREATE_SHOUT_REQUEST = 11101;
+    public static final int SETTINGS_REQUEST = 14760;
 }
