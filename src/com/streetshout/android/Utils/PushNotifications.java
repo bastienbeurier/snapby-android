@@ -3,7 +3,11 @@ package com.streetshout.android.Utils;
 import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
+import com.androidquery.AQuery;
 import com.streetshout.android.R;
 import com.streetshout.android.Receivers.PushNotificationReceiver;
 import com.urbanairship.AirshipConfigOptions;
@@ -16,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PushNotifications {
-    public static void initialize(Application appCtx) {
+    public static void initialize(final Application appCtx) {
         //Start Urban Airship push notifications
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(appCtx);
         if (Constants.PRODUCTION) {
@@ -25,6 +29,8 @@ public class PushNotifications {
             options.inProduction = false;
         }
         UAirship.takeOff(appCtx, options);
+
+        final AQuery aq = new AQuery(appCtx);
 
         // Status bar Icon
         BasicPushNotificationBuilder nb = new BasicPushNotificationBuilder() {
@@ -36,6 +42,21 @@ public class PushNotifications {
                 notification.icon = R.drawable.ic_stat_notify_shout;
                 // The icon displayed within the notification content
                 notification.contentView.setImageViewResource(android.R.id.icon, R.drawable.ic_stat_notify_shout);
+
+                //Send recent location when user receives a notification
+                LocationManager locationManager = (LocationManager) appCtx.getSystemService(appCtx.LOCATION_SERVICE);
+                if (locationManager != null) {
+                    Criteria criteria = new Criteria();
+                    criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                    String provider = locationManager.getBestProvider(criteria, true);
+                    if (provider != null) {
+                        Location location = locationManager.getLastKnownLocation(provider);
+                        if (location != null) {
+                            ApiUtils.sendDeviceInfo(appCtx, aq, location, null);
+                        }
+                    }
+                }
+
                 return notification;
             }
 
