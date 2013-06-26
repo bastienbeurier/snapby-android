@@ -40,8 +40,6 @@ import java.util.List;
 
 public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener, AddressSearchFragment.OnAddressValidateListener {
 
-
-
     private static int FEED_FRAGMENT_ID = R.id.feed_fragment;
 
     private static int MAP_FRAGMENT_ID = R.id.map;
@@ -78,6 +76,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private AddressSearchFragment addressSearchFragment = null;
 
     public int currentlySelectedShout = -1;
+
+    private boolean notificationRedirectionHandled = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,7 +157,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         ApiUtils.sendDeviceInfo(this, aq, myLocation);
 
         //Handles case when user clicked a shout notification
-        if (savedInstanceStateCameraPosition == null && getIntent().hasExtra("notificationShout")) {
+        if (!notificationRedirectionHandled && savedInstanceStateCameraPosition == null && getIntent().hasExtra("notificationShout")) {
+            //To avoid going through here after before OnActivityResult
+            notificationRedirectionHandled = true;
             JSONObject rawShout = null;
             try {
                 rawShout = new JSONObject(getIntent().getStringExtra("notificationShout"));
@@ -221,7 +223,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
-                    pullShouts(cameraPosition);
+                    pullShouts();
                 }
             });
 
@@ -316,7 +318,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         mMap.moveCamera(update);
     }
 
-    private void pullShouts(CameraPosition cameraPosition) {
+    private void pullShouts() {
         MapRequestHandler mapReqHandler = new MapRequestHandler();
 
         feedFragment.showFeedProgressBar();
