@@ -279,6 +279,17 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 }
             });
 
+            if (Constants.PRODUCTION) {
+                findViewById(R.id.start_demo_button).setVisibility(View.GONE);
+            } else {
+                findViewById(R.id.start_demo_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ApiUtils.startDemo(aq);
+                    }
+                });
+            }
+
             return true;
         }
 
@@ -421,16 +432,17 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     @Override
     public void onAddressValidate(double lat, double lng) {
+        addressSearchFragment.removeFocusFromSearchAddressView();
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), Constants.SEARCH_ADDRESS_IN_NAV);
         mMap.animateCamera(update, new GoogleMap.CancelableCallback() {
             @Override
             public void onFinish() {
-                onBackPressed();
+                showFragment(FEED_FRAGMENT_ID);
             }
 
             @Override
             public void onCancel() {
-                onBackPressed();
+                showFragment(FEED_FRAGMENT_ID);
             }
         });
     }
