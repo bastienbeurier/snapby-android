@@ -50,7 +50,7 @@ public class NewShoutFeedAdapter extends BaseAdapter {
                 Location shoutLocation = new Location("");
                 shoutLocation.setLatitude(shout.lat);
                 shoutLocation.setLongitude(shout.lng);
-                shoutStamp += ", " + LocationUtils.formatedDistanceInMeters(myLocation, shoutLocation) + ",";
+                shoutStamp += ", " + LocationUtils.formatedDistance(context, myLocation, shoutLocation) + ",";
             }
 
             shoutStamp += " by " + shout.displayName;

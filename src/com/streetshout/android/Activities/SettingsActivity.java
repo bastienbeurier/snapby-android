@@ -1,9 +1,12 @@
 package com.streetshout.android.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,7 +19,6 @@ import com.streetshout.android.R;
 import com.streetshout.android.Utils.ApiUtils;
 import com.streetshout.android.Utils.AppPreferences;
 import com.streetshout.android.Utils.GeneralUtils;
-import com.streetshout.android.Utils.PushNotifications;
 
 public class SettingsActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
@@ -43,51 +45,44 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         findViewById(R.id.feedback_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(SettingsActivity.this, "NOT YET IMPLEMENTED!!!", Toast.LENGTH_SHORT);
-                toast.show();
+                Intent feedbackIntent = new Intent(Intent.ACTION_SEND);
+                feedbackIntent.setType("plain/text");
+
+                feedbackIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "info@street-shout.com" });
+                feedbackIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feed_back_mail_title, GeneralUtils.getAppVersion(SettingsActivity.this)));
+                startActivity(Intent.createChooser(feedbackIntent, ""));
             }
         });
 
         findViewById(R.id.rate_me_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(SettingsActivity.this, "NOT YET IMPLEMENTED!!!", Toast.LENGTH_SHORT);
-                toast.show();
+                Context ctx = SettingsActivity.this.getApplicationContext();
+                try {
+                    Uri uri = Uri.parse("market://search?q=street+shout&c=apps");
+                    Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(goToMarket);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(ctx, getString(R.string.no_google_play_store), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        findViewById(R.id.notification_help_button_wrapper).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                builder.setMessage(R.string.notification_preference_dialog_instruction).setTitle(R.string.notification_preference_dialog_title);
+                builder.create().show();
             }
         });
 
         notificationSpinner = (Spinner) findViewById(R.id.notification_preference_spinner);
-        ArrayAdapter<CharSequence> notificationAdapter = null;
-
-        int distancePref = appPrefs.getDistanceUnitPref();
-
-        if (distancePref == 1) {
-            notificationAdapter = ArrayAdapter.createFromResource(this, R.array.miles_notification_preference_array, android.R.layout.simple_spinner_item);
-            notificationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        } else {
-            notificationAdapter = ArrayAdapter.createFromResource(this, R.array.meters_notification_preference_array, android.R.layout.simple_spinner_item);
-            notificationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        }
-
-        notificationSpinner.setAdapter(notificationAdapter);
+        setNotificationSpinnerAdapter();
         notificationSpinner.setOnItemSelectedListener(this);
 
-        int notificationPref = appPrefs.getNotificationPref();
-        if (notificationPref != -1) {
-            notificationSpinner.setSelection(notificationPref);
-        } else {
-            notificationSpinner.setSelection(3);
-        }
-
         distanceSpinner = (Spinner) findViewById(R.id.distance_preference_spinner);
-        ArrayAdapter<CharSequence> distanceAdapter = ArrayAdapter.createFromResource(this, R.array.distance_preference_array, android.R.layout.simple_spinner_item);
-        distanceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        distanceSpinner.setAdapter(distanceAdapter);
-        distanceSpinner.setOnItemSelectedListener(this);
-
-        if (distancePref != -1) {
-            distanceSpinner.setSelection(distancePref);
-        }
+        setDistanceSpinnerAdapter();
     }
 
     @Override
@@ -104,22 +99,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
             appPrefs.setDistanceUnitPref(pos);
 
             //Modify the notification spinner according to right distance unit
-            ArrayAdapter<CharSequence> notificationAdapter = null;
-            if (pos == 1) {
-                notificationAdapter = ArrayAdapter.createFromResource(this, R.array.miles_notification_preference_array, android.R.layout.simple_spinner_item);
-                notificationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            } else {
-                notificationAdapter = ArrayAdapter.createFromResource(this, R.array.meters_notification_preference_array, android.R.layout.simple_spinner_item);
-                notificationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            }
-            notificationSpinner.setAdapter(notificationAdapter);
-
-            int notificationPref = appPrefs.getNotificationPref();
-            if (notificationPref != -1) {
-                notificationSpinner.setSelection(notificationPref);
-            } else {
-                notificationSpinner.setSelection(3);
-            }
+            setNotificationSpinnerAdapter();
         }
 
         if (parent.getId() == R.id.notification_preference_spinner) {
@@ -129,6 +109,43 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
+        //Nothing
+    }
+
+    private void setNotificationSpinnerAdapter() {
+        ArrayAdapter<CharSequence> notificationAdapter = null;
+
+        int distancePref = appPrefs.getDistanceUnitPref();
+
+        if (distancePref == 1) {
+            notificationAdapter = ArrayAdapter.createFromResource(this, R.array.miles_notification_preference_array, android.R.layout.simple_spinner_item);
+            notificationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        } else {
+            notificationAdapter = ArrayAdapter.createFromResource(this, R.array.meters_notification_preference_array, android.R.layout.simple_spinner_item);
+            notificationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+
+        notificationSpinner.setAdapter(notificationAdapter);
+
+        int notificationPref = appPrefs.getNotificationPref();
+        if (notificationPref != -1) {
+            notificationSpinner.setSelection(notificationPref);
+        } else {
+            notificationSpinner.setSelection(3);
+        }
+    }
+
+    private void setDistanceSpinnerAdapter() {
+        int distancePref = appPrefs.getDistanceUnitPref();
+
+        ArrayAdapter<CharSequence> distanceAdapter = ArrayAdapter.createFromResource(this, R.array.distance_preference_array, android.R.layout.simple_spinner_item);
+        distanceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        distanceSpinner.setAdapter(distanceAdapter);
+        distanceSpinner.setOnItemSelectedListener(this);
+
+        if (distancePref != -1) {
+            distanceSpinner.setSelection(distancePref);
+        }
+
     }
 }

@@ -67,7 +67,7 @@ public class ShoutFragment extends Fragment {
             Location shoutLocation = new Location("");
             shoutLocation.setLatitude(shout.lat);
             shoutLocation.setLongitude(shout.lng);
-            shoutStamp += ", " + LocationUtils.formatedDistanceInMeters(myLocation, shoutLocation);
+            shoutStamp += ", " + LocationUtils.formatedDistance(getActivity(), myLocation, shoutLocation);
         }
 
         timeStampView.setText(shoutStamp);

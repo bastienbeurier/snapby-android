@@ -285,6 +285,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                     @Override
                     public void onClick(View v) {
                         ApiUtils.startDemo(aq);
+                        v.setVisibility(View.GONE);
                     }
                 });
             }

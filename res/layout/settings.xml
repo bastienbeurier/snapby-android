@@ -21,12 +21,34 @@
                       android:orientation="horizontal">
 
             <TextView android:layout_height="match_parent"
-                      android:layout_width="match_parent"
-                      android:layout_weight="1"
+                      android:layout_width="wrap_content"
                       android:textColor="@android:color/white"
                       android:textSize="14sp"
                       android:gravity="left|center_vertical"
                       android:text="@string/notification_preference_button"/>
+
+            <FrameLayout android:id="@+id/notification_help_button_wrapper"
+                         android:layout_width="40dp"
+                         android:layout_height="40dp"
+                         android:layout_gravity="center_vertical"
+                         android:background="@drawable/blue_highlight_button_selector">
+
+                <ImageView
+
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/notification_help_button_selector"
+                        android:src="@drawable/ic_action_help"
+                        android:padding="2dp"/>
+
+            </FrameLayout>
+
+
+            <View android:layout_weight="1"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"/>
 
             <Spinner android:id="@+id/notification_preference_spinner"
                      android:layout_width="wrap_content"

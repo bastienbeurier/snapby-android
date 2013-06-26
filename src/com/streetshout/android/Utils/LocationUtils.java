@@ -1,5 +1,6 @@
 package com.streetshout.android.Utils;
 
+import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -69,8 +70,19 @@ public class LocationUtils {
         return new LatLng[] {southWest, northEast};
     }
 
-    public static String formatedDistanceInMeters(Location loc1, Location loc2) {
+    public static String formatedDistance(Context ctx, Location loc1, Location loc2) {
         int distance = (int) (loc1.distanceTo(loc2));
+
+        AppPreferences appPrefs = new AppPreferences(ctx.getApplicationContext());
+
+        if (appPrefs.getDistanceUnitPref() == 1) {
+            return formatedDistanceInMiles(distance);
+        } else {
+            return formatedDistanceInMeters(distance);
+        }
+    }
+
+    public static String formatedDistanceInMeters(int distance) {
 
         if (distance < 100) {
             return "nearby";
@@ -79,7 +91,24 @@ public class LocationUtils {
         } else if (distance < 10000) {
             return (Math.round(distance / 1000.0)) + "km away";
         } else if (distance < 100000 ) {
-            return (Math.round(distance / 10000.0) * 10) + "kms away";
+            return (Math.round(distance / 10000.0) * 10) + "km away";
+        } else {
+            return "far away";
+        }
+    }
+
+    public static String formatedDistanceInMiles(int distance) {
+        long distanceYd = Math.round(distance * 1.09361);
+        long distanceMiles = Math.round(distance * 0.000621371);
+
+        if (distanceYd < 100) {
+            return "nearby";
+        } else if (distanceMiles < 1) {
+            return (Math.round(distanceYd / 100.0) * 100) + "yd away";
+        } else if (distanceMiles < 10) {
+            return distanceMiles + "mi away";
+        } else if (distanceMiles < 100 ) {
+            return (Math.round(distanceMiles / 10.0) * 10) + "mi away";
         } else {
             return "far away";
         }
