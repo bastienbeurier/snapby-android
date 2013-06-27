@@ -1,4 +1,4 @@
-package com.streetshout.android.Activities;
+package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,13 +23,13 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.streetshout.android.Adapters.MapWindowAdapter;
-import com.streetshout.android.Fragments.AddressSearchFragment;
-import com.streetshout.android.Fragments.FeedFragment;
-import com.streetshout.android.Fragments.ShoutFragment;
-import com.streetshout.android.Models.ShoutModel;
+import com.streetshout.android.adapters.MapWindowAdapter;
+import com.streetshout.android.fragments.AddressSearchFragment;
+import com.streetshout.android.fragments.FeedFragment;
+import com.streetshout.android.fragments.ShoutFragment;
+import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.*;
+import com.streetshout.android.utils.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

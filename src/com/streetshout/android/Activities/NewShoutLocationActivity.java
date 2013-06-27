@@ -1,4 +1,4 @@
-package com.streetshout.android.Activities;
+package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -31,10 +31,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.streetshout.android.Models.ShoutModel;
+import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.Constants;
-import com.streetshout.android.Utils.LocationUtils;
+import com.streetshout.android.utils.Constants;
+import com.streetshout.android.utils.LocationUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 

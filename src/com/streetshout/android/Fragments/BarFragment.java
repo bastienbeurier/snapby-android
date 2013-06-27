@@ -1,4 +1,4 @@
-package com.streetshout.android.Fragments;
+package com.streetshout.android.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;

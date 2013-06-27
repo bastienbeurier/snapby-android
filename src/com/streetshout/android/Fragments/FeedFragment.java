@@ -1,4 +1,4 @@
-package com.streetshout.android.Fragments;
+package com.streetshout.android.fragments;
 
 
 import android.app.Activity;
@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import com.streetshout.android.Adapters.NewShoutFeedAdapter;
-import com.streetshout.android.Models.ShoutModel;
+import com.streetshout.android.adapters.NewShoutFeedAdapter;
+import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
 
 import java.util.ArrayList;

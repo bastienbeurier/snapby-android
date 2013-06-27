@@ -9,19 +9,19 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent">
 
-        <fragment android:name="com.streetshout.android.Fragments.ShoutFragment"
+        <fragment android:name="com.streetshout.android.fragments.ShoutFragment"
                   android:id="@+id/shout_fragment"
                   android:layout_weight="1.2"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent" />
 
-        <fragment android:name="com.streetshout.android.Fragments.FeedFragment"
+        <fragment android:name="com.streetshout.android.fragments.FeedFragment"
                   android:id="@+id/feed_fragment"
                   android:layout_weight="1.2"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent" />
 
-        <fragment android:name="com.streetshout.android.Fragments.AddressSearchFragment"
+        <fragment android:name="com.streetshout.android.fragments.AddressSearchFragment"
                   android:id="@+id/address_search_fragment"
                   android:layout_weight="1.2"
                   android:layout_width="match_parent"
@@ -108,7 +108,7 @@
         <View android:layout_height="40dp"
               android:layout_width="match_parent"/>
 
-        <fragment android:name="com.streetshout.android.Fragments.BarFragment"
+        <fragment android:name="com.streetshout.android.fragments.BarFragment"
                   android:id="@+id/bar_fragment"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"/>

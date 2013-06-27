@@ -1,17 +1,16 @@
-package com.streetshout.android.Models;
+package com.streetshout.android.models;
 
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
-import com.streetshout.android.Utils.ApiUtils;
+import com.streetshout.android.utils.ApiUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Model for shouts

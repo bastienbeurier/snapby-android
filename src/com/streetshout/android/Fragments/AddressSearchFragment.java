@@ -1,4 +1,4 @@
-package com.streetshout.android.Fragments;
+package com.streetshout.android.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -18,7 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.LocationUtils;
+import com.streetshout.android.utils.LocationUtils;
 
 public class AddressSearchFragment extends Fragment {
 

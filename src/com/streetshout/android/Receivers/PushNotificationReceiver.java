@@ -1,11 +1,10 @@
-package com.streetshout.android.Receivers;
+package com.streetshout.android.receivers;
 
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-import com.streetshout.android.Activities.NavActivity;
+import com.streetshout.android.activities.NavActivity;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 

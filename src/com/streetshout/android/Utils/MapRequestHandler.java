@@ -1,4 +1,4 @@
-package com.streetshout.android.Utils;
+package com.streetshout.android.utils;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;

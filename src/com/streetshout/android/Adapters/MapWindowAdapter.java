@@ -1,4 +1,4 @@
-package com.streetshout.android.Adapters;
+package com.streetshout.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;

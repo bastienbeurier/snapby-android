@@ -1,4 +1,4 @@
-package com.streetshout.android.Activities;
+package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,9 +16,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.ApiUtils;
-import com.streetshout.android.Utils.AppPreferences;
-import com.streetshout.android.Utils.GeneralUtils;
+import com.streetshout.android.utils.ApiUtils;
+import com.streetshout.android.utils.AppPreferences;
+import com.streetshout.android.utils.GeneralUtils;
 
 public class SettingsActivity extends Activity implements AdapterView.OnItemSelectedListener {
 

@@ -1,4 +1,4 @@
-package com.streetshout.android.Utils;
+package com.streetshout.android.utils;
 
 public class Constants {
     public static final boolean PRODUCTION = false;

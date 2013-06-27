@@ -1,24 +1,17 @@
-package com.streetshout.android.Fragments;
+package com.streetshout.android.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.streetshout.android.Models.ShoutModel;
+import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.GeneralUtils;
-import com.streetshout.android.Utils.LocationUtils;
-import com.streetshout.android.Utils.TimeUtils;
-import org.json.JSONObject;
+import com.streetshout.android.utils.LocationUtils;
+import com.streetshout.android.utils.TimeUtils;
 
 public class ShoutFragment extends Fragment {
     TextView userNameView = null;

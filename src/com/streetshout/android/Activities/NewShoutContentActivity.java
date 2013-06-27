@@ -1,4 +1,4 @@
-package com.streetshout.android.Activities;
+package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,8 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.AppPreferences;
-import com.streetshout.android.Utils.Constants;
+import com.streetshout.android.utils.AppPreferences;
+import com.streetshout.android.utils.Constants;
 
 public class NewShoutContentActivity extends Activity {
     private static int MAX_SHOUT_DESCR_LINES = 6;

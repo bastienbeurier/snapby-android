@@ -1,4 +1,4 @@
-package com.streetshout.android.Utils;
+package com.streetshout.android.utils;
 
 import android.app.Application;
 import android.app.Notification;
@@ -9,7 +9,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
-import com.streetshout.android.Receivers.PushNotificationReceiver;
+import com.streetshout.android.receivers.PushNotificationReceiver;
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.BasicPushNotificationBuilder;

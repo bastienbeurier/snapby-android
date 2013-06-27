@@ -1,4 +1,4 @@
-package com.streetshout.android.Adapters;
+package com.streetshout.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.streetshout.android.Models.ShoutModel;
+import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
-import com.streetshout.android.Utils.LocationUtils;
-import com.streetshout.android.Utils.TimeUtils;
+import com.streetshout.android.utils.LocationUtils;
+import com.streetshout.android.utils.TimeUtils;
 
 import java.util.ArrayList;
 
