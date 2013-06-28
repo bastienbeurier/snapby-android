@@ -1,7 +1,7 @@
 package com.streetshout.android.utils;
 
 public class Constants {
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION = true;
 
     public static final boolean ADMIN = false;
 
@@ -29,4 +29,8 @@ public class Constants {
     public static final int NEW_SHOUT_CONTENT_ACTIVITY_REQUEST = 13450;
     public static final int CREATE_SHOUT_REQUEST = 11101;
     public static final int SETTINGS_REQUEST = 14760;
+    public static final int UPLOAD_PHOTO_REQUEST = 15849;
+
+    /** AWS S3 **/
+    public static final String PICTURE_BUCKET = "street-shout1";
 }

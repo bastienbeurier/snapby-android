@@ -23,6 +23,10 @@ public class AppPreferences {
         this.prefsEditor = sharedPrefs.edit();
     }
 
+    public SharedPreferences getSharedPrefs() {
+        return sharedPrefs;
+    }
+
     public String getUserNamePref() {
         return sharedPrefs.getString(USER_NAME, "");
     }
