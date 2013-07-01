@@ -1,12 +1,16 @@
 package com.streetshout.android.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -18,18 +22,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import com.streetshout.android.R;
+import com.streetshout.android.aws.AmazonClientManager;
+import com.streetshout.android.aws.S3;
+import com.streetshout.android.tvmclient.Response;
 import com.streetshout.android.utils.AppPreferences;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.StreetShoutApplication;
 
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +54,10 @@ public class NewShoutContentActivity extends Activity {
 
     private String photoPath = null;
 
+    private Bitmap photoBitmap = null;
+
+    public static AmazonClientManager clientManager = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_shout_content);
@@ -52,6 +66,9 @@ public class NewShoutContentActivity extends Activity {
         getActionBar().setDisplayShowHomeEnabled(false);
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        clientManager = new AmazonClientManager(getSharedPreferences(
+                "com.streetshout.android", Context.MODE_PRIVATE));
 
         //Set user name if we have it
         EditText userNameView = (EditText) findViewById(R.id.shout_descr_dialog_name);
@@ -124,30 +141,15 @@ public class NewShoutContentActivity extends Activity {
             //Save user name in prefs
             appPrefs.setUserNamePref(userName);
 
-            AmazonS3Client s3Client = ((StreetShoutApplication) getApplicationContext()).getS3Client();
+            String photoName = userName + "--" + (new Date()).getTime();
 
-            if (s3Client == null) {
-                Log.d("BAB", "S3 CLIENT IS NULL");
-            }
-
-            //Put image in S3 bucket
-            PutObjectRequest por = new PutObjectRequest(Constants.PICTURE_BUCKET, "street-shout-first-picture", new java.io.File(photoPath));
-            s3Client.putObject(por);
-
-            //Request a URL for this image
-            ResponseHeaderOverrides override = new ResponseHeaderOverrides();override.setContentType( "image/jpeg" );
-            GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(Constants.PICTURE_BUCKET, "street-shout-first-picture");
-            //Url expires in 24 hours
-            urlRequest.setExpiration(new Date(System.currentTimeMillis() + Constants.SHOUT_DURATION));
-            urlRequest.setResponseHeaders(override);
-            URL url = s3Client.generatePresignedUrl(urlRequest);
-
-            Log.d("BAB", "Photo URL: " + url);
+            new ValidateCredentialsTask().execute(photoName);
 
             Intent newShoutNextStep = new Intent(NewShoutContentActivity.this, NewShoutLocationActivity.class);
             newShoutNextStep.putExtra("userName", userName);
             newShoutNextStep.putExtra("shoutDescription", shoutDescription);
             newShoutNextStep.putExtra("myLocation", getIntent().getParcelableExtra("myLocation"));
+            newShoutNextStep.putExtra("photoName", photoName);
             startActivityForResult(newShoutNextStep, Constants.NEW_SHOUT_CONTENT_ACTIVITY_REQUEST);
         }
     }
@@ -176,7 +178,8 @@ public class NewShoutContentActivity extends Activity {
                 cursor.close();
 
                 ImageView imageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
-                imageView.setImageBitmap(BitmapFactory.decodeFile(photoPath));
+                photoBitmap = BitmapFactory.decodeFile(photoPath);
+                imageView.setImageBitmap(photoBitmap);
             }
         }
     }
@@ -201,5 +204,33 @@ public class NewShoutContentActivity extends Activity {
 
 
         startActivityForResult(chooserIntent, Constants.UPLOAD_PHOTO_REQUEST);
+    }
+
+    private class ValidateCredentialsTask extends
+            AsyncTask<String, Void, Response> {
+
+        String photoName = null;
+
+        protected Response doInBackground(String... params) {
+            photoName = params[0];
+
+            return NewShoutContentActivity.clientManager.validateCredentials();
+        }
+
+        protected void onPostExecute(Response response) {
+            if (response != null && response.requestWasSuccessful()) {
+                Thread t = new Thread() {
+                    @Override
+                    public void run(){
+                        try{
+                            S3.addImageInBucket(photoPath, photoName);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                t.start();
+            }
+        }
     }
 }
