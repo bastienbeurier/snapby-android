@@ -34,16 +34,36 @@
                   android:orientation="vertical"
                   android:layout_weight="1"
                   android:background="@drawable/blue_highlight_button_selector">
-        <TextView
-                android:id="@+id/shout_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:textSize="22dp"
-                android:textStyle="bold"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"/>
+
+        <LinearLayout android:layout_height="wrap_content"
+                      android:layout_width="match_parent"
+                      android:orientation="horizontal"
+                      android:layout_marginTop="15dp"
+                      android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp">
+
+            <TextView
+                    android:id="@+id/shout_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:textSize="22dp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"/>
+
+            <View android:layout_height="match_parent"
+                  android:layout_width="match_parent"
+                  android:layout_weight="1"/>
+
+            <ImageView android:id="@+id/shout_fragment_image"
+                       android:layout_width="80dp"
+                       android:layout_height="80dp"
+                       android:src="@drawable/ic_default_image"
+                       android:layout_gravity="right"
+                       android:visibility="gone"/>
+
+        </LinearLayout>
+
         <TextView
                 android:id="@+id/shout_body"
                 android:textSize="16dp"
@@ -51,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"/>
+
 
         <TextView
                 android:id="@+id/shout_stamp"
@@ -62,6 +83,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="30dp"/>
+
     </LinearLayout>
 
     <View   android:layout_height="match_parent"

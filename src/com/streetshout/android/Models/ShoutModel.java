@@ -37,6 +37,8 @@ public class ShoutModel implements Parcelable {
 
     public String displayName = "";
 
+    public String image = "";
+
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static ArrayList<ShoutModel> rawShoutsToInstances(JSONArray rawShouts) {
         ArrayList<ShoutModel> shouts = new ArrayList<ShoutModel>();
@@ -54,6 +56,8 @@ public class ShoutModel implements Parcelable {
                     shout.created = rawShout.getString("created_at");
                     shout.source = rawShout.getString("source");
                     shout.displayName = rawShout.getString("display_name");
+                    shout.image = rawShout.getString("image");
+                    shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
                     shouts.add(shout);
                 }
             } catch (JSONException e) {
@@ -75,6 +79,8 @@ public class ShoutModel implements Parcelable {
                 shout.description = rawShout.getString("description");
                 shout.created = rawShout.getString("created_at");
                 shout.displayName = rawShout.getString("display_name");
+                shout.image = rawShout.getString("image");
+                shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -84,8 +90,8 @@ public class ShoutModel implements Parcelable {
     }
 
     /** User creates a new shout */
-    public static void createShout(Context ctx, AQuery aq, double lat, double lng, String userName, String description, AjaxCallback<JSONObject> cb) {
-        ApiUtils.createShout(ctx, aq, lat, lng, userName, description, cb);
+    public static void createShout(Context ctx, AQuery aq, double lat, double lng, String userName, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
+        ApiUtils.createShout(ctx, aq, lat, lng, userName, description, shoutImageUrl, cb);
     }
 
     /**
@@ -132,6 +138,7 @@ public class ShoutModel implements Parcelable {
         out.writeInt(id);
         out.writeDouble(lat);
         out.writeDouble(lng);
+        out.writeString(image);
     }
 
     /**
@@ -145,5 +152,6 @@ public class ShoutModel implements Parcelable {
         id = in.readInt();
         lat = in.readDouble();
         lng = in.readDouble();
+        image = in.readString();
     }
 }

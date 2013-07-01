@@ -1,7 +1,7 @@
 package com.streetshout.android.utils;
 
 public class Constants {
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
 
     public static final boolean ADMIN = false;
 
@@ -33,4 +33,5 @@ public class Constants {
 
     /** AWS S3 **/
     public static final String PICTURE_BUCKET = "street-shout1";
+    public static final String S3_URL = "street-shout1.s3.amazonaws.com/";
 }

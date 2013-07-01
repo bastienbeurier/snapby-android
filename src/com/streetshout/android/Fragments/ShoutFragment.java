@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import com.androidquery.AQuery;
 import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.LocationUtils;
@@ -20,13 +23,19 @@ public class ShoutFragment extends Fragment {
 
     TextView timeStampView = null;
 
+    ImageView imageView = null;
+
     ShoutModel currentDisplayedShout = null;
 
     private OnShoutSelectedListener shoutSelectedListener;
 
+    private AQuery fragmentAQuery = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        fragmentAQuery = new AQuery(getActivity());
+
         return inflater.inflate(R.layout.shout_fragment, container, false);
     }
 
@@ -37,6 +46,7 @@ public class ShoutFragment extends Fragment {
         userNameView = (TextView) getView().findViewById(R.id.shout_title);
         descriptionView = (TextView) getView().findViewById(R.id.shout_body);
         timeStampView = (TextView) getView().findViewById(R.id.shout_stamp);
+        imageView = (ImageView) getView().findViewById(R.id.shout_fragment_image);
 
         userNameView.setText(getString(R.string.no_shout_displayed));
 
@@ -61,6 +71,14 @@ public class ShoutFragment extends Fragment {
             shoutLocation.setLatitude(shout.lat);
             shoutLocation.setLongitude(shout.lng);
             shoutStamp += ", " + LocationUtils.formatedDistance(getActivity(), myLocation, shoutLocation);
+        }
+
+        if (shout.image != null && shout.image.length() > 0) {
+            Log.d("BAB", "image: " + shout.image);
+            fragmentAQuery.id(imageView).image(shout.image, false, true, 0, R.drawable.ic_default_image);
+            imageView.setVisibility(View.VISIBLE);
+        } else {
+            imageView.setVisibility(View.GONE);
         }
 
         timeStampView.setText(shoutStamp);

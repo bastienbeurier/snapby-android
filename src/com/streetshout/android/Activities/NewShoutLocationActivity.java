@@ -227,7 +227,13 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
 
         final ProgressDialog createShoutDialog = ProgressDialog.show(NewShoutLocationActivity.this, "",getString(R.string.shout_processing), false);
 
-        ShoutModel.createShout(NewShoutLocationActivity.this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, new AjaxCallback<JSONObject>() {
+        String shoutImageUrl = null;
+
+        if (getIntent().hasExtra("shoutImageUrl")) {
+            shoutImageUrl = getIntent().getStringExtra("shoutImageUrl");
+        };
+
+        ShoutModel.createShout(NewShoutLocationActivity.this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, shoutImageUrl, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);

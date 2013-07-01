@@ -29,9 +29,12 @@ import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.streetshout.android.activities.NewShoutContentActivity;
 import com.streetshout.android.utils.Constants;
+import com.streetshout.android.utils.ImageUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -49,8 +52,9 @@ public class S3 {
 
     public static void addImageInBucket(String photoPath, String photoName) {
         try {
-            PutObjectRequest por = new PutObjectRequest(Constants.PICTURE_BUCKET, photoName, new java.io.File(photoPath));
             try {
+                ImageUtils.storeBitmapInFile(photoPath, ImageUtils.shrinkBitmap(photoPath, 400, 400));
+                PutObjectRequest por = new PutObjectRequest(Constants.PICTURE_BUCKET, photoName, new java.io.File(photoPath));
                 getInstance().putObject(por);
             } catch (Exception e) {
                 e.printStackTrace();
