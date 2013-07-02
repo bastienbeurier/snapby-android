@@ -7,6 +7,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -30,6 +32,7 @@ import com.streetshout.android.fragments.ShoutFragment;
 import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.*;
+import net.hockeyapp.android.CrashManagerListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +40,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
 
 public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener, AddressSearchFragment.OnAddressValidateListener {
 
@@ -151,6 +157,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     protected void onResume() {
         super.onResume();
 
+        checkForCrashes();
+        checkForUpdates();
 
         boolean newMap = setUpMapIfNeeded();
         myLocation = getMyInitialLocation();
@@ -559,5 +567,14 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
 
         super.onBackPressed();
+    }
+
+    private void checkForCrashes() {
+        CrashManager.register(this, "d8088fe6145a4b3dbf56d2d2f2289de9");
+    }
+
+    private void checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this, "d8088fe6145a4b3dbf56d2d2f2289de9");
     }
 }
