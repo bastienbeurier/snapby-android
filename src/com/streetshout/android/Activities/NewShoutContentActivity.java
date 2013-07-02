@@ -169,6 +169,7 @@ public class NewShoutContentActivity extends Activity {
 
                 ImageView imageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
                 imageView.setImageBitmap(BitmapFactory.decodeFile(photoPath));
+                imageView.setScaleType(ImageView.ScaleType.MATRIX);
             }
         }
     }

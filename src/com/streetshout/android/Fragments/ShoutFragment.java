@@ -2,6 +2,7 @@ package com.streetshout.android.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,8 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.androidquery.AQuery;
+import com.streetshout.android.activities.DisplayImageActivity;
 import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.TimeUtils;
 
@@ -60,7 +63,7 @@ public class ShoutFragment extends Fragment {
         });
     }
 
-    public void displayShoutInFragment(ShoutModel shout, Location myLocation) {
+    public void displayShoutInFragment(final ShoutModel shout, Location myLocation) {
         currentDisplayedShout = shout;
 
         userNameView.setText(shout.displayName);
@@ -75,8 +78,16 @@ public class ShoutFragment extends Fragment {
 
         if (shout.image != null && shout.image.length() > 0) {
             Log.d("BAB", "image: " + shout.image);
-            fragmentAQuery.id(imageView).image(shout.image, false, true, 0, R.drawable.ic_default_image);
+            fragmentAQuery.id(imageView)    .image(shout.image + "--75", false, true, 0, 0, null, AQuery.FADE_IN, 1.0f / 1.0f);
             imageView.setVisibility(View.VISIBLE);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent displayImage = new Intent(getActivity(), DisplayImageActivity.class);
+                    displayImage.putExtra("image", shout.image);
+                    startActivityForResult(displayImage, Constants.DISPLAY_PHOTO_REQUEST);
+                }
+            });
         } else {
             imageView.setVisibility(View.GONE);
         }

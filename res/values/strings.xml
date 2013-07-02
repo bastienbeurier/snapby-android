@@ -11,6 +11,7 @@
     <string name="create_shout_dialog">What\'s happening around you?</string>
     <string name="create_shout_dialog_title">Create a shout</string>
     <string name="create_shout_dialog_count">140 characters</string>
+    <string name="add_image_to_shout_instruction">Attach a picture to your shout (optional):</string>
     <string name="characters">characters</string>
     <string name="create_shout_button">Tap to shout!</string>
     <string name="create_shout_success">Congrats for shouting your truth!</string>
@@ -35,7 +36,7 @@
     <string name="just_now">just now</string>
     <string name="no_connection">No internet connection</string>
     <string name="no_shout_displayed">No shout displayed...</string>
-    <string name="status_bar_notification_title">New shout in area of interest</string>
+    <string name="status_bar_notification_title">New shout in your area</string>
     <string name="create_shout_map_instruction">Hold and drag arrow to refine location...</string>
     <string name="create_shout_address_instruction">...or enter nearby address</string>
     <string name="nav_activity_address_instruction">Go to address or location:</string>

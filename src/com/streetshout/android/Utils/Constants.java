@@ -30,8 +30,13 @@ public class Constants {
     public static final int CREATE_SHOUT_REQUEST = 11101;
     public static final int SETTINGS_REQUEST = 14760;
     public static final int UPLOAD_PHOTO_REQUEST = 15849;
+    public static final int DISPLAY_PHOTO_REQUEST = 47308;
 
     /** AWS S3 **/
     public static final String PICTURE_BUCKET = "street-shout1";
     public static final String S3_URL = "street-shout1.s3.amazonaws.com/";
+
+    /** Shout image res **/
+    public static final int SHOUT_THUMB_RES = 75;
+    public static final int SHOUT_BIG_RES = 400;
 }
