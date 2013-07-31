@@ -34,7 +34,7 @@ public class TimeUtils {
             if (hours > 1) {
                 String result = String.valueOf(hours) + " " + activity.getString(R.string.hours_ago);
                 if (age > Constants.SHOUT_DURATION) {
-                    result += " (expired)";
+                    result += " " + activity.getString(R.string.shout_expired);
                 }
                 return result;
             } else if (hours == 1) {

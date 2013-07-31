@@ -39,6 +39,7 @@ public class ShoutModel implements Parcelable {
 
     public String image = "";
 
+    //TODO: Refactor with rawShoutToInstance
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static ArrayList<ShoutModel> rawShoutsToInstances(JSONArray rawShouts) {
         ArrayList<ShoutModel> shouts = new ArrayList<ShoutModel>();
