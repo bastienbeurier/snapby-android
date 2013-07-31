@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +76,6 @@ public class ShoutFragment extends Fragment {
         }
 
         if (shout.image != null && shout.image.length() > 0) {
-            Log.d("BAB", "image: " + shout.image);
             fragmentAQuery.id(imageView)    .image(shout.image + "--75", false, true, 0, 0, null, AQuery.FADE_IN, 1.0f / 1.0f);
             imageView.setVisibility(View.VISIBLE);
             imageView.setOnClickListener(new View.OnClickListener() {

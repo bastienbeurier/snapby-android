@@ -21,12 +21,6 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent" />
 
-        <fragment android:name="com.streetshout.android.fragments.AddressSearchFragment"
-                  android:id="@+id/address_search_fragment"
-                  android:layout_weight="1.2"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent" />
-
         <RelativeLayout android:id="@+id/map_fragment_container"
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
@@ -59,15 +53,6 @@
                         android:layout_marginTop="10dp"
                         android:background="@drawable/map_button_selector"
                         android:src="@drawable/world_map_icon"
-                        android:padding="4dp"/>
-
-                <ImageView
-                        android:id="@+id/address_search_button"
-                        android:layout_width="@dimen/map_button_size"
-                        android:layout_height="@dimen/map_button_size"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/map_button_selector"
-                        android:src="@drawable/search_map_icon"
                         android:padding="4dp"/>
 
                 <ImageView

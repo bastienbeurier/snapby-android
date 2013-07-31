@@ -1,11 +1,18 @@
 package com.streetshout.android.utils;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
+import android.provider.Settings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.streetshout.android.R;
 
 import java.util.List;
 
@@ -133,5 +140,34 @@ public class LocationUtils {
         }
 
         return result;
+    }
+
+    public static void checkLocationServicesEnabled(final Context ctx, LocationManager locationManager) {
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {}
+
+        try {
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {}
+
+        if(!gps_enabled && !network_enabled){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(ctx);
+            dialog.setTitle(ctx.getText(R.string.no_location_dialog_title));
+            dialog.setMessage(ctx.getText(R.string.no_location_dialog_message));
+            dialog.setPositiveButton(ctx.getText(R.string.settings), new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    Intent settings = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ctx.startActivity(settings);
+                }
+            });
+            dialog.setNegativeButton(ctx.getText(R.string.skip), null);
+            dialog.show();
+        }
     }
 }

@@ -7,8 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -26,13 +24,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.adapters.MapWindowAdapter;
-import com.streetshout.android.fragments.AddressSearchFragment;
 import com.streetshout.android.fragments.FeedFragment;
 import com.streetshout.android.fragments.ShoutFragment;
 import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.*;
-import net.hockeyapp.android.CrashManagerListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,15 +40,13 @@ import java.util.List;
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
 
-public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener, AddressSearchFragment.OnAddressValidateListener {
+public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnShoutSelectedListener, FeedFragment.OnFeedShoutSelectedListener {
 
     private static int FEED_FRAGMENT_ID = R.id.feed_fragment;
 
     private static int MAP_FRAGMENT_ID = R.id.map;
 
     private static int SHOUT_FRAGMENT_ID = R.id.shout_fragment;
-
-    private static int ADDRESS_SEARCH_FRAGMENT_ID = R.id.address_search_fragment;
 
     private static int CREATE_ACTIVITY_ID = 33312;
 
@@ -79,8 +73,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private ShoutFragment shoutFragment = null;
 
-    private AddressSearchFragment addressSearchFragment = null;
-
     public int currentlySelectedShout = -1;
 
     private boolean notificationRedirectionHandled = false;
@@ -100,52 +92,21 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         feedFragment = (FeedFragment) getFragmentManager().findFragmentById(R.id.feed_fragment);
         shoutFragment = (ShoutFragment) getFragmentManager().findFragmentById(R.id.shout_fragment);
-        addressSearchFragment = (AddressSearchFragment) getFragmentManager().findFragmentById(R.id.address_search_fragment);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.hide(shoutFragment);
-        ft.hide(addressSearchFragment);
         ft.commit();
 
         if (savedInstanceState != null) {
             savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
 
-        checkLocationServicesEnabled();
+        LocationUtils.checkLocationServicesEnabled(this, locationManager);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("cameraPosition", mMap.getCameraPosition());
         super.onSaveInstanceState(outState);
-    }
-
-    private void checkLocationServicesEnabled() {
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {}
-
-        try {
-            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {}
-
-        if(!gps_enabled && !network_enabled){
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setTitle(getText(R.string.no_location_dialog_title));
-            dialog.setMessage(getText(R.string.no_location_dialog_message));
-            dialog.setPositiveButton(getText(R.string.settings), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    Intent settings = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    NavActivity.this.startActivity(settings);
-                }
-            });
-            dialog.setNegativeButton(getText(R.string.skip), null);
-            dialog.show();
-        }
     }
 
     @Override
@@ -270,13 +231,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 @Override
                 public void onClick(View v) {
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(0));
-                }
-            });
-
-            findViewById(R.id.address_search_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showSearchAddressFragment();
                 }
             });
 
@@ -440,23 +394,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         animateCameraToShout(shout, Constants.CLICK_ON_SHOUT_IN_SHOUT);
     }
 
-    @Override
-    public void onAddressValidate(double lat, double lng) {
-        addressSearchFragment.removeFocusFromSearchAddressView();
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), Constants.SEARCH_ADDRESS_IN_NAV);
-        mMap.animateCamera(update, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                showFragment(FEED_FRAGMENT_ID);
-            }
-
-            @Override
-            public void onCancel() {
-                showFragment(FEED_FRAGMENT_ID);
-            }
-        });
-    }
-
     private void animateCameraToShout(ShoutModel shout, Integer zoomLevel) {
         CameraUpdate update = null;
 
@@ -478,13 +415,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         showFragment(SHOUT_FRAGMENT_ID);
     }
 
-    private void showSearchAddressFragment() {
-        this.deselectShoutIfAnySelected();
-        addressSearchFragment.setFocusOnSearchAddressView();
-
-        showFragment(ADDRESS_SEARCH_FRAGMENT_ID);
-    }
-
     private void showFragment(int fragmentId) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
@@ -492,10 +422,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         if (fragmentId == FEED_FRAGMENT_ID) {
             ft.show(feedFragment);
-        } if (fragmentId == SHOUT_FRAGMENT_ID) {
+        } else if (fragmentId == SHOUT_FRAGMENT_ID) {
             ft.show(shoutFragment);
-        } else if (fragmentId == ADDRESS_SEARCH_FRAGMENT_ID) {
-            ft.show(addressSearchFragment);
         }
 
         ft.commit();
@@ -504,8 +432,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     private Fragment visibleFrament() {
         if (shoutFragment.isVisible()) {
             return shoutFragment;
-        } else if (addressSearchFragment.isVisible()) {
-            return addressSearchFragment;
         //Warning: when activity launched by notification, no fragment is visible and this method is called, in this
         //case the feedFragment should be returned.
         } else {
@@ -542,24 +468,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
     }
 
-    public void shareShoutFromShoutFragment(View v) {
-        //TODO: remove
-        Toast toast = Toast.makeText(this, "NOT YET IMPLEMENTED!!!", Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
-    public void onBackPressed(View v) {
-        onBackPressed();
-    }
-
     @Override
     public void onBackPressed() {
-        if (visibleFrament() == addressSearchFragment) {
-            showFragment(FEED_FRAGMENT_ID);
-            addressSearchFragment.removeFocusFromSearchAddressView();
-            return;
-        }
-
         if (visibleFrament() == shoutFragment) {
             showFragment(FEED_FRAGMENT_ID);
             deselectShoutIfAnySelected();
