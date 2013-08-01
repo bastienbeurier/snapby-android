@@ -58,10 +58,8 @@ public class NewShoutFeedAdapter extends BaseAdapter {
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(shoutStamp);
 
             if (shout.image != null && shout.image.length() > 0) {
-                Log.d("BAB", "VISIBLE: " + shout.image);
                 shoutView.findViewById(R.id.photo_presence_indicator).setVisibility(View.VISIBLE);
             } else {
-                Log.d("BAB", "GONE: " + shout.image);
                 shoutView.findViewById(R.id.photo_presence_indicator).setVisibility(View.GONE);
             }
         }

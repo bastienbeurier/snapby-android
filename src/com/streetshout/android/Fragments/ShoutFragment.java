@@ -29,7 +29,7 @@ public class ShoutFragment extends Fragment {
 
     ShoutModel currentDisplayedShout = null;
 
-    private OnShoutSelectedListener shoutSelectedListener;
+    private OnZoomOnShoutListener zoomOnShoutListener;
 
     private AQuery fragmentAQuery = null;
 
@@ -56,12 +56,13 @@ public class ShoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (currentDisplayedShout != null) {
-                    shoutSelectedListener.onShoutSelected(currentDisplayedShout);
+                    zoomOnShoutListener.zoomOnShout(currentDisplayedShout);
                 }
             }
         });
     }
 
+    //TODO: rename to intializeFragment or something
     public void displayShoutInFragment(final ShoutModel shout, Location myLocation) {
         currentDisplayedShout = shout;
 
@@ -97,13 +98,13 @@ public class ShoutFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            shoutSelectedListener = (OnShoutSelectedListener) activity;
+            zoomOnShoutListener = (OnZoomOnShoutListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement OnShoutSelectedListener");
         }
     }
 
-    public interface OnShoutSelectedListener {
-        public void onShoutSelected(ShoutModel shout);
+    public interface OnZoomOnShoutListener {
+        public void zoomOnShout(ShoutModel shout);
     }
 }
