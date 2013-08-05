@@ -22,12 +22,10 @@ public class NewShoutFeedAdapter extends BaseAdapter {
 
     private ArrayList<ShoutModel> items = null;
 
-    private Location myLocation = null;
 
-    public NewShoutFeedAdapter(Context context, ArrayList<ShoutModel> shouts, Location myLocation) {
+    public NewShoutFeedAdapter(Context context, ArrayList<ShoutModel> shouts) {
         this.context = context;
         this.items = shouts;
-        this.myLocation = myLocation;
     }
 
     @Override
@@ -47,14 +45,7 @@ public class NewShoutFeedAdapter extends BaseAdapter {
 
             String shoutStamp = TimeUtils.shoutAgeToString((Activity) context, TimeUtils.getShoutAge(shout.created));
 
-            if (myLocation != null) {
-                Location shoutLocation = new Location("");
-                shoutLocation.setLatitude(shout.lat);
-                shoutLocation.setLongitude(shout.lng);
-                shoutStamp += ", " + LocationUtils.formatedDistance(context, myLocation, shoutLocation) + ",";
-            }
-
-            shoutStamp += " by " + shout.displayName;
+            shoutStamp += ", " + context.getText(R.string.shout_by) + " " + shout.displayName;
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_stamp)).setText(shoutStamp);
 
             if (shout.image != null && shout.image.length() > 0) {

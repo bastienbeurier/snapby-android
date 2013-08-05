@@ -61,4 +61,5 @@
     <string name="no_google_play_store">Couldn\'t launch the google play store</string>
     <string name="no_sd_card">/Users/bastien/Developer/Android/GogoDroid/res/values/strings.xml</string>
     <string name="select_picture_from">Select picture from...</string>
+    <string name="shout_by">by</string>
 </resources>

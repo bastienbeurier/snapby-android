@@ -183,7 +183,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
                         displayShoutsOnMap(shouts);
                         feedFragment.hideFeedProgressBar();
-                        feedFragment.setAdapter(NavActivity.this, shouts, myLocation);
+                        feedFragment.setAdapter(NavActivity.this, shouts);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

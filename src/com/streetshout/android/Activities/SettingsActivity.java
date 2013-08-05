@@ -102,6 +102,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
             setNotificationSpinnerAdapter();
         }
 
+        //0 -> no notificaiton / 1 -> 100m / 2 -> 1km / 3 -> 10km
         if (parent.getId() == R.id.notification_preference_spinner) {
             appPrefs.setNotificationPref(pos);
             ApiUtils.sendDeviceInfo(this, aq, null);

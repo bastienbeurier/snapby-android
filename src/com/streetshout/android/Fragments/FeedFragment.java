@@ -46,8 +46,8 @@ public class FeedFragment extends ListFragment {
         feedWrapperView.setVisibility(View.VISIBLE);
     }
 
-    public void setAdapter(Activity activity, ArrayList<ShoutModel> shouts, Location myLocation) {
-        setListAdapter(new NewShoutFeedAdapter(activity, shouts, myLocation));
+    public void setAdapter(Activity activity, ArrayList<ShoutModel> shouts) {
+        setListAdapter(new NewShoutFeedAdapter(activity, shouts));
     }
 
     public interface OnFeedShoutSelectedListener {
