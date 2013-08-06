@@ -1,11 +1,11 @@
 package com.streetshout.android.utils;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
@@ -169,5 +169,15 @@ public class LocationUtils {
             dialog.setNegativeButton(ctx.getText(R.string.skip), null);
             dialog.show();
         }
+    }
+
+    public static Location getLastLocationWithLocationManager(Context ctx, LocationManager locationManager) {
+        if (locationManager == null) {
+            locationManager = (LocationManager) ctx.getSystemService(ctx.LOCATION_SERVICE);
+        }
+
+        Criteria criteria = new Criteria();
+        String provider = locationManager.getBestProvider(criteria, true);
+        return locationManager.getLastKnownLocation(provider);
     }
 }

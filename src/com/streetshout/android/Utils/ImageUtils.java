@@ -76,7 +76,6 @@ public class ImageUtils {
 
         BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
         bmpFactoryOptions.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
 
         int heightRatio = (int)Math.ceil(bmpFactoryOptions.outHeight/(float)height);
         int widthRatio = (int)Math.ceil(bmpFactoryOptions.outWidth/(float)width);
@@ -90,7 +89,7 @@ public class ImageUtils {
         }
 
         bmpFactoryOptions.inJustDecodeBounds = false;
-        bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
+        Bitmap bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
         return bitmap;
     }
 

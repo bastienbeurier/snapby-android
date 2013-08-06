@@ -7,20 +7,17 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.net.ConnectivityManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -31,12 +28,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.LocationUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
 
@@ -50,34 +44,27 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
 
     private Marker shoutLocationArrow = null;
 
-    private ConnectivityManager connectivityManager = null;
-
-    private AQuery aq = null;
-
     private Geocoder geocoder = null;
 
     private LatLngBounds mapLatLngBounds = null;
+
+    private LocationManager locationManager = null;
+
+    private EditText addressView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_shout_location);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayShowHomeEnabled(false);
-
-        aq = new AQuery(this);
-
-        this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        myLocation = getIntent().getParcelableExtra("myLocation");
-
         geocoder = new Geocoder(this);
 
+        locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+
         setUpMap();
-        setUpCameraPosition();
+        mapLoaded();
         letUserRefineShoutPosition();
 
-        EditText addressView = (EditText) findViewById(R.id.shout_address_view);
+        addressView = (EditText) findViewById(R.id.shout_address_view);
 
         addressView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,9 +77,18 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId== EditorInfo.IME_ACTION_SEARCH) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(addressView.getWindowToken(), 0);
                     geocodeAddress(v);
                 }
                 return false;
+            }
+        });
+
+        findViewById(R.id.refresh_shout_perimeter).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMapCameraPositionOnUserLocation();
             }
         });
     }
@@ -135,21 +131,40 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
         }
     }
 
-    private void setUpCameraPosition() {
-        //Compute bounds of this perimeter
-        LatLng[] boundsResult = LocationUtils.getLatLngBounds(Constants.SHOUT_RADIUS, myLocation);
-        final LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
-
+    private void mapLoaded() {
         //Update the camera to fit this perimeter (use of listener is a hack to know when map is loaded)
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition arg0) {
                 mMap.setOnCameraChangeListener(null);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
-                mapLatLngBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-                updateShoutAccuratePosition(myLocation.getLatitude(), myLocation.getLongitude());
+
+                setMapCameraPositionOnUserLocation();
+
+                if (getIntent().hasExtra("shoutRefinedLocation")) {
+                    shoutLocation = getIntent().getParcelableExtra("shoutRefinedLocation");
+                    updateShoutAccuratePosition(shoutLocation.getLatitude(), shoutLocation.getLongitude());
+                } else {
+                    updateShoutAccuratePosition(myLocation.getLatitude(), myLocation.getLongitude());
+                }
             }
         });
+    }
+
+    private void setMapCameraPositionOnUserLocation() {
+        Location myMapLocation = mMap.getMyLocation();
+
+        if (myMapLocation != null) {
+            myLocation = myMapLocation;
+        } else if (myLocation == null) {
+            myLocation = LocationUtils.getLastLocationWithLocationManager(NewShoutLocationActivity.this, locationManager);
+        }
+
+        //Compute bounds of this perimeter
+        LatLng[] boundsResult = LocationUtils.getLatLngBounds(Constants.SHOUT_RADIUS, myLocation);
+        final LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
+        mapLatLngBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
     }
 
     private void letUserRefineShoutPosition() {
@@ -158,6 +173,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
             @Override
             public void onMapClick(LatLng latLng) {
                 updateShoutAccuratePosition(latLng.latitude, latLng.longitude);
+                addressView.setText("");
             }
         };
 
@@ -172,6 +188,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 updateShoutAccuratePosition(marker.getPosition().latitude, marker.getPosition().longitude);
+                addressView.setText("");
             }
         };
 
@@ -179,6 +196,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
             @Override
             public void onMapLongClick(LatLng latLng) {
                 updateShoutAccuratePosition(latLng.latitude, latLng.longitude);
+                addressView.setText("");
             }
         };
 
@@ -206,60 +224,12 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
         shoutLocationArrow = mMap.addMarker(marker);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        Intent returnIntent = new Intent();
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-        return true;
-    }
-
     /** User confirmed shout creation after scpecifying accurate location and shout description */
     public void createNewShoutFromInfo(View view) {
-        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-            Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
-            toast.show();
-            return;
-        }
-
-        String userName = getIntent().getStringExtra("userName");
-        String shoutDescription = getIntent().getStringExtra("shoutDescription");
-
-        final ProgressDialog createShoutDialog = ProgressDialog.show(NewShoutLocationActivity.this, "",getString(R.string.shout_processing), false);
-
-        String shoutImageUrl = null;
-
-        if (getIntent().hasExtra("shoutImageUrl")) {
-            shoutImageUrl = getIntent().getStringExtra("shoutImageUrl");
-        };
-
-        ShoutModel.createShout(NewShoutLocationActivity.this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, shoutImageUrl, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                super.callback(url, object, status);
-
-                if (status.getError() == null && object != null) {
-                    JSONObject rawShout = null;
-
-                    try {
-                        rawShout = object.getJSONObject("result");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    createShoutDialog.cancel();
-
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("newShout", ShoutModel.rawShoutToInstance(rawShout));
-                    setResult(RESULT_OK, returnIntent);
-                    finish();
-                } else {
-                    createShoutDialog.cancel();
-                    Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            }
-        });
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("accurateShoutLocation", shoutLocation);
+        setResult(RESULT_OK, returnIntent);
+        finish();
     }
 
     private void geocodeAddress(final TextView editTextView) {

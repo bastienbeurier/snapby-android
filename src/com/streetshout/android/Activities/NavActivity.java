@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -110,7 +109,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         checkForUpdates();
 
         boolean newMap = setUpMapIfNeeded();
-        myLocation = getMyInitialLocation();
+        myLocation = LocationUtils.getLastLocationWithLocationManager(this, locationManager);
         ApiUtils.sendDeviceInfo(this, aq, myLocation);
 
         //Handles case when user clicked a shout notification
@@ -153,16 +152,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         super.onPause();
 
         ApiUtils.sendDeviceInfo(this, aq, myLocation);
-    }
-
-    private Location getMyInitialLocation() {
-        if (locationManager == null) {
-            this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
-        }
-
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, true);
-        return locationManager.getLastKnownLocation(provider);
     }
 
     private void pullShouts() {

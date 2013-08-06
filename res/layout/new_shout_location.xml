@@ -11,18 +11,35 @@
               android:layout_height="wrap_content"
               android:layout_marginLeft="10dp"
               android:layout_marginTop="10dp"
-              android:layout_marginBottom="20dp"
               android:textSize="18dp"/>
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/shout_map"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:layout_marginRight="30dp"
-              android:layout_marginLeft="30dp"
-              android:layout_marginBottom="30dp"
-              class="com.google.android.gms.maps.MapFragment" />
+    <com.streetshout.android.utils.SquareLayout android:id="@+id/refine_location_map_fragment_container"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:layout_weight="1"
+                 android:layout_margin="30dp"
+                 android:layout_gravity="center">
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/shout_map"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  class="com.google.android.gms.maps.MapFragment" />
+
+        <ImageView
+                android:id="@+id/refresh_shout_perimeter"
+                android:layout_width="@dimen/map_button_size"
+                android:layout_height="@dimen/map_button_size"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/map_button_selector"
+                android:src="@drawable/refresh_icon"
+                android:padding="6dp"/>
+
+     </com.streetshout.android.utils.SquareLayout>
+
+
 
     <TextView android:text="@string/create_shout_address_instruction"
               android:layout_width="match_parent"
@@ -37,15 +54,15 @@
               android:layout_height="wrap_content"
               android:layout_marginLeft="30dp"
               android:layout_marginRight="30dp"
-              android:layout_marginBottom="30dp"
+              android:layout_marginBottom="20dp"
               android:imeOptions="actionSearch"
               android:hint="@string/new_shout_location_address_hint"
               android:textSize="16dp"/>
 
-    <Button android:id="@+id/create_shout_button"
+    <Button android:id="@+id/refine_location_button"
             android:layout_height="60dp"
             android:layout_width="match_parent"
-            android:text="@string/create_shout_button"
+            android:text="@string/done"
             android:textColor="@color/darkerShoutBlue"
             android:background="@drawable/rounded_button"
             android:layout_marginLeft="10dp"
