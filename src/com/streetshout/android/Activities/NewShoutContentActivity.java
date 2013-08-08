@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -84,6 +85,12 @@ public class NewShoutContentActivity extends Activity {
 
     private String shoutDescription = null;
 
+    private ImageView removePhotoButton = null;
+
+    private ImageView flipPhotoButton = null;
+
+    private ImageView shoutImageView = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_shout_content);
@@ -129,6 +136,43 @@ public class NewShoutContentActivity extends Activity {
                 charCountView.setText((Constants.MAX_DESCRIPTION_LENGTH - s.length()) + " " + getString(R.string.characters));
             }
         });
+
+        removePhotoButton = (ImageView) findViewById(R.id.remove_photo_button);
+
+        removePhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (photoUrl != null) {
+                    photoUrl = null;
+                    photoName = null;
+                    shrinkedImages = null;
+
+                    shoutImageView.setImageResource(R.drawable.ic_photo);
+                    removePhotoButton.setVisibility(View.GONE);
+                    flipPhotoButton.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        flipPhotoButton = (ImageView) findViewById(R.id.flip_photo_button);
+
+        flipPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (photoUrl != null || shrinkedImages != null) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(-90);
+
+                    shrinkedImages[0] = Bitmap.createBitmap(shrinkedImages[0] , 0, 0, shrinkedImages[0].getWidth(), shrinkedImages[0].getHeight(), matrix, true);
+                    shrinkedImages[1] = Bitmap.createBitmap(shrinkedImages[1] , 0, 0, shrinkedImages[1].getWidth(), shrinkedImages[1].getHeight(), matrix, true);
+
+                    shoutImageView.setImageBitmap(shrinkedImages[1]);
+                    shoutImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                }
+            }
+        });
+
+        shoutImageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
     }
 
     @Override
@@ -282,9 +326,10 @@ public class NewShoutContentActivity extends Activity {
                 cursor.close();
 
                 if (photoPath != null) {
-                    ImageView imageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
-                    imageView.setImageBitmap(BitmapFactory.decodeFile(photoPath));
-                    imageView.setScaleType(ImageView.ScaleType.MATRIX);
+                    shoutImageView.setImageBitmap(BitmapFactory.decodeFile(photoPath));
+                    shoutImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    removePhotoButton.setVisibility(View.VISIBLE);
+                    flipPhotoButton.setVisibility(View.VISIBLE);
 
                     photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
                     photoUrl = Constants.S3_URL + photoName;
@@ -377,16 +422,12 @@ public class NewShoutContentActivity extends Activity {
     }
 
     public void uploadImageBeforeCreatingShout() {
-        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-            Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
-            toast.show();
-            return;
-        }
-
         createShoutDialog = ProgressDialog.show(this, "", getString(R.string.shout_processing), false);
 
-        if (photoName != null) {
+        if (photoUrl != null) {
             new ValidateCredentialsTask().execute();
+        } else {
+            createNewShoutFromInfo();
         }
     }
 
