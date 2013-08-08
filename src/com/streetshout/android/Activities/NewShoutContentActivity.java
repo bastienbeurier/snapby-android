@@ -5,12 +5,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -70,7 +72,17 @@ public class NewShoutContentActivity extends Activity {
 
     private boolean shoutLocationRefined = false;
 
+    private String photoName = null;
+
     private String photoUrl = null;
+
+    private Bitmap[] shrinkedImages = null;
+
+    private ProgressDialog createShoutDialog;
+
+    private String userName = null;
+
+    private String shoutDescription = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,8 +224,8 @@ public class NewShoutContentActivity extends Activity {
         userNameView.setError(null);
         descriptionView.setError(null);
 
-        String userName = userNameView.getText().toString();
-        String shoutDescription = descriptionView.getText().toString();
+        userName = userNameView.getText().toString();
+        shoutDescription = descriptionView.getText().toString();
 
         if (userName.length() == 0) {
             userNameView.setError(getString(R.string.name_not_empty));
@@ -242,7 +254,7 @@ public class NewShoutContentActivity extends Activity {
             //Save user name in prefs
             appPrefs.setUserNamePref(userName);
 
-            createNewShoutFromInfo(userName, shoutDescription, photoUrl);
+            uploadImageBeforeCreatingShout();
         }
     }
 
@@ -269,15 +281,29 @@ public class NewShoutContentActivity extends Activity {
                 photoPath = cursor.getString(columnIndex);
                 cursor.close();
 
-                ImageView imageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
-                imageView.setImageBitmap(BitmapFactory.decodeFile(photoPath));
-                imageView.setScaleType(ImageView.ScaleType.MATRIX);
-
                 if (photoPath != null) {
-                    String photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
+                    ImageView imageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
+                    imageView.setImageBitmap(BitmapFactory.decodeFile(photoPath));
+                    imageView.setScaleType(ImageView.ScaleType.MATRIX);
+
+                    photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
                     photoUrl = Constants.S3_URL + photoName;
 
-                    new ValidateCredentialsTask().execute(photoName);
+                    final ProgressDialog addPhotoDialog = ProgressDialog.show(this, "", "", false);
+
+                    Thread t = new Thread() {
+                        @Override
+                        public void run(){
+                            shrinkedImages = new Bitmap[2];
+
+                            shrinkedImages[0] = ImageUtils.shrinkBitmap(photoPath, Constants.SHOUT_THUMB_RES, Constants.SHOUT_THUMB_RES);
+                            shrinkedImages[1] = ImageUtils.shrinkBitmap(photoPath, Constants.SHOUT_BIG_RES, Constants.SHOUT_BIG_RES);
+
+                            addPhotoDialog.cancel();
+                        }
+                    };
+
+                    t.start();
                 }
             }
         }
@@ -291,7 +317,7 @@ public class NewShoutContentActivity extends Activity {
         return true;
     }
 
-    public void uploadPhoto(View view) {
+    public void letUserChooseImage(View view) {
         if (ImageUtils.isSDPresent() == false){
             Toast toast = Toast.makeText(this, this.getString(R.string.no_sd_card), Toast.LENGTH_LONG);
             toast.show();
@@ -306,43 +332,66 @@ public class NewShoutContentActivity extends Activity {
     }
 
     private class ValidateCredentialsTask extends
-            AsyncTask<String, Void, Response> {
+            AsyncTask<Void, Void, Response> {
 
-        String photoName = null;
-
-        protected Response doInBackground(String... params) {
-            photoName = params[0];
-
+        protected Response doInBackground(Void... params) {
             return NewShoutContentActivity.clientManager.validateCredentials();
         }
 
         protected void onPostExecute(Response response) {
             if (response != null && response.requestWasSuccessful()) {
-                Thread t = new Thread() {
+                final AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
                     @Override
-                    public void run(){
-                        try{
-                            S3.addImageInBucket(photoPath, photoName);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    protected String doInBackground(Void... params) {
+                        if (S3.addImageInBucket(photoPath, photoName, shrinkedImages)) {
+                            return "success";
+                        } else {
+                            return "failure";
+                        }
+                    }
+
+                    @Override
+                    protected void onPostExecute(String result) {
+                        if (result.equals("success")) {
+                            createNewShoutFromInfo();
+                        } else {
+                            shoutCreationFailed();
                         }
                     }
                 };
-                t.start();
+                task.execute((Void[])null);
+
+                Handler handler = new Handler();
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (task.getStatus() == Status.RUNNING) {
+                            task.cancel(true);
+                            shoutCreationFailed();
+                        }
+                    }
+                }, 30000);
             }
         }
     }
 
-    public void createNewShoutFromInfo(String userName, String shoutDescription, String shoutImageUrl) {
+    public void uploadImageBeforeCreatingShout() {
         if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
             Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
             toast.show();
             return;
         }
 
-        final ProgressDialog createShoutDialog = ProgressDialog.show(this, "", getString(R.string.shout_processing), false);
+        createShoutDialog = ProgressDialog.show(this, "", getString(R.string.shout_processing), false);
 
-        ShoutModel.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, shoutImageUrl, new AjaxCallback<JSONObject>() {
+        if (photoName != null) {
+            new ValidateCredentialsTask().execute();
+        }
+    }
+
+    public void createNewShoutFromInfo() {
+        ShoutModel.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, photoUrl, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -363,11 +412,15 @@ public class NewShoutContentActivity extends Activity {
                     setResult(RESULT_OK, returnIntent);
                     finish();
                 } else {
-                    createShoutDialog.cancel();
-                    Toast toast = Toast.makeText(NewShoutContentActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
-                    toast.show();
+                    shoutCreationFailed();
                 }
             }
         });
+    }
+
+    public void shoutCreationFailed() {
+        createShoutDialog.cancel();
+        Toast toast = Toast.makeText(NewShoutContentActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
+        toast.show();
     }
 }

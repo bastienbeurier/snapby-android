@@ -1,7 +1,7 @@
 package com.streetshout.android.utils;
 
 public class Constants {
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
 
     public static final boolean ADMIN = false;
 

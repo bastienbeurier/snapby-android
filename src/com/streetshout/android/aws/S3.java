@@ -34,27 +34,27 @@ public class S3 {
 		return NewShoutContentActivity.clientManager.s3();
 	}
 
-    public static void addImageInBucket(String photoPath, String photoName) {
+    public static boolean addImageInBucket(String photoPath, String photoName, Bitmap[] shrinkedImages) {
         try {
-            Bitmap thumbImage = ImageUtils.shrinkBitmap(photoPath, Constants.SHOUT_THUMB_RES, Constants.SHOUT_THUMB_RES);
-            Bitmap bigImage = ImageUtils.shrinkBitmap(photoPath, Constants.SHOUT_BIG_RES, Constants.SHOUT_BIG_RES);
-            addImagewithRes(photoPath, photoName, thumbImage, Constants.SHOUT_THUMB_RES);
-            addImagewithRes(photoPath, photoName, bigImage, Constants.SHOUT_BIG_RES);
+            return addImagewithRes(photoPath, photoName, shrinkedImages[0], Constants.SHOUT_THUMB_RES) &&
+                    addImagewithRes(photoPath, photoName, shrinkedImages[1], Constants.SHOUT_BIG_RES);
         } catch (AmazonServiceException ex) {
             NewShoutContentActivity.clientManager.wipeCredentialsOnAuthError(ex);
             ex.printStackTrace();
+            return false;
         }
     }
 
-    private static void addImagewithRes(String photoPath, String photoName, Bitmap bm, int res) {
+    private static boolean addImagewithRes(String photoPath, String photoName, Bitmap bm, int res) {
         try {
             ImageUtils.storeBitmapInFile(photoPath, bm);
+            PutObjectRequest por = new PutObjectRequest(Constants.PICTURE_BUCKET, photoName + "--" + res, new java.io.File(photoPath));
+            getInstance().putObject(por);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-
-        PutObjectRequest por = new PutObjectRequest(Constants.PICTURE_BUCKET, photoName + "--" + res, new java.io.File(photoPath));
-        getInstance().putObject(por);
     }
 
 	protected static String read(InputStream stream) {
