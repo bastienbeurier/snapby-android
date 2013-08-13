@@ -77,7 +77,7 @@ public class ShoutFragment extends Fragment {
         }
 
         if (shout.image != null && shout.image.length() > 0) {
-            fragmentAQuery.id(imageView)    .image(shout.image + "--75", false, true, 0, 0, null, AQuery.FADE_IN, 1.0f / 1.0f);
+            fragmentAQuery.id(imageView).image(shout.image + "--400");
             imageView.setVisibility(View.VISIBLE);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override

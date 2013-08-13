@@ -241,7 +241,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         if (requestCode == Constants.CREATE_SHOUT_REQUEST) {
 
-            if(resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 ShoutModel shout = data.getParcelableExtra("newShout");
 
                 displayedShoutModels.put(shout.id, shout);
@@ -250,7 +250,17 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
                 onShoutCreationShoutSelected(shout, shoutMarker);
             }
+        } else if (requestCode == Constants.SETTINGS_REQUEST) {
+            //Go back to feed and refresh if user is coming back from settings (in case user changed distance unit)
+            if (shoutFragment.isVisible()) {
+                deselectShoutIfAnySelected();
+                onBackPressed();
+            }
+
+            pullShouts();
         }
+
+
     }
 
     @Override

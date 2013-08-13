@@ -34,10 +34,9 @@ public class S3 {
 		return NewShoutContentActivity.clientManager.s3();
 	}
 
-    public static boolean addImageInBucket(String photoPath, String photoName, Bitmap[] shrinkedImages) {
+    public static boolean addImageInBucket(String photoPath, String photoName, Bitmap shrinkedImage) {
         try {
-            return addImagewithRes(photoPath, photoName, shrinkedImages[0], Constants.SHOUT_THUMB_RES) &&
-                    addImagewithRes(photoPath, photoName, shrinkedImages[1], Constants.SHOUT_BIG_RES);
+            return addImagewithRes(photoPath, photoName, shrinkedImage, Constants.SHOUT_BIG_RES);
         } catch (AmazonServiceException ex) {
             NewShoutContentActivity.clientManager.wipeCredentialsOnAuthError(ex);
             ex.printStackTrace();

@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -77,7 +78,7 @@ public class NewShoutContentActivity extends Activity {
 
     private String photoUrl = null;
 
-    private Bitmap[] shrinkedImages = null;
+    private Bitmap shrinkedImage = null;
 
     private ProgressDialog createShoutDialog;
 
@@ -90,6 +91,8 @@ public class NewShoutContentActivity extends Activity {
     private ImageView flipPhotoButton = null;
 
     private ImageView shoutImageView = null;
+
+    private long time1 = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,7 +148,7 @@ public class NewShoutContentActivity extends Activity {
                 if (photoUrl != null) {
                     photoUrl = null;
                     photoName = null;
-                    shrinkedImages = null;
+                    shrinkedImage = null;
 
                     shoutImageView.setImageResource(R.drawable.ic_photo);
                     removePhotoButton.setVisibility(View.GONE);
@@ -159,14 +162,13 @@ public class NewShoutContentActivity extends Activity {
         flipPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (photoUrl != null || shrinkedImages != null) {
+                if (photoUrl != null || shrinkedImage != null) {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(-90);
 
-                    shrinkedImages[0] = Bitmap.createBitmap(shrinkedImages[0] , 0, 0, shrinkedImages[0].getWidth(), shrinkedImages[0].getHeight(), matrix, true);
-                    shrinkedImages[1] = Bitmap.createBitmap(shrinkedImages[1] , 0, 0, shrinkedImages[1].getWidth(), shrinkedImages[1].getHeight(), matrix, true);
+                    shrinkedImage = Bitmap.createBitmap(shrinkedImage, 0, 0, shrinkedImage.getWidth(), shrinkedImage.getHeight(), matrix, true);
 
-                    shoutImageView.setImageBitmap(shrinkedImages[1]);
+                    shoutImageView.setImageBitmap(shrinkedImage);
                     shoutImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 }
             }
@@ -339,10 +341,7 @@ public class NewShoutContentActivity extends Activity {
                     Thread t = new Thread() {
                         @Override
                         public void run(){
-                            shrinkedImages = new Bitmap[2];
-
-                            shrinkedImages[0] = ImageUtils.shrinkBitmap(photoPath, Constants.SHOUT_THUMB_RES, Constants.SHOUT_THUMB_RES);
-                            shrinkedImages[1] = ImageUtils.shrinkBitmap(photoPath, Constants.SHOUT_BIG_RES, Constants.SHOUT_BIG_RES);
+                            shrinkedImage = ImageUtils.shrinkBitmap(photoPath, Constants.SHOUT_BIG_RES, Constants.SHOUT_BIG_RES);
 
                             addPhotoDialog.cancel();
                         }
@@ -388,7 +387,8 @@ public class NewShoutContentActivity extends Activity {
                 final AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
                     @Override
                     protected String doInBackground(Void... params) {
-                        if (S3.addImageInBucket(photoPath, photoName, shrinkedImages)) {
+                        time1 = System.currentTimeMillis();
+                        if (S3.addImageInBucket(photoPath, photoName, shrinkedImage)) {
                             return "success";
                         } else {
                             return "failure";

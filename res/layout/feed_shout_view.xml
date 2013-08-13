@@ -27,7 +27,7 @@
                         android:layout_height="20dp"
                        android:layout_width="20dp"
                        android:visibility="gone"
-                       android:src="@drawable/ic_photo"/>
+                       android:background="@drawable/ic_photo"/>
 
             <TextView
                     android:id="@+id/feed_shout_item_stamp"

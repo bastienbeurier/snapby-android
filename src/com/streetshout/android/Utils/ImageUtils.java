@@ -25,10 +25,9 @@ public class ImageUtils {
     }
 
     public static Uri reserveUriForPicture(Context ctx) {
-        String fileName = "streetshout.jpg";	// testing
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, fileName);
-        values.put(MediaStore.Images.Media.DESCRIPTION, "Street Shout");
+        values.put(MediaStore.Images.Media.TITLE, "shoutimage.jpg");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "Shout image.");
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
         Uri photoUri = ctx.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         return photoUri;
@@ -76,6 +75,7 @@ public class ImageUtils {
 
         BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
         bmpFactoryOptions.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
 
         int heightRatio = (int)Math.ceil(bmpFactoryOptions.outHeight/(float)height);
         int widthRatio = (int)Math.ceil(bmpFactoryOptions.outWidth/(float)width);
@@ -89,7 +89,7 @@ public class ImageUtils {
         }
 
         bmpFactoryOptions.inJustDecodeBounds = false;
-        Bitmap bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
+        bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
         return bitmap;
     }
 
