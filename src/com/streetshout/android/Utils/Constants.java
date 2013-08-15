@@ -36,6 +36,5 @@ public class Constants {
     public static final String S3_URL = "street-shout1.s3.amazonaws.com/";
 
     /** Shout image res **/
-    public static final int SHOUT_THUMB_RES = 75;
     public static final int SHOUT_BIG_RES = 400;
 }

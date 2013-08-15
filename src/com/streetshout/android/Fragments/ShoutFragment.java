@@ -64,6 +64,8 @@ public class ShoutFragment extends Fragment {
 
     //TODO: rename to intializeFragment or something
     public void displayShoutInFragment(final ShoutModel shout, Location myLocation) {
+        imageView.setImageResource(R.drawable.ic_default_image);
+
         currentDisplayedShout = shout;
 
         userNameView.setText(shout.displayName);
