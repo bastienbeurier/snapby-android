@@ -75,7 +75,7 @@ public class ShoutFragment extends Fragment {
             Location shoutLocation = new Location("");
             shoutLocation.setLatitude(shout.lat);
             shoutLocation.setLongitude(shout.lng);
-            shoutStamp += ", " + LocationUtils.formatedDistance(getActivity(), myLocation, shoutLocation);
+            shoutStamp += ", " + LocationUtils.formattedDistance(getActivity(), myLocation, shoutLocation);
         }
 
         if (shout.image != null && shout.image.length() > 0) {

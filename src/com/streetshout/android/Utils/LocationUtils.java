@@ -77,7 +77,7 @@ public class LocationUtils {
         return new LatLng[] {southWest, northEast};
     }
 
-    public static String formatedDistance(Context ctx, Location loc1, Location loc2) {
+    public static String formattedDistance(Context ctx, Location loc1, Location loc2) {
         int distance = (int) (loc1.distanceTo(loc2));
 
         AppPreferences appPrefs = new AppPreferences(ctx.getApplicationContext());
