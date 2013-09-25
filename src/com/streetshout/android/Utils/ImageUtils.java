@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -71,11 +72,12 @@ public class ImageUtils {
         return imagePath;
     }
 
-    static public Bitmap shrinkBitmap(String file, int width, int height){
+    static public Bitmap shrinkBitmapFromFile(String file, int width, int height) {
 
         BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
         bmpFactoryOptions.inJustDecodeBounds = true;
         Bitmap bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
+
 
         int heightRatio = (int)Math.ceil(bmpFactoryOptions.outHeight/(float)height);
         int widthRatio = (int)Math.ceil(bmpFactoryOptions.outWidth/(float)width);
@@ -90,7 +92,34 @@ public class ImageUtils {
 
         bmpFactoryOptions.inJustDecodeBounds = false;
         bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
+
         return bitmap;
+    }
+
+    public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
+
+        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
+
+        int h = (int) (newHeight * densityMultiplier);
+        int w = (int) (h * photo.getWidth()/((double) photo.getHeight()));
+
+        photo = Bitmap.createScaledBitmap(photo, w, h, true);
+
+        return photo;
+    }
+
+    static public String getPathFromUri(Context ctx, Uri selectedImage) {
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+        Cursor cursor = ctx.getContentResolver().query(selectedImage,
+                filePathColumn, null, null, null);
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String photoPath = cursor.getString(columnIndex);
+        cursor.close();
+
+        return photoPath;
     }
 
     static public void storeBitmapInFile(String pathName, Bitmap bm) {
@@ -98,7 +127,7 @@ public class ImageUtils {
         if (file.exists ()) file.delete ();
         try {
             FileOutputStream out = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            bm.compress(Bitmap.CompressFormat.JPEG, 50, out);
             out.flush();
             out.close();
 

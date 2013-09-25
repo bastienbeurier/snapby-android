@@ -66,6 +66,10 @@
         <activity android:name=".activities.DisplayImageActivity"
                   android:label="Shout Image"
                   android:screenOrientation="portrait"/>
+        <activity android:name=".activities.ImageEditorActivity"
+                  android:label="Image Editor"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/ShoutStyle.NoBar"/>
         <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
                 android:value="AIzaSyAhJpucfrY791-bMEQHP0tbEe4gIIYcctQ"/>

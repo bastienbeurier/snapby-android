@@ -8,6 +8,7 @@
       <directory url="file://$PROJECT_DIR$/3rd party/HoloEverywhere/library/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/3rd party/HoloEverywhere/contrib/ActionBarSherlock/library/gen" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/../android-sdk-macosx/extras/google/google_play_services/libproject/google-play-services_lib/gen" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/3rd parties/cropper/gen" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>

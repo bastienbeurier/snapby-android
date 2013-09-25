@@ -19,7 +19,6 @@
     <string name="shout_processing">Your shout is being processed</string>
     <string name="create_shout_instructions">Tap on the map to choose a shout location around you, then tap DONE.</string>
     <string name="done">Done</string>
-    <string name="cancel">Cancel</string>
     <string name="powered_by_twitter">(powered by Twitter)</string>
     <string name="name_not_empty">Please enter a non-empty name.</string>
     <string name="name_too_long">Please enter a name of less than 20 characters.</string>
@@ -61,4 +60,6 @@
     <string name="no_sd_card">/Users/bastien/Developer/Android/GogoDroid/res/values/strings.xml</string>
     <string name="select_picture_from">Select picture from...</string>
     <string name="shout_by">by</string>
+    <string name="rotate">rotate</string>
+    <string name="crop">crop</string>
 </resources>

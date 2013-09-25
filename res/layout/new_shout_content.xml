@@ -67,17 +67,6 @@
                     android:src="@drawable/ic_cancel"
                     android:padding="6dp"
                     android:visibility="gone"/>
-
-            <ImageView
-                    android:id="@+id/flip_photo_button"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/map_button_selector"
-                    android:src="@drawable/ic_rotate"
-                    android:padding="6dp"
-                    android:visibility="gone"/>
         </RelativeLayout>
 
 

@@ -88,8 +88,6 @@ public class NewShoutContentActivity extends Activity {
 
     private ImageView removePhotoButton = null;
 
-    private ImageView flipPhotoButton = null;
-
     private ImageView shoutImageView = null;
 
     private long time1 = 0;
@@ -152,24 +150,6 @@ public class NewShoutContentActivity extends Activity {
 
                     shoutImageView.setImageResource(R.drawable.ic_photo);
                     removePhotoButton.setVisibility(View.GONE);
-                    flipPhotoButton.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        flipPhotoButton = (ImageView) findViewById(R.id.flip_photo_button);
-
-        flipPhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (photoUrl != null || shrinkedImage != null) {
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(-90);
-
-                    shrinkedImage = Bitmap.createBitmap(shrinkedImage, 0, 0, shrinkedImage.getWidth(), shrinkedImage.getHeight(), matrix, true);
-
-                    shoutImageView.setImageBitmap(shrinkedImage);
-                    shoutImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 }
             }
         });
@@ -317,38 +297,28 @@ public class NewShoutContentActivity extends Activity {
         if (requestCode == Constants.UPLOAD_PHOTO_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Uri selectedImage = ImageUtils.getImageUrl(this, data, photoUri);
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                photoPath = cursor.getString(columnIndex);
-                cursor.close();
+                photoPath = ImageUtils.getPathFromUri(this, selectedImage);
 
                 if (photoPath != null) {
-                    shoutImageView.setImageBitmap(BitmapFactory.decodeFile(photoPath));
-                    shoutImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    removePhotoButton.setVisibility(View.VISIBLE);
-                    flipPhotoButton.setVisibility(View.VISIBLE);
+                    Intent imageEditor = new Intent(this, ImageEditorActivity.class);
+                    imageEditor.putExtra("photoPath", photoPath);
 
-                    photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
-                    photoUrl = Constants.S3_URL + photoName;
-
-                    final ProgressDialog addPhotoDialog = ProgressDialog.show(this, "", "", false);
-
-                    Thread t = new Thread() {
-                        @Override
-                        public void run(){
-                            shrinkedImage = ImageUtils.shrinkBitmap(photoPath, Constants.SHOUT_BIG_RES, Constants.SHOUT_BIG_RES);
-
-                            addPhotoDialog.cancel();
-                        }
-                    };
-
-                    t.start();
+                    startActivityForResult(imageEditor, Constants.IMAGE_EDITOR_REQUEST);
                 }
+            }
+        }
+
+        if (requestCode == Constants.IMAGE_EDITOR_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                shrinkedImage = data.getParcelableExtra("croppedImage");
+
+                shoutImageView.setImageBitmap(shrinkedImage);
+//                shoutImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                removePhotoButton.setVisibility(View.VISIBLE);
+
+                photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
+                photoUrl = Constants.S3_URL + photoName;
             }
         }
     }
