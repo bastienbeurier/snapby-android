@@ -55,14 +55,6 @@
                         android:src="@drawable/world_map_icon"
                         android:padding="4dp"/>
 
-                <ImageView
-                        android:id="@+id/start_demo_button"
-                        android:layout_width="@dimen/map_button_size"
-                        android:layout_height="@dimen/map_button_size"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/map_button_selector"
-                        android:padding="4dp"/>
-
             </LinearLayout>
 
             <ImageView

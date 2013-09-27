@@ -1,23 +1,22 @@
 package com.streetshout.android.utils;
 
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.widget.Toast;
 import com.streetshout.android.R;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ImageUtils {
@@ -25,30 +24,17 @@ public class ImageUtils {
         return android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
     }
 
-    public static Uri reserveUriForPicture(Context ctx) {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "shoutimage.jpg");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "Shout image.");
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        Uri photoUri = ctx.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        return photoUri;
+    public static File getFileToStoreImage() {
+        File photostorage = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        return new File(photostorage, (System.currentTimeMillis()) + ".jpg");
     }
 
-    public static Intent getPhotoChooserIntent(Context ctx, Uri photoUri) {
+    public static Intent getPhotoChooserIntent(Context ctx, File photoFile) {
         List<Intent> cameraIntents = new ArrayList<Intent>();
 
-        Intent imageCaptureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        PackageManager packageManager = ctx.getPackageManager();
-        List<ResolveInfo> listCameras = packageManager.queryIntentActivities(imageCaptureIntent, 0);
-
-        for (ResolveInfo camera : listCameras) {
-            String packageName = camera.activityInfo.packageName;
-            Intent cameraIntent = new Intent(imageCaptureIntent);
-            cameraIntent.setComponent(new ComponentName(camera.activityInfo.packageName, camera.activityInfo.name));
-            cameraIntent.setPackage(packageName);
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-            cameraIntents.add(cameraIntent);
-        }
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+        cameraIntents.add(cameraIntent);
 
         Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
@@ -58,18 +44,6 @@ public class ImageUtils {
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
 
         return chooserIntent;
-    }
-
-    public static Uri getImageUrl(Activity activity, Intent data, Uri reserverdUri) {
-        Uri	imagePath	= null;
-
-        if (data == null || data.getData() == null) {
-            imagePath	= reserverdUri;
-        } else {
-            imagePath	= data.getData();
-        }
-
-        return imagePath;
     }
 
     static public Bitmap shrinkBitmapFromFile(String file, int width, int height) {
@@ -96,18 +70,6 @@ public class ImageUtils {
         return bitmap;
     }
 
-    public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
-
-        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
-
-        int h = (int) (newHeight * densityMultiplier);
-        int w = (int) (h * photo.getWidth()/((double) photo.getHeight()));
-
-        photo = Bitmap.createScaledBitmap(photo, w, h, true);
-
-        return photo;
-    }
-
     static public String getPathFromUri(Context ctx, Uri selectedImage) {
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -127,12 +89,21 @@ public class ImageUtils {
         if (file.exists ()) file.delete ();
         try {
             FileOutputStream out = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.JPEG, 50, out);
+            bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.flush();
             out.close();
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    static public void savePictureToGallery(Context ctx, String photoPath) {
+        try {
+            String photoName = GeneralUtils.getDeviceId(ctx) + "--" + (new Date()).getTime() + ".jpg";
+            String url = MediaStore.Images.Media.insertImage(ctx.getContentResolver(), photoPath, photoName, "Shout photo");
+        } catch (FileNotFoundException e) {
+            Toast.makeText(ctx, ctx.getString(R.string.failed_saving_photo), Toast.LENGTH_SHORT ).show();
         }
     }
 }

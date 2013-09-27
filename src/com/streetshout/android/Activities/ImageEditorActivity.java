@@ -1,20 +1,14 @@
 package com.streetshout.android.activities;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import com.edmodo.cropper.CropImageView;
 import com.streetshout.android.R;
-import com.streetshout.android.aws.S3;
-import com.streetshout.android.tvmclient.Response;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.ImageUtils;
 
@@ -30,17 +24,18 @@ public class ImageEditorActivity extends Activity {
     private int mAspectRatioY = 10;
 
     private Bitmap croppedImage = null;
-    private Bitmap shrinkedCroppedImage = null;
 
-    private String photoPath = null;
+    private String highResPhotoPath = null;
+    private String shrinkedResPhotoPath = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.image_editor);
 
-        photoPath = getIntent().getStringExtra("photoPath");
-        croppedImage = BitmapFactory.decodeFile(photoPath);
+        highResPhotoPath = getIntent().getStringExtra("highResPhotoPath");
+        shrinkedResPhotoPath = getIntent().getStringExtra("shrinkedResPhotoPath");
+        croppedImage = BitmapFactory.decodeFile(highResPhotoPath);
 
         cropImageView = (CropImageView) findViewById(R.id.crop_image_view);
         cropImageView.setImageBitmap(croppedImage);
@@ -64,20 +59,18 @@ public class ImageEditorActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                croppedImage = cropImageView.getCroppedImage();
-                Log.d("BAB", "BYTE COUNNNNTTTT BEFORE: " + croppedImage.getByteCount());
-
-                ImageUtils.storeBitmapInFile(photoPath, croppedImage);
-
-                croppedImage = ImageUtils.shrinkBitmapFromFile(photoPath, Constants.SHOUT_BIG_RES, Constants.SHOUT_BIG_RES);
-
-                Log.d("BAB", "BYTE COUNNNNTTTT AFTER: " + croppedImage.getByteCount());
+                ImageUtils.storeBitmapInFile(shrinkedResPhotoPath, Bitmap.createScaledBitmap(cropImageView.getCroppedImage(), Constants.SHOUT_BIG_RES, Constants.SHOUT_BIG_RES, true));
 
                 final Intent returnIntent = new Intent();
-                returnIntent.putExtra("croppedImage", croppedImage);
                 setResult(RESULT_OK, returnIntent);
                 finish();
             }
         });
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+
+        cropImageView.setImageBitmap(null);
     }
 }

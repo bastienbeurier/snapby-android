@@ -14,14 +14,12 @@
  */
 package com.streetshout.android.aws;
 
-import android.graphics.Bitmap;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.streetshout.android.activities.NewShoutContentActivity;
 import com.streetshout.android.utils.Constants;
-import com.streetshout.android.utils.ImageUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -34,9 +32,9 @@ public class S3 {
 		return NewShoutContentActivity.clientManager.s3();
 	}
 
-    public static boolean addImageInBucket(String photoPath, String photoName, Bitmap shrinkedImage) {
+    public static boolean addImageInBucket(String photoPath, String photoName) {
         try {
-            return addImagewithRes(photoPath, photoName, shrinkedImage, Constants.SHOUT_BIG_RES);
+            return addImagewithRes(photoPath, photoName, Constants.SHOUT_BIG_RES);
         } catch (AmazonServiceException ex) {
             NewShoutContentActivity.clientManager.wipeCredentialsOnAuthError(ex);
             ex.printStackTrace();
@@ -44,9 +42,8 @@ public class S3 {
         }
     }
 
-    private static boolean addImagewithRes(String photoPath, String photoName, Bitmap bm, int res) {
+    private static boolean addImagewithRes(String photoPath, String photoName, int res) {
         try {
-            ImageUtils.storeBitmapInFile(photoPath, bm);
             PutObjectRequest por = new PutObjectRequest(Constants.PICTURE_BUCKET, photoName + "--" + res, new java.io.File(photoPath));
             getInstance().putObject(por);
             return true;

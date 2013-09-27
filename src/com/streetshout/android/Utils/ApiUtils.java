@@ -61,12 +61,4 @@ public class ApiUtils {
 
         aq.ajax(url, params, JSONObject.class, cb);
     }
-
-    public static void startDemo(AQuery aq) {
-        String url = SITEURL + "/demo";
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-
-        aq.ajax(url, JSONObject.class, cb);
-    }
 }

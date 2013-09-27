@@ -8,7 +8,9 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
@@ -64,6 +66,14 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private int preventBackButtonPressedOnMapPositionChanged = 0;
 
+    private ImageView settingsButton = null;
+
+    private ImageView createShoutImageView = null;
+
+    private boolean newMap = false;
+
+    private boolean shoutJustCreated = false;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav);
@@ -88,12 +98,10 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
 
         LocationUtils.checkLocationServicesEnabled(this, locationManager);
-    }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("cameraPosition", mMap.getCameraPosition());
-        super.onSaveInstanceState(outState);
+        createShoutImageView = (ImageView) findViewById(R.id.create_shout_item_menu);
+
+        newMap = setUpMapIfNeeded();
     }
 
     @Override
@@ -108,7 +116,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         checkForCrashes();
         checkForUpdates();
 
-        boolean newMap = setUpMapIfNeeded();
         myLocation = LocationUtils.getLastLocationWithLocationManager(this, locationManager);
         ApiUtils.sendDeviceInfo(this, aq, myLocation);
 
@@ -137,14 +144,17 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
-        if (newMap) {
+        //But activity gets destroyed when user shout with photo (memory issue), so don't initialize in that case!
+        if (newMap && !shoutJustCreated) {
             if (savedInstanceStateCameraPosition != null) {
                 initializeCameraWithCameraPosition(savedInstanceStateCameraPosition);
                 savedInstanceStateCameraPosition = null;
             } else if (myLocation != null) {
                 initializeCameraWithLocation(myLocation);
             }
+            newMap = false;
         }
+        shoutJustCreated = false;
     }
 
     @Override
@@ -224,12 +234,16 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     public void createShout(View view) {
+        createShoutImageView.setEnabled(false);
+
         if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
             Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
             toast.show();
+            createShoutImageView.setEnabled(true);
         } else if (myLocation == null) {
             Toast toast = Toast.makeText(this, getString(R.string.no_location), Toast.LENGTH_SHORT);
             toast.show();
+            createShoutImageView.setEnabled(true);
         } else {
             Intent createShout = new Intent(this, NewShoutContentActivity.class);
             createShout.putExtra("myLocation", myLocation);
@@ -237,9 +251,19 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("cameraPosition", mMap.getCameraPosition());
+        super.onSaveInstanceState(outState);
+    }
 
+    protected void onStart() {
+        super.onStart();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.CREATE_SHOUT_REQUEST) {
+            createShoutImageView.setEnabled(true);
 
             if (resultCode == RESULT_OK) {
                 ShoutModel shout = data.getParcelableExtra("newShout");
@@ -249,8 +273,12 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 displayedShoutMarkers.put(shout.id, shoutMarker);
 
                 onShoutCreationShoutSelected(shout, shoutMarker);
+
+                shoutJustCreated = true;
             }
         } else if (requestCode == Constants.SETTINGS_REQUEST) {
+            settingsButton.setEnabled(true);
+
             //Go back to feed and refresh if user is coming back from settings (in case user changed distance unit)
             if (shoutFragment.isVisible()) {
                 deselectShoutIfAnySelected();
@@ -399,25 +427,16 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 }
             });
 
-            findViewById(R.id.settings_button).setOnClickListener(new View.OnClickListener() {
+            settingsButton = (ImageView) findViewById(R.id.settings_button);
+
+            settingsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    settingsButton.setEnabled(false);
                     Intent settings = new Intent(NavActivity.this, SettingsActivity.class);
                     startActivityForResult(settings, Constants.SETTINGS_REQUEST);
                 }
             });
-
-            if (Constants.PRODUCTION) {
-                findViewById(R.id.start_demo_button).setVisibility(View.GONE);
-            } else {
-                findViewById(R.id.start_demo_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ApiUtils.startDemo(aq);
-                        v.setVisibility(View.GONE);
-                    }
-                });
-            }
 
             return true;
         }
