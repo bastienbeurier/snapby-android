@@ -101,7 +101,7 @@ public class ImageUtils {
     static public void savePictureToGallery(Context ctx, String photoPath) {
         try {
             String photoName = GeneralUtils.getDeviceId(ctx) + "--" + (new Date()).getTime() + ".jpg";
-            String url = MediaStore.Images.Media.insertImage(ctx.getContentResolver(), photoPath, photoName, "Shout photo");
+            MediaStore.Images.Media.insertImage(ctx.getContentResolver(), photoPath, photoName, "Shout photo");
         } catch (FileNotFoundException e) {
             Toast.makeText(ctx, ctx.getString(R.string.failed_saving_photo), Toast.LENGTH_SHORT ).show();
         }

@@ -317,6 +317,7 @@ public class NewShoutContentActivity extends Activity {
                 if (data == null || data.getData() == null) {
                     if (highResCameraPictureFile != null) {
                         highResPhotoPath = highResCameraPictureFile.getAbsolutePath();
+                        ImageUtils.savePictureToGallery(this, highResPhotoPath);
                     }
                 //Case where image chosen with library
                 } else {
