@@ -1,7 +1,7 @@
 package com.streetshout.android.utils;
 
 public class Constants {
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION = true;
 
     public static final boolean ADMIN = false;
 
@@ -17,6 +17,7 @@ public class Constants {
     public static final int CLICK_ON_SHOUT_IN_MAP_OR_FEED = 12;
     public static final int REDIRECTION_FROM_CREATE_SHOUT = 16;
     public static final int REDIRECTION_FROM_NOTIFICATION = 12;
+    public static final int CLICK_ON_MY_LOCATION_BUTTON = 13;
 
     /** Zoom for the initial camera position when we have the user location */
     public static final int INITIAL_ZOOM = 0;

@@ -34,9 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import net.hockeyapp.android.CrashManager;
-import net.hockeyapp.android.UpdateManager;
-
 public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, ShoutFragment.OnZoomOnShoutListener, FeedFragment.OnFeedShoutSelectedListener {
 
     private ConnectivityManager connectivityManager = null;
@@ -112,9 +109,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     @Override
     protected void onResume() {
         super.onResume();
-
-        checkForCrashes();
-        checkForUpdates();
 
         myLocation = LocationUtils.getLastLocationWithLocationManager(this, locationManager);
         ApiUtils.sendDeviceInfo(this, aq, myLocation);
@@ -345,15 +339,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         }
     }
 
-    private void checkForCrashes() {
-        CrashManager.register(this, "d8088fe6145a4b3dbf56d2d2f2289de9");
-    }
-
-    private void checkForUpdates() {
-        // Remove this for store builds!
-        UpdateManager.register(this, "d8088fe6145a4b3dbf56d2d2f2289de9");
-    }
-
     /**
      *  MAP RELATED METHODS
      */
@@ -407,8 +392,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 public void onClick(View v) {
                     if (myLocation != null) {
                         CameraUpdate update;
-                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_SHOUT_IN_MAP_OR_FEED) {
-                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_SHOUT_IN_MAP_OR_FEED);
+                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_MY_LOCATION_BUTTON) {
+                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_MY_LOCATION_BUTTON);
                         } else {
                             update = CameraUpdateFactory.newLatLng(LocationUtils.toLatLng(myLocation));
                         }
@@ -432,6 +417,12 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             settingsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+                        Toast toast = Toast.makeText(NavActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+                        toast.show();
+                        return;
+                    }
+
                     settingsButton.setEnabled(false);
                     Intent settings = new Intent(NavActivity.this, SettingsActivity.class);
                     startActivityForResult(settings, Constants.SETTINGS_REQUEST);

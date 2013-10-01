@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -90,13 +91,6 @@ public class NewShoutContentActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_shout_content);
-
-        if (savedInstanceState != null) {
-            highResCameraPictureFile = (File) savedInstanceState.getSerializable("highResCameraPictureFile");
-            shrinkedResCameraPictureFile = (File) savedInstanceState.getSerializable("shrinkedResCameraPictureFile");
-            shrinkedResPhotoPath = savedInstanceState.getString("shrinkedResPhotoPath");
-        }
-
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayShowHomeEnabled(false);
 
@@ -107,7 +101,21 @@ public class NewShoutContentActivity extends Activity {
         clientManager = new AmazonClientManager(getSharedPreferences(
                 "com.streetshout.android", Context.MODE_PRIVATE));
 
+        Location savedInstanceStateShoutLocation = null;
+
+        if (savedInstanceState != null) {
+            highResCameraPictureFile = (File) savedInstanceState.getSerializable("highResCameraPictureFile");
+            shrinkedResCameraPictureFile = (File) savedInstanceState.getSerializable("shrinkedResCameraPictureFile");
+            shrinkedResPhotoPath = savedInstanceState.getString("shrinkedResPhotoPath");
+            savedInstanceStateShoutLocation = savedInstanceState.getParcelable("shoutLocation");
+        }
+
         shoutLocation = getIntent().getParcelableExtra("myLocation");
+
+        if (savedInstanceStateShoutLocation != null) {
+            shoutLocation = savedInstanceStateShoutLocation;
+            shoutLocationRefined = true;
+        }
 
         //Set user name if we have it
         EditText userNameView = (EditText) findViewById(R.id.shout_descr_dialog_name);
@@ -206,6 +214,12 @@ public class NewShoutContentActivity extends Activity {
     }
 
     private void refineShoutLocation() {
+        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+            Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
         Intent newShoutNextStep = new Intent(NewShoutContentActivity.this, NewShoutLocationActivity.class);
 
         if (shoutLocationRefined) {
@@ -294,7 +308,13 @@ public class NewShoutContentActivity extends Activity {
             savedInstanceState.putSerializable("highResCameraPictureFile", highResCameraPictureFile);
             savedInstanceState.putSerializable("shrinkedResCameraPictureFile", shrinkedResCameraPictureFile);
             savedInstanceState.putString("shrinkedResPhotoPath", shrinkedResPhotoPath);
+
+            if (shoutLocationRefined == true) {
+                savedInstanceState.putParcelable("shoutLocation", shoutLocation);
+            }
         }
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

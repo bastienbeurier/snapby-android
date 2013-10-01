@@ -13,7 +13,10 @@ public class StreetShoutApplication extends Application {
         appPrefs = new AppPreferences(getApplicationContext());
 
         PushNotifications.initialize(this);
-        if (!Constants.PRODUCTION) {
+
+        if (Constants.PRODUCTION) {
+            AQUtility.setDebug(false);
+        } else {
             AQUtility.setDebug(true);
         }
     }
