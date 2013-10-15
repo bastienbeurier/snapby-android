@@ -12,6 +12,8 @@ import com.streetshout.android.R;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.ImageUtils;
 
+import java.io.File;
+
 public class ImageEditorActivity extends Activity {
 
     private static final int ROTATE_NINETY_DEGREES = 90;
@@ -23,9 +25,7 @@ public class ImageEditorActivity extends Activity {
     private int mAspectRatioX = 10;
     private int mAspectRatioY = 10;
 
-    private Bitmap croppedImage = null;
-
-    private String highResPhotoPath = null;
+    private File highResCameraPictureFile = null;
     private String shrinkedResPhotoPath = null;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -33,12 +33,11 @@ public class ImageEditorActivity extends Activity {
 
         setContentView(R.layout.image_editor);
 
-        highResPhotoPath = getIntent().getStringExtra("highResPhotoPath");
+        highResCameraPictureFile = (File) getIntent().getSerializableExtra("highResCameraPictureFile");
         shrinkedResPhotoPath = getIntent().getStringExtra("shrinkedResPhotoPath");
-        croppedImage = BitmapFactory.decodeFile(highResPhotoPath);
 
         cropImageView = (CropImageView) findViewById(R.id.crop_image_view);
-        cropImageView.setImageBitmap(croppedImage);
+        cropImageView.setImageBitmap(ImageUtils.decodeFileAndShrinkBitmap(highResCameraPictureFile));
 
         cropImageView.setAspectRatio(mAspectRatioX, mAspectRatioY);
         cropImageView.setFixedAspectRatio(true);
@@ -59,7 +58,7 @@ public class ImageEditorActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                ImageUtils.storeBitmapInFile(shrinkedResPhotoPath, Bitmap.createScaledBitmap(cropImageView.getCroppedImage(), Constants.SHOUT_BIG_RES, Constants.SHOUT_BIG_RES, true));
+                ImageUtils.storeBitmapInFile(shrinkedResPhotoPath, cropImageView.getCroppedImage());
 
                 final Intent returnIntent = new Intent();
                 setResult(RESULT_OK, returnIntent);

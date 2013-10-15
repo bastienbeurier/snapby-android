@@ -18,7 +18,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.streetshout.android.activities.NewShoutContentActivity;
+import com.streetshout.android.activities.CreateShoutActivity;
 import com.streetshout.android.utils.Constants;
 
 import java.io.ByteArrayOutputStream;
@@ -29,14 +29,14 @@ public class S3 {
 	private static ObjectListing objListing = null;
 
 	public static AmazonS3Client getInstance() {
-		return NewShoutContentActivity.clientManager.s3();
+		return CreateShoutActivity.clientManager.s3();
 	}
 
     public static boolean addImageInBucket(String photoPath, String photoName) {
         try {
             return addImagewithRes(photoPath, photoName, Constants.SHOUT_BIG_RES);
         } catch (AmazonServiceException ex) {
-            NewShoutContentActivity.clientManager.wipeCredentialsOnAuthError(ex);
+            CreateShoutActivity.clientManager.wipeCredentialsOnAuthError(ex);
             ex.printStackTrace();
             return false;
         }

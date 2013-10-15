@@ -8,7 +8,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -239,7 +238,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             toast.show();
             createShoutImageView.setEnabled(true);
         } else {
-            Intent createShout = new Intent(this, NewShoutContentActivity.class);
+            Intent createShout = new Intent(this, CreateShoutActivity.class);
             createShout.putExtra("myLocation", myLocation);
             startActivityForResult(createShout, Constants.CREATE_SHOUT_REQUEST);
         }

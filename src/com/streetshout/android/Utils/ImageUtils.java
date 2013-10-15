@@ -13,8 +13,10 @@ import android.widget.Toast;
 import com.streetshout.android.R;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,6 +70,39 @@ public class ImageUtils {
         bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
 
         return bitmap;
+    }
+
+    static public Bitmap decodeFileAndShrinkBitmap(File f){
+        Bitmap b = null;
+
+        //Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+
+
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            BitmapFactory.decodeStream(fis, null, o);
+
+            fis.close();
+            int scale = 1;
+            if (o.outHeight > Constants.SHOUT_BIG_RES || o.outWidth > Constants.SHOUT_BIG_RES) {
+                scale = (int)Math.pow(2, (int) Math.round(Math.log(Constants.SHOUT_BIG_RES /
+                        (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+            }
+
+            //Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            fis = new FileInputStream(f);
+            b = BitmapFactory.decodeStream(fis, null, o2);
+            fis.close();
+
+            return b;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return null;
+        }
     }
 
     static public String getPathFromUri(Context ctx, Uri selectedImage) {

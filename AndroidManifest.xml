@@ -52,11 +52,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.NewShoutLocationActivity"
+        <activity android:name=".activities.RefineShoutLocationActivity"
                   android:label="Refine Shout Location"
                   android:screenOrientation="portrait"
                   android:theme="@style/ShoutStyle.NoBar"/>
-        <activity android:name=".activities.NewShoutContentActivity"
+        <activity android:name=".activities.CreateShoutActivity"
                   android:label="Create Shout"
                   android:screenOrientation="portrait"/>
         <activity android:name=".activities.SettingsActivity"

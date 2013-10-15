@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -49,7 +48,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.Date;
 
-public class NewShoutContentActivity extends Activity {
+public class CreateShoutActivity extends Activity {
     private static int MAX_SHOUT_DESCR_LINES = 6;
 
     private AQuery aq;
@@ -220,7 +219,7 @@ public class NewShoutContentActivity extends Activity {
             return;
         }
 
-        Intent newShoutNextStep = new Intent(NewShoutContentActivity.this, NewShoutLocationActivity.class);
+        Intent newShoutNextStep = new Intent(CreateShoutActivity.this, RefineShoutLocationActivity.class);
 
         if (shoutLocationRefined) {
             newShoutNextStep.putExtra("shoutRefinedLocation", shoutLocation);
@@ -337,7 +336,6 @@ public class NewShoutContentActivity extends Activity {
                 if (data == null || data.getData() == null) {
                     if (highResCameraPictureFile != null) {
                         highResPhotoPath = highResCameraPictureFile.getAbsolutePath();
-                        ImageUtils.savePictureToGallery(this, highResPhotoPath);
                     }
                 //Case where image chosen with library
                 } else {
@@ -346,7 +344,7 @@ public class NewShoutContentActivity extends Activity {
 
                 if (highResPhotoPath != null && shrinkedResPhotoPath != null) {
                     Intent imageEditor = new Intent(this, ImageEditorActivity.class);
-                    imageEditor.putExtra("highResPhotoPath", highResPhotoPath);
+                    imageEditor.putExtra("highResCameraPictureFile", highResCameraPictureFile);
                     imageEditor.putExtra("shrinkedResPhotoPath", shrinkedResPhotoPath);
 
                     startActivityForResult(imageEditor, Constants.IMAGE_EDITOR_REQUEST);
@@ -364,6 +362,8 @@ public class NewShoutContentActivity extends Activity {
 
                 photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
                 photoUrl = Constants.S3_URL + photoName;
+
+                ImageUtils.savePictureToGallery(this, shrinkedResPhotoPath);
             }
         }
     }
@@ -411,7 +411,7 @@ public class NewShoutContentActivity extends Activity {
             AsyncTask<Void, Void, Response> {
 
         protected Response doInBackground(Void... params) {
-            return NewShoutContentActivity.clientManager.validateCredentials();
+            return CreateShoutActivity.clientManager.validateCredentials();
         }
 
         protected void onPostExecute(Response response) {
@@ -492,7 +492,7 @@ public class NewShoutContentActivity extends Activity {
 
     public void shoutCreationFailed() {
         createShoutDialog.cancel();
-        Toast toast = Toast.makeText(NewShoutContentActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
         toast.show();
     }
 }

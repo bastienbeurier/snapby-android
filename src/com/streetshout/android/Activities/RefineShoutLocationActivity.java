@@ -32,7 +32,7 @@ import com.streetshout.android.R;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.LocationUtils;
 
-public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
+public class RefineShoutLocationActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
 
     private static final int UPDATE_SHOUT_LOCATION = 1437;
 
@@ -156,7 +156,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
         if (myMapLocation != null) {
             myLocation = myMapLocation;
         } else if (myLocation == null) {
-            myLocation = LocationUtils.getLastLocationWithLocationManager(NewShoutLocationActivity.this, locationManager);
+            myLocation = LocationUtils.getLastLocationWithLocationManager(RefineShoutLocationActivity.this, locationManager);
         }
 
         //Compute bounds of this perimeter
@@ -234,7 +234,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
 
     private void geocodeAddress(final TextView editTextView) {
         String dialogText = String.format(getString(R.string.create_shout_address_geocoding_processing), '"' + editTextView.getText().toString() + '"');
-        final ProgressDialog addressDialog = ProgressDialog.show(NewShoutLocationActivity.this, "", dialogText, false);
+        final ProgressDialog addressDialog = ProgressDialog.show(RefineShoutLocationActivity.this, "", dialogText, false);
 
         final Handler handler = new Handler(){
             @Override
@@ -254,7 +254,7 @@ public class NewShoutLocationActivity extends Activity implements GoogleMap.OnMy
                                     && addressLng < mapLatLngBounds.northeast.longitude) {
                                 updateShoutAccuratePosition(addressLat, addressLng);
                                 addressDialog.cancel();
-                                Toast toast = Toast.makeText(NewShoutLocationActivity.this, getString(R.string.new_shout_geocoding_successful), Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(RefineShoutLocationActivity.this, getString(R.string.new_shout_geocoding_successful), Toast.LENGTH_SHORT);
                                 toast.show();
                                 return;
                             }
