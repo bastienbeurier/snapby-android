@@ -15,6 +15,7 @@ public class TimeUtils {
     public static final long ONE_MIN = 60 * 1000;
     public static final long ONE_HOUR = 60 * 60 * 1000;
 
+    //Returns long in milliseconds
     public static long getShoutAge(String dateCreated) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -28,29 +29,41 @@ public class TimeUtils {
         return (new Date()).getTime() - date.getTime();
     }
 
-    public static String shoutAgeToString(Activity activity, long age) {
+    public static String[] shoutAgeToStrings(Activity activity, long age) {
+        String[] result = new String[2];
+
         if (age > 0) {
             long hours = age / ONE_HOUR;
             if (hours > 1) {
-                String result = String.valueOf(hours) + " " + activity.getString(R.string.hours_ago);
                 if (age > Constants.SHOUT_DURATION) {
-                    result += " " + activity.getString(R.string.shout_expired);
+                    result[0] = activity.getString(R.string.expired);
+                    result[1] = "";
+                } else {
+                    result[0] = String.valueOf(hours);
+                    result[1] = activity.getString(R.string.hours);
                 }
-                return result;
             } else if (hours == 1) {
-                return String.valueOf(hours) + " " + activity.getString(R.string.hour_ago);
+                result[0] = String.valueOf(hours);
+                result[1] = activity.getString(R.string.hour);
             } else {
                 long minutes = age / ONE_MIN;
                 if (minutes > 1) {
-                    return String.valueOf(minutes) + " " + activity.getString(R.string.minutes_ago);
+                    result[0] = String.valueOf(minutes);
+                    result[1] = activity.getString(R.string.minutes);
                 } else if (minutes == 1) {
-                    return String.valueOf(minutes) + " " + activity.getString(R.string.minute_ago);
+                    result[0] = String.valueOf(minutes);
+                    result[1] = activity.getString(R.string.minute);
                 } else {
-                    return activity.getString(R.string.just_now);
+                    result[0] = activity.getString(R.string.now);
+                    result[1] = "";
                 }
             }
         } else {
-            return activity.getString(R.string.just_now);
+            result[0] = activity.getString(R.string.now);
+            result[1] = "";
         }
+
+
+        return result;
     }
 }

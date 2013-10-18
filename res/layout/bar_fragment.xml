@@ -12,14 +12,4 @@
                   android:layout_centerVertical="true"
                   android:background="@drawable/nav_bar_selector">
     </LinearLayout>
-
-    <ImageView
-            android:id="@+id/create_shout_item_menu"
-            android:layout_width="@dimen/create_shout_button_size"
-            android:layout_height="@dimen/create_shout_button_size"
-            android:src="@drawable/ic_action_create_shout"
-            android:layout_centerHorizontal="true"
-            android:padding="10dp"
-            android:onClick="createShout"
-            android:background="@drawable/create_shout_button_selector"/>
 </RelativeLayout>

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ShoutStyle" parent="@android:style/Theme.Holo">
+    <style name="ShoutStyle" parent="@android:style/Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/StreetShoutActionBar</item>
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
     </style>
 
     <style name="StreetShoutActionBar" parent="@android:style/Widget.Holo.ActionBar">
@@ -16,6 +18,14 @@
 
     <style name="ActionBarText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textColor">@color/darkerShoutBlue</item>
+    </style>
+
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="NoTitleText">

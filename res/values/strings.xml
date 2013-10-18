@@ -32,8 +32,15 @@
     <string name="minutes_ago">mins ago</string>
     <string name="hour_ago">hour ago</string>
     <string name="hours_ago">hours ago</string>
+    <string name="minute">minute</string>
+    <string name="minutes">minutes</string>
+    <string name="hour">hour</string>
+    <string name="hours">hours</string>
+    <string name="ago">ago</string>
     <string name="just_now">just now</string>
+    <string name="now">now</string>
     <string name="shout_expired">(expired)</string>
+    <string name="expired">exp</string>
     <string name="no_connection">No internet connection</string>
     <string name="no_shout_displayed">No shout displayed...</string>
     <string name="status_bar_notification_title">New shout in your area</string>
@@ -66,4 +73,8 @@
     <string name="shout_by">by</string>
     <string name="rotate">rotate</string>
     <string name="crop">crop</string>
+    <string name="near">near</string>
+    <string name="far">far</string>
+    <string name="meters">meters</string>
+    <string name="away">away</string>
 </resources>

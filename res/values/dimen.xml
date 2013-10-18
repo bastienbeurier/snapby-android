@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="feed_header_height">48dp</dimen>
-    <dimen name="feed_header_refresh_heigh">25dp</dimen>
     <dimen name="action_bar_icon_width">50dp</dimen>
-    <dimen name="create_shout_button_size">60dp</dimen>
-    <dimen name="map_button_size">40dp</dimen>
+    <dimen name="create_shout_button_size">80dp</dimen>
+    <dimen name="map_button_size">42dp</dimen>
+    <dimen name="map_zoom_size">40dp</dimen>
     <dimen name="sliding_menu_shadow">15dp</dimen>
     <dimen name="map_info_window_size">200dp</dimen>
     <dimen name="action_bar_heigh">50dp</dimen>
     <dimen name="nav_bar_heigh">20dp</dimen>
+    <dimen name="feed_shout_view_height">70dp</dimen>
+    <dimen name="feed_shout_age_container">68dp</dimen>
+    <dimen name="feed_shout_image_height">56dp</dimen>
+    <dimen name="shout_fragment_image_height">70dp</dimen>
+    <dimen name="shout_fragment_button_size">53dp</dimen>
+    <dimen name="shout_fragment_button_margin">20dp</dimen>
+    <!--shout_fragment_numeric_info_layout_width equals shout_fragment_button_size + 2 * shout_fragment_button_margin-->
+    <dimen name="shout_fragment_numeric_info_layout_width">93dp</dimen>
 </resources>

@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.streetshout.android.activities.DisplayImageActivity;
 import com.streetshout.android.models.ShoutModel;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.Constants;
+import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.TimeUtils;
 
@@ -23,7 +25,13 @@ public class ShoutFragment extends Fragment {
 
     TextView descriptionView = null;
 
-    TextView timeStampView = null;
+    TextView shoutAgeView = null;
+
+    TextView shoutAgeUnitView = null;
+
+    TextView shoutDistanceView = null;
+
+    TextView shoutDistanceUnitView = null;
 
     ImageView imageView = null;
 
@@ -47,12 +55,27 @@ public class ShoutFragment extends Fragment {
 
         userNameView = (TextView) getView().findViewById(R.id.shout_title);
         descriptionView = (TextView) getView().findViewById(R.id.shout_body);
-        timeStampView = (TextView) getView().findViewById(R.id.shout_stamp);
         imageView = (ImageView) getView().findViewById(R.id.shout_fragment_image);
+        shoutAgeView = (TextView) getView().findViewById(R.id.shout_fragment_shout_age);
+        shoutAgeUnitView = (TextView) getView().findViewById(R.id.shout_fragment_shout_age_unit);
+        shoutDistanceView = (TextView) getView().findViewById(R.id.shout_fragment_shout_distance);
+        shoutDistanceUnitView = (TextView) getView().findViewById(R.id.shout_fragment_shout_age_distance_unit);
 
         userNameView.setText(getString(R.string.no_shout_displayed));
+    }
 
-        getView().findViewById(R.id.shout_container).setOnClickListener(new View.OnClickListener() {
+    //TODO: rename to intializeFragment or something
+    public void displayShoutInFragment(final ShoutModel shout, Location myLocation) {
+        getView().findViewById(R.id.shout_container).setBackgroundColor(GeneralUtils.getShoutAgeColor(getActivity(), shout));
+
+        getView().findViewById(R.id.shout_fragment_back_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+
+        getView().findViewById(R.id.shout_fragment_zoom_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentDisplayedShout != null) {
@@ -60,22 +83,32 @@ public class ShoutFragment extends Fragment {
                 }
             }
         });
-    }
 
-    //TODO: rename to intializeFragment or something
-    public void displayShoutInFragment(final ShoutModel shout, Location myLocation) {
         imageView.setImageResource(R.drawable.ic_default_image);
 
         currentDisplayedShout = shout;
 
-        userNameView.setText(shout.displayName);
-        descriptionView.setText('"' + shout.description + '"');
-        String shoutStamp = TimeUtils.shoutAgeToString(getActivity(), TimeUtils.getShoutAge(shout.created));
+        userNameView.setText(getString(R.string.shout_by) + " " + shout.displayName);
+        descriptionView.setText(shout.description);
+
+        String[] ageStrings = TimeUtils.shoutAgeToStrings(getActivity(), TimeUtils.getShoutAge(shout.created));
+
+        shoutAgeView.setText(ageStrings[0]);
+        if (ageStrings[1] != "") {
+            shoutAgeUnitView.setText(ageStrings[1] + " " + getText(R.string.ago));
+        }
+
         if (myLocation != null) {
             Location shoutLocation = new Location("");
             shoutLocation.setLatitude(shout.lat);
             shoutLocation.setLongitude(shout.lng);
-            shoutStamp += ", " + LocationUtils.formattedDistance(getActivity(), myLocation, shoutLocation);
+
+            String[] distanceStrings = LocationUtils.formattedDistanceStrings(getActivity(), myLocation, shoutLocation);
+            shoutDistanceView.setText(distanceStrings[0]);
+            if (distanceStrings[1] != "") {
+                shoutDistanceUnitView.setText(distanceStrings[1] + " " + getText(R.string.away));
+            }
+
         }
 
         if (shout.image != null && shout.image.length() > 0) {
@@ -92,8 +125,6 @@ public class ShoutFragment extends Fragment {
         } else {
             imageView.setVisibility(View.GONE);
         }
-
-        timeStampView.setText(shoutStamp);
     }
 
     @Override

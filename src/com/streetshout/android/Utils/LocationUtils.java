@@ -77,48 +77,65 @@ public class LocationUtils {
         return new LatLng[] {southWest, northEast};
     }
 
-    public static String formattedDistance(Context ctx, Location loc1, Location loc2) {
+    public static String[] formattedDistanceStrings(Context ctx, Location loc1, Location loc2) {
         int distance = (int) (loc1.distanceTo(loc2));
 
         AppPreferences appPrefs = new AppPreferences(ctx.getApplicationContext());
 
         if (appPrefs.getDistanceUnitPref() == 1) {
-            return formatedDistanceInMiles(distance);
+            return formatedDistanceInMiles(ctx, distance);
         } else {
-            return formatedDistanceInMeters(distance);
+            return formatedDistanceInMeters(ctx, distance);
         }
     }
 
-    public static String formatedDistanceInMeters(int distance) {
+    public static String[] formatedDistanceInMeters(Context ctx, int distance) {
+        String[] result = new String[2];
 
         if (distance < 100) {
-            return "nearby";
+            result[0] = ctx.getString(R.string.near);
+            result[1] = "";
         } else if (distance < 1000) {
-            return (Math.round(distance / 100.0) * 100) + " meters away";
+            result[0] = String.format("%d", Math.round(distance / 100.0) * 100);
+            result[1] = ctx.getString(R.string.meters);
         } else if (distance < 10000) {
-            return (Math.round(distance / 1000.0)) + "km away";
+            result[0] = String.format("%d", Math.round(distance / 1000.0));
+            result[1] = "km";
         } else if (distance < 100000 ) {
-            return (Math.round(distance / 10000.0) * 10) + "km away";
+            result[0] = String.format("%d", Math.round(distance / 10000.0) * 10);
+            result[1] = "km";
         } else {
-            return "far away";
+            result[0] = ctx.getString(R.string.far);
+            result[1] = "";
         }
+
+        return result;
     }
 
-    public static String formatedDistanceInMiles(int distance) {
+    public static String[] formatedDistanceInMiles(Context ctx, int distance) {
+        String[] result = new String[2];
+
         long distanceYd = Math.round(distance * 1.09361);
         long distanceMiles = Math.round(distance * 0.000621371);
 
         if (distanceYd < 100) {
-            return "nearby";
+            result[0] = ctx.getString(R.string.near);
+            result[1] = "";
         } else if (distanceMiles < 1) {
-            return (Math.round(distanceYd / 100.0) * 100) + "yd away";
+            result[0] = String.format("%d", Math.round(distanceYd / 100.0) * 100);
+            result[1] = "yd";
         } else if (distanceMiles < 10) {
-            return distanceMiles + "mi away";
+            result[0] = String.format("%d", distanceMiles);
+            result[1] = "mi";
         } else if (distanceMiles < 100 ) {
-            return (Math.round(distanceMiles / 10.0) * 10) + "mi away";
+            result[0] = String.format("%d", Math.round(distanceMiles / 10.0) * 10);
+            result[1] = "mi";
         } else {
-            return "far away";
+            result[0] = ctx.getString(R.string.far);
+            result[1] = "";
         }
+
+        return result;
     }
 
     public static Address geocodeAddress(Geocoder geocoder, String address, LatLngBounds latLngBounds) {
