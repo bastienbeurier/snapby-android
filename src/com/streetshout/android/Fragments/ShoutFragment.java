@@ -96,6 +96,8 @@ public class ShoutFragment extends Fragment {
         shoutAgeView.setText(ageStrings[0]);
         if (ageStrings[1] != "") {
             shoutAgeUnitView.setText(ageStrings[1] + " " + getText(R.string.ago));
+        } else {
+            shoutAgeUnitView.setText("");
         }
 
         if (myLocation != null) {
@@ -107,6 +109,8 @@ public class ShoutFragment extends Fragment {
             shoutDistanceView.setText(distanceStrings[0]);
             if (distanceStrings[1] != "") {
                 shoutDistanceUnitView.setText(distanceStrings[1] + " " + getText(R.string.away));
+            } else {
+                shoutDistanceUnitView.setText("");
             }
 
         }

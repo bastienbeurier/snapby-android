@@ -35,7 +35,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         setContentView(R.layout.settings);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayShowHomeEnabled(false);
+//        getActionBar().setDisplayShowHomeEnabled(false);
 
         appPrefs = new AppPreferences(getApplicationContext());
         aq = new AQuery(this);
@@ -119,11 +119,11 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         int distancePref = appPrefs.getDistanceUnitPref();
 
         if (distancePref == 1) {
-            notificationAdapter = ArrayAdapter.createFromResource(this, R.array.miles_notification_preference_array, android.R.layout.simple_spinner_item);
-            notificationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            notificationAdapter = ArrayAdapter.createFromResource(this, R.array.miles_notification_preference_array, R.layout.settings_spinner_item);
+            notificationAdapter.setDropDownViewResource(R.layout.settings_spinner_item);
         } else {
-            notificationAdapter = ArrayAdapter.createFromResource(this, R.array.meters_notification_preference_array, android.R.layout.simple_spinner_item);
-            notificationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            notificationAdapter = ArrayAdapter.createFromResource(this, R.array.meters_notification_preference_array, R.layout.settings_spinner_item);
+            notificationAdapter.setDropDownViewResource(R.layout.settings_spinner_item);
         }
 
         notificationSpinner.setAdapter(notificationAdapter);
@@ -139,8 +139,8 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
     private void setDistanceSpinnerAdapter() {
         int distancePref = appPrefs.getDistanceUnitPref();
 
-        ArrayAdapter<CharSequence> distanceAdapter = ArrayAdapter.createFromResource(this, R.array.distance_preference_array, android.R.layout.simple_spinner_item);
-        distanceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> distanceAdapter = ArrayAdapter.createFromResource(this, R.array.distance_preference_array, R.layout.settings_spinner_item);
+        distanceAdapter.setDropDownViewResource(R.layout.settings_spinner_item);
         distanceSpinner.setAdapter(distanceAdapter);
         distanceSpinner.setOnItemSelectedListener(this);
 

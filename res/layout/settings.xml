@@ -4,7 +4,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/darkGrey"
+              android:background="@color/white"
               android:paddingTop="10dp">
 
     <LinearLayout android:layout_height="wrap_content"
@@ -12,8 +12,21 @@
                   android:orientation="vertical"
                   android:layout_marginLeft="10dp"
                   android:layout_marginRight="10dp"
-                  android:padding="1dp"
-                  android:background="@drawable/form_wrapper_borders">
+                  android:padding="1dp" >
+
+        <TextView android:layout_height="match_parent"
+                  android:layout_width="wrap_content"
+                  android:textColor="@color/blackLighter"
+                  android:textSize="14sp"
+                  android:fontFamily="sans-serif"
+                  android:textStyle="bold"
+                  android:gravity="left|center_vertical"
+                  android:text="@string/shout_settings"
+                  android:layout_marginBottom="5dp"/>
+
+        <View android:layout_height="1dp"
+              android:layout_width="match_parent"
+              android:background="@color/veryLightGrey" />
 
         <LinearLayout android:layout_height="60dp"
                       android:layout_width="match_parent"
@@ -22,8 +35,8 @@
 
             <TextView android:layout_height="match_parent"
                       android:layout_width="wrap_content"
-                      android:textColor="@android:color/white"
-                      android:textSize="14sp"
+                      android:textColor="@color/blackLighter"
+                      android:textSize="16sp"
                       android:gravity="left|center_vertical"
                       android:text="@string/notification_preference_button"/>
 
@@ -67,8 +80,8 @@
             <TextView android:layout_height="match_parent"
                       android:layout_width="match_parent"
                       android:layout_weight="1"
-                      android:textColor="@android:color/white"
-                      android:textSize="14sp"
+                      android:textColor="@color/blackLighter"
+                      android:textSize="16sp"
                       android:gravity="left|center_vertical"
                       android:text="@string/distance_unit_preference_button"/>
 
@@ -81,10 +94,26 @@
 
         </LinearLayout>
 
+        <TextView android:layout_height="match_parent"
+                  android:layout_width="wrap_content"
+                  android:textColor="@color/blackLighter"
+                  android:textSize="14sp"
+                  android:fontFamily="sans-serif"
+                  android:textStyle="bold"
+                  android:gravity="left|center_vertical"
+                  android:text="@string/participate"
+                  android:layout_marginBottom="5dp"
+                  android:layout_marginTop="10dp"/>
+
+        <View android:layout_height="1dp"
+              android:layout_width="match_parent"
+              android:background="@color/veryLightGrey" />
+
         <Button
                 android:id="@+id/feedback_button"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:textColor="@color/blackLighter"
                 style="@style/PreferenceButton"
                 android:text="@string/feedback_preference_button"/>
 
@@ -92,6 +121,7 @@
                 android:id="@+id/rate_me_button"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:textColor="@color/blackLighter"
                 style="@style/PreferenceButton"
                 android:text="@string/rate_me_preference_button"/>
 
