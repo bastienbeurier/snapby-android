@@ -1,28 +1,18 @@
 package com.streetshout.android.activities;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -44,19 +34,14 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
 
     private Marker shoutLocationArrow = null;
 
-    private Geocoder geocoder = null;
-
-    private LatLngBounds mapLatLngBounds = null;
-
     private LocationManager locationManager = null;
-
-    private EditText addressView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_shout_location);
 
-        geocoder = new Geocoder(this);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowHomeEnabled(true);
 
         locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
 
@@ -64,31 +49,10 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
         mapLoaded();
         letUserRefineShoutPosition();
 
-        addressView = (EditText) findViewById(R.id.shout_address_view);
-
-        addressView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((EditText) v).setError(null);
-            }
-        });
-
-        addressView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId== EditorInfo.IME_ACTION_SEARCH) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(addressView.getWindowToken(), 0);
-                    geocodeAddress(v);
-                }
-                return false;
-            }
-        });
-
         findViewById(R.id.refresh_shout_perimeter).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setMapCameraPositionOnUserLocation();
+                setMapCameraPositionAndShoutPositionOnUserLocation();
             }
         });
     }
@@ -138,25 +102,48 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
             public void onCameraChange(CameraPosition arg0) {
                 mMap.setOnCameraChangeListener(null);
 
-                setMapCameraPositionOnUserLocation();
-
+                //User has already refined his shout location and is doing it again
                 if (getIntent().hasExtra("shoutRefinedLocation")) {
                     shoutLocation = getIntent().getParcelableExtra("shoutRefinedLocation");
+                    setMapCameraPositionOnShoutLocation();
                     updateShoutAccuratePosition(shoutLocation.getLatitude(), shoutLocation.getLongitude());
+                //First time user refines his shout location
                 } else {
-                    updateShoutAccuratePosition(myLocation.getLatitude(), myLocation.getLongitude());
+                    //Update shout position to most recent user position if available
+                    boolean myLocationAvailable = setMapCameraPositionAndShoutPositionOnUserLocation();
+
+                    //Otherwise use position given by CreateShoutActivity
+                    if (!myLocationAvailable) {
+                        shoutLocation = getIntent().getParcelableExtra("shoutInitialLocation");
+                        setMapCameraPositionOnShoutLocation();
+                        updateShoutAccuratePosition(shoutLocation.getLatitude(), shoutLocation.getLongitude());
+                    }
                 }
             }
         });
     }
 
-    private void setMapCameraPositionOnUserLocation() {
+    private void setMapCameraPositionOnShoutLocation() {
+        //Compute bounds of this perimeter
+        LatLng[] boundsResult = LocationUtils.getLatLngBounds(Constants.SHOUT_RADIUS, shoutLocation);
+        final LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
+    }
+
+    private boolean setMapCameraPositionAndShoutPositionOnUserLocation() {
         Location myMapLocation = mMap.getMyLocation();
 
         if (myMapLocation != null) {
             myLocation = myMapLocation;
-        } else if (myLocation == null) {
+        }
+
+        if (myLocation == null) {
             myLocation = LocationUtils.getLastLocationWithLocationManager(RefineShoutLocationActivity.this, locationManager);
+        }
+
+        if (myLocation == null) {
+            return false;
         }
 
         //Compute bounds of this perimeter
@@ -164,7 +151,11 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
         final LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
-        mapLatLngBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+
+        shoutLocation = myLocation;
+        updateShoutAccuratePosition(myLocation.getLatitude(), myLocation.getLongitude());
+
+        return true;
     }
 
     private void letUserRefineShoutPosition() {
@@ -173,7 +164,6 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
             @Override
             public void onMapClick(LatLng latLng) {
                 updateShoutAccuratePosition(latLng.latitude, latLng.longitude);
-                addressView.setText("");
             }
         };
 
@@ -188,7 +178,6 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 updateShoutAccuratePosition(marker.getPosition().latitude, marker.getPosition().longitude);
-                addressView.setText("");
             }
         };
 
@@ -196,7 +185,6 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
             @Override
             public void onMapLongClick(LatLng latLng) {
                 updateShoutAccuratePosition(latLng.latitude, latLng.longitude);
-                addressView.setText("");
             }
         };
 
@@ -219,74 +207,35 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
         MarkerOptions marker = new MarkerOptions();
         marker.position(new LatLng(shoutLocation.getLatitude(), shoutLocation.getLongitude()));
         marker.draggable(true);
-        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
-        marker.anchor((float) 0.5, (float) 0.95);
         shoutLocationArrow = mMap.addMarker(marker);
     }
 
-    /** User confirmed shout creation after scpecifying accurate location and shout description */
-    public void createNewShoutFromInfo(View view) {
+    public void endShoutLocationRefining() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("accurateShoutLocation", shoutLocation);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
 
-    private void geocodeAddress(final TextView editTextView) {
-        String dialogText = String.format(getString(R.string.create_shout_address_geocoding_processing), '"' + editTextView.getText().toString() + '"');
-        final ProgressDialog addressDialog = ProgressDialog.show(RefineShoutLocationActivity.this, "", dialogText, false);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.refine_location_actions, menu);
 
-        final Handler handler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == UPDATE_SHOUT_LOCATION) {
-                    Address address = (Address) msg.obj;
+        return super.onCreateOptionsMenu(menu);
+    }
 
-                    if (address != null) {
-                        try {
-                            double addressLat = address.getLatitude();
-                            double addressLng = address.getLongitude();
-
-
-                            if (addressLat > mapLatLngBounds.southwest.latitude
-                                    && addressLat < mapLatLngBounds.northeast.latitude
-                                    && addressLng > mapLatLngBounds.southwest.longitude
-                                    && addressLng < mapLatLngBounds.northeast.longitude) {
-                                updateShoutAccuratePosition(addressLat, addressLng);
-                                addressDialog.cancel();
-                                Toast toast = Toast.makeText(RefineShoutLocationActivity.this, getString(R.string.new_shout_geocoding_successful), Toast.LENGTH_SHORT);
-                                toast.show();
-                                return;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    addressDialog.cancel();
-                    editTextView.setError(getString(R.string.new_shout_geocoding_failed));
-                    editTextView.setText("");
-                }
-
-                super.handleMessage(msg);
-            }
-        };
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Address address = LocationUtils.geocodeAddress(geocoder, editTextView.getText().toString(), mapLatLngBounds);
-                    Message msg = handler.obtainMessage();
-                    msg.what = UPDATE_SHOUT_LOCATION;
-                    msg.obj = address;
-                    handler.sendMessage(msg);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        thread.start();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.done_action) {
+            endShoutLocationRefining();
+            return false;
+        } else {
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED, returnIntent);
+            finish();
+            return true;
+        }
     }
 }

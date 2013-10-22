@@ -4,6 +4,7 @@
         <item name="android:actionBarStyle">@style/StreetShoutActionBar</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
     <style name="StreetShoutActionBar" parent="@android:style/Widget.Holo.ActionBar">
@@ -43,5 +44,9 @@
         <item name="android:background">@drawable/selector_top_grey_border</item>
         <item name="android:gravity">left|center_vertical</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CreateShoutEditText">
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 </resources>

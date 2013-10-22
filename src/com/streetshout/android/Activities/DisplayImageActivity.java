@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import com.androidquery.AQuery;
+import com.androidquery.callback.ImageOptions;
 import com.streetshout.android.R;
 
 public class DisplayImageActivity extends Activity {
@@ -13,7 +14,6 @@ public class DisplayImageActivity extends Activity {
         setContentView(R.layout.display_image);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayShowHomeEnabled(false);
 
         AQuery aq = new AQuery(this);
 
@@ -21,7 +21,10 @@ public class DisplayImageActivity extends Activity {
 
         String imageUrl = getIntent().getStringExtra("image") + "--400";
 
-        aq.id(R.id.display_image_view).image(imageUrl);
+        ImageOptions options = new ImageOptions();
+        options.round = 20;
+
+        aq.id(R.id.display_image_view).image(imageUrl, options);
     }
 
     @Override

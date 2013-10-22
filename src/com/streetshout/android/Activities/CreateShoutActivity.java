@@ -2,8 +2,10 @@ package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -12,10 +14,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -87,11 +97,14 @@ public class CreateShoutActivity extends Activity {
 
     private String shrinkedResPhotoPath = null;
 
+    private Menu menu = null;
+
+    private View mapView = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_shout_content);
+        setContentView(R.layout.create_shout);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayShowHomeEnabled(false);
 
         aq = new AQuery(this);
 
@@ -121,16 +134,23 @@ public class CreateShoutActivity extends Activity {
         final EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
         descriptionView.setHorizontallyScrolling(false);
         descriptionView.setMaxLines(MAX_SHOUT_DESCR_LINES);
-        final TextView charCountView = (TextView) findViewById(R.id.shout_descr_dialog_count);
 
         appPrefs = ((StreetShoutApplication) getApplicationContext()).getAppPrefs();
 
         String savedUserName = appPrefs.getUserNamePref();
+
+        InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
+
         if (savedUserName.length() > 0) {
             userNameView.setText(savedUserName);
-            userNameView.clearFocus();
             descriptionView.requestFocus();
+            imm.showSoftInput(descriptionView, 0);
+        } else {
+            userNameView.requestFocus();
+            imm.showSoftInput(userNameView, 0);
         }
+
+        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
         descriptionView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -142,7 +162,7 @@ public class CreateShoutActivity extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 descriptionView.setError(null);
-                charCountView.setText((Constants.MAX_DESCRIPTION_LENGTH - s.length()) + " " + getString(R.string.characters));
+                setCharCountItemTitle(String.format("%d", Constants.MAX_DESCRIPTION_LENGTH - s.length()));
             }
         });
 
@@ -156,6 +176,8 @@ public class CreateShoutActivity extends Activity {
         });
 
         shoutImageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
+
+        resizeSquarePhotoAndMap(shoutImageView);
     }
 
     private void removePhoto() {
@@ -175,8 +197,32 @@ public class CreateShoutActivity extends Activity {
         }
     }
 
+    private void resizeSquarePhotoAndMap(View view) {
+        int marginLeft = 10;
+        int marginRight = 10;
+        int middleSpace = 40;
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = (width / 2) - marginLeft - marginRight - middleSpace;
+        view.setLayoutParams(params);
+    }
+
     private void setUpMap() {
-        mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.refine_location_map)).getMap();
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.refine_location_map);
+        mMap = mapFragment.getMap();
+
+        mapView = mapFragment.getView();
+
+        //We want a square map
+        resizeSquarePhotoAndMap(mapView);
+
+        if (!shoutLocationRefined) {
+            mapView.setVisibility(View.INVISIBLE);
+        }
 
         //Set map settings
         UiSettings settings = mMap.getUiSettings();
@@ -188,31 +234,11 @@ public class CreateShoutActivity extends Activity {
         settings.setScrollGesturesEnabled(false);
         settings.setZoomGesturesEnabled(false);
 
-        //Disable clicking on markers
-        GoogleMap.OnMarkerClickListener disableMarkerClick = new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                refineShoutLocation();
-                return true;
-            }
-        };
-
-        mMap.setOnMarkerClickListener(disableMarkerClick);
-
-        GoogleMap.OnMapClickListener updateShoutLocOnClick = new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                refineShoutLocation();
-            }
-        };
-
-        mMap.setOnMapClickListener(updateShoutLocOnClick);
-
         updateShoutMarkerLocation();
         setUpCameraPosition();
     }
 
-    private void refineShoutLocation() {
+    public void refineShoutLocation(View view) {
         if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
             Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
             toast.show();
@@ -222,6 +248,8 @@ public class CreateShoutActivity extends Activity {
         Intent newShoutNextStep = new Intent(CreateShoutActivity.this, RefineShoutLocationActivity.class);
 
         if (shoutLocationRefined) {
+            newShoutNextStep.putExtra("shoutRefinedLocation", shoutLocation);
+        } else {
             newShoutNextStep.putExtra("shoutRefinedLocation", shoutLocation);
         }
 
@@ -252,12 +280,10 @@ public class CreateShoutActivity extends Activity {
         MarkerOptions marker = new MarkerOptions();
         marker.position(new LatLng(shoutLocation.getLatitude(), shoutLocation.getLongitude()));
         marker.draggable(false);
-        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shout_map_marker_selected));
-        marker.anchor((float) 0.5, (float) 0.95);
         mMap.addMarker(marker);
     }
 
-    public void validateShoutInfo(View view) {
+    public void validateShoutInfo() {
         boolean errors = false;
 
         EditText userNameView = (EditText) findViewById(R.id.shout_descr_dialog_name);
@@ -319,6 +345,8 @@ public class CreateShoutActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.NEW_SHOUT_CONTENT_ACTIVITY_REQUEST) {
             if (resultCode == RESULT_OK) {
+                mapView.setVisibility(View.VISIBLE);
+
                 shoutLocation = data.getParcelableExtra("accurateShoutLocation");
                 updateShoutMarkerLocation();
                 updateCameraPosition();
@@ -366,14 +394,6 @@ public class CreateShoutActivity extends Activity {
                 ImageUtils.savePictureToGallery(this, shrinkedResPhotoPath);
             }
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        Intent returnIntent = new Intent();
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-        return true;
     }
 
     public void letUserChooseImage(View view) {
@@ -495,4 +515,36 @@ public class CreateShoutActivity extends Activity {
         Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
         toast.show();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        this.menu = menu;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.create_shout_actions, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_shout) {
+            validateShoutInfo();
+            return false;
+        } else if (item.getItemId() == R.id.char_count) {
+            return false;
+        } else {
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED, returnIntent);
+            finish();
+            return true;
+        }
+    }
+
+    private void setCharCountItemTitle(String title)
+    {
+        MenuItem item = menu.findItem(R.id.char_count);
+        item.setTitle(title);
+    }
+
 }

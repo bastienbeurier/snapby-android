@@ -7,12 +7,10 @@
     <string name="cancel">Cancel</string>
     <string name="no_location_dialog_title">Location access disabled</string>
     <string name="no_location_dialog_message">Some features require access to your location. Tap "Settings" to edit these settings, otherwise tap "Skip".</string>
-    <string name="create_shout_dialog_name">User name (publicly visible)</string>
-    <string name="create_shout_dialog">What\'s happening around you?</string>
+    <string name="create_shout_dialog_name">Your shouter pseudo</string>
+    <string name="create_shout_dialog">What\'s happening here and now?</string>
     <string name="create_shout_dialog_title">Create a shout</string>
     <string name="create_shout_dialog_count">140 characters</string>
-    <string name="add_image_to_shout_instruction">Add photo:</string>
-    <string name="refine_location_instruction">Refine location:</string>
     <string name="characters">characters</string>
     <string name="create_shout_success">Congrats for shouting your truth!</string>
     <string name="create_shout_failure">Sorry, your shout failed!</string>
@@ -27,6 +25,7 @@
     <string name="loading">Loading...</string>
     <string name="feed_header">LATEST SHOUTS</string>
     <string name="empty_feed">No shouts in this area...</string>
+    <string name="no_connection_feed">No internet connection...</string>
     <string name="no_location">No location available</string>
     <string name="minute_ago">min ago</string>
     <string name="minutes_ago">mins ago</string>
@@ -44,7 +43,7 @@
     <string name="no_connection">No internet connection</string>
     <string name="no_shout_displayed">No shout displayed...</string>
     <string name="status_bar_notification_title">New shout in your area</string>
-    <string name="create_shout_map_instruction">Tap on the map to refine your location...</string>
+    <string name="create_shout_map_instruction">Tap on the map to refine your location</string>
     <string name="create_shout_address_instruction">...or enter nearby address</string>
     <string name="nav_activity_address_instruction">Go to address or location:</string>
     <string name="create_shout_activity_title">Create a shout</string>
@@ -54,6 +53,7 @@
     <string name="nav_address_geocoding_processing">Searching for %s...</string>
     <string name="create_shout_address_geocoding_processing">Searching for %s nearby...</string>
     <string name="new_shout_geocoding_successful">Shout location updated on map</string>
+    <string name="refine_location_failure">No better location available.</string>
     <string name="new_shout_geocoding_failed">Not found or not nearby location</string>
     <string name="address_geocoding_failed">Location not found</string>
     <string name="notification_preference_button">Notification radius</string>
@@ -77,6 +77,9 @@
     <string name="far">far</string>
     <string name="meters">meters</string>
     <string name="away">away</string>
-    <string name="shout_settings">SETTINGS</string>
+    <string name="shout_settings">GENERAL SETTINGS</string>
     <string name="participate">PARTICIPATE!</string>
+    <string name="add_photo">Add photo</string>
+    <string name="refine_location">Refine location</string>
+    <string name="done_cap">DONE</string>
 </resources>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white">
+
+    <EditText android:id="@+id/shout_descr_dialog_name"
+              android:inputType="textPersonName"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="16dp"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+              android:layout_marginBottom="4dp"
+              android:textColorHint="@color/lightGrey"
+              style="@style/CreateShoutEditText"
+              android:hint="@string/create_shout_dialog_name" />
+
+    <EditText android:id="@+id/shout_descr_dialog_descr"
+              android:inputType="textCapSentences"
+              android:imeOptions="actionDone"
+              android:gravity="top|left"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+              android:layout_marginBottom="4dp"
+              android:textColorHint="@color/lightGrey"
+              style="@style/CreateShoutEditText"
+              android:hint="@string/create_shout_dialog" />
+
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="15dp">
+
+        <LinearLayout android:layout_height="wrap_content"
+                      android:layout_width="match_parent"
+                      android:layout_weight="1"
+                      android:layout_marginLeft="10dp"
+                      android:orientation="vertical">
+
+            <Button android:id="@+id/add_photo"
+                    android:layout_height="40dp"
+                    android:layout_width="match_parent"
+                    android:text="@string/add_photo"
+                    android:textSize="16dp"
+                    android:background="@drawable/create_shout_option_button_selector"
+                    android:onClick="letUserChooseImage"/>
+
+            <RelativeLayout android:layout_height="match_parent"
+                            android:layout_width="match_parent"
+                            android:layout_marginTop="10dp">
+
+                <ImageView android:id="@+id/new_shout_upload_photo"
+                           android:layout_height="match_parent"
+                           android:layout_width="match_parent"
+                           android:background="@color/white"/>
+
+                <ImageView
+                        android:id="@+id/remove_photo_button"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/remove_photo_button"
+                        android:visibility="gone"/>
+            </RelativeLayout>
+
+         </LinearLayout>
+
+        <View android:layout_height="40dp"
+              android:layout_width="20dp"/>
+
+        <LinearLayout android:layout_height="wrap_content"
+                      android:layout_width="match_parent"
+                      android:layout_weight="1"
+                      android:layout_marginRight="10dp"
+                      android:orientation="vertical">
+
+            <Button android:id="@+id/refine_location_button"
+                    android:layout_height="40dp"
+                    android:layout_width="match_parent"
+                    android:text="@string/refine_location"
+                    android:textSize="16dp"
+                    android:background="@drawable/create_shout_option_button_selector"
+                    android:onClick="refineShoutLocation"/>
+
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:id="@+id/refine_location_map"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginRight="5dp"
+                      android:layout_marginLeft="5dp"
+                      class="com.google.android.gms.maps.MapFragment" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -59,7 +59,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
             public void onClick(View v) {
                 Context ctx = SettingsActivity.this.getApplicationContext();
                 try {
-                    Uri uri = Uri.parse("market://search?q=street+shout&c=apps");
+                    Uri uri = Uri.parse("market://search?q=shout&c=apps");
                     Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(goToMarket);
                 } catch (ActivityNotFoundException e) {

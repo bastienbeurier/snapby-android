@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -159,6 +160,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     private void pullShouts() {
+        findViewById(R.id.no_connection_feed).setVisibility(View.GONE);
+        findViewById(R.id.feed_wrapper).setVisibility(View.VISIBLE);
+
         MapRequestHandler mapReqHandler = new MapRequestHandler();
 
         feedFragment.showFeedProgressBar();
@@ -170,22 +174,37 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 if (status.getError() == null) {
                     JSONArray rawResult;
                     try {
-                        rawResult = object.getJSONArray("result");
+
+                        if (object != null) {
+                            rawResult = object.getJSONArray("result");
+                        } else {
+                            showNoConnectionInFeedMessage();
+                            return;
+                        }
 
                         ArrayList<ShoutModel> shouts = ShoutModel.rawShoutsToInstances(rawResult);
 
                         displayShoutsOnMap(shouts);
                         feedFragment.hideFeedProgressBar();
                         feedFragment.setAdapter(NavActivity.this, shouts);
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
+                } else {
+                    showNoConnectionInFeedMessage();
                 }
             }
         });
 
         //Add a request to populate the map with shouts
         mapReqHandler.addMapRequest(aq, mMap.getProjection().getVisibleRegion().latLngBounds);
+    }
+
+    private void showNoConnectionInFeedMessage() {
+        feedFragment.hideFeedProgressBar();
+        findViewById(R.id.feed_progress_bar).setVisibility(View.GONE);
+        findViewById(R.id.no_connection_feed).setVisibility(View.VISIBLE);
+        findViewById(R.id.feed_wrapper).setVisibility(View.GONE);
     }
 
     private void displayShoutsOnMap(List<ShoutModel> shouts) {

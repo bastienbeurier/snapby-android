@@ -24,6 +24,12 @@
                       android:layout_width="match_parent"
                       android:layout_height="match_parent" />
 
+            <ImageView android:layout_height="15dp"
+                       android:layout_width="match_parent"
+                       android:layout_alignParentBottom="true"
+                       android:layout_marginBottom="-3dp"
+                       android:background="@drawable/vertical_drop_shadow"/>
+
         </RelativeLayout>
 
         <RelativeLayout android:id="@+id/map_fragment_container"
