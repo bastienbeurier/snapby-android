@@ -75,7 +75,7 @@ public class ImageUtils {
         return bitmap;
     }
 
-    static public Bitmap decodeFileAndShrinkBitmap(File file) {
+    static public Bitmap decodeFileAndShrinkBitmap(String filePath) {
         Bitmap bitmap = null;
 
         //Decode image size
@@ -83,7 +83,7 @@ public class ImageUtils {
         o.inJustDecodeBounds = true;
 
         try {
-            FileInputStream fis = new FileInputStream(file);
+            FileInputStream fis = new FileInputStream(filePath);
             BitmapFactory.decodeStream(fis, null, o);
 
             fis.close();
@@ -96,7 +96,7 @@ public class ImageUtils {
             //Decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
-            fis = new FileInputStream(file);
+            fis = new FileInputStream(filePath);
             bitmap = BitmapFactory.decodeStream(fis, null, o2);
             fis.close();
 
@@ -107,10 +107,9 @@ public class ImageUtils {
         }
     }
 
-    static public Bitmap decodeFileAndShrinkAndMakeSquareBitmap(File file){
-        Bitmap bitmap = decodeFileAndShrinkBitmap(file);
+    static public Bitmap decodeFileAndShrinkAndMakeSquareBitmap(String filePath){
+        Bitmap bitmap = decodeFileAndShrinkBitmap(filePath);
         bitmap = makeSquareBitmap(bitmap);
-//        bitmap = mirrorBitmap(bitmap);
 
         return bitmap;
     }

@@ -55,11 +55,15 @@ public class NewShoutFeedAdapter extends BaseAdapter {
             ((TextView) shoutView.findViewById(R.id.feed_shout_age_unit)).setText(ageStrings[1]);
 
             CircleImageView shoutImageView = (CircleImageView) shoutView.findViewById(R.id.feed_shout_image);
+            ImageView shoutImageViewPlaceHolder = (ImageView) shoutView.findViewById(R.id.feed_shout_image_place_holder);
+
             if (shout.image != null && shout.image.length() > 0) {
-                feedFragmentAQuery.id(shoutImageView).image(R.drawable.image_shout_place_holder);
+                shoutImageViewPlaceHolder.setVisibility(View.VISIBLE);
                 feedFragmentAQuery.id(shoutImageView).image(shout.image + "--400");
+                shoutImageView.setVisibility(View.VISIBLE);
             } else {
                 shoutImageView.setVisibility(View.GONE);
+                shoutImageViewPlaceHolder.setVisibility(View.GONE);
             }
 
             shoutView.findViewById(R.id.feed_shout_age_container).setBackgroundColor(GeneralUtils.getShoutAgeColor(context, shout));

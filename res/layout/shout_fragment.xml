@@ -31,12 +31,23 @@
                   android:layout_width="match_parent"
                   android:layout_weight="1"/>
 
-            <com.streetshout.android.custom.CircleImageView
-                    android:id="@+id/shout_fragment_image"
-                    android:layout_width="@dimen/shout_fragment_image_height"
-                    android:layout_height="@dimen/shout_fragment_image_height"
-                    android:src="@drawable/ic_default_image"
-                    android:visibility="gone"/>
+
+            <RelativeLayout android:layout_height="wrap_content"
+                            android:layout_width="wrap_content">
+
+                <ImageView android:id="@+id/shout_fragment_image_place_holder"
+                           android:layout_width="@dimen/shout_fragment_image_height"
+                           android:layout_height="@dimen/shout_fragment_image_height"
+                           android:src="@drawable/shout_image_place_holder_circle"
+                           android:visibility="gone"/>
+
+                <com.streetshout.android.custom.CircleImageView
+                        android:id="@+id/shout_fragment_image"
+                        android:layout_width="@dimen/shout_fragment_image_height"
+                        android:layout_height="@dimen/shout_fragment_image_height"
+                        android:visibility="gone"/>
+
+            </RelativeLayout>
 
             <View android:layout_height="match_parent"
                   android:layout_width="match_parent"

@@ -17,14 +17,10 @@ public class DisplayImageActivity extends Activity {
 
         AQuery aq = new AQuery(this);
 
-        findViewById(R.id.display_image_view);
-
         String imageUrl = getIntent().getStringExtra("image") + "--400";
 
-        ImageOptions options = new ImageOptions();
-        options.round = 20;
-
-        aq.id(R.id.display_image_view).image(imageUrl, options);
+        aq.id(R.id.display_image_view_place_holder).image(R.drawable.shout_image_place_holder_square);
+        aq.id(R.id.display_image_view).image(imageUrl);
     }
 
     @Override

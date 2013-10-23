@@ -31,7 +31,6 @@ public class Constants {
     public static final int SETTINGS_REQUEST = 14760;
     public static final int UPLOAD_PHOTO_REQUEST = 15849;
     public static final int DISPLAY_PHOTO_REQUEST = 47308;
-    public static final int IMAGE_EDITOR_REQUEST = 34072;
 
     /** AWS S3 **/
     public static final String PICTURE_BUCKET = "street-shout1";

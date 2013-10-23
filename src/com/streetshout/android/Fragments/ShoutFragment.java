@@ -35,6 +35,8 @@ public class ShoutFragment extends Fragment {
 
     ImageView imageView = null;
 
+    ImageView imageViewPlaceHolder = null;
+
     ShoutModel currentDisplayedShout = null;
 
     private OnZoomOnShoutListener zoomOnShoutListener;
@@ -56,6 +58,7 @@ public class ShoutFragment extends Fragment {
         userNameView = (TextView) getView().findViewById(R.id.shout_title);
         descriptionView = (TextView) getView().findViewById(R.id.shout_body);
         imageView = (ImageView) getView().findViewById(R.id.shout_fragment_image);
+        imageViewPlaceHolder = (ImageView) getView().findViewById(R.id.shout_fragment_image_place_holder);
         shoutAgeView = (TextView) getView().findViewById(R.id.shout_fragment_shout_age);
         shoutAgeUnitView = (TextView) getView().findViewById(R.id.shout_fragment_shout_age_unit);
         shoutDistanceView = (TextView) getView().findViewById(R.id.shout_fragment_shout_distance);
@@ -116,6 +119,8 @@ public class ShoutFragment extends Fragment {
         }
 
         if (shout.image != null && shout.image.length() > 0) {
+            imageViewPlaceHolder.setVisibility(View.VISIBLE);
+
             fragmentAQuery.id(imageView).image(shout.image + "--400");
             imageView.setVisibility(View.VISIBLE);
             imageView.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +133,7 @@ public class ShoutFragment extends Fragment {
             });
         } else {
             imageView.setVisibility(View.GONE);
+            imageViewPlaceHolder.setVisibility(View.GONE);
         }
     }
 

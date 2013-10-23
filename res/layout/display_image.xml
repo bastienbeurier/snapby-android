@@ -5,10 +5,16 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/white">
-    <ImageView android:id="@+id/display_image_view"
-               android:layout_height="match_parent"
-               android:layout_width="match_parent"
-               android:layout_marginRight="20dp"
-               android:layout_marginLeft="20dp"
-               android:background="@drawable/ic_default_image"/>
+    <RelativeLayout android:layout_height="match_parent"
+                    android:layout_width="match_parent">
+
+        <ImageView android:id="@+id/display_image_view_place_holder"
+                   android:layout_height="match_parent"
+                   android:layout_width="match_parent"/>
+
+        <ImageView android:id="@+id/display_image_view"
+                   android:layout_height="match_parent"
+                   android:layout_width="match_parent"/>
+    </RelativeLayout>
+
 </LinearLayout>

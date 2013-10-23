@@ -367,26 +367,27 @@ public class CreateShoutActivity extends Activity {
             shoutImageView.setEnabled(true);
             if (resultCode == RESULT_OK) {
 
-                shoutPhotoPath = null;
-
                 boolean photoTakenWithCamera = false;
 
-                //Case where image chosen with camera
-                if (data == null || data.getData() == null) {
-                    shoutPhotoPath = shoutPhotoFile.getAbsolutePath();
-                    photoTakenWithCamera = true;
-                //Case where image chosen with library
-                } else {
-                    String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
-                    ImageUtils.copyFile(libraryPhotoPath, shoutPhotoFile);
-                    shoutPhotoPath = shoutPhotoFile.getAbsolutePath();
-                }
+
+                shoutPhotoPath = shoutPhotoFile.getAbsolutePath();
 
                 if (shoutPhotoPath != null) {
-                    Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(shoutPhotoFile);
+                    Bitmap formattedPicture = null;
+
+                    //Case where image chosen with camera -> image is already in shoutPhotoFile
+                    if (data == null || data.getData() == null) {
+                        photoTakenWithCamera = true;
+                        formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(shoutPhotoPath);
+                    //Case where image chosen with library
+                    } else {
+                        String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
+                        formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(libraryPhotoPath);
+                    }
+
                     shoutImageView.setImageBitmap(formattedPicture);
 
-                    //Save the small res image in the shoutPhotoPath
+                    //Save the small res image in the shoutPhotoPath, do not alter library photos
                     ImageUtils.storeBitmapInFile(shoutPhotoPath, formattedPicture);
 
                     removePhotoButton.setVisibility(View.VISIBLE);
@@ -394,7 +395,6 @@ public class CreateShoutActivity extends Activity {
 
                     photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
                     photoUrl = Constants.S3_URL + photoName;
-
 
                     //Save the small res image, otherwise we get memory crashes
                     if (photoTakenWithCamera) {

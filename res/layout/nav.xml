@@ -24,11 +24,10 @@
                       android:layout_width="match_parent"
                       android:layout_height="match_parent" />
 
-            <ImageView android:layout_height="15dp"
+            <ImageView android:layout_height="7dp"
                        android:layout_width="match_parent"
                        android:layout_alignParentBottom="true"
-                       android:layout_marginBottom="-3dp"
-                       android:background="@drawable/vertical_drop_shadow"/>
+                       android:background="@drawable/nav_map_drop_shadow"/>
 
         </RelativeLayout>
 
@@ -60,7 +59,7 @@
                         android:id="@+id/zoom_plus_button"
                         android:layout_width="@dimen/map_button_size"
                         android:layout_height="@dimen/map_button_size"
-                        android:layout_marginTop="40dp"
+                        android:layout_marginTop="20dp"
                         android:src="@drawable/button_zoom_plus_selector"/>
 
                 <ImageView
@@ -84,7 +83,7 @@
                     android:id="@+id/create_shout_button"
                     android:layout_width="@dimen/create_shout_button_size"
                     android:layout_height="@dimen/create_shout_button_size"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/button_create_shout_selector"

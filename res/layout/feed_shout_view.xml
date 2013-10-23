@@ -75,12 +75,27 @@
 
     </LinearLayout>
 
-    <com.streetshout.android.custom.CircleImageView android:id="@+id/feed_shout_image"
-               android:layout_width="@dimen/feed_shout_image_height"
-               android:layout_height="@dimen/feed_shout_image_height"
-               android:layout_marginRight="5dp"
-               android:layout_marginLeft="5dp"
-               android:layout_gravity="center"
-               android:src="@drawable/image_shout_place_holder"/>
+    <RelativeLayout android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical">
+
+        <ImageView android:id="@+id/feed_shout_image_place_holder"
+                   android:layout_width="@dimen/feed_shout_image_height"
+                   android:layout_height="@dimen/feed_shout_image_height"
+                   android:src="@drawable/shout_image_place_holder_circle"
+                   android:layout_gravity="center"
+                   android:visibility="gone"/>
+
+
+        <com.streetshout.android.custom.CircleImageView android:id="@+id/feed_shout_image"
+                                                        android:layout_width="@dimen/feed_shout_image_height"
+                                                        android:layout_height="@dimen/feed_shout_image_height"
+                                                        android:layout_gravity="center"
+                                                        android:visibility="gone"/>
+
+    </RelativeLayout>
+
 
 </LinearLayout>
