@@ -5,28 +5,26 @@ import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -35,11 +33,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.R;
 import com.streetshout.android.aws.AmazonClientManager;
@@ -87,15 +83,13 @@ public class CreateShoutActivity extends Activity {
 
     private ImageView removePhotoButton = null;
 
+    private ImageView flipPhotoButton = null;
+
     private ImageView shoutImageView = null;
 
-    private File highResCameraPictureFile = null;
+    private File shoutPhotoFile = null;
 
-    private File shrinkedResCameraPictureFile = null;
-
-    private String highResPhotoPath = null;
-
-    private String shrinkedResPhotoPath = null;
+    private String shoutPhotoPath = null;
 
     private Menu menu = null;
 
@@ -116,9 +110,7 @@ public class CreateShoutActivity extends Activity {
         Location savedInstanceStateShoutLocation = null;
 
         if (savedInstanceState != null) {
-            highResCameraPictureFile = (File) savedInstanceState.getSerializable("highResCameraPictureFile");
-            shrinkedResCameraPictureFile = (File) savedInstanceState.getSerializable("shrinkedResCameraPictureFile");
-            shrinkedResPhotoPath = savedInstanceState.getString("shrinkedResPhotoPath");
+            shoutPhotoFile = (File) savedInstanceState.getSerializable("highResCameraPictureFile");
             savedInstanceStateShoutLocation = savedInstanceState.getParcelable("shoutLocation");
         }
 
@@ -175,9 +167,19 @@ public class CreateShoutActivity extends Activity {
             }
         });
 
+        flipPhotoButton = (ImageView) findViewById(R.id.flip_photo_button);
+
+        flipPhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flipPhoto();
+            }
+        });
+
         shoutImageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
 
-        resizeSquarePhotoAndMap(shoutImageView);
+        RelativeLayout newShouPhotoWrapper = (RelativeLayout) findViewById(R.id.new_shout_photo_wrapper);
+        resizeSquareOptionalViews(newShouPhotoWrapper);
     }
 
     private void removePhoto() {
@@ -186,6 +188,15 @@ public class CreateShoutActivity extends Activity {
 
         shoutImageView.setImageResource(R.drawable.ic_photo);
         removePhotoButton.setVisibility(View.GONE);
+        flipPhotoButton.setVisibility(View.GONE);
+    }
+
+    private void flipPhoto() {
+        Bitmap flippedBitmap = ImageUtils.rotateImage(((BitmapDrawable) shoutImageView.getDrawable()).getBitmap());
+
+        shoutImageView.setImageBitmap(flippedBitmap);
+
+        ImageUtils.storeBitmapInFile(shoutPhotoPath, flippedBitmap);
     }
 
     @Override
@@ -197,7 +208,7 @@ public class CreateShoutActivity extends Activity {
         }
     }
 
-    private void resizeSquarePhotoAndMap(View view) {
+    private void resizeSquareOptionalViews(View view) {
         int marginLeft = 10;
         int marginRight = 10;
         int middleSpace = 40;
@@ -218,7 +229,7 @@ public class CreateShoutActivity extends Activity {
         mapView = mapFragment.getView();
 
         //We want a square map
-        resizeSquarePhotoAndMap(mapView);
+        resizeSquareOptionalViews(mapView);
 
         if (!shoutLocationRefined) {
             mapView.setVisibility(View.INVISIBLE);
@@ -329,10 +340,8 @@ public class CreateShoutActivity extends Activity {
         super.onSaveInstanceState(savedInstanceState);
 
         //Activity often gets destroyed when taking a picture
-        if (highResCameraPictureFile != null && shrinkedResCameraPictureFile != null) {
-            savedInstanceState.putSerializable("highResCameraPictureFile", highResCameraPictureFile);
-            savedInstanceState.putSerializable("shrinkedResCameraPictureFile", shrinkedResCameraPictureFile);
-            savedInstanceState.putString("shrinkedResPhotoPath", shrinkedResPhotoPath);
+        if (shoutPhotoFile != null) {
+            savedInstanceState.putSerializable("highResCameraPictureFile", shoutPhotoFile);
 
             if (shoutLocationRefined == true) {
                 savedInstanceState.putParcelable("shoutLocation", shoutLocation);
@@ -358,40 +367,43 @@ public class CreateShoutActivity extends Activity {
             shoutImageView.setEnabled(true);
             if (resultCode == RESULT_OK) {
 
-                highResPhotoPath = null;
+                shoutPhotoPath = null;
+
+                boolean photoTakenWithCamera = false;
 
                 //Case where image chosen with camera
                 if (data == null || data.getData() == null) {
-                    if (highResCameraPictureFile != null) {
-                        highResPhotoPath = highResCameraPictureFile.getAbsolutePath();
-                    }
+                    shoutPhotoPath = shoutPhotoFile.getAbsolutePath();
+                    photoTakenWithCamera = true;
                 //Case where image chosen with library
                 } else {
-                    highResPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
+                    String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
+                    ImageUtils.copyFile(libraryPhotoPath, shoutPhotoFile);
+                    shoutPhotoPath = shoutPhotoFile.getAbsolutePath();
                 }
 
-                if (highResPhotoPath != null && shrinkedResPhotoPath != null) {
-                    Intent imageEditor = new Intent(this, ImageEditorActivity.class);
-                    imageEditor.putExtra("highResCameraPictureFile", highResCameraPictureFile);
-                    imageEditor.putExtra("shrinkedResPhotoPath", shrinkedResPhotoPath);
+                if (shoutPhotoPath != null) {
+                    Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(shoutPhotoFile);
+                    shoutImageView.setImageBitmap(formattedPicture);
 
-                    startActivityForResult(imageEditor, Constants.IMAGE_EDITOR_REQUEST);
+                    //Save the small res image in the shoutPhotoPath
+                    ImageUtils.storeBitmapInFile(shoutPhotoPath, formattedPicture);
+
+                    removePhotoButton.setVisibility(View.VISIBLE);
+                    flipPhotoButton.setVisibility(View.VISIBLE);
+
+                    photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
+                    photoUrl = Constants.S3_URL + photoName;
+
+
+                    //Save the small res image, otherwise we get memory crashes
+                    if (photoTakenWithCamera) {
+                        ImageUtils.savePictureToGallery(this, shoutPhotoPath);
+                    }
                 } else {
                     Toast toast = Toast.makeText(this, this.getString(R.string.photo_not_found), Toast.LENGTH_LONG);
                     toast.show();
                 }
-            }
-        }
-
-        if (requestCode == Constants.IMAGE_EDITOR_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                shoutImageView.setImageURI(Uri.fromFile(shrinkedResCameraPictureFile));
-                removePhotoButton.setVisibility(View.VISIBLE);
-
-                photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
-                photoUrl = Constants.S3_URL + photoName;
-
-                ImageUtils.savePictureToGallery(this, shrinkedResPhotoPath);
             }
         }
     }
@@ -406,23 +418,17 @@ public class CreateShoutActivity extends Activity {
             return;
         }
 
-        if (highResCameraPictureFile == null) {
-            highResCameraPictureFile = ImageUtils.getFileToStoreImage();
+        if (shoutPhotoFile == null) {
+            shoutPhotoFile = ImageUtils.getFileToStoreImage();
         }
 
-        if (shrinkedResCameraPictureFile == null) {
-            shrinkedResCameraPictureFile = ImageUtils.getFileToStoreImage();
-        }
-
-        shrinkedResPhotoPath = shrinkedResCameraPictureFile.getAbsolutePath();
-
-        if (highResCameraPictureFile == null || shrinkedResCameraPictureFile == null) {
+        if (shoutPhotoFile == null) {
             Toast toast = Toast.makeText(this, this.getString(R.string.no_space_picture), Toast.LENGTH_LONG);
             toast.show();
             return;
         }
 
-        Intent chooserIntent = ImageUtils.getPhotoChooserIntent(this, highResCameraPictureFile);
+        Intent chooserIntent = ImageUtils.getPhotoChooserIntent(this, shoutPhotoFile);
 
         startActivityForResult(chooserIntent, Constants.UPLOAD_PHOTO_REQUEST);
     }
@@ -439,7 +445,7 @@ public class CreateShoutActivity extends Activity {
                 final AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
                     @Override
                     protected String doInBackground(Void... params) {
-                        if (S3.addImageInBucket(shrinkedResPhotoPath, photoName)) {
+                        if (S3.addImageInBucket(shoutPhotoPath, photoName)) {
                             return "success";
                         } else {
                             return "failure";

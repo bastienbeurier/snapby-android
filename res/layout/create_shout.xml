@@ -50,7 +50,8 @@
                     android:background="@drawable/create_shout_option_button_selector"
                     android:onClick="letUserChooseImage"/>
 
-            <RelativeLayout android:layout_height="match_parent"
+            <RelativeLayout android:id="@+id/new_shout_photo_wrapper"
+                            android:layout_height="wrap_content"
                             android:layout_width="match_parent"
                             android:layout_marginTop="10dp">
 
@@ -67,6 +68,16 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginRight="10dp"
                         android:src="@drawable/remove_photo_button"
+                        android:visibility="gone"/>
+
+                <ImageView
+                        android:id="@+id/flip_photo_button"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/rotate_photo"
                         android:visibility="gone"/>
             </RelativeLayout>
 

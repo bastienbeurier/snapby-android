@@ -5,12 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -23,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,16 +75,15 @@ public class ImageUtils {
         return bitmap;
     }
 
-    static public Bitmap decodeFileAndShrinkBitmap(File f){
-        Bitmap b = null;
+    static public Bitmap decodeFileAndShrinkBitmap(File file) {
+        Bitmap bitmap = null;
 
         //Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
 
-
         try {
-            FileInputStream fis = new FileInputStream(f);
+            FileInputStream fis = new FileInputStream(file);
             BitmapFactory.decodeStream(fis, null, o);
 
             fis.close();
@@ -100,14 +96,52 @@ public class ImageUtils {
             //Decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
-            fis = new FileInputStream(f);
-            b = BitmapFactory.decodeStream(fis, null, o2);
+            fis = new FileInputStream(file);
+            bitmap = BitmapFactory.decodeStream(fis, null, o2);
             fis.close();
 
-            return b;
+            return bitmap;
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return null;
+        }
+    }
+
+    static public Bitmap decodeFileAndShrinkAndMakeSquareBitmap(File file){
+        Bitmap bitmap = decodeFileAndShrinkBitmap(file);
+        bitmap = makeSquareBitmap(bitmap);
+//        bitmap = mirrorBitmap(bitmap);
+
+        return bitmap;
+    }
+
+    static public Bitmap mirrorBitmap(Bitmap bitmap) {
+        Matrix matrix = new Matrix();
+        matrix.preScale(-1.0f, 1.0f);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+    }
+
+
+    static public Bitmap makeSquareBitmap(Bitmap bitmap) {
+        if (bitmap.getWidth() >= bitmap.getHeight()){
+
+            return Bitmap.createBitmap(
+                    bitmap,
+                    bitmap.getWidth()/2 - bitmap.getHeight()/2,
+                    0,
+                    bitmap.getHeight(),
+                    bitmap.getHeight()
+            );
+
+        }else{
+
+            return Bitmap.createBitmap(
+                    bitmap,
+                    0,
+                    bitmap.getHeight()/2 - bitmap.getWidth()/2,
+                    bitmap.getWidth(),
+                    bitmap.getWidth()
+            );
         }
     }
 
@@ -148,65 +182,30 @@ public class ImageUtils {
         }
     }
 
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
-                .getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
+    static public void copyFile(String src, File dst) {
+        try {
+            InputStream in = new FileInputStream(src);
+            OutputStream out = null;
+            out = new FileOutputStream(dst);
 
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = pixels;
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
-    public static Bitmap getRoundedCornerBitmap(Context context, Bitmap input, int pixels , int w , int h , boolean squareTL, boolean squareTR, boolean squareBL, boolean squareBR  ) {
+    static public Bitmap rotateImage(Bitmap bitmap) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
 
-        Bitmap output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, w, h);
-        final RectF rectF = new RectF(rect);
-
-        //make sure that our rounded corner is scaled appropriately
-        final float roundPx = pixels*densityMultiplier;
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-
-        //draw rectangles over the corners we want to be square
-        if (squareTL ){
-            canvas.drawRect(0, 0, w/2, h/2, paint);
-        }
-        if (squareTR ){
-            canvas.drawRect(w/2, 0, w, h/2, paint);
-        }
-        if (squareBL ){
-            canvas.drawRect(0, h/2, w/2, h, paint);
-        }
-        if (squareBR ){
-            canvas.drawRect(w/2, h/2, w, h, paint);
-        }
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(input, 0,0, paint);
-
-        return output;
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
+
 }
