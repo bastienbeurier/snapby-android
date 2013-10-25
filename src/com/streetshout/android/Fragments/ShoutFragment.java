@@ -87,8 +87,6 @@ public class ShoutFragment extends Fragment {
             }
         });
 
-        imageView.setImageResource(R.drawable.ic_default_image);
-
         currentDisplayedShout = shout;
 
         userNameView.setText(getString(R.string.shout_by) + " " + shout.displayName);

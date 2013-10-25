@@ -42,6 +42,8 @@ public class ApiUtils {
         String url = SITEURL + "/bound_box_shouts.json?neLat=" + String.valueOf(neLat) + "&neLng=" + String.valueOf(neLng)
                                                    + "&swLat=" + String.valueOf(swLat) + "&swLng=" + String.valueOf(swLng);
 
+        cb.timeout(15000);
+
         aq.ajax(url, JSONObject.class, cb);
     }
 
