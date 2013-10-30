@@ -529,6 +529,13 @@ public class CreateShoutActivity extends Activity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.create_shout_actions, menu);
 
+        MenuItem item = menu.findItem(R.id.action_shout);
+        if (Constants.PRODUCTION) {
+            item.setTitle("SHOUT!");
+        } else {
+            item.setTitle("SHATTE!");
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -58,9 +58,10 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
             @Override
             public void onClick(View v) {
                 Context ctx = SettingsActivity.this.getApplicationContext();
+
+                Uri uri = Uri.parse("market://details?id=" + ctx.getPackageName());
+                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                 try {
-                    Uri uri = Uri.parse("market://search?q=shout&c=apps");
-                    Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(goToMarket);
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(ctx, getString(R.string.no_google_play_store), Toast.LENGTH_LONG).show();

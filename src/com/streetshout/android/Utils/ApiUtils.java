@@ -14,12 +14,13 @@ import java.util.Map;
  */
 public class ApiUtils {
 
-    /** street-shout-web URL for API calls */
-    public static String SITEURL = Constants.PRODUCTION ? "http://street-shout.herokuapp.com" : "http://dev-street-shout.herokuapp.com";
+    private static String getSiteUrl() {
+        return Constants.PRODUCTION ? "http://street-shout.herokuapp.com" : "http://dev-street-shout.herokuapp.com";
+    }
 
     /** API call to create a new shout */
     public static void createShout(Context ctx, AQuery aq, double lat, double lng, String userName, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
-        String url = SITEURL + "/shouts.json";
+        String url = getSiteUrl() + "/shouts.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("user_name", userName);
@@ -39,7 +40,7 @@ public class ApiUtils {
 
     /** API call to retrieve shouts in a zone of the map */
     public static void pullShoutsInZone(AQuery aq, double neLat, double neLng, double swLat, double swLng, AjaxCallback<JSONObject> cb) {
-        String url = SITEURL + "/bound_box_shouts.json?neLat=" + String.valueOf(neLat) + "&neLng=" + String.valueOf(neLng)
+        String url = getSiteUrl() + "/bound_box_shouts.json?neLat=" + String.valueOf(neLat) + "&neLng=" + String.valueOf(neLng)
                                                    + "&swLat=" + String.valueOf(swLat) + "&swLng=" + String.valueOf(swLng);
 
         cb.timeout(15000);
@@ -48,7 +49,7 @@ public class ApiUtils {
     }
 
     public static void sendDeviceInfo(Context context, AQuery aq, Location lastLocation) {
-        String url = SITEURL + "/update_device_info";
+        String url = getSiteUrl() + "/update_device_info";
 
         Map<String, Object> params = PushNotifications.getDeviceInfo(context);
         if (lastLocation != null) {

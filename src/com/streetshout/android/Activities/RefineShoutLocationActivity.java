@@ -40,8 +40,8 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_shout_location);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayShowHomeEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(false);
+        getActionBar().setDisplayShowHomeEnabled(false);
 
         locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
 
