@@ -28,9 +28,9 @@ public class GeneralUtils {
     public static int getShoutAgeColor(Context ctx, ShoutModel shout) {
         long shoutAge = TimeUtils.getShoutAge(shout.created);
 
-        if (shoutAge < Constants.SHOUT_DURATION / 24) {
+        if (shoutAge < Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS) {
             return ctx.getResources().getColor(R.color.shoutRed);
-        } else if (shoutAge < 23 * (Constants.SHOUT_DURATION / 24)) {
+        } else if (shoutAge < 3 * (Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS)) {
             return ctx.getResources().getColor(R.color.shoutPink);
         } else {
             return ctx.getResources().getColor(R.color.shoutLightPink);
@@ -40,13 +40,13 @@ public class GeneralUtils {
     public static int getShoutMarkerImageResource(ShoutModel shout, boolean selected) {
         long shoutAge = TimeUtils.getShoutAge(shout.created);
 
-        if (shoutAge < Constants.SHOUT_DURATION / 24) {
+        if (shoutAge < Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS) {
             if (selected) {
                 return R.drawable.marker_shout_red_selected;
             } else {
                 return R.drawable.marker_shout_red;
             }
-        } else if (shoutAge < 23 * (Constants.SHOUT_DURATION / 24)) {
+        } else if (shoutAge < 2 * (Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS)) {
             if (selected) {
                 return R.drawable.marker_shout_pink_selected;
             } else {
