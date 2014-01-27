@@ -40,8 +40,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.R;
 import com.streetshout.android.aws.AmazonClientManager;
 import com.streetshout.android.aws.S3;
-import com.streetshout.android.models.ShoutModel;
+import com.streetshout.android.models.Shout;
 import com.streetshout.android.tvmclient.Response;
+import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.AppPreferences;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
@@ -489,7 +490,7 @@ public class CreateShoutActivity extends Activity {
     }
 
     public void createNewShoutFromInfo() {
-        ShoutModel.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, photoUrl, new AjaxCallback<JSONObject>() {
+        ApiUtils.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, photoUrl, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -506,7 +507,7 @@ public class CreateShoutActivity extends Activity {
                     createShoutDialog.cancel();
 
                     Intent returnIntent = new Intent();
-                    returnIntent.putExtra("newShout", ShoutModel.rawShoutToInstance(rawShout));
+                    returnIntent.putExtra("newShout", Shout.rawShoutToInstance(rawShout));
                     setResult(RESULT_OK, returnIntent);
                     finish();
                 } else {

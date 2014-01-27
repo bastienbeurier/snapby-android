@@ -1,11 +1,7 @@
 package com.streetshout.android.models;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxCallback;
-import com.streetshout.android.utils.ApiUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Model for shouts
  */
-public class ShoutModel implements Parcelable {
+public class Shout implements Parcelable {
 
     /** Shout id */
     public int id = 0;
@@ -39,26 +35,16 @@ public class ShoutModel implements Parcelable {
 
     public String image = "";
 
-    //TODO: Refactor with rawShoutToInstance
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
-    public static ArrayList<ShoutModel> rawShoutsToInstances(JSONArray rawShouts) {
-        ArrayList<ShoutModel> shouts = new ArrayList<ShoutModel>();
+    public static ArrayList<Shout> rawShoutsToInstances(JSONArray rawShouts) {
+        ArrayList<Shout> shouts = new ArrayList<Shout>();
 
         int len = rawShouts.length();
         for (int i = 0; i < len; i++) {
             try {
                 JSONObject rawShout = rawShouts.getJSONObject(i);
                 if (rawShout != null) {
-                    ShoutModel shout = new ShoutModel();
-                    shout.id = Integer.parseInt(rawShout.getString("id"));
-                    shout.lat = Double.parseDouble(rawShout.getString("lat"));
-                    shout.lng = Double.parseDouble(rawShout.getString("lng"));
-                    shout.description = rawShout.getString("description");
-                    shout.created = rawShout.getString("created_at");
-                    shout.source = rawShout.getString("source");
-                    shout.displayName = rawShout.getString("display_name");
-                    shout.image = rawShout.getString("image");
-                    shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
+                    Shout shout = rawShoutToInstance(rawShout);
                     shouts.add(shout);
                 }
             } catch (JSONException e) {
@@ -69,8 +55,8 @@ public class ShoutModel implements Parcelable {
         return shouts;
     }
 
-    public static ShoutModel rawShoutToInstance(JSONObject rawShout) {
-        ShoutModel shout = new ShoutModel();
+    public static Shout rawShoutToInstance(JSONObject rawShout) {
+        Shout shout = new Shout();
 
         try {
             if (rawShout != null) {
@@ -79,6 +65,7 @@ public class ShoutModel implements Parcelable {
                 shout.lng = Double.parseDouble(rawShout.getString("lng"));
                 shout.description = rawShout.getString("description");
                 shout.created = rawShout.getString("created_at");
+                shout.source = rawShout.getString("source");
                 shout.displayName = rawShout.getString("display_name");
                 shout.image = rawShout.getString("image");
                 shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
@@ -88,11 +75,6 @@ public class ShoutModel implements Parcelable {
         }
 
         return shout;
-    }
-
-    /** User creates a new shout */
-    public static void createShout(Context ctx, AQuery aq, double lat, double lng, String userName, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
-        ApiUtils.createShout(ctx, aq, lat, lng, userName, description, shoutImageUrl, cb);
     }
 
     /**
@@ -105,27 +87,27 @@ public class ShoutModel implements Parcelable {
     /**
      * To implement Parcelable interface
      */
-    public static final Parcelable.Creator<ShoutModel> CREATOR = new Parcelable.Creator<ShoutModel>() {
-        public ShoutModel createFromParcel(Parcel in) {
-            return new ShoutModel(in);
+    public static final Parcelable.Creator<Shout> CREATOR = new Parcelable.Creator<Shout>() {
+        public Shout createFromParcel(Parcel in) {
+            return new Shout(in);
         }
 
-        public ShoutModel[] newArray(int size) {
-            return new ShoutModel[size];
+        public Shout[] newArray(int size) {
+            return new Shout[size];
         }
     };
 
     /**
      * To implement Parcelable interface
      */
-    private ShoutModel(Parcel in) {
+    private Shout(Parcel in) {
         readFromParcel(in);
     }
 
     /**
      * Default constructor
      */
-    public ShoutModel() {
+    public Shout() {
     }
 
     /**

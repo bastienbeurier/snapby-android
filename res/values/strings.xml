@@ -82,4 +82,14 @@
     <string name="add_photo">Add photo</string>
     <string name="refine_location">Refine location</string>
     <string name="done_cap">DONE</string>
+    <string name="invalid_email_error">Please enter a valid email.</string>
+    <string name="password_length_error">Your password should contain at least 6 characters.</string>
+    <string name="signin_processing">Signing in...</string>
+    <string name="signup_processing">Signing up...</string>
+    <string name="invalid_signin_message">Your email or password is incorrect.</string>
+    <string name="invalid_username_error">Please enter a valid username (letters, numbers or ._+-)</string>
+    <string name="username_length_error">Your username should contain between 6 and 20 characters.</string>
+    <string name="password_match_error">Passwords don\'t match.</string>
+    <string name="username_taken_error">Username already taken.</string>
+    <string name="email_taken_error">Email already taken.</string>
 </resources>

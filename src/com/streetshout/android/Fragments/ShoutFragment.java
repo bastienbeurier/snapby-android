@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.streetshout.android.activities.DisplayImageActivity;
-import com.streetshout.android.models.ShoutModel;
+import com.streetshout.android.models.Shout;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
@@ -37,7 +36,7 @@ public class ShoutFragment extends Fragment {
 
     ImageView imageViewPlaceHolder = null;
 
-    ShoutModel currentDisplayedShout = null;
+    Shout currentDisplayedShout = null;
 
     private OnZoomOnShoutListener zoomOnShoutListener;
 
@@ -68,7 +67,7 @@ public class ShoutFragment extends Fragment {
     }
 
     //TODO: rename to intializeFragment or something
-    public void displayShoutInFragment(final ShoutModel shout, Location myLocation) {
+    public void displayShoutInFragment(final Shout shout, Location myLocation) {
         getView().findViewById(R.id.shout_container).setBackgroundColor(GeneralUtils.getShoutAgeColor(getActivity(), shout));
 
         getView().findViewById(R.id.shout_fragment_back_button).setOnClickListener(new View.OnClickListener() {
@@ -146,6 +145,6 @@ public class ShoutFragment extends Fragment {
     }
 
     public interface OnZoomOnShoutListener {
-        public void zoomOnShout(ShoutModel shout);
+        public void zoomOnShout(Shout shout);
     }
 }

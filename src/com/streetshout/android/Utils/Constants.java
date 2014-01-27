@@ -5,7 +5,7 @@ public class Constants {
 
     public static final boolean ADMIN = false;
 
-    public static final String API = "1.0";
+    public static final String API = "2";
 
     public static final int SHOUT_DURATION = 4 * 60 * 60 * 1000;
     public static final int SHOUT_DURATION_HOURS = 4;

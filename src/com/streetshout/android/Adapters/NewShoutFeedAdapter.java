@@ -6,13 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.streetshout.android.custom.CircleImageView;
-import com.streetshout.android.models.ShoutModel;
+import com.streetshout.android.models.Shout;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.TimeUtils;
@@ -22,12 +21,12 @@ import java.util.ArrayList;
 public class NewShoutFeedAdapter extends BaseAdapter {
     private Context context = null;
 
-    private ArrayList<ShoutModel> items = null;
+    private ArrayList<Shout> items = null;
 
     private AQuery feedFragmentAQuery = null;
 
 
-    public NewShoutFeedAdapter(Context context, ArrayList<ShoutModel> shouts) {
+    public NewShoutFeedAdapter(Context context, ArrayList<Shout> shouts) {
         this.context = context;
         this.items = shouts;
         feedFragmentAQuery = new AQuery(context);
@@ -43,7 +42,7 @@ public class NewShoutFeedAdapter extends BaseAdapter {
             shoutView = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.feed_shout_view, null);
         }
 
-        final ShoutModel shout = items.get(position);
+        final Shout shout = items.get(position);
 
         if (shout != null) {
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_body)).setText(shout.description);
@@ -89,7 +88,7 @@ public class NewShoutFeedAdapter extends BaseAdapter {
     }
 
     @Override
-    public ShoutModel getItem(int position) {
+    public Shout getItem(int position) {
         return items.get(position);
     }
 
