@@ -155,28 +155,10 @@ public class WelcomeActivity extends Activity {
                         public void onCompleted(GraphUser user, Response response) {
                             if (user != null) {
 
-                                if (WelcomeActivity.this == null) {
-                                    Log.d("BAB", "ACTIVITY NULL");
-                                }
-
-                                if (GeneralUtils.getAquery(WelcomeActivity.this) == null) {
-                                    Log.d("BAB", "AQUERY NULL");
-                                }
-
-                                if (user.getUsername() == null) {
-                                    Log.d("BAB", "USERNAME NULL");
-                                }
-
-                                if (user.asMap().get("email").toString() == null) {
-                                    Log.d("BAB", "EMAIL NULL");
-                                }
-
-                                if (user.getId() == null) {
-                                    Log.d("BAB", "ID NULL");
-                                }
-
-                                if (user.getName() == null) {
-                                    Log.d("BAB", "NAME NULL");
+                                if (user.getUsername() == null || user.asMap().get("email").toString() == null || user.getId() == null || user.getName() == null) {
+                                    Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
+                                    toast.show();
+                                    return;
                                 }
 
                                 ApiUtils.connectFacebook(WelcomeActivity.this, GeneralUtils.getAquery(WelcomeActivity.this), user.getUsername(), user.asMap().get("email").toString(), user.getId(), user.getName(), new AjaxCallback<JSONObject>() {

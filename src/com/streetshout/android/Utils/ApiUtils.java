@@ -156,4 +156,18 @@ public class ApiUtils {
 
         aq.ajax(url, params, JSONObject.class, cb);
     }
+
+    public static void updateUsername(Context ctx, AQuery aq, String username, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/modify_user_credentials.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("username", username);
+
+        enrichParametersWithToken(ctx, params);
+
+        cb.method(AQuery.METHOD_PUT);
+
+        aq.ajax(url, params, JSONObject.class, cb);
+    }
+
 }

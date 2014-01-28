@@ -21,8 +21,39 @@
                   android:fontFamily="sans-serif"
                   android:textStyle="bold"
                   android:gravity="left|center_vertical"
-                  android:text="@string/shout_settings"
+                  android:text="@string/participate"
                   android:layout_marginBottom="5dp"/>
+
+        <View android:layout_height="1dp"
+              android:layout_width="match_parent"
+              android:background="@color/veryLightGrey" />
+
+        <Button
+                android:id="@+id/feedback_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textColor="@color/blackLighter"
+                style="@style/PreferenceButton"
+                android:text="@string/feedback_preference_button"/>
+
+        <Button
+                android:id="@+id/rate_me_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textColor="@color/blackLighter"
+                style="@style/PreferenceButton"
+                android:text="@string/rate_me_preference_button"/>
+
+        <TextView android:layout_height="match_parent"
+                  android:layout_width="wrap_content"
+                  android:textColor="@color/blackLighter"
+                  android:textSize="14sp"
+                  android:fontFamily="sans-serif"
+                  android:textStyle="bold"
+                  android:gravity="left|center_vertical"
+                  android:text="@string/shout_settings"
+                  android:layout_marginBottom="5dp"
+                  android:layout_marginTop="10dp"/>
 
         <View android:layout_height="1dp"
               android:layout_width="match_parent"
@@ -38,38 +69,20 @@
                       android:textColor="@color/blackLighter"
                       android:textSize="16sp"
                       android:gravity="left|center_vertical"
-                      android:text="@string/notification_preference_button"/>
+                      android:text="@string/username_preference_button"/>
 
-            <FrameLayout android:id="@+id/notification_help_button_wrapper"
-                         android:layout_width="40dp"
-                         android:layout_height="40dp"
-                         android:layout_gravity="center_vertical"
-                         android:background="@drawable/blue_highlight_button_selector">
-
-                <ImageView
-
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/notification_help_button_selector"
-                        android:src="@drawable/ic_action_help"
-                        android:padding="2dp"/>
-
-            </FrameLayout>
-
-
-            <View android:layout_weight="1"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"/>
-
-            <Spinner android:id="@+id/notification_preference_spinner"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:textSize="14sp"
-                     android:layout_gravity="center_vertical"
-                     android:layout_marginRight="10dp"/>
-
+            <EditText android:id="@+id/settings_username_editText"
+                      android:layout_height="match_parent"
+                      android:layout_width="match_parent"
+                      android:layout_marginLeft="10dp"
+                      android:textColor="@color/shoutBlue"
+                      android:textSize="16sp"
+                      android:textStyle="bold"
+                      android:gravity="left|center_vertical"
+                      android:background="#00000000"
+                      android:singleLine="true"
+                      android:imeOptions="actionSend"
+                      android:text="@string/username_preference_button"/>
         </LinearLayout>
 
         <LinearLayout android:layout_height="60dp"
@@ -94,42 +107,23 @@
 
         </LinearLayout>
 
-        <TextView android:layout_height="match_parent"
-                  android:layout_width="wrap_content"
-                  android:textColor="@color/blackLighter"
+        <Button android:id="@+id/logout_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textColor="@color/shoutLightRed"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                style="@style/PreferenceButton"
+                android:text="@string/logout"
+                android:gravity="center"/>
+
+        <TextView android:id="@+id/app_name_and_version"
+                  android:layout_height="wrap_content"
+                  android:layout_width="match_parent"
+                  android:textColor="@color/lightGrey"
                   android:textSize="14sp"
-                  android:fontFamily="sans-serif"
-                  android:textStyle="bold"
-                  android:gravity="left|center_vertical"
-                  android:text="@string/participate"
-                  android:layout_marginBottom="5dp"
-                  android:layout_marginTop="10dp"/>
-
-        <View android:layout_height="1dp"
-              android:layout_width="match_parent"
-              android:background="@color/veryLightGrey" />
-
-        <Button
-                android:id="@+id/feedback_button"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:textColor="@color/blackLighter"
-                style="@style/PreferenceButton"
-                android:text="@string/feedback_preference_button"/>
-
-        <Button
-                android:id="@+id/rate_me_button"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:textColor="@color/blackLighter"
-                style="@style/PreferenceButton"
-                android:text="@string/rate_me_preference_button"/>
+                  android:gravity="center"/>
 
     </LinearLayout>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="logout"
-            android:id="@+id/logout_button" android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

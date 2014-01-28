@@ -13,4 +13,5 @@
     <color name="semiTransparentWhite">#AAffffff</color>
     <color name="lightGrey">#999999</color>
     <color name="veryLightGrey">#D8D8D8</color>
+    <color name="shoutLightRed">#ED4723</color>
 </resources>

@@ -10,8 +10,6 @@ public class AppPreferences {
 
     private static final String DISTANCE_UNIT = "ss_saved_distance_unit";
 
-    private static final String NOTIFICATION_PREF = "ss_saved_notification_pref";
-
     private static final String CURRENT_USER_ID_PREF = "ss_current_user_id_pref";
 
     private static final String CURRENT_USER_EMAIL_PREF = "ss_current_user_email_pref";
@@ -56,15 +54,6 @@ public class AppPreferences {
 
     public void setDistanceUnitPref(int value) {
         prefsEditor.putInt(DISTANCE_UNIT, value);
-        prefsEditor.commit();
-    }
-
-    public int getNotificationPref() {
-        return sharedPrefs.getInt(NOTIFICATION_PREF, -1);
-    }
-
-    public void setNotificationPref(int value) {
-        prefsEditor.putInt(NOTIFICATION_PREF, value);
         prefsEditor.commit();
     }
 
