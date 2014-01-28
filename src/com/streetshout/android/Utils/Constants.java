@@ -14,10 +14,7 @@ public class Constants {
     public static final int MAX_DESCRIPTION_LENGTH = 140;
 
     /** Zoom level set when a user clicks on a shout**/
-    public static final int CLICK_ON_SHOUT_IN_SHOUT = 16;
-    public static final int CLICK_ON_SHOUT_IN_MAP_OR_FEED = 12;
     public static final int REDIRECTION_FROM_CREATE_SHOUT = 16;
-    public static final int REDIRECTION_FROM_NOTIFICATION = 12;
     public static final int CLICK_ON_MY_LOCATION_BUTTON = 13;
 
     /** Zoom for the initial camera position when we have the user location */

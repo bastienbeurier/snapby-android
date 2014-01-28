@@ -1,6 +1,5 @@
 package com.streetshout.android.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.location.Location;
@@ -38,8 +37,6 @@ public class ShoutFragment extends Fragment {
 
     Shout currentDisplayedShout = null;
 
-    private OnZoomOnShoutListener zoomOnShoutListener;
-
     private AQuery fragmentAQuery = null;
 
     @Override
@@ -74,15 +71,6 @@ public class ShoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
-            }
-        });
-
-        getView().findViewById(R.id.shout_fragment_zoom_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentDisplayedShout != null) {
-                    zoomOnShoutListener.zoomOnShout(currentDisplayedShout);
-                }
             }
         });
 
@@ -132,19 +120,5 @@ public class ShoutFragment extends Fragment {
             imageView.setVisibility(View.GONE);
             imageViewPlaceHolder.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            zoomOnShoutListener = (OnZoomOnShoutListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnShoutSelectedListener");
-        }
-    }
-
-    public interface OnZoomOnShoutListener {
-        public void zoomOnShout(Shout shout);
     }
 }

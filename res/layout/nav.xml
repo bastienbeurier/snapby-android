@@ -35,20 +35,6 @@
                         android:src="@drawable/button_my_location_selector"/>
 
                 <ImageView
-                        android:id="@+id/zoom_plus_button"
-                        android:layout_width="@dimen/map_button_size"
-                        android:layout_height="@dimen/map_button_size"
-                        android:layout_marginTop="20dp"
-                        android:src="@drawable/button_zoom_plus_selector"/>
-
-                <ImageView
-                        android:id="@+id/zoom_minus_button"
-                        android:layout_width="@dimen/map_button_size"
-                        android:layout_height="@dimen/map_button_size"
-                        android:layout_marginTop="-2dp"
-                        android:src="@drawable/button_zoom_minus_selector"/>
-
-                <ImageView
                         android:id="@+id/shatte_shout_switch"
                         android:layout_width="@dimen/map_button_size"
                         android:layout_height="@dimen/map_button_size"
@@ -85,16 +71,12 @@
             <fragment android:name="com.streetshout.android.fragments.FeedFragment"
                       android:id="@+id/feed_fragment"
                       android:layout_width="match_parent"
-                      android:layout_height="match_parent" />
+                      android:layout_height="match_parent"/>
 
-            <fragment android:name="com.streetshout.android.fragments.ShoutFragment"
-                      android:id="@+id/shout_fragment"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent" />
 
             <ImageView android:layout_height="7dp"
                        android:layout_width="match_parent"
-                       android:layout_alignParentBottom="true"
+                       android:layout_alignParentTop="true"
                        android:background="@drawable/nav_map_drop_shadow"/>
 
         </RelativeLayout>
