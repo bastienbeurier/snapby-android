@@ -10,27 +10,6 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent">
 
-        <RelativeLayout android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.2">
-
-            <fragment android:name="com.streetshout.android.fragments.FeedFragment"
-                      android:id="@+id/feed_fragment"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent" />
-
-            <fragment android:name="com.streetshout.android.fragments.ShoutFragment"
-                      android:id="@+id/shout_fragment"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent" />
-
-            <ImageView android:layout_height="7dp"
-                       android:layout_width="match_parent"
-                       android:layout_alignParentBottom="true"
-                       android:background="@drawable/nav_map_drop_shadow"/>
-
-        </RelativeLayout>
-
         <RelativeLayout android:id="@+id/map_fragment_container"
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"
@@ -80,12 +59,12 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/settings_button"
-                android:layout_width="@dimen/map_button_size"
-                android:layout_height="@dimen/map_button_size"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/button_settings_selector"/>
+                    android:id="@+id/settings_button"
+                    android:layout_width="@dimen/map_button_size"
+                    android:layout_height="@dimen/map_button_size"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/button_settings_selector"/>
 
             <Button
                     android:id="@+id/create_shout_button"
@@ -96,6 +75,27 @@
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/button_create_shout_selector"
                     android:onClick="createShout"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.2">
+
+            <fragment android:name="com.streetshout.android.fragments.FeedFragment"
+                      android:id="@+id/feed_fragment"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent" />
+
+            <fragment android:name="com.streetshout.android.fragments.ShoutFragment"
+                      android:id="@+id/shout_fragment"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent" />
+
+            <ImageView android:layout_height="7dp"
+                       android:layout_width="match_parent"
+                       android:layout_alignParentBottom="true"
+                       android:background="@drawable/nav_map_drop_shadow"/>
 
         </RelativeLayout>
 

@@ -46,7 +46,7 @@ public class NewShoutFeedAdapter extends BaseAdapter {
 
         if (shout != null) {
             ((TextView) shoutView.findViewById(R.id.feed_shout_item_body)).setText(shout.description);
-            ((TextView) shoutView.findViewById(R.id.feed_shout_item_username)).setText("by " + shout.displayName);
+            ((TextView) shoutView.findViewById(R.id.feed_shout_item_username)).setText("by " + shout.username);
 
             String[] ageStrings = TimeUtils.shoutAgeToStrings((Activity) context, TimeUtils.getShoutAge(shout.created));
 

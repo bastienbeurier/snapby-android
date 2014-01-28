@@ -16,6 +16,9 @@ public class Shout implements Parcelable {
     /** Shout id */
     public int id = 0;
 
+    /** Shout user id */
+    public int userId = 0;
+
     /** Shout latitude */
     public double lat = 0;
 
@@ -31,9 +34,11 @@ public class Shout implements Parcelable {
     /** Shout source (ex: Twitter) */
     public String source = "";
 
-    public String displayName = "";
+    public String username = "";
 
     public String image = "";
+
+    public Boolean removed = false;
 
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static ArrayList<Shout> rawShoutsToInstances(JSONArray rawShouts) {
@@ -61,13 +66,15 @@ public class Shout implements Parcelable {
         try {
             if (rawShout != null) {
                 shout.id = Integer.parseInt(rawShout.getString("id"));
+                shout.userId = Integer.parseInt(rawShout.getString("user_id"));
                 shout.lat = Double.parseDouble(rawShout.getString("lat"));
                 shout.lng = Double.parseDouble(rawShout.getString("lng"));
                 shout.description = rawShout.getString("description");
                 shout.created = rawShout.getString("created_at");
                 shout.source = rawShout.getString("source");
-                shout.displayName = rawShout.getString("display_name");
+                shout.username = rawShout.getString("username");
                 shout.image = rawShout.getString("image");
+                shout.removed = rawShout.getBoolean("removed");
                 shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
             }
         } catch (JSONException e) {
@@ -117,10 +124,12 @@ public class Shout implements Parcelable {
         out.writeString(description);
         out.writeString(created);
         out.writeString(source);
-        out.writeString(displayName);
+        out.writeString(username);
         out.writeInt(id);
+        out.writeInt(userId);
         out.writeDouble(lat);
         out.writeDouble(lng);
+        out.writeByte((byte) (removed ? 1 : 0));
         out.writeString(image);
     }
 
@@ -131,10 +140,12 @@ public class Shout implements Parcelable {
         description = in.readString();
         created = in.readString();
         source = in.readString();
-        displayName = in.readString();
+        username = in.readString();
         id = in.readInt();
+        userId = in.readInt();
         lat = in.readDouble();
         lng = in.readDouble();
+        removed = in.readByte() != 0;
         image = in.readString();
     }
 }

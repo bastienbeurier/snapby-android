@@ -195,17 +195,18 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             @Override
             public void responseReceived(String url, JSONObject object, AjaxStatus status) {
                 if (status.getError() == null) {
-                    JSONArray rawResult;
+                    JSONArray rawShouts;
                     try {
 
                         if (object != null) {
-                            rawResult = object.getJSONArray("result");
+                            JSONObject rawResult = object.getJSONObject("result");
+                            rawShouts = rawResult.getJSONArray("shouts");
                         } else {
                             showNoConnectionInFeedMessage();
                             return;
                         }
 
-                        ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawResult);
+                        ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
 
                         displayShoutsOnMap(shouts);
                         feedFragment.hideFeedProgressBar();

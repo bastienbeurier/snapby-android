@@ -88,7 +88,7 @@ public class ShoutFragment extends Fragment {
 
         currentDisplayedShout = shout;
 
-        userNameView.setText(getString(R.string.shout_by) + " " + shout.displayName);
+        userNameView.setText(getString(R.string.shout_by) + " " + shout.username);
         descriptionView.setText(shout.description);
 
         String[] ageStrings = TimeUtils.shoutAgeToStrings(getActivity(), TimeUtils.getShoutAge(shout.created));
