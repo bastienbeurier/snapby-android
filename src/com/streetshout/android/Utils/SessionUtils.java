@@ -3,6 +3,7 @@ package com.streetshout.android.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import com.facebook.Session;
 import com.streetshout.android.models.User;
 
 /**
@@ -70,7 +71,11 @@ public class SessionUtils {
 
     public static void wipeOffCredentials(Context ctx) {
         //Wipe off mixpanel
-        //Wipe off fb
+
+        Session session = Session.getActiveSession();
+        if (!session.isClosed()) {
+            session.closeAndClearTokenInformation();
+        }
 
         AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
 

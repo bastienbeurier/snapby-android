@@ -15,10 +15,12 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 import com.androidquery.AQuery;
+import com.facebook.Session;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.AppPreferences;
 import com.streetshout.android.utils.GeneralUtils;
+import com.streetshout.android.utils.SessionUtils;
 
 public class SettingsActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
@@ -35,7 +37,6 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         setContentView(R.layout.settings);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-//        getActionBar().setDisplayShowHomeEnabled(false);
 
         appPrefs = new AppPreferences(getApplicationContext());
         aq = new AQuery(this);
@@ -84,6 +85,18 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
         distanceSpinner = (Spinner) findViewById(R.id.distance_preference_spinner);
         setDistanceSpinnerAdapter();
+
+        findViewById(R.id.logout_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SessionUtils.wipeOffCredentials(SettingsActivity.this);
+
+                Intent welcome = new Intent(SettingsActivity.this, WelcomeActivity.class);
+                welcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(welcome);
+                SettingsActivity.this.finish();
+            }
+        });
     }
 
     @Override

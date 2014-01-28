@@ -42,7 +42,11 @@ public class AppPreferences {
     }
 
     public void setUserNamePref(String value) {
-        prefsEditor.putString(USER_NAME, value);
+        if (value == null) {
+            prefsEditor.remove(USER_NAME);
+        } else {
+            prefsEditor.putString(USER_NAME, value);
+        }
         prefsEditor.commit();
     }
 
@@ -78,7 +82,11 @@ public class AppPreferences {
     }
 
     public void setCurrentUserEmailPref(String value) {
-        prefsEditor.putString(CURRENT_USER_EMAIL_PREF, value);
+        if (value == null) {
+            prefsEditor.remove(CURRENT_USER_EMAIL_PREF);
+        } else {
+            prefsEditor.putString(CURRENT_USER_EMAIL_PREF, value);
+        }
         prefsEditor.commit();
     }
 
@@ -87,7 +95,12 @@ public class AppPreferences {
     }
 
     public void setCurrentUsernamePref(String value) {
-        prefsEditor.putString(CURRENT_USERNAME_PREF, value);
+        if (value == null) {
+            prefsEditor.remove(CURRENT_USERNAME_PREF);
+        } else {
+            prefsEditor.putString(CURRENT_USERNAME_PREF, value);
+        }
+
         prefsEditor.commit();
     }
 
@@ -96,7 +109,12 @@ public class AppPreferences {
     }
 
     public void setCurrentUserBlacklistedPref(Boolean value) {
-        prefsEditor.putBoolean(CURRENT_USER_BLACKLISTED_PREF, value);
+        if (value == null) {
+           prefsEditor.remove(CURRENT_USER_BLACKLISTED_PREF);
+        } else {
+            prefsEditor.putBoolean(CURRENT_USER_BLACKLISTED_PREF, value);
+        }
+
         prefsEditor.commit();
     }
 
@@ -105,7 +123,11 @@ public class AppPreferences {
     }
 
     public void setCurrentUserTokenPref(String value) {
-        prefsEditor.putString(CURRENT_USER_TOKEN_PREF, value);
+        if (value == null) {
+            prefsEditor.remove(CURRENT_USER_TOKEN_PREF);
+        } else {
+            prefsEditor.putString(CURRENT_USER_TOKEN_PREF, value);
+        }
         prefsEditor.commit();
     }
 }

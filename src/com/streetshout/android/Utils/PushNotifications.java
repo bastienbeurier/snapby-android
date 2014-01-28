@@ -52,7 +52,8 @@ public class PushNotifications {
                     if (provider != null) {
                         Location location = locationManager.getLastKnownLocation(provider);
                         if (location != null) {
-                            ApiUtils.sendDeviceInfo(appCtx, aq, location);
+                            //TODO: send user info
+//                            ApiUtils.sendDeviceInfo(appCtx, aq, location);
                         }
                     }
                 }

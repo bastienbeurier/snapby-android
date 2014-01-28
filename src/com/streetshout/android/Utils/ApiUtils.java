@@ -2,16 +2,13 @@ package com.streetshout.android.utils;
 
 import android.content.Context;
 import android.location.Location;
-import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.streetshout.android.models.User;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Tools relative to API calls to street-shout-web.
@@ -88,7 +85,7 @@ public class ApiUtils {
 
     public static void updateUserInfoWithLocation(Context context, AQuery aq, Location lastLocation) {
         User currentUser = SessionUtils.getCurrentUser(context);
-        String url = getBasePath() + "/users" + currentUser.id + ".json";
+        String url = getBasePath() + "/users/" + currentUser.id + ".json";
 
         Map<String, Object> params = new HashMap<String, Object>();
 
@@ -101,6 +98,8 @@ public class ApiUtils {
         enrichParametersWithToken(context, params);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+
+        cb.method(AQuery.METHOD_PUT);
 
         aq.ajax(url, params, JSONObject.class, cb);
     }
@@ -115,8 +114,8 @@ public class ApiUtils {
         String url = getBasePath() + "/users/sign_in.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("email", String.valueOf(email));
-        params.put("password", String.valueOf(password));
+        params.put("email", email);
+        params.put("password", password);
 
         aq.ajax(url, params, JSONObject.class, cb);
     }
@@ -125,16 +124,29 @@ public class ApiUtils {
         String url = getBasePath() + "/users.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("email", String.valueOf(email));
-        params.put("password", String.valueOf(password));
-        params.put("username", String.valueOf(username));
+        params.put("email", email);
+        params.put("password", password);
+        params.put("username", username);
 
         GeneralUtils.enrichParamsWithWithGeneralUserAndDeviceInfo(ctx, params);
 
-        //TODO: enrich with device/user info like iOS
+        aq.ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void connectFacebook(Context context, AQuery aq, String username, String email, String facebookId, String facebookName, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/users/facebook_create_or_update.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("email", email);
+        params.put("username", username);
+        params.put("facebook_id", facebookId);
+        params.put("facebook_name", facebookName);
+
+        GeneralUtils.enrichParamsWithWithGeneralUserAndDeviceInfo(context, params);
 
         aq.ajax(url, params, JSONObject.class, cb);
     }
+
 
     public static void sendResetPasswordInstructions(AQuery aq, String email, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/users/password.json";

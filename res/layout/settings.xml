@@ -126,5 +126,10 @@
                 android:text="@string/rate_me_preference_button"/>
 
     </LinearLayout>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="logout"
+            android:id="@+id/logout_button" android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>
