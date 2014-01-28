@@ -2,11 +2,13 @@ package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -58,6 +60,11 @@ public class SignupActivity extends Activity {
                 validateSignupInfo();
             }
         });
+
+        //Set focus on username EditText
+        usernameEditText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
     public void validateSignupInfo() {

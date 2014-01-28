@@ -8,7 +8,8 @@
     <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/username_editText" android:layout_gravity="center_horizontal" android:text="username"/>
+            android:id="@+id/username_editText" android:layout_gravity="center_horizontal" android:text="username"
+            android:inputType="textPersonName"/>
     <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

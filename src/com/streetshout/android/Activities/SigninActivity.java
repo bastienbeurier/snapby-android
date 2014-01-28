@@ -2,11 +2,13 @@ package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,6 +17,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.SessionUtils;
 import org.json.JSONException;
@@ -47,6 +50,7 @@ public class SigninActivity extends Activity {
         passwordEditText = (EditText) findViewById(R.id.user_password_editText);
 
         signinValidateButton = (Button) findViewById(R.id.signin_validate_button);
+        resetPasswordButton = (Button) findViewById(R.id.reset_password_button);
 
         signinValidateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,13 +59,19 @@ public class SigninActivity extends Activity {
             }
         });
 
+
         resetPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent resetPassword = new Intent(SigninActivity.this, ResetPasswordActivity.class);
-                startActivity(resetPassword);
+                startActivityForResult(resetPassword, Constants.RESET_PASSWORD_REQUEST);
             }
         });
+
+        //Set focus on email EditText
+        emailEditText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
     private void validateSigninInfo() {
