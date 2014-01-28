@@ -136,7 +136,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         super.onResume();
 
         myLocation = LocationUtils.getLastLocationWithLocationManager(this, locationManager);
-        ApiUtils.sendDeviceInfo(this, aq, myLocation);
 
         //Handles case when user clicked a shout notification
         if (!notificationRedirectionHandled && savedInstanceStateCameraPosition == null && getIntent().hasExtra("notificationShout")) {
@@ -180,7 +179,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     protected void onPause () {
         super.onPause();
 
-        ApiUtils.sendDeviceInfo(this, aq, myLocation);
+        ApiUtils.updateUserInfoWithLocation(this, aq, myLocation);
     }
 
     private void pullShouts() {

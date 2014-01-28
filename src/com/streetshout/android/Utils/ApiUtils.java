@@ -5,6 +5,7 @@ import android.location.Location;
 import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
+import com.streetshout.android.models.User;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -85,18 +86,19 @@ public class ApiUtils {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    //TODO: send user info
-    public static void sendDeviceInfo(Context context, AQuery aq, Location lastLocation) {
-        String url = getBasePath() + "/update_device_info.json";
+    public static void updateUserInfoWithLocation(Context context, AQuery aq, Location lastLocation) {
+        User currentUser = SessionUtils.getCurrentUser(context);
+        String url = getBasePath() + "/users" + currentUser.id + ".json";
 
-        Map<String, Object> params = PushNotifications.getDeviceInfo(context);
+        Map<String, Object> params = new HashMap<String, Object>();
+
         if (lastLocation != null) {
             params.put("lat", lastLocation.getLatitude());
             params.put("lng", lastLocation.getLongitude());
         }
 
-        AppPreferences appPrefs = new AppPreferences(context.getApplicationContext());
-        params.put("notification_radius", Integer.toString(appPrefs.getNotificationPref()));
+        GeneralUtils.enrichParamsWithWithGeneralUserAndDeviceInfo(context, params);
+        enrichParametersWithToken(context, params);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 
