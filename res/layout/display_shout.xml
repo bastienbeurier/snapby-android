@@ -51,17 +51,72 @@
                   android:layout_weight="1"
                   android:background="@color/white">
 
-        <RelativeLayout android:layout_height="match_parent"
-                        android:layout_width="match_parent">
+        <LinearLayout android:orientation="vertical"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:background="@color/white">
 
-            <ImageView android:id="@+id/display_shout_image_view_place_holder"
-                       android:layout_height="match_parent"
-                       android:layout_width="match_parent"/>
+            <com.streetshout.android.custom.SquareRelativeLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
 
-            <ImageView android:id="@+id/display_shout_image_view"
-                       android:layout_height="match_parent"
-                       android:layout_width="match_parent"/>
-        </RelativeLayout>
+                <ImageView android:id="@+id/display_shout_image_view_place_holder"
+                           android:layout_height="match_parent"
+                           android:layout_width="match_parent"/>
+
+                <com.streetshout.android.custom.SquareImageView
+                        android:id="@+id/display_shout_image_view"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"/>
+
+                <TextView android:id="@+id/display_shout_description_textView"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_margin="10dp"
+                          android:paddingLeft="5dp"
+                          android:paddingRight="5dp"
+                          android:fontFamily="sans-serif-light"
+                          android:textSize="25dp"
+                          android:textColor="@color/white"
+                          android:background="@color/semiTransparentBlack"
+                          android:gravity="center"
+                          android:layout_alignParentTop="true"
+                          android:layout_centerHorizontal="true"/>
+            </com.streetshout.android.custom.SquareRelativeLayout>
+
+            <LinearLayout android:orientation="horizontal"
+                          android:layout_width="match_parent"
+                          android:layout_height="@dimen/action_bar_heigh"
+                          android:background="@color/white">
+
+                <TextView android:id="@+id/display_shout_like_count_textView"
+                          android:layout_width="wrap_content"
+                          android:layout_height="match_parent"
+                          android:layout_marginLeft="10dp"
+                          android:maxLines="1"
+                          android:fontFamily="sans-serif"
+                          android:textSize="16dp"
+                          android:textColor="@color/shoutBlue"
+                          android:gravity="center_vertical"
+                          android:visibility="gone"/>
+
+                <View android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:layout_weight="1"/>
+
+                <TextView android:id="@+id/display_shout_comment_count_textView"
+                          android:layout_width="wrap_content"
+                          android:layout_height="match_parent"
+                          android:maxLines="1"
+                          android:layout_marginRight="10dp"
+                          android:fontFamily="sans-serif"
+                          android:textSize="16dp"
+                          android:textColor="@color/shoutBlue"
+                          android:gravity="center_vertical"
+                          android:visibility="gone"/>
+            </LinearLayout>
+
+        </LinearLayout>
 
     </ScrollView>
 

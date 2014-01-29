@@ -100,4 +100,8 @@
     <string name="reset_password_success">An email with reset password instructions has just been sent.</string>
     <string name="facebook_connect_failed">Connection to Facebook failed. Please try again.</string>
     <string name="username_successfully_updated">Username successfully updated.</string>
+    <string name="like">like</string>
+    <string name="likes">likes</string>
+    <string name="comment">comment</string>
+    <string name="comments">comments</string>
 </resources>

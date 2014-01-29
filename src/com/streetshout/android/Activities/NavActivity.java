@@ -336,6 +336,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 //        showShoutFragment(shout);
         Intent displayShout = new Intent(this, DisplayShoutActivity.class);
         displayShout.putExtra("shout", shout);
+        displayShout.putExtra("myLocation", myLocation);
         startActivity(displayShout);
     }
 

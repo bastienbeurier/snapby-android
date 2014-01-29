@@ -2,12 +2,17 @@ package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,11 +23,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.streetshout.android.R;
+import com.streetshout.android.custom.SquareImageView;
+import com.streetshout.android.models.Like;
 import com.streetshout.android.models.Shout;
+import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.TimeUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by bastien on 1/29/14.
@@ -37,22 +50,99 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
     private ImageView imageViewPlaceHolder = null;
 
-    private ImageView imageView = null;
+    private SquareImageView imageView = null;
+
+    private TextView likeCountView = null;
+
+    private TextView commentCountView = null;
+
+    private LocationManager locationManager = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.display_shout);
 
+        locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+
         shout = getIntent().getParcelableExtra("shout");
 
-        imageView = (ImageView) findViewById(R.id.display_shout_image_view);
+        likeCountView = (TextView) findViewById(R.id.display_shout_like_count_textView);
+        commentCountView = (TextView) findViewById(R.id.display_shout_comment_count_textView);
+        imageView = (SquareImageView) findViewById(R.id.display_shout_image_view);
         imageViewPlaceHolder = (ImageView) findViewById(R.id.display_shout_image_view_place_holder);
 
+        updateUI();
+        setUpMap();
+        mapLoaded();
+    }
+
+    private void updateLikeCount(int count) {
+        if (count > 1) {
+            likeCountView.setText(count + " " + getString(R.string.likes));
+        } else {
+            likeCountView.setText(count + " " + getString(R.string.like));
+        }
+
+        likeCountView.setVisibility(View.VISIBLE);
+    }
+
+    private void updateCommentCount(int count) {
+        if (count > 1) {
+            commentCountView.setText(count + " " + getString(R.string.comments));
+        } else {
+            commentCountView.setText(count + " " + getString(R.string.comment));
+        }
+
+        commentCountView.setVisibility(View.VISIBLE);
+    }
+
+    private void updateUI() {
+        ApiUtils.getShoutMetaData(this, GeneralUtils.getAquery(this), shout.id, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+                if (status.getError() == null && object != null) {
+                    JSONObject rawShout = null;
+
+                    int commentCount = 0;
+                    ArrayList<Integer> likerIds = null;
+
+                    try {
+                        JSONObject result = object.getJSONObject("result");
+                        commentCount = result.getInt("comment_count");
+                        JSONArray rawlikerIds = result.getJSONArray("liker_ids");
+                        likerIds = Like.rawLikerIdsToIntegers(rawlikerIds);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (likerIds != null) {
+                        updateLikeCount(likerIds.size());
+                    }
+
+                    updateCommentCount(commentCount);
+                }
+            }
+
+        });
+
         ((TextView) findViewById(R.id.display_shout_username_textView)).setText("@" + shout.username);
+
+        ((TextView) findViewById(R.id.display_shout_description_textView)).setText(shout.description);
 
         String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(shout.created));
 
         String stamp = ageStrings[0] + ageStrings[1] + " | ";
+
+
+        if (myLocation == null) {
+            myLocation = getIntent().getParcelableExtra("myLocation");
+        }
+
+        if (myLocation == null) {
+            myLocation = LocationUtils.getLastLocationWithLocationManager(this, locationManager);
+        }
 
         if (myLocation != null) {
             Location shoutLocation = new Location("");
@@ -70,14 +160,18 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         GeneralUtils.getAquery(this).id(imageViewPlaceHolder).image(R.drawable.shout_image_place_holder_square);
 
         if (shout.image != null && shout.image.length() > 0) {
-            GeneralUtils.getAquery(this).id(imageView).image(shout.image + "--400");
             imageView.setVisibility(View.VISIBLE);
+
+            GeneralUtils.getAquery(this).image(shout.image + "--400", true, true, 0, 0, new BitmapAjaxCallback() {
+                @Override
+                public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
+                    imageView.setBackground(new BitmapDrawable(DisplayShoutActivity.this.getResources(), bm));
+                    imageViewPlaceHolder.setVisibility(View.GONE);
+                }
+            });
         } else {
             imageView.setVisibility(View.GONE);
         }
-
-        setUpMap();
-        mapLoaded();
     }
 
     @Override

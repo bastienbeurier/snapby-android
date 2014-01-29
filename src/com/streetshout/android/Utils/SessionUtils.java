@@ -1,9 +1,12 @@
 package com.streetshout.android.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import com.facebook.Session;
+import com.streetshout.android.activities.WelcomeActivity;
 import com.streetshout.android.models.User;
 
 /**
@@ -81,5 +84,14 @@ public class SessionUtils {
 
         appPrefs.setCurrentUserTokenPref(null);
         removeCurrentUserInfoInPhone(ctx);
+    }
+
+    public static void logOut(Activity activity) {
+        SessionUtils.wipeOffCredentials(activity);
+
+        Intent welcome = new Intent(activity, WelcomeActivity.class);
+        welcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(welcome);
+        activity.finish();
     }
 }

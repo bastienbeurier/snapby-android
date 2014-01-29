@@ -1,5 +1,6 @@
 package com.streetshout.android.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import com.androidquery.AQuery;
@@ -36,18 +37,18 @@ public class ApiUtils {
         return result.substring(0, result.length() - 1);
     }
 
-    private static Map<String, Object> enrichParametersWithToken(Context ctx, Map<String, Object> parameters) {
-        if (SessionUtils.isSignIn(ctx)) {
-            parameters.put("auth_token", SessionUtils.getCurrentUserToken(ctx));
+    private static Map<String, Object> enrichParametersWithToken(Activity activity, Map<String, Object> parameters) {
+        if (SessionUtils.isSignIn(activity)) {
+            parameters.put("auth_token", SessionUtils.getCurrentUserToken(activity));
+            return parameters;
+        } else {
+            SessionUtils.logOut(activity);
+            return null;
         }
-
-        //TODO else redirect to signin
-
-        return parameters;
     }
 
     /** API call to create a new shout */
-    public static void createShout(Context ctx, AQuery aq, double lat, double lng, String userName, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
+    public static void createShout(Activity activity, AQuery aq, double lat, double lng, String userName, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/shouts.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
@@ -55,9 +56,11 @@ public class ApiUtils {
         params.put("description", description);
         params.put("lat", lat);
         params.put("lng", lng);
-        params.put("device_id", GeneralUtils.getDeviceId(ctx));
+        params.put("device_id", GeneralUtils.getDeviceId(activity));
 
-        params = enrichParametersWithToken(ctx, params);
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) return;
 
         if (shoutImageUrl != null) {
             params.put("image", shoutImageUrl);
@@ -83,8 +86,8 @@ public class ApiUtils {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void updateUserInfoWithLocation(Context context, AQuery aq, Location lastLocation) {
-        User currentUser = SessionUtils.getCurrentUser(context);
+    public static void updateUserInfoWithLocation(Activity activity, AQuery aq, Location lastLocation) {
+        User currentUser = SessionUtils.getCurrentUser(activity);
         String url = getBasePath() + "/users/" + currentUser.id + ".json";
 
         Map<String, Object> params = new HashMap<String, Object>();
@@ -94,8 +97,10 @@ public class ApiUtils {
             params.put("lng", lastLocation.getLongitude());
         }
 
-        GeneralUtils.enrichParamsWithWithGeneralUserAndDeviceInfo(context, params);
-        enrichParametersWithToken(context, params);
+        GeneralUtils.enrichParamsWithWithGeneralUserAndDeviceInfo(activity, params);
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) return;
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 
@@ -157,17 +162,28 @@ public class ApiUtils {
         aq.ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void updateUsername(Context ctx, AQuery aq, String username, AjaxCallback<JSONObject> cb) {
+    public static void updateUsername(Activity activity, AQuery aq, String username, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/modify_user_credentials.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", username);
 
-        enrichParametersWithToken(ctx, params);
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) return;
 
         cb.method(AQuery.METHOD_PUT);
 
         aq.ajax(url, params, JSONObject.class, cb);
     }
 
+    public static void getShoutMetaData(Context ctx, AQuery aq, int shoutId, AjaxCallback<JSONObject> cb) {
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shoutId);
+
+        String url = getBasePath() + "/get_shout_meta_data.json" + encodeParamsAsUrlParams(params);
+
+        aq.ajax(url, JSONObject.class, cb);
+    }
 }

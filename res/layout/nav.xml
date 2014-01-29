@@ -77,7 +77,7 @@
             <ImageView android:layout_height="7dp"
                        android:layout_width="match_parent"
                        android:layout_alignParentTop="true"
-                       android:background="@drawable/nav_map_drop_shadow"/>
+                       android:background="@drawable/top_shadow"/>
 
         </RelativeLayout>
 

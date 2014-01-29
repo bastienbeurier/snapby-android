@@ -160,12 +160,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         findViewById(R.id.logout_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SessionUtils.wipeOffCredentials(SettingsActivity.this);
-
-                Intent welcome = new Intent(SettingsActivity.this, WelcomeActivity.class);
-                welcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(welcome);
-                SettingsActivity.this.finish();
+                SessionUtils.logOut(SettingsActivity.this);
             }
         });
 
