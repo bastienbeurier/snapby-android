@@ -9,6 +9,7 @@
     <FrameLayout android:id="@+id/comments_feed_progress_bar"
                  android:layout_width="match_parent"
                  android:layout_height="match_parent"
+                 android:layout_weight="1"
                  android:visibility="gone" >
 
         <ProgressBar android:layout_width="wrap_content"
@@ -20,6 +21,7 @@
     <LinearLayout android:id="@+id/comments_feed_wrapper"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
+                  android:layout_weight="1"
                   android:orientation="vertical">
 
         <ListView
@@ -40,8 +42,25 @@
             android:id="@+id/no_connection_feed"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:gravity="center"
             android:visibility="gone"
             android:text="@string/no_connection_feed"/>
+
+    <View android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:background="@color/shoutBlue"
+          android:layout_marginBottom="3dp"/>
+
+    <EditText
+            android:id="@+id/create_comment_editText"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/darkGrey"
+            android:layout_marginBottom="10dp"
+            android:hint="@string/create_comment_hint"
+            android:imeOptions="actionSend"
+            android:singleLine="true"/>
 
 </LinearLayout>

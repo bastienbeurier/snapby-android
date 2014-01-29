@@ -234,4 +234,44 @@ public class ApiUtils {
 
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
+
+    public static void createLike(Activity activity, Shout shout, double lat, double lng, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/likes.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shout.id);
+
+        if (lat != 0 && lng != 0) {
+            params.put("lat", lat);
+            params.put("lng", lng);
+        }
+
+        params = enrichParametersWithToken(activity, params);
+        if (params == null) {
+            return;
+        }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void createComment(Activity activity, String description, Shout shout, double lat, double lng, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/comments.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shout.id);
+        params.put("shouter_id", shout.userId);
+        params.put("description", shout.description);
+
+        if (lat != 0 && lng != 0) {
+            params.put("lat", lat);
+            params.put("lng", lng);
+        }
+
+        params = enrichParametersWithToken(activity, params);
+        if (params == null) {
+            return;
+        }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
 }

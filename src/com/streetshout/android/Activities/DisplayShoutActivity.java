@@ -38,6 +38,7 @@ import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.LocationUtils;
+import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.TimeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,6 +68,10 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
     private LocationManager locationManager = null;
 
     private ConnectivityManager connectivityManager = null;
+
+    private ArrayList<Integer> likerIds = null;
+
+    private ImageView createLikeButton = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,9 +140,52 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
             }
         });
 
+        createLikeButton = (ImageView) findViewById(R.id.shout_like_button);
+        createLikeButton.setEnabled(false);
+
+        createLikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createLikeButton.setEnabled(false);
+                likerIds.add(0, SessionUtils.getCurrentUser(DisplayShoutActivity.this).id);
+                updateUIOnShoutLiked(true);
+
+                double lat = 0;
+                double lng = 0;
+
+                if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+                    lat = myLocation.getLatitude();
+                    lng = myLocation.getLongitude();
+                }
+
+                ApiUtils.createLike(DisplayShoutActivity.this, shout, lat, lng, new AjaxCallback<JSONObject>() {
+                    @Override
+                    public void callback(String url, JSONObject object, AjaxStatus status) {
+                        super.callback(url, object, status);
+
+                        createLikeButton.setEnabled(true);
+
+                        if (status.getError() != null) {
+                            Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
+                            toast.show();
+                            likerIds.remove(0);
+                            updateUIOnShoutLiked(false);
+                        }
+                    }
+                });
+            }
+        });
+
         updateUI();
         setUpMap();
         mapLoaded();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getShoutMetaData();
     }
 
     private void startCommentsActivity(View v) {
@@ -148,6 +196,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         } else {
             Intent comments = new Intent(DisplayShoutActivity.this, CommentsActivity.class);
             comments.putExtra("shout", shout);
+            comments.putExtra("myLocation", myLocation);
             startActivity(comments);
         }
 
@@ -175,7 +224,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         commentCountView.setVisibility(View.VISIBLE);
     }
 
-    private void updateUI() {
+    private void getShoutMetaData() {
         ApiUtils.getShoutMetaData(this, GeneralUtils.getAquery(this), shout.id, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
@@ -185,7 +234,6 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                     JSONObject rawShout = null;
 
                     int commentCount = 0;
-                    ArrayList<Integer> likerIds = null;
 
                     try {
                         JSONObject result = object.getJSONObject("result");
@@ -198,13 +246,25 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
                     if (likerIds != null) {
                         updateLikeCount(likerIds.size());
+
+                        boolean currentUserLikedShout = false;
+
+                        for (int i = 0; i < likerIds.size(); i++) {
+                            if (likerIds.get(i).intValue() == SessionUtils.getCurrentUser(DisplayShoutActivity.this).id) {
+                                currentUserLikedShout = true;
+                            }
+                        }
+
+                        updateUIOnShoutLiked(currentUserLikedShout);
                     }
 
                     updateCommentCount(commentCount);
                 }
             }
         });
+    }
 
+    private void updateUI() {
         ((TextView) findViewById(R.id.display_shout_username_textView)).setText("@" + shout.username);
 
         TextView shoutDescription = ((TextView) findViewById(R.id.display_shout_description_textView));
@@ -250,6 +310,18 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         } else {
             imageView.setVisibility(View.GONE);
         }
+    }
+
+    private void updateUIOnShoutLiked(boolean liked) {
+        if (liked) {
+            createLikeButton.setImageDrawable(getResources().getDrawable(R.drawable.shout_bar_liked_icon));
+            createLikeButton.setEnabled(false);
+        } else {
+            createLikeButton.setImageDrawable(getResources().getDrawable(R.drawable.shout_bar_like_icon));
+            createLikeButton.setEnabled(true);
+        }
+
+        updateLikeCount(likerIds.size());
     }
 
     @Override

@@ -120,4 +120,7 @@
     <string name="connect_with_fb">Connect with Facebook</string>
     <string name="signup_with_email">Sign up with Email</string>
     <string name="signin_with_email">Already have an account? Sign in here.</string>
+    <string name="shout_like_failed">We couldn\'t save your like, please try again.</string>
+    <string name="create_comment_hint">Write a comment...</string>
+    <string name="create_comment_failed">We couldn\'t save your comment, please try again.</string>
 </resources>
