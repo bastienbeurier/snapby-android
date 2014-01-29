@@ -86,17 +86,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         commentCountView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.setEnabled(false);
-                if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-                    Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
-                    toast.show();
-                } else {
-                    Intent comments = new Intent(DisplayShoutActivity.this, CommentsActivity.class);
-                    comments.putExtra("shout", shout);
-                    startActivity(comments);
-                }
-
-                v.setEnabled(true);
+                startCommentsActivity(v);
             }
         });
 
@@ -114,6 +104,13 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                 }
 
                 v.setEnabled(true);
+            }
+        });
+
+        findViewById(R.id.shout_comment_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCommentsActivity(v);
             }
         });
 
@@ -142,6 +139,21 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         setUpMap();
         mapLoaded();
     }
+
+    private void startCommentsActivity(View v) {
+        v.setEnabled(false);
+        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+            Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+            toast.show();
+        } else {
+            Intent comments = new Intent(DisplayShoutActivity.this, CommentsActivity.class);
+            comments.putExtra("shout", shout);
+            startActivity(comments);
+        }
+
+        v.setEnabled(true);
+    }
+
 
     private void updateLikeCount(int count) {
         if (count > 1) {

@@ -109,5 +109,7 @@
     <string name="report_shout">Report this shout</string>
     <string name="directions_to_shout">Directions to shout</string>
     <string name="report_shout_successful">Thank you for sharing your concern!</string>
-    <string name="report_shout_failed">We couldn't report this shout, please try again.</string>
+    <string name="report_shout_failed">We couldn\'t report this shout, please try again.</string>
+    <string name="no_comments_in_feed">No comments yet...</string>
+    <string name="no_likes_in_feed">No likes yet...</string>
 </resources>

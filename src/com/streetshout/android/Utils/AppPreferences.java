@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class AppPreferences {
-    private static final String USER_NAME = "ss_saved_user_name";
-
     private static final String DISTANCE_UNIT = "ss_saved_distance_unit";
 
     private static final String CURRENT_USER_ID_PREF = "ss_current_user_id_pref";
@@ -33,19 +31,6 @@ public class AppPreferences {
 
     public SharedPreferences getSharedPrefs() {
         return sharedPrefs;
-    }
-
-    public String getUserNamePref() {
-        return sharedPrefs.getString(USER_NAME, "");
-    }
-
-    public void setUserNamePref(String value) {
-        if (value == null) {
-            prefsEditor.remove(USER_NAME);
-        } else {
-            prefsEditor.putString(USER_NAME, value);
-        }
-        prefsEditor.commit();
     }
 
     public int getDistanceUnitPref() {

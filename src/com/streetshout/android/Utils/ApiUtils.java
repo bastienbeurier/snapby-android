@@ -49,11 +49,12 @@ public class ApiUtils {
     }
 
     /** API call to create a new shout */
-    public static void createShout(Activity activity, AQuery aq, double lat, double lng, String userName, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
+    public static void createShout(Activity activity, AQuery aq, double lat, double lng, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/shouts.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("user_name", userName);
+        params.put("username", SessionUtils.getCurrentUser(activity).username);
+        params.put("user_id", SessionUtils.getCurrentUser(activity).id);
         params.put("description", description);
         params.put("lat", lat);
         params.put("lng", lng);

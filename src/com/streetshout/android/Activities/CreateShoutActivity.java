@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -48,6 +50,7 @@ import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.LocationUtils;
+import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.StreetShoutApplication;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,8 +80,6 @@ public class CreateShoutActivity extends Activity {
     private String photoUrl = null;
 
     private ProgressDialog createShoutDialog;
-
-    private String userName = null;
 
     private String shoutDescription = null;
 
@@ -123,25 +124,16 @@ public class CreateShoutActivity extends Activity {
         }
 
         //Set user name if we have it
-        EditText userNameView = (EditText) findViewById(R.id.shout_descr_dialog_name);
         final EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
         descriptionView.setHorizontallyScrolling(false);
         descriptionView.setMaxLines(MAX_SHOUT_DESCR_LINES);
 
         appPrefs = ((StreetShoutApplication) getApplicationContext()).getAppPrefs();
 
-        String savedUserName = appPrefs.getUserNamePref();
-
         InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
 
-        if (savedUserName.length() > 0) {
-            userNameView.setText(savedUserName);
-            descriptionView.requestFocus();
-            imm.showSoftInput(descriptionView, 0);
-        } else {
-            userNameView.requestFocus();
-            imm.showSoftInput(userNameView, 0);
-        }
+        descriptionView.requestFocus();
+        imm.showSoftInput(descriptionView, 0);
 
         ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
@@ -181,6 +173,8 @@ public class CreateShoutActivity extends Activity {
 
         RelativeLayout newShouPhotoWrapper = (RelativeLayout) findViewById(R.id.new_shout_photo_wrapper);
         resizeSquareOptionalViews(newShouPhotoWrapper);
+
+        ((TextView) findViewById(R.id.shout_descr_dialog_name)).setText("@" + SessionUtils.getCurrentUser(this).username);
     }
 
     private void removePhoto() {
@@ -298,23 +292,10 @@ public class CreateShoutActivity extends Activity {
     public void validateShoutInfo() {
         boolean errors = false;
 
-        EditText userNameView = (EditText) findViewById(R.id.shout_descr_dialog_name);
         EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
-        userNameView.setError(null);
         descriptionView.setError(null);
 
-        userName = userNameView.getText().toString();
         shoutDescription = descriptionView.getText().toString();
-
-        if (userName.length() == 0) {
-            userNameView.setError(getString(R.string.name_not_empty));
-            errors = true;
-        }
-
-        if (userName.length() > Constants.MAX_USER_NAME_LENGTH) {
-            userNameView.setError(getString(R.string.name_too_long));
-            errors = true;
-        }
 
         if (shoutDescription.length() == 0) {
             descriptionView.setError(getString(R.string.description_not_empty));
@@ -331,8 +312,6 @@ public class CreateShoutActivity extends Activity {
             toast.show();
         } else if (!errors) {
             //Save user name in prefs
-            appPrefs.setUserNamePref(userName);
-
             uploadImageBeforeCreatingShout();
         }
     }
@@ -490,7 +469,7 @@ public class CreateShoutActivity extends Activity {
     }
 
     public void createNewShoutFromInfo() {
-        ApiUtils.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), userName, shoutDescription, photoUrl, new AjaxCallback<JSONObject>() {
+        ApiUtils.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), shoutDescription, photoUrl, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -499,7 +478,8 @@ public class CreateShoutActivity extends Activity {
                     JSONObject rawShout = null;
 
                     try {
-                        rawShout = object.getJSONObject("result");
+                        JSONObject result = object.getJSONObject("result");
+                        rawShout = result.getJSONObject("shout");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

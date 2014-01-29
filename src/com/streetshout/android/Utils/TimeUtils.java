@@ -1,6 +1,7 @@
 package com.streetshout.android.utils;
 
 import android.app.Activity;
+import android.util.Log;
 import com.streetshout.android.R;
 
 import java.text.ParseException;

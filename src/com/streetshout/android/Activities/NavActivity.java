@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -433,10 +434,10 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     private void updateMapOnShoutSelectedFromNotificationOrCreation(Shout shout, Marker marker) {
-        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout, true)));
         //Hack to make to the marker come to front when click (warning! to work, a marker title must be set)
         marker.showInfoWindow();
 
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
+        mMap.moveCamera(update);
     }
 }
