@@ -24,8 +24,6 @@ import com.streetshout.android.utils.LocationUtils;
 
 public class RefineShoutLocationActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
 
-    private static final int UPDATE_SHOUT_LOCATION = 1437;
-
     private Location myLocation = null;
 
     private Location shoutLocation = null;

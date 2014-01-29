@@ -66,4 +66,30 @@ public class TimeUtils {
 
         return result;
     }
+
+    public static String[] shoutAgeToShortStrings(long age) {
+        String[] result = new String[2];
+
+        if (age > 0) {
+            long hours = age / ONE_HOUR;
+            if (hours >= 1) {
+                result[0] = String.valueOf(hours);
+                result[1] = "h";
+            } else {
+                long minutes = age / ONE_MIN;
+                if (minutes >= 1) {
+                    result[0] = String.valueOf(minutes);
+                    result[1] = "min";
+                } else {
+                    result[0] = "0";
+                    result[1] = "min";
+                }
+            }
+        } else {
+            result[0] = "0";
+            result[1] = "min";
+        }
+
+        return result;
+    }
 }

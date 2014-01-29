@@ -93,11 +93,11 @@ public class LocationUtils {
         String[] result = new String[2];
 
         if (distance < 100) {
-            result[0] = ctx.getString(R.string.near);
-            result[1] = "";
+            result[0] = String.format("%d", distance);
+            result[1] = "m";
         } else if (distance < 1000) {
             result[0] = String.format("%d", Math.round(distance / 100.0) * 100);
-            result[1] = ctx.getString(R.string.meters);
+            result[1] = "m";
         } else if (distance < 10000) {
             result[0] = String.format("%d", Math.round(distance / 1000.0));
             result[1] = "km";
@@ -105,8 +105,8 @@ public class LocationUtils {
             result[0] = String.format("%d", Math.round(distance / 10000.0) * 10);
             result[1] = "km";
         } else {
-            result[0] = ctx.getString(R.string.far);
-            result[1] = "";
+            result[0] = "+100";
+            result[1] = "km";
         }
 
         return result;
@@ -119,8 +119,8 @@ public class LocationUtils {
         long distanceMiles = Math.round(distance * 0.000621371);
 
         if (distanceYd < 100) {
-            result[0] = ctx.getString(R.string.near);
-            result[1] = "";
+            result[0] = String.format("%d", distance);
+            result[1] = "yd";
         } else if (distanceMiles < 1) {
             result[0] = String.format("%d", Math.round(distanceYd / 100.0) * 100);
             result[1] = "yd";
@@ -131,8 +131,8 @@ public class LocationUtils {
             result[0] = String.format("%d", Math.round(distanceMiles / 10.0) * 10);
             result[1] = "mi";
         } else {
-            result[0] = ctx.getString(R.string.far);
-            result[1] = "";
+            result[0] = "+100";
+            result[1] = "mi";
         }
 
         return result;
