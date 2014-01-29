@@ -8,7 +8,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,10 +25,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.R;
 import com.streetshout.android.custom.SquareImageView;
 import com.streetshout.android.models.Like;
@@ -92,6 +97,44 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                 }
 
                 v.setEnabled(true);
+            }
+        });
+
+        likeCountView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setEnabled(false);
+                if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+                    Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    Intent likes = new Intent(DisplayShoutActivity.this, LikesActivity.class);
+                    likes.putExtra("shout", shout);
+                    startActivity(likes);
+                }
+
+                v.setEnabled(true);
+            }
+        });
+
+        findViewById(R.id.shout_share_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = ApiUtils.getSiteUrl() + "/shouts/" + shout.id;
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_shout_text, url));
+                sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_shout_subject));
+                sendIntent.setType("text/plain");
+
+                startActivity(sendIntent);
+            }
+        });
+
+        findViewById(R.id.shout_more_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openOptionsMenu();
             }
         });
 
@@ -211,7 +254,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         settings.setMyLocationButtonEnabled(false);
         settings.setRotateGesturesEnabled(false);
         settings.setTiltGesturesEnabled(false);
-        settings.setScrollGesturesEnabled(true);
+        settings.setScrollGesturesEnabled(false);
         settings.setZoomGesturesEnabled(true);
 
         //Set user location
@@ -237,6 +280,16 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                 mMap.setOnCameraChangeListener(null);
 
                 setMapCameraPositionOnShoutLocation();
+
+                MarkerOptions markerOptions = new MarkerOptions();
+
+                markerOptions.position(new LatLng(shout.lat, shout.lng));
+
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout, false)));
+
+                markerOptions.title(Integer.toString(shout.id));
+
+                mMap.addMarker(markerOptions);
             }
         });
     }
@@ -244,5 +297,42 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
     private void setMapCameraPositionOnShoutLocation() {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
         mMap.moveCamera(update);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.display_shout_more_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.directions_item:
+                String uri = "http://maps.google.com/maps?daddr=" + shout.lat + "," + shout.lng;
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(intent);
+                return true;
+            case R.id.report_item:
+                ApiUtils.reportShout(DisplayShoutActivity.this, shout.id, "general", new AjaxCallback<JSONObject>() {
+                    @Override
+                    public void callback(String url, JSONObject object, AjaxStatus status) {
+                        super.callback(url, object, status);
+
+                        if (status.getError() != null) {
+                            Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.report_shout_failed), Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    }
+                });
+
+                Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.report_shout_successful), Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

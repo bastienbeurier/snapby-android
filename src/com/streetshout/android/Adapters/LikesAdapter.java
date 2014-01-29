@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.streetshout.android.R;
-import com.streetshout.android.models.Comment;
+import com.streetshout.android.models.Like;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.TimeUtils;
 
@@ -18,16 +18,16 @@ import java.util.ArrayList;
 /**
  * Created by bastien on 1/29/14.
  */
-public class CommentsAdapter extends BaseAdapter{
+public class LikesAdapter extends BaseAdapter{
     private Context context = null;
 
-    private ArrayList<Comment> items = null;
+    private ArrayList<Like> items = null;
 
     private Location shoutLocation = null;
 
-    public CommentsAdapter(Context context, ArrayList<Comment> comments, Location shoutLocation) {
+    public LikesAdapter(Context context, ArrayList<Like> likes, Location shoutLocation) {
         this.context = context;
-        this.items = comments;
+        this.items = likes;
         this.shoutLocation = shoutLocation;
     }
 
@@ -38,30 +38,28 @@ public class CommentsAdapter extends BaseAdapter{
         if (convertView != null) {
             commentView = (LinearLayout) convertView;
         } else {
-            commentView = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.comment_feed_view, null);
+            commentView = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.like_feed_view, null);
         }
 
-        final Comment comment = items.get(position);
+        final Like like = items.get(position);
 
-        if (comment != null) {
-            ((TextView) commentView.findViewById(R.id.comment_feed_username_textView)).setText("@" + comment.commenterUsername);
+        if (like != null) {
+            ((TextView) commentView.findViewById(R.id.like_feed_username_textView)).setText("@" + like.likerUsername);
 
-            ((TextView) commentView.findViewById(R.id.comment_feed_description_textView)).setText(comment.description);
-
-            String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(comment.created));
+            String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(like.created));
 
             String stamp = ageStrings[0] + ageStrings[1];
 
-            if (comment.lat != 0 && comment.lng != 0) {
+            if (like.lat != 0 && like.lng != 0) {
                 Location commentLocation = new Location("");
-                commentLocation.setLatitude(comment.lat);
-                commentLocation.setLongitude(comment.lng);
+                commentLocation.setLatitude(like.lat);
+                commentLocation.setLongitude(like.lng);
 
                 String[] distanceStrings = LocationUtils.formattedDistanceStrings(context, commentLocation, shoutLocation);
                 stamp += " | " + distanceStrings[0] + distanceStrings[1];
             }
 
-            ((TextView) commentView.findViewById(R.id.comment_feed_stamp_textView)).setText(stamp);
+            ((TextView) commentView.findViewById(R.id.like_feed_stamp_textView)).setText(stamp);
         }
 
         return commentView;
@@ -84,7 +82,7 @@ public class CommentsAdapter extends BaseAdapter{
     }
 
     @Override
-    public Comment getItem(int position) {
+    public Like getItem(int position) {
         return items.get(position);
     }
 

@@ -11,7 +11,9 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
 import com.streetshout.android.adapters.CommentsAdapter;
+import com.streetshout.android.adapters.LikesAdapter;
 import com.streetshout.android.models.Comment;
+import com.streetshout.android.models.Like;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.ApiUtils;
 import org.json.JSONArray;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created by bastien on 1/29/14.
  */
-public class CommentsActivity extends ListActivity {
+public class LikesActivity extends ListActivity {
 
     private View progressBarWrapper = null;
 
@@ -31,12 +33,12 @@ public class CommentsActivity extends ListActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.comments);
+        setContentView(R.layout.likes);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        progressBarWrapper = findViewById(R.id.comments_feed_progress_bar);
-        feedWrapperView = findViewById(R.id.comments_feed_wrapper);
+        progressBarWrapper = findViewById(R.id.likes_feed_progress_bar);
+        feedWrapperView = findViewById(R.id.likes_feed_wrapper);
 
         Shout shout = getIntent().getParcelableExtra("shout");
 
@@ -46,25 +48,25 @@ public class CommentsActivity extends ListActivity {
 
         showFeedProgressBar();
 
-        ApiUtils.getComments(this, shout, new AjaxCallback<JSONObject>() {
+        ApiUtils.getLikes(this, shout, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
 
                 if (status.getError() == null && object != null) {
-                    JSONArray rawComments = null;
+                    JSONArray rawLikes = null;
 
                     try {
                         JSONObject result = object.getJSONObject("result");
-                        rawComments = result.getJSONArray("comments");
+                        rawLikes = result.getJSONArray("likes");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    if (rawComments != null) {
-                        ArrayList<Comment> comments = Comment.rawCommentsToInstances(rawComments);
+                    if (rawLikes != null) {
+                        ArrayList<Like> comments = Like.rawLikesToInstances(rawLikes);
                         hideFeedProgressBar();
-                        setAdapter(CommentsActivity.this, comments, shoutLocation);
+                        setAdapter(LikesActivity.this, comments, shoutLocation);
                     }
                 } else {
                     showNoConnectionInFeedMessage();
@@ -75,9 +77,9 @@ public class CommentsActivity extends ListActivity {
 
     private void showNoConnectionInFeedMessage() {
         hideFeedProgressBar();
-        findViewById(R.id.comments_feed_progress_bar).setVisibility(View.GONE);
+        findViewById(R.id.likes_feed_progress_bar).setVisibility(View.GONE);
         findViewById(R.id.no_connection_feed).setVisibility(View.VISIBLE);
-        findViewById(R.id.comments_feed_wrapper).setVisibility(View.GONE);
+        findViewById(R.id.likes_feed_wrapper).setVisibility(View.GONE);
     }
 
     public void showFeedProgressBar() {
@@ -90,8 +92,8 @@ public class CommentsActivity extends ListActivity {
         feedWrapperView.setVisibility(View.VISIBLE);
     }
 
-    public void setAdapter(Activity activity, ArrayList<Comment> comments, Location shoutLocation) {
-        setListAdapter(new CommentsAdapter(activity, comments, shoutLocation));
+    public void setAdapter(Activity activity, ArrayList<Like> likes, Location shoutLocation) {
+        setListAdapter(new LikesAdapter(activity, likes, shoutLocation));
     }
 
     @Override

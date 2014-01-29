@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class ApiUtils {
 
-    private static String getSiteUrl() {
+    public static String getSiteUrl() {
         return Constants.PRODUCTION ? "http://street-shout.herokuapp.com" : "http://dev-street-shout.herokuapp.com";
     }
 
@@ -216,5 +216,21 @@ public class ApiUtils {
         String url = getBasePath() + "/likes.json" + encodeParamsAsUrlParams(params);
 
         GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
+    }
+
+    public static void reportShout(Activity activity, int shoutId, String motive, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/flags.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shoutId);
+        params.put("motive", motive);
+        params.put("flagger_id", SessionUtils.getCurrentUser(activity).id);
+
+        params = enrichParametersWithToken(activity, params);
+        if (params == null) {
+            return;
+        }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 }

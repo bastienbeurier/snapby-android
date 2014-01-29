@@ -104,4 +104,10 @@
     <string name="likes">likes</string>
     <string name="comment">comment</string>
     <string name="comments">comments</string>
+    <string name="share_shout_text">Hey, check this shout before it\'s too late! %s</string>
+    <string name="share_shout_subject">Sharing a shout with you.</string>
+    <string name="report_shout">Report this shout</string>
+    <string name="directions_to_shout">Directions to shout</string>
+    <string name="report_shout_successful">Thank you for sharing your concern!</string>
+    <string name="report_shout_failed">We couldn't report this shout, please try again.</string>
 </resources>

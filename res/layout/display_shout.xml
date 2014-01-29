@@ -6,17 +6,6 @@
               android:layout_height="match_parent"
               android:background="@color/white">
 
-    <RelativeLayout android:layout_height="@dimen/display_shout_map_height"
-                    android:layout_width="match_parent">
-
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:id="@+id/display_shout_map"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  class="com.google.android.gms.maps.MapFragment" />
-
-    </RelativeLayout>
-
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="@dimen/action_bar_heigh"
@@ -116,15 +105,55 @@
                           android:visibility="gone"/>
             </LinearLayout>
 
+            <RelativeLayout android:layout_height="@dimen/display_shout_map_height"
+                            android:layout_width="match_parent"
+                            android:layout_margin="10dp">
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                          android:id="@+id/display_shout_map"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          class="com.google.android.gms.maps.MapFragment" />
+
+            </RelativeLayout>
+
         </LinearLayout>
 
     </ScrollView>
 
-    <LinearLayout android:orientation="vertical"
+    <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="@dimen/action_bar_heigh"
                   android:background="@color/shoutBlue">
 
+        <Button android:id="@+id/shout_like_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="hey"
+                android:background="@android:color/transparent"
+                android:gravity="center"/>
+        <Button android:id="@+id/shout_comment_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="yo"
+                android:background="@android:color/transparent"
+                android:gravity="center"/>
+        <Button android:id="@+id/shout_share_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="pfff"
+                android:background="@android:color/transparent"
+                android:gravity="center"/>
+        <Button android:id="@+id/shout_more_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="mhmm"
+                android:background="@android:color/transparent"
+                android:gravity="center"/>
     </LinearLayout>
 
 </LinearLayout>

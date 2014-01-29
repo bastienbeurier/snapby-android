@@ -10,9 +10,11 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 import com.streetshout.android.R;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,11 +22,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ImageUtils {
+
+    public static final int MEDIA_TYPE_IMAGE = 1;
+
     public static boolean isSDPresent() {
         return android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
     }
@@ -200,11 +206,84 @@ public class ImageUtils {
         }
     }
 
+    /** Create a File for saving an image or video */
+    public static File getOutputMediaFile(int type){
+        Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+
+        if (isSDPresent) {
+            File mediaStorageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            // Create the storage directory if it does not exist
+            if (! mediaStorageDir.exists()){
+                if (!mediaStorageDir.mkdirs()){
+                    return null;
+                }
+            }
+
+            // Create a media file name
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            File mediaFile;
+            if (type == MEDIA_TYPE_IMAGE){
+                mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                        "IMG_"+ timeStamp + ".jpg");
+            } else {
+                return null;
+            }
+
+            return mediaFile;
+        }
+        else
+        {
+        }
+
+        return null;
+    }
+
     static public Bitmap rotateImage(Bitmap bitmap) {
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
 
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    public static Uri storeImage(Bitmap image) {
+        FileOutputStream fileOutputStream = null;
+        File path = null;
+
+        Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+        if (isSDPresent)
+        {
+            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File file = new File(path, "shout_" + new Date().getTime() + ".jpg");
+            path	= file;
+        } else {
+            return null;
+        }
+
+        if (path == null) {
+            return null;
+        }
+
+        try {
+            fileOutputStream = new FileOutputStream(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (fileOutputStream != null)
+        {
+            BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream);
+            image.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            try {
+                bos.flush();
+                bos.close();
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return Uri.parse("file://" + path.getAbsolutePath());
+        }
+
+        return null;
     }
 
 }
