@@ -10,7 +10,6 @@ public class Constants {
     public static final int SHOUT_DURATION = 4 * 60 * 60 * 1000;
     public static final int SHOUT_DURATION_HOURS = 4;
 
-    public static final int MAX_USER_NAME_LENGTH = 20;
     public static final int MAX_DESCRIPTION_LENGTH = 140;
 
     /** Zoom level set when a user clicks on a shout**/
@@ -28,7 +27,6 @@ public class Constants {
     public static final int CREATE_SHOUT_REQUEST = 11101;
     public static final int SETTINGS_REQUEST = 14760;
     public static final int UPLOAD_PHOTO_REQUEST = 15849;
-    public static final int DISPLAY_PHOTO_REQUEST = 47308;
     public static final int RESET_PASSWORD_REQUEST = 64783;
 
     /** AWS S3 **/
@@ -37,4 +35,8 @@ public class Constants {
 
     /** Shout image res **/
     public static final int SHOUT_BIG_RES = 400;
+
+    /** Mixpanel tokens **/
+    public static final String PROD_MIXPANEL_TOKEN = "24dc482a232028564063bd3dd7e84e93";
+    public static final String DEV_MIXPANEL_TOKEN = "468e53159f354365149b1a46a7ecdec3";
 }

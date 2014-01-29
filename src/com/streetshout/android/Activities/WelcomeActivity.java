@@ -23,6 +23,7 @@ import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.SessionUtils;
+import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -182,12 +183,13 @@ public class WelcomeActivity extends Activity {
                                             }
 
                                             SessionUtils.saveCurrentUserToken(WelcomeActivity.this, token);
-                                            SessionUtils.updateCurrentUserInfoInPhone(WelcomeActivity.this, User.rawUserToInstance(rawUser));
 
-                                            //TODO: Mixpanel identify according to sign in sign up
+                                            User currentUser = User.rawUserToInstance(rawUser);
+                                            SessionUtils.updateCurrentUserInfoInPhone(WelcomeActivity.this, currentUser);
 
-                                            Intent nav = new Intent(WelcomeActivity.this, NavActivity.class);
-                                            WelcomeActivity.this.startActivity(nav);
+                                            TrackingUtils.identify(WelcomeActivity.this, currentUser);
+
+                                            goToNavActivity();
                                             connectFBDialog.cancel();
                                         } else {
                                             Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
@@ -208,6 +210,8 @@ public class WelcomeActivity extends Activity {
     }
 
     private void goToNavActivity() {
+        TrackingUtils.identify(WelcomeActivity.this, SessionUtils.getCurrentUser(this));
+
         Intent nav = new Intent(WelcomeActivity.this, NavActivity.class);
         WelcomeActivity.this.startActivity(nav);
     }

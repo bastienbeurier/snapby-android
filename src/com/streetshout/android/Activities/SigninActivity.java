@@ -21,6 +21,7 @@ import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.SessionUtils;
+import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -135,9 +136,11 @@ public class SigninActivity extends Activity {
                     }
 
                     SessionUtils.saveCurrentUserToken(SigninActivity.this, token);
-                    SessionUtils.updateCurrentUserInfoInPhone(SigninActivity.this, User.rawUserToInstance(rawUser));
 
-                    //TODO: Mixpanel identify
+                    User currentUser = User.rawUserToInstance(rawUser);
+                    SessionUtils.updateCurrentUserInfoInPhone(SigninActivity.this, currentUser);
+
+                    TrackingUtils.identify(SigninActivity.this, currentUser);
 
                     Intent nav = new Intent(SigninActivity.this, NavActivity.class);
                     SigninActivity.this.startActivity(nav);
