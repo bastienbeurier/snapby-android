@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
+import com.streetshout.android.models.Shout;
 import com.streetshout.android.models.User;
 import org.json.JSONObject;
 
@@ -185,5 +186,35 @@ public class ApiUtils {
         String url = getBasePath() + "/get_shout_meta_data.json" + encodeParamsAsUrlParams(params);
 
         aq.ajax(url, JSONObject.class, cb);
+    }
+
+    public static void getComments(Activity activity, Shout shout, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shout.id);
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        //TODO: Remove token from url param
+        String url = getBasePath() + "/comments.json" + encodeParamsAsUrlParams(params);
+
+        GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
+    }
+
+    public static void getLikes(Activity activity, Shout shout, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shout.id);
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        //TODO: Remove token from url param
+        String url = getBasePath() + "/likes.json" + encodeParamsAsUrlParams(params);
+
+        GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
     }
 }

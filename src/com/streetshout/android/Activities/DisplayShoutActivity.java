@@ -1,15 +1,18 @@
 package com.streetshout.android.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
@@ -58,11 +61,15 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
     private LocationManager locationManager = null;
 
+    private ConnectivityManager connectivityManager = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.display_shout);
 
         locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+
+        connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         shout = getIntent().getParcelableExtra("shout");
 
@@ -70,6 +77,23 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         commentCountView = (TextView) findViewById(R.id.display_shout_comment_count_textView);
         imageView = (SquareImageView) findViewById(R.id.display_shout_image_view);
         imageViewPlaceHolder = (ImageView) findViewById(R.id.display_shout_image_view_place_holder);
+
+        commentCountView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setEnabled(false);
+                if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+                    Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    Intent comments = new Intent(DisplayShoutActivity.this, CommentsActivity.class);
+                    comments.putExtra("shout", shout);
+                    startActivity(comments);
+                }
+
+                v.setEnabled(true);
+            }
+        });
 
         updateUI();
         setUpMap();
@@ -124,7 +148,6 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                     updateCommentCount(commentCount);
                 }
             }
-
         });
 
         ((TextView) findViewById(R.id.display_shout_username_textView)).setText("@" + shout.username);
@@ -134,7 +157,6 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(shout.created));
 
         String stamp = ageStrings[0] + ageStrings[1] + " | ";
-
 
         if (myLocation == null) {
             myLocation = getIntent().getParcelableExtra("myLocation");
