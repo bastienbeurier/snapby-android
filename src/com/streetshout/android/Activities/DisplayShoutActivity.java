@@ -297,18 +297,26 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
         if (shout.image != null && shout.image.length() > 0) {
             imageView.setVisibility(View.VISIBLE);
+            imageViewPlaceHolder.setVisibility(View.VISIBLE);
 
-            GeneralUtils.getAquery(this).image(shout.image + "--400", true, true, 0, 0, new BitmapAjaxCallback() {
+//            Bitmap bm = GeneralUtils.getAquery(this).getCachedImage(shout.image + "--400");
+
+            GeneralUtils.getAquery(this).id(R.id.display_shout_image_view).image(shout.image + "--400", true, true, 0, 0, new BitmapAjaxCallback() {
                 @Override
-                public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
-                    imageView.setBackground(new BitmapDrawable(DisplayShoutActivity.this.getResources(), bm));
-                    imageViewPlaceHolder.setVisibility(View.GONE);
+            public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
+                    int sdk = android.os.Build.VERSION.SDK_INT;
+
+                    if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        imageView.setBackgroundDrawable(new BitmapDrawable(DisplayShoutActivity.this.getResources(), bm));
+                    } else {
+                        imageView.setBackground(new BitmapDrawable(DisplayShoutActivity.this.getResources(), bm));
+                    }
                 }
             });
-
-            shoutDescription.setBackgroundColor(getResources().getColor(R.color.semiTransparentBlackDarker));
         } else {
             imageView.setVisibility(View.GONE);
+            imageViewPlaceHolder.setVisibility(View.VISIBLE);
+            shoutDescription.setBackgroundColor(getResources().getColor(R.color.semiTransparentBlackDarker));
         }
     }
 

@@ -260,7 +260,7 @@ public class ApiUtils {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("shout_id", shout.id);
         params.put("shouter_id", shout.userId);
-        params.put("description", shout.description);
+        params.put("description", description);
 
         if (lat != 0 && lng != 0) {
             params.put("lat", lat);
