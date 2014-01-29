@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -26,8 +30,6 @@ import org.json.JSONObject;
  */
 public class ResetPasswordActivity extends Activity {
 
-    private Button forgotPasswordButton = null;
-
     private EditText forgotPasswordEmailEditText = null;
 
     private ConnectivityManager connectivityManager = null;
@@ -37,16 +39,9 @@ public class ResetPasswordActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.reset_password);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        forgotPasswordButton = (Button) findViewById(R.id.forgot_password_button);
         forgotPasswordEmailEditText = (EditText) findViewById(R.id.forgot_password_email_editText);
-
-        forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateEmail(forgotPasswordEmailEditText.getText().toString());
-            }
-        });
 
         forgotPasswordEmailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -61,8 +56,10 @@ public class ResetPasswordActivity extends Activity {
         forgotPasswordEmailEditText.requestFocus();
     }
 
-    private void validateEmail(String email) {
+    private void validateEmail() {
         boolean errors = false;
+
+        String email = forgotPasswordEmailEditText.getText().toString();
 
         forgotPasswordEmailEditText.setError(null);
 
@@ -103,7 +100,30 @@ public class ResetPasswordActivity extends Activity {
                 }
             }
         });
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.reset_menu, menu);
 
+        MenuItem item = menu.findItem(R.id.action_reset);
+        item.setTitle("Reset");
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_reset) {
+            validateEmail();
+            return false;
+        } else {
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED, returnIntent);
+            finish();
+            return true;
+        }
     }
 }

@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -30,8 +33,6 @@ import org.json.JSONObject;
  */
 public class SigninActivity extends Activity {
 
-    private Button signinValidateButton = null;
-
     private Button resetPasswordButton = null;
 
     private EditText emailEditText = null;
@@ -45,21 +46,14 @@ public class SigninActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signin);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         emailEditText = (EditText) findViewById(R.id.user_email_editText);
         passwordEditText = (EditText) findViewById(R.id.user_password_editText);
 
-        signinValidateButton = (Button) findViewById(R.id.signin_validate_button);
         resetPasswordButton = (Button) findViewById(R.id.reset_password_button);
-
-        signinValidateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateSigninInfo();
-            }
-        });
 
 
         resetPasswordButton.setOnClickListener(new View.OnClickListener() {
@@ -153,5 +147,30 @@ public class SigninActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.signin_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.action_signin);
+        item.setTitle("Sign In");
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_signin) {
+            validateSigninInfo();
+            return false;
+        } else {
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED, returnIntent);
+            finish();
+            return true;
+        }
     }
 }

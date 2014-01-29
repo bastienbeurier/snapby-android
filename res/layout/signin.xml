@@ -6,25 +6,40 @@
               android:layout_height="match_parent">
 
     <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
-            android:id="@+id/user_email_editText" android:layout_gravity="center_horizontal"/>
+            android:id="@+id/user_email_editText"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/darkGrey"
+            android:textSize="18dp"
+            android:hint="@string/your_email"/>
     <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:id="@+id/user_password_editText" android:layout_gravity="center_horizontal"/>
+            android:id="@+id/user_password_editText"
+            android:layout_margin="10dp"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/darkGrey"
+            android:textSize="18dp"
+            android:hint="@string/your_password"/>
+
     <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="yo"
-            android:id="@+id/signin_validate_button" android:layout_gravity="center_horizontal"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Reset"
-            android:id="@+id/reset_password_button" android:layout_gravity="center_horizontal"/>
+            android:layout_height="50dp"
+            android:text="@string/forgot_password"
+            android:id="@+id/reset_password_button"
+            android:gravity="center"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/darkGrey"
+            android:textSize="15dp"
+            android:background="@android:color/transparent"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="right"/>
 </LinearLayout>

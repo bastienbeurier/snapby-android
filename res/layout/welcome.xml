@@ -5,20 +5,67 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign in"
-            android:id="@+id/signin_button" android:layout_gravity="center_horizontal"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign up"
-            android:id="@+id/signup_button" android:layout_gravity="center_horizontal"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Facebook"
-            android:id="@+id/connect_fb_button" android:layout_gravity="center_horizontal"/>
+    <RelativeLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent">
+
+        <ImageView android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:src="@drawable/welcome"
+                    android:scaleType="centerCrop"/>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:orientation="vertical"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent">
+
+            <View android:layout_height="match_parent"
+                  android:layout_width="match_parent"
+                  android:layout_weight="1"/>
+
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="@string/connect_with_fb"
+                    android:textSize="18dp"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:background="@drawable/fb_button_selector"
+                    android:id="@+id/connect_fb_button"
+                    android:gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"/>
+
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="@string/signup_with_email"
+                    android:textSize="18dp"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:background="@drawable/welcome_button_selector"
+                    android:id="@+id/signup_button"
+                    android:gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="@string/signin_with_email"
+                    android:textSize="16dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/white"
+                    android:id="@+id/signin_button"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="25dp"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

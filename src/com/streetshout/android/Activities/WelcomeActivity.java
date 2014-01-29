@@ -170,8 +170,6 @@ public class WelcomeActivity extends Activity {
                                     public void callback(String url, JSONObject object, AjaxStatus status) {
                                         super.callback(url, object, status);
 
-                                        //TODO close dialog
-
                                         if (status.getError() == null && object != null) {
                                             JSONObject rawUser = null;
                                             String token = null;

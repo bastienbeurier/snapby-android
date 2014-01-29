@@ -12,7 +12,9 @@
     <color name="mediumGrey">#333333</color>
     <color name="semiTransparentWhite">#AAffffff</color>
     <color name="semiTransparentBlack">#33000000</color>
+    <color name="semiTransparentBlackDarker">#AA000000</color>
     <color name="lightGrey">#999999</color>
     <color name="veryLightGrey">#D8D8D8</color>
     <color name="shoutLightRed">#ED4723</color>
+    <color name="facebookBlue">#3b5999</color>
 </resources>

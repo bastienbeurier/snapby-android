@@ -56,7 +56,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
     private Shout shout = null;
 
-    private ImageView imageViewPlaceHolder = null;
+    private SquareImageView imageViewPlaceHolder = null;
 
     private SquareImageView imageView = null;
 
@@ -81,7 +81,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         likeCountView = (TextView) findViewById(R.id.display_shout_like_count_textView);
         commentCountView = (TextView) findViewById(R.id.display_shout_comment_count_textView);
         imageView = (SquareImageView) findViewById(R.id.display_shout_image_view);
-        imageViewPlaceHolder = (ImageView) findViewById(R.id.display_shout_image_view_place_holder);
+        imageViewPlaceHolder = (SquareImageView) findViewById(R.id.display_shout_image_view_place_holder);
 
         commentCountView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +207,8 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
         ((TextView) findViewById(R.id.display_shout_username_textView)).setText("@" + shout.username);
 
-        ((TextView) findViewById(R.id.display_shout_description_textView)).setText(shout.description);
+        TextView shoutDescription = ((TextView) findViewById(R.id.display_shout_description_textView));
+        shoutDescription.setText(shout.description);
 
         String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(shout.created));
 
@@ -234,8 +235,6 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
         ((TextView) findViewById(R.id.display_shout_stamp_textView)).setText(stamp);
 
-        GeneralUtils.getAquery(this).id(imageViewPlaceHolder).image(R.drawable.shout_image_place_holder_square);
-
         if (shout.image != null && shout.image.length() > 0) {
             imageView.setVisibility(View.VISIBLE);
 
@@ -246,6 +245,8 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                     imageViewPlaceHolder.setVisibility(View.GONE);
                 }
             });
+
+            shoutDescription.setBackgroundColor(getResources().getColor(R.color.semiTransparentBlackDarker));
         } else {
             imageView.setVisibility(View.GONE);
         }

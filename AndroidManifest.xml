@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.streetshout.android"
-          android:versionCode="9"
-          android:versionName="1.2.1">
+          android:versionCode="10"
+          android:versionName="1.2.2">
     <!--General permissions-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -58,8 +58,8 @@
         <activity android:name=".activities.SettingsActivity"
                   android:label="Settings"
                   android:screenOrientation="portrait"/>
-        <activity android:name=".activities.SigninActivity" android:label="Sign in" android:screenOrientation="portrait"/>
-        <activity android:name=".activities.SignupActivity" android:label="Sign up" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.SigninActivity" android:label="Sign In" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.SignupActivity" android:label="Sign Up" android:screenOrientation="portrait"/>
         <activity android:name=".activities.WelcomeActivity" android:label="Shout" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

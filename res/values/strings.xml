@@ -112,4 +112,12 @@
     <string name="report_shout_failed">We couldn\'t report this shout, please try again.</string>
     <string name="no_comments_in_feed">No comments yet...</string>
     <string name="no_likes_in_feed">No likes yet...</string>
+    <string name="your_email">Your email</string>
+    <string name="your_password">Your password</string>
+    <string name="your_confirmation">Confirm password</string>
+    <string name="your_username">Choose a username (public)</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="connect_with_fb">Connect with Facebook</string>
+    <string name="signup_with_email">Sign up with Email</string>
+    <string name="signin_with_email">Already have an account? Sign in here.</string>
 </resources>

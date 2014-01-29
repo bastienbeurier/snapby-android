@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -29,8 +32,6 @@ import org.json.JSONObject;
  */
 public class SignupActivity extends Activity {
 
-    private Button signupValidateButton = null;
-
     private EditText usernameEditText = null;
 
     private EditText emailEditText = null;
@@ -46,6 +47,7 @@ public class SignupActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -53,16 +55,6 @@ public class SignupActivity extends Activity {
         emailEditText = (EditText) findViewById(R.id.user_email_editText);
         passwordEditText = (EditText) findViewById(R.id.user_password_editText);
         confirmPasswordEditText = (EditText) findViewById(R.id.user_confirm_password_editText);
-
-        signupValidateButton = (Button) findViewById(R.id.signup_validate_button);
-
-        signupValidateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateSignupInfo();
-            }
-        });
-
 
         usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -181,5 +173,30 @@ public class SignupActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.signup_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.action_signup);
+        item.setTitle("Sign Up");
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_signup) {
+            validateSignupInfo();
+            return false;
+        } else {
+            Intent returnIntent = new Intent();
+            setResult(RESULT_CANCELED, returnIntent);
+            finish();
+            return true;
+        }
     }
 }
