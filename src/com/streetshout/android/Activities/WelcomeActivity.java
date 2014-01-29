@@ -50,6 +50,9 @@ public class WelcomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
 
+        //Mixpanel
+        TrackingUtils.trackAppOpened(this);
+
         signinButton = (Button) findViewById(R.id.signin_button);
         signupButton = (Button) findViewById(R.id.signup_button);
         connectFBButton = (Button) findViewById(R.id.connect_fb_button);
@@ -172,12 +175,16 @@ public class WelcomeActivity extends Activity {
                                         if (status.getError() == null && object != null) {
                                             JSONObject rawUser = null;
                                             String token = null;
+                                            Boolean isSigningUp = null;
 
                                             try {
                                                 result = object.getJSONObject("result");
 
                                                 rawUser = result.getJSONObject("user");
                                                 token = result.getString("auth_token");
+
+                                                isSigningUp = result.getBoolean("is_signup");
+
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
@@ -188,6 +195,10 @@ public class WelcomeActivity extends Activity {
                                             SessionUtils.updateCurrentUserInfoInPhone(WelcomeActivity.this, currentUser);
 
                                             TrackingUtils.identify(WelcomeActivity.this, currentUser);
+
+                                            if (isSigningUp != null && isSigningUp) {
+                                                TrackingUtils.trackSignup(WelcomeActivity.this, "Facebook");
+                                            }
 
                                             goToNavActivity();
                                             connectFBDialog.cancel();

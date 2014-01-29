@@ -310,16 +310,22 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     @Override
     public void onFeedShoutSelected(Shout shout) {
+        TrackingUtils.trackDisplayShout(this, shout, "Feed");
+
         shoutSelected(shout);
     }
 
     private void onMapShoutSelected(Marker marker) {
         Shout shout = displayedShoutModels.get(Integer.parseInt(marker.getTitle()));
 
+        TrackingUtils.trackDisplayShout(this, shout, "Map");
+
         shoutSelected(shout);
     }
 
     private void onNotificationShoutSelected(Shout shout, Marker marker) {
+        TrackingUtils.trackDisplayShout(this, shout, "Notification");
+
         shoutSelected(shout);
 
         updateMapOnShoutSelectedFromNotificationOrCreation(shout, marker);
@@ -332,8 +338,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     private void shoutSelected(Shout shout) {
-        //TODO: launch ShoutActivity
-//        showShoutFragment(shout);
         Intent displayShout = new Intent(this, DisplayShoutActivity.class);
         displayShout.putExtra("shout", shout);
         displayShout.putExtra("myLocation", myLocation);

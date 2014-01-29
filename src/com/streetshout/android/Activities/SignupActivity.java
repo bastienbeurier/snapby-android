@@ -154,6 +154,7 @@ public class SignupActivity extends Activity {
                     SessionUtils.updateCurrentUserInfoInPhone(SignupActivity.this, currentUser);
 
                     TrackingUtils.identify(SignupActivity.this, currentUser);
+                    TrackingUtils.trackSignup(SignupActivity.this, "Email");
 
                     Intent nav = new Intent(SignupActivity.this, NavActivity.class);
                     SignupActivity.this.startActivity(nav);

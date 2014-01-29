@@ -52,6 +52,7 @@ import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.StreetShoutApplication;
+import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -484,10 +485,16 @@ public class CreateShoutActivity extends Activity {
                         e.printStackTrace();
                     }
 
+                    Shout newShout = Shout.rawShoutToInstance(rawShout);
+
+                    boolean imagePresent = newShout.image != null && newShout.image.length() > 0;
+
+                    TrackingUtils.trackCreateShout(CreateShoutActivity.this, imagePresent, newShout.description.length());
+
                     createShoutDialog.cancel();
 
                     Intent returnIntent = new Intent();
-                    returnIntent.putExtra("newShout", Shout.rawShoutToInstance(rawShout));
+                    returnIntent.putExtra("newShout", newShout);
                     setResult(RESULT_OK, returnIntent);
                     finish();
                 } else {
