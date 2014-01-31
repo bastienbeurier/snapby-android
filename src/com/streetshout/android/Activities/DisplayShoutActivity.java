@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.R;
+import com.streetshout.android.custom.Banner;
 import com.streetshout.android.custom.SquareImageView;
 import com.streetshout.android.models.Like;
 import com.streetshout.android.models.Shout;
@@ -59,7 +60,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
     private SquareImageView imageViewPlaceHolder = null;
 
-    private SquareImageView imageView = null;
+    private Banner imageView = null;
 
     private TextView likeCountView = null;
 
@@ -85,7 +86,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
         likeCountView = (TextView) findViewById(R.id.display_shout_like_count_textView);
         commentCountView = (TextView) findViewById(R.id.display_shout_comment_count_textView);
-        imageView = (SquareImageView) findViewById(R.id.display_shout_image_view);
+        imageView = (Banner) findViewById(R.id.display_shout_image_view);
         imageViewPlaceHolder = (SquareImageView) findViewById(R.id.display_shout_image_view_place_holder);
 
         commentCountView.setOnClickListener(new View.OnClickListener() {
@@ -299,20 +300,9 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
             imageView.setVisibility(View.VISIBLE);
             imageViewPlaceHolder.setVisibility(View.VISIBLE);
 
-//            Bitmap bm = GeneralUtils.getAquery(this).getCachedImage(shout.image + "--400");
+            GeneralUtils.getAquery(this).id(imageView).image(shout.image + "--400");
 
-            GeneralUtils.getAquery(this).id(R.id.display_shout_image_view).image(shout.image + "--400", true, true, 0, 0, new BitmapAjaxCallback() {
-                @Override
-            public void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
-                    int sdk = android.os.Build.VERSION.SDK_INT;
 
-                    if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                        imageView.setBackgroundDrawable(new BitmapDrawable(DisplayShoutActivity.this.getResources(), bm));
-                    } else {
-                        imageView.setBackground(new BitmapDrawable(DisplayShoutActivity.this.getResources(), bm));
-                    }
-                }
-            });
         } else {
             imageView.setVisibility(View.GONE);
             imageViewPlaceHolder.setVisibility(View.VISIBLE);

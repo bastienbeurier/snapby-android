@@ -58,11 +58,11 @@
 
         <LinearLayout android:orientation="vertical"
                       android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
+                      android:layout_height="match_parent"
                       android:background="@color/white">
 
-            <com.streetshout.android.custom.SquareRelativeLayout
-                    android:layout_height="wrap_content"
+            <RelativeLayout
+                    android:layout_height="match_parent"
                     android:layout_width="match_parent">
 
                 <com.streetshout.android.custom.SquareImageView android:id="@+id/display_shout_image_view_place_holder"
@@ -70,7 +70,7 @@
                                                                 android:layout_width="match_parent"
                                                                 android:background="@drawable/shout_image_place_holder_square"/>
 
-                <com.streetshout.android.custom.SquareImageView
+                <com.streetshout.android.custom.Banner
                         android:id="@+id/display_shout_image_view"
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"/>
@@ -88,7 +88,7 @@
                           android:gravity="center"
                           android:layout_alignParentTop="true"
                           android:layout_centerHorizontal="true"/>
-            </com.streetshout.android.custom.SquareRelativeLayout>
+            </RelativeLayout>
 
             <LinearLayout android:orientation="horizontal"
                           android:layout_width="match_parent"
