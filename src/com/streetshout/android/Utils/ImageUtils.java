@@ -57,28 +57,24 @@ public class ImageUtils {
         return chooserIntent;
     }
 
-    static public Bitmap shrinkBitmapFromFile(String file, int width, int height) {
+    static public Bitmap getResizedBitmap(Bitmap bm) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
 
-        BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
-        bmpFactoryOptions.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
+        if (height > Constants.SHOUT_BIG_RES && width > Constants.SHOUT_BIG_RES) {
 
+            float scale = ((float) Constants.SHOUT_BIG_RES) / Math.min(width, height);
+            // CREATE A MATRIX FOR THE MANIPULATION
+            Matrix matrix = new Matrix();
+            // RESIZE THE BIT MAP
+            matrix.postScale(scale, scale);
 
-        int heightRatio = (int)Math.ceil(bmpFactoryOptions.outHeight/(float)height);
-        int widthRatio = (int)Math.ceil(bmpFactoryOptions.outWidth/(float)width);
-
-        if (heightRatio > 1 || widthRatio > 1) {
-            if (heightRatio > widthRatio) {
-                bmpFactoryOptions.inSampleSize = heightRatio;
-            } else {
-                bmpFactoryOptions.inSampleSize = widthRatio;
-            }
+            // "RECREATE" THE NEW BITMAP
+            Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
+            return resizedBitmap;
+        } else {
+            return bm;
         }
-
-        bmpFactoryOptions.inJustDecodeBounds = false;
-        bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
-
-        return bitmap;
     }
 
     static public Bitmap decodeFileAndShrinkBitmap(String filePath) {
@@ -93,15 +89,15 @@ public class ImageUtils {
             BitmapFactory.decodeStream(fis, null, o);
 
             fis.close();
-            int scale = 1;
-            if (o.outHeight > Constants.SHOUT_BIG_RES || o.outWidth > Constants.SHOUT_BIG_RES) {
-                scale = (int)Math.pow(2, (int) Math.round(Math.log(Constants.SHOUT_BIG_RES /
-                        (double) Math.max(o.outHeight, o.outWidth)) / Math.log(0.5)));
+            int ratio = 1;
+            if (o.outHeight > Constants.SHOUT_BIG_RES && o.outWidth > Constants.SHOUT_BIG_RES) {
+                float scale = ((float) Constants.SHOUT_BIG_RES) / Math.min(o.outHeight, o.outWidth);
+                ratio = (int) (1 / scale);
             }
 
             //Decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
+            o2.inSampleSize = ratio;
             fis = new FileInputStream(filePath);
             bitmap = BitmapFactory.decodeStream(fis, null, o2);
             fis.close();
@@ -113,11 +109,18 @@ public class ImageUtils {
         }
     }
 
-    static public Bitmap decodeFileAndShrinkAndMakeSquareBitmap(String filePath){
+    static public Bitmap decodeFileAndShrinkAndMakeSquareBitmap(String filePath) {
         Bitmap bitmap = decodeFileAndShrinkBitmap(filePath);
         bitmap = makeSquareBitmap(bitmap);
 
         return bitmap;
+    }
+
+    static public Bitmap shrinkAndMakeSquareBitmap(Bitmap bitmap) {
+        Bitmap newBitmap = getResizedBitmap(bitmap);
+        newBitmap = makeSquareBitmap(newBitmap);
+
+        return newBitmap;
     }
 
     static public Bitmap mirrorBitmap(Bitmap bitmap) {

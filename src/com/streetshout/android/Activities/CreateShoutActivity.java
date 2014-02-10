@@ -6,13 +6,16 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -57,6 +60,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.Date;
 
 public class CreateShoutActivity extends Activity {
@@ -362,8 +367,23 @@ public class CreateShoutActivity extends Activity {
                         formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(shoutPhotoPath);
                     //Case where image chosen with library
                     } else {
-                        String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
-                        formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(libraryPhotoPath);
+                        //New Kitkat way of doing things
+                        if (Build.VERSION.SDK_INT < 19) {
+                            String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
+                            formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(libraryPhotoPath);
+                        } else {
+                            ParcelFileDescriptor parcelFileDescriptor;
+                            try {
+                                parcelFileDescriptor = getContentResolver().openFileDescriptor(data.getData(), "r");
+                                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                                formattedPicture = ImageUtils.shrinkAndMakeSquareBitmap(BitmapFactory.decodeFileDescriptor(fileDescriptor));
+                                parcelFileDescriptor.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
                     }
 
                     shoutImageView.setImageBitmap(formattedPicture);

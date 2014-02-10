@@ -34,7 +34,7 @@ public class S3 {
 
     public static boolean addImageInBucket(String photoPath, String photoName) {
         try {
-            return addImagewithRes(photoPath, photoName, Constants.SHOUT_BIG_RES);
+            return addImagewithRes(photoPath, photoName, Constants.SHOUT_BIG_RES_SUFFIX);
         } catch (AmazonServiceException ex) {
             CreateShoutActivity.clientManager.wipeCredentialsOnAuthError(ex);
             ex.printStackTrace();
