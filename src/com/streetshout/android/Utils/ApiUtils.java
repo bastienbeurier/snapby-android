@@ -21,6 +21,10 @@ public class ApiUtils {
         return Constants.PRODUCTION ? "http://street-shout.herokuapp.com" : "http://dev-street-shout.herokuapp.com";
     }
 
+    public static String getUserSiteUrl() {
+        return Constants.PRODUCTION ? "http://www.shouthereandnow.com" : "http://dev-street-shout.herokuapp.com";
+    }
+
     private static String getBasePath() {
         return getSiteUrl() + "/api/v" + Constants.API;
     }

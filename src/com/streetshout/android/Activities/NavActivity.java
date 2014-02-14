@@ -444,4 +444,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
         mMap.moveCamera(update);
     }
+
+    @Override
+    public void onBackPressed() {
+    }
 }

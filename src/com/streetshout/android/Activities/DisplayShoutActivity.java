@@ -3,8 +3,6 @@ package com.streetshout.android.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.androidquery.callback.BitmapAjaxCallback;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -123,7 +120,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
         findViewById(R.id.shout_share_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = ApiUtils.getSiteUrl() + "/shouts/" + shout.id;
+                String url = ApiUtils.getUserSiteUrl() + "/shouts/" + shout.id;
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_shout_text, url));
