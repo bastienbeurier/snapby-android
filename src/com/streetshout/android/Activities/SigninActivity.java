@@ -91,7 +91,7 @@ public class SigninActivity extends Activity {
             errors = true;
         }
 
-        if (password.length() < 6 || password.length() > 128) {
+        if (password.length() < Constants.MIN_PASSWORD_LENGTH || password.length() > Constants.MAX_PASSWORD_LENGTH) {
             passwordEditText.setError(getString(R.string.password_length_error));
             errors = true;
         }

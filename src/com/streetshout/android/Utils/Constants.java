@@ -1,7 +1,7 @@
 package com.streetshout.android.utils;
 
 public class Constants {
-    public static boolean PRODUCTION = true;
+    public static boolean PRODUCTION = false;
 
     public static final boolean ADMIN = false;
 
@@ -11,6 +11,12 @@ public class Constants {
     public static final int SHOUT_DURATION_HOURS = 4;
 
     public static final int MAX_DESCRIPTION_LENGTH = 140;
+
+    public static final int MAX_USERNAME_LENGTH = 20;
+    public static final int MIN_USERNAME_LENGTH = 1;
+
+    public static final int MAX_PASSWORD_LENGTH = 128;
+    public static final int MIN_PASSWORD_LENGTH = 6;
 
     /** Zoom level set when a user clicks on a shout**/
     public static final int REDIRECTION_FROM_CREATE_SHOUT = 16;

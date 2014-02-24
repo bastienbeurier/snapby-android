@@ -199,6 +199,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                         }
 
                         ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
+                        shouts = checkForRemovedShouts(shouts);
 
                         displayShoutsOnMap(shouts);
                         feedFragment.hideFeedProgressBar();
@@ -214,6 +215,18 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
         //Add a request to populate the map with shouts
         mapReqHandler.addMapRequest(aq, mMap.getProjection().getVisibleRegion().latLngBounds);
+    }
+
+    private ArrayList<Shout> checkForRemovedShouts(ArrayList<Shout> shouts) {
+        ArrayList<Shout> newShouts = new ArrayList<Shout>();
+
+        for (Shout shout:shouts) {
+            if (!shout.removed) {
+                newShouts.add(shout);
+            }
+        }
+
+        return newShouts;
     }
 
     private void showNoConnectionInFeedMessage() {
@@ -234,7 +247,7 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             if (!displayedShoutMarkers.containsKey(shout.id)) {
                 Marker shoutMarker = displayShoutOnMap(shout);
                 newDisplayedShoutMarkers.put(shout.id, shoutMarker);
-            //If he is, re-use the marker
+                //If he is, re-use the marker
             } else {
                 newDisplayedShoutMarkers.put(shout.id, displayedShoutMarkers.get(shout.id));
                 displayedShoutMarkers.remove(shout.id);

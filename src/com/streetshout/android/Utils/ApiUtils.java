@@ -1,6 +1,7 @@
 package com.streetshout.android.utils;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.location.Location;
 import com.androidquery.AQuery;
@@ -48,6 +49,15 @@ public class ApiUtils {
             return parameters;
         } else {
             SessionUtils.logOut(activity);
+            return null;
+        }
+    }
+
+    private static Map<String, Object> enrichParametersWithToken(Application appCtx, Map<String, Object> parameters) {
+        if (SessionUtils.isSignIn(appCtx)) {
+            parameters.put("auth_token", SessionUtils.getCurrentUserToken(appCtx));
+            return parameters;
+        } else {
             return null;
         }
     }
@@ -105,6 +115,29 @@ public class ApiUtils {
 
         GeneralUtils.enrichParamsWithWithGeneralUserAndDeviceInfo(activity, params);
         enrichParametersWithToken(activity, params);
+
+        if (params == null) return;
+
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+
+        cb.method(AQuery.METHOD_PUT);
+
+        aq.ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void updateUserInfoWithLocationFromNotif(Application appCtx, AQuery aq, Location lastLocation) {
+        User currentUser = SessionUtils.getCurrentUser(appCtx);
+        String url = getBasePath() + "/users/" + currentUser.id + ".json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        if (lastLocation != null) {
+            params.put("lat", lastLocation.getLatitude());
+            params.put("lng", lastLocation.getLongitude());
+        }
+
+        GeneralUtils.enrichParamsWithWithGeneralUserAndDeviceInfo(appCtx, params);
+        enrichParametersWithToken(appCtx, params);
 
         if (params == null) return;
 

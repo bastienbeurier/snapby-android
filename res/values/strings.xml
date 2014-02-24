@@ -44,7 +44,7 @@
     <string name="expired">exp</string>
     <string name="no_connection">No internet connection</string>
     <string name="no_shout_displayed">No shout displayed...</string>
-    <string name="status_bar_notification_title">New shout in your area</string>
+    <string name="status_bar_notification_title">Shout</string>
     <string name="create_shout_map_instruction">Tap on the map to refine your location</string>
     <string name="create_shout_address_instruction">...or enter nearby address</string>
     <string name="nav_activity_address_instruction">Go to address or location:</string>

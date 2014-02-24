@@ -21,6 +21,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.TrackingUtils;
@@ -87,7 +88,7 @@ public class SignupActivity extends Activity {
             errors = true;
         }
 
-        if (username.length() < 6 || username.length() > 20) {
+        if (username.length() < Constants.MIN_USERNAME_LENGTH || username.length() > Constants.MAX_USERNAME_LENGTH) {
             usernameEditText.setError(getString(R.string.username_length_error));
             errors = true;
         }
@@ -97,7 +98,7 @@ public class SignupActivity extends Activity {
             errors = true;
         }
 
-        if (password.length() < 6 || password.length() > 128) {
+        if (password.length() < Constants.MIN_PASSWORD_LENGTH || password.length() > Constants.MAX_PASSWORD_LENGTH) {
             passwordEditText.setError(getString(R.string.password_length_error));
             errors = true;
         }

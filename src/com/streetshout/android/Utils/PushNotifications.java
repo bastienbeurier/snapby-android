@@ -23,11 +23,8 @@ public class PushNotifications {
     public static void initialize(final Application appCtx) {
         //Start Urban Airship push notifications
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(appCtx);
-        if (Constants.PRODUCTION) {
-            options.inProduction = true;
-        } else {
-            options.inProduction = false;
-        }
+
+        options.inProduction = Constants.PRODUCTION;
         UAirship.takeOff(appCtx, options);
 
         final AQuery aq = new AQuery(appCtx);
@@ -52,8 +49,7 @@ public class PushNotifications {
                     if (provider != null) {
                         Location location = locationManager.getLastKnownLocation(provider);
                         if (location != null) {
-                            //TODO: send user info
-//                            ApiUtils.sendDeviceInfo(appCtx, aq, location);
+                            ApiUtils.updateUserInfoWithLocationFromNotif(appCtx, aq, location);
                         }
                     }
                 }
@@ -63,7 +59,8 @@ public class PushNotifications {
 
             @Override
             public int getNextId(String alert, Map<String, String> extras) {
-                return 1001; // Always update the single notification
+//                return 1001;
+                return super.getNextId(alert, extras);
             }
         };
 
