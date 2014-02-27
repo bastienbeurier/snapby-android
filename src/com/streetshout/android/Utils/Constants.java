@@ -31,6 +31,7 @@ public class Constants {
     /** StartActivityForResult codes **/
     public static final int NEW_SHOUT_CONTENT_ACTIVITY_REQUEST = 13450;
     public static final int CREATE_SHOUT_REQUEST = 11101;
+    public static final int CAMERA_REQUEST = 12376;
     public static final int SETTINGS_REQUEST = 14760;
     public static final int UPLOAD_PHOTO_REQUEST = 15849;
     public static final int RESET_PASSWORD_REQUEST = 64783;
@@ -46,4 +47,7 @@ public class Constants {
     /** Mixpanel tokens **/
     public static final String PROD_MIXPANEL_TOKEN = "24dc482a232028564063bd3dd7e84e93";
     public static final String DEV_MIXPANEL_TOKEN = "468e53159f354365149b1a46a7ecdec3";
+
+    /** When using onActivityResult **/
+    public static final int RESULT_FAILED = 473820;
 }

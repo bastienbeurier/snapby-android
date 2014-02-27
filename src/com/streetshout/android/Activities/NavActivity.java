@@ -3,6 +3,7 @@ package com.streetshout.android.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -91,28 +92,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         createShoutImageView = (Button) findViewById(R.id.create_shout_button);
 
         newMap = setUpMapIfNeeded();
-
-        if (Constants.ADMIN) {
-            final ImageView shatteShoutSwitch = (ImageView) findViewById(R.id.shatte_shout_switch);
-            shatteShoutSwitch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Constants.PRODUCTION = !Constants.PRODUCTION;
-                    setShatteShoutSwitchImage(shatteShoutSwitch);
-                }
-            });
-
-            setShatteShoutSwitchImage(shatteShoutSwitch);
-            shatteShoutSwitch.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void setShatteShoutSwitchImage(ImageView shatteShoutSwitch) {
-        if (Constants.PRODUCTION) {
-            shatteShoutSwitch.setImageResource(R.drawable.button_settings_selector);
-        } else {
-            shatteShoutSwitch.setImageResource(R.drawable.button_my_location_selector);
-        }
     }
 
     @Override
@@ -276,7 +255,11 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     public void createShout(View view) {
         createShoutImageView.setEnabled(false);
 
-        if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
+        if (!this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+            Toast toast = Toast.makeText(this, getString(R.string.no_camera), Toast.LENGTH_SHORT);
+            toast.show();
+            createShoutImageView.setEnabled(true);
+        }if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
             Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
             toast.show();
             createShoutImageView.setEnabled(true);
@@ -285,9 +268,9 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             toast.show();
             createShoutImageView.setEnabled(true);
         } else {
-            Intent createShout = new Intent(this, CreateShoutActivity.class);
-            createShout.putExtra("myLocation", myLocation);
-            startActivityForResult(createShout, Constants.CREATE_SHOUT_REQUEST);
+            Intent camera = new Intent(this, CameraActivity.class);
+            startActivityForResult(camera, Constants.CAMERA_REQUEST);
+            createShoutImageView.setEnabled(true);
         }
     }
 

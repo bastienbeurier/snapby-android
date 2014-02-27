@@ -129,7 +129,6 @@ public class CreateShoutActivity extends Activity {
             shoutLocationRefined = true;
         }
 
-        //Set user name if we have it
         final EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
         descriptionView.setHorizontallyScrolling(false);
         descriptionView.setMaxLines(MAX_SHOUT_DESCR_LINES);
@@ -181,6 +180,25 @@ public class CreateShoutActivity extends Activity {
         resizeSquareOptionalViews(newShouPhotoWrapper);
 
         ((TextView) findViewById(R.id.shout_descr_dialog_name)).setText("@" + SessionUtils.getCurrentUser(this).username);
+
+        displayImage();
+    }
+
+    private void displayImage() {
+        shoutPhotoPath = getIntent().getStringExtra("imagePath");
+
+        Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(shoutPhotoPath);
+
+        //Save the small res image in the shoutPhotoPath, do not alter library photos
+        ImageUtils.storeBitmapInFile(shoutPhotoPath, formattedPicture);
+
+        shoutImageView.setImageBitmap(formattedPicture);
+
+        removePhotoButton.setVisibility(View.VISIBLE);
+        flipPhotoButton.setVisibility(View.VISIBLE);
+
+        photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
+        photoUrl = Constants.S3_URL + photoName;
     }
 
     private void removePhoto() {

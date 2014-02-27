@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/camera_activity_frame"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent">
+    <FrameLayout
+            android:id="@+id/camera_preview"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"/>
+
+    <View android:id="@+id/camera_top_stripe"
+          android:layout_width="fill_parent"
+          android:layout_height="1dp"
+          android:background="@color/semiTransparentBlack"/>
+
+    <View android:id="@+id/camera_bottom_stripe"
+          android:layout_width="fill_parent"
+          android:layout_height="1dp"
+          android:background="@color/semiTransparentBlack"/>
+
+    <FrameLayout android:id="@+id/camera_top_bar"
+          android:layout_width="fill_parent"
+          android:layout_height="@dimen/camera_top_bar"
+          android:background="@drawable/nav_bar_selector">
+
+        <ImageView android:id="@+id/camera_explore_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="8dp"
+                android:src="@drawable/camera_explore_button_selector"
+                android:layout_gravity="center|left"/>
+
+        <ImageView android:id="@+id/camera_explore_button"
+                android:layout_width="91dp"
+                android:layout_height="40dp"
+                android:background="@drawable/camera_shout_label"
+                android:layout_gravity="center"/>
+
+        <ImageView android:id="@+id/camera_settigns_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="8dp"
+                android:src="@drawable/camera_settings_button_selector"
+                android:layout_gravity="center|right"/>
+
+
+    </FrameLayout>
+
+    <FrameLayout android:id="@+id/camera_bottom_bar"
+          android:layout_width="fill_parent"
+          android:layout_height="@dimen/camera_bottom_bar"
+          android:layout_gravity="bottom"
+          android:background="@drawable/nav_bar_selector">
+
+        <Button android:id="@+id/capture_button"
+                android:layout_width="100dp"
+                android:layout_height="79dp"
+                android:background="@drawable/camera_shout_button_selector"
+                android:layout_gravity="center"/>
+
+        <ImageView android:id="@+id/camera_flip_button"
+                android:layout_width="61dp"
+                android:layout_height="48dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:src="@drawable/camera_flip_button_selector"
+                android:layout_gravity="center|right"
+                android:layout_marginRight="30dp"
+                android:visibility="gone"/>
+
+
+
+    </FrameLayout>
+</FrameLayout>

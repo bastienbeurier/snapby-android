@@ -34,14 +34,6 @@
                         android:layout_height="@dimen/map_button_size"
                         android:src="@drawable/button_my_location_selector"/>
 
-                <ImageView
-                        android:id="@+id/shatte_shout_switch"
-                        android:layout_width="@dimen/map_button_size"
-                        android:layout_height="@dimen/map_button_size"
-                        android:src="@drawable/button_my_location_selector"
-                        android:layout_marginTop="20dp"
-                        android:visibility="gone"/>
-
             </LinearLayout>
 
             <ImageView
