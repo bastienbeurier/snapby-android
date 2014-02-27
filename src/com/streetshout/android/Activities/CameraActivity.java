@@ -55,7 +55,9 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
 
     private LocationRequest mLocationRequest = null;
 
-    public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+    private LocationManager locationManager = null;
+
+    public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     /*
      * Define a request code to send to Google Play services
@@ -67,19 +69,21 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera);
 
-        setUpLocationRequest();
+        locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+
+        mLocationRequest = LocationUtils.createLocationRequest(LocationRequest.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS);
 
         int statusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 
         if (statusCode == ConnectionResult.SUCCESS) {
             mLocationClient = new LocationClient(this, this, this);
         } else {
-            googlePlayServicesFailure();
+            LocationUtils.googlePlayServicesFailure(this);
         }
 
         //Front camera button
         ImageView flipCameraView = (ImageView) findViewById(R.id.camera_flip_button);
-        if (Camera.getNumberOfCameras() > 0 ) {
+        if (Camera.getNumberOfCameras() > 1 ) {
             flipCameraView.setVisibility(View.VISIBLE);
 
             flipCameraView.setOnClickListener(new View.OnClickListener() {
@@ -101,10 +105,12 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         exploreButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent returnIntent = new Intent();
-                setResult(RESULT_CANCELED, returnIntent);
+                Intent exploreIntent = new Intent(CameraActivity.this, NavActivity.class);
+                if (myLocation != null & myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+                    exploreIntent.putExtra("myLocation", myLocation);
+                }
 
-                finish();
+                startActivityForResult(exploreIntent, Constants.EXPLORE_REQUEST);
             }
         });
 
@@ -113,8 +119,12 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         settingsButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent settings = new Intent(CameraActivity.this, SettingsActivity.class);
+                startActivityForResult(settings, Constants.SETTINGS_REQUEST);
             }
         });
+
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
     }
 
     private void setUpCamera(int cameraId) {
@@ -127,7 +137,10 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         mCamera = getCameraInstance(cameraId);
 
         if (mCamera == null) {
-            pictureFailed();
+            Toast toast = Toast.makeText(this, getString(R.string.no_camera), Toast.LENGTH_SHORT);
+            toast.show();
+
+            return;
         }
 
         //Portrait mode
@@ -147,12 +160,12 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         bottomStripe.setLayoutParams(new FrameLayout.LayoutParams(screenWidth, (screenHeight + ImageUtils.getNavigationBarHeight(this) - screenWidth)/2));
         bottomStripe.setY(screenHeight - (screenHeight - screenWidth)/2);
 
-        //Create Preview view
         if (mPreview != null) {
             preview.removeView(mPreview);
         }
+
+        //Create Preview view
         mPreview = new CameraPreview(this, mCamera);
-        preview = (FrameLayout) findViewById(R.id.camera_preview);
 
         //Set the preview view size
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) preview.getLayoutParams();
@@ -278,13 +291,13 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     protected void onPause() {
         super.onPause();
         releaseCamera();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        LocationManager locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
         LocationUtils.checkLocationServicesEnabled(this, locationManager);
 
         if (frontCamera) {
@@ -298,9 +311,12 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (myLocation != null && myLocation.getLongitude() != 0 && myLocation.getLatitude() != 0) {
+                        if (myLocation != null && myLocation.getLongitude() != 0 && myLocation.getLatitude() != 0 && mCamera != null) {
                             // get an image from the camera
                             mCamera.takePicture(null, null, mPicture);
+                        } else if (mCamera == null) {
+                            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_camera), Toast.LENGTH_SHORT);
+                            toast.show();
                         } else {
                             Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
                             toast.show();
@@ -314,8 +330,6 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         if (mCamera != null){
             mCamera.release();
             mCamera = null;
-
-            mPreview = null;
         }
     }
 
@@ -324,9 +338,9 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         toast.show();
     }
 
-    //Location-related methods
-    //-------------------------------------------------------
-
+    /**
+     *  Location-related methods
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -357,10 +371,13 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
      */
     @Override
     public void onConnected(Bundle dataBundle) {
+
         Location lastLocation = mLocationClient.getLastLocation();
 
         if (lastLocation != null) {
             myLocation = lastLocation;
+        } else {
+            myLocation = LocationUtils.getLastLocationWithLocationManager(this, locationManager);
         }
 
         // Display the connection status
@@ -405,11 +422,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
              * If no resolution is available, display a dialog to the
              * user with the error.
              */
-            googlePlayServicesFailure();
+            LocationUtils.googlePlayServicesFailure(this);
         }
-    }
-
-    private void googlePlayServicesFailure() {
     }
 
     // Define the callback method that receives location updates
@@ -419,11 +433,5 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         if (location != null) {
             myLocation = location;
         }
-    }
-
-    private void setUpLocationRequest() {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
     }
 }

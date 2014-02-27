@@ -9,6 +9,8 @@
     <string name="cancel">Cancel</string>
     <string name="no_location_dialog_title">Location access disabled</string>
     <string name="no_location_dialog_message">You can\'t shout with no location! Tap "Settings" to edit these settings, otherwise tap "Skip".</string>
+    <string name="no_google_play_services_title">Google Play Services</string>
+    <string name="no_google_play_services_message">Install Google Play Services to enable your location on Shout.</string>
     <string name="create_shout_dialog_name">Your shouter pseudo</string>
     <string name="create_shout_dialog">What\'s happening here and now?</string>
     <string name="create_shout_dialog_title">Create a shout</string>

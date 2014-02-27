@@ -3,7 +3,7 @@ package com.streetshout.android.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.IntentSender;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -15,6 +15,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,11 +43,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NavActivity extends Activity implements GoogleMap.OnMyLocationChangeListener, FeedFragment.OnFeedShoutSelectedListener {
+public class NavActivity extends Activity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, FeedFragment.OnFeedShoutSelectedListener {
+
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     private ConnectivityManager connectivityManager = null;
-
-    private LocationManager locationManager = null;
 
     private AQuery aq = null;
 
@@ -60,21 +66,37 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
     private boolean notificationRedirectionHandled = false;
 
-    private ImageView settingsButton = null;
-
-    private Button createShoutImageView = null;
+    private ImageView createShoutImageView = null;
 
     private boolean newMap = false;
 
     private boolean shoutJustCreated = false;
 
+    private LocationClient locationClient = null;
+
+    private LocationRequest locationRequest = null;
+
+    public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.nav);
 
+        if (getIntent().hasExtra("myLocation")) {
+            myLocation = getIntent().getParcelableExtra("myLocation");
+        }
+
         this.aq = new AQuery(this);
 
-        this.locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+        locationRequest = LocationUtils.createLocationRequest(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS);
+
+        int statusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
+        if (statusCode == ConnectionResult.SUCCESS) {
+            locationClient = new LocationClient(this, this, this);
+        } else {
+            LocationUtils.googlePlayServicesFailure(this);
+        }
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -87,23 +109,14 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
 
-        LocationUtils.checkLocationServicesEnabled(this, locationManager);
-
-        createShoutImageView = (Button) findViewById(R.id.create_shout_button);
+        createShoutImageView = (ImageView) findViewById(R.id.create_shout_button);
 
         newMap = setUpMapIfNeeded();
     }
 
     @Override
-    public void onMyLocationChange(Location location) {
-        myLocation = location;
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-
-        myLocation = LocationUtils.getLastLocationWithLocationManager(this, locationManager);
 
         //Handles case when user clicked a shout notification
         if (!notificationRedirectionHandled && savedInstanceStateCameraPosition == null && getIntent().hasExtra("notificationShout")) {
@@ -253,35 +266,16 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
     }
 
     public void createShout(View view) {
-        createShoutImageView.setEnabled(false);
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
 
-        if (!this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            Toast toast = Toast.makeText(this, getString(R.string.no_camera), Toast.LENGTH_SHORT);
-            toast.show();
-            createShoutImageView.setEnabled(true);
-        }if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-            Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
-            toast.show();
-            createShoutImageView.setEnabled(true);
-        } else if (myLocation == null) {
-            Toast toast = Toast.makeText(this, getString(R.string.no_location), Toast.LENGTH_SHORT);
-            toast.show();
-            createShoutImageView.setEnabled(true);
-        } else {
-            Intent camera = new Intent(this, CameraActivity.class);
-            startActivityForResult(camera, Constants.CAMERA_REQUEST);
-            createShoutImageView.setEnabled(true);
-        }
+        finish();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("cameraPosition", mMap.getCameraPosition());
         super.onSaveInstanceState(outState);
-    }
-
-    protected void onStart() {
-        super.onStart();
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -299,8 +293,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
 
                 shoutJustCreated = true;
             }
-        } else if (requestCode == Constants.SETTINGS_REQUEST) {
-            settingsButton.setEnabled(true);
         }
     }
 
@@ -340,9 +332,8 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         startActivity(displayShout);
     }
 
-
     /**
-     *  MAP RELATED METHODS
+     *  Map-related methods
      */
 
     private boolean setUpMapIfNeeded() {
@@ -360,9 +351,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
             settings.setRotateGesturesEnabled(false);
             settings.setTiltGesturesEnabled(false);
             mMap.setMyLocationEnabled(true);
-
-            //Set location listener
-            mMap.setOnMyLocationChangeListener(this);
 
             //Pull shouts on the map
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
@@ -400,23 +388,6 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
                 }
             });
 
-            settingsButton = (ImageView) findViewById(R.id.settings_button);
-
-            settingsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-                        Toast toast = Toast.makeText(NavActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
-                        toast.show();
-                        return;
-                    }
-
-                    settingsButton.setEnabled(false);
-                    Intent settings = new Intent(NavActivity.this, SettingsActivity.class);
-                    startActivityForResult(settings, Constants.SETTINGS_REQUEST);
-                }
-            });
-
             return true;
         }
 
@@ -441,7 +412,98 @@ public class NavActivity extends Activity implements GoogleMap.OnMyLocationChang
         mMap.moveCamera(update);
     }
 
+    /**
+     *  Map-related methods
+     */
+
     @Override
-    public void onBackPressed() {
+    protected void onStart() {
+        super.onStart();
+        // Connect the client.
+        if (locationClient != null) {
+            locationClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        // Disconnecting the client invalidates it.
+        if (locationClient != null) {
+            if (locationClient.isConnected()) {
+                locationClient.removeLocationUpdates(this);
+            }
+
+            locationClient.disconnect();
+        }
+
+        super.onStop();
+    }
+
+    /*
+     * Called by Location Services when the request to connect the
+     * client finishes successfully. At this point, you can
+     * request the current location or start periodic updates
+     */
+    @Override
+    public void onConnected(Bundle dataBundle) {
+        Location lastLocation = locationClient.getLastLocation();
+
+        if (lastLocation != null) {
+            myLocation = lastLocation;
+        }
+
+        // Display the connection status
+        locationClient.requestLocationUpdates(locationRequest, this);
+    }
+
+    /*
+     * Called by Location Services if the connection to the
+     * location client drops because of an error.
+     */
+    @Override
+    public void onDisconnected() {
+    }
+
+    /*
+     * Called by Location Services if the attempt to
+     * Location Services fails.
+     */
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        /*
+         * Google Play services can resolve some errors it detects.
+         * If the error has a resolution, try sending an Intent to
+         * start a Google Play services activity that can resolve
+         * error.
+         */
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
+            } catch (IntentSender.SendIntentException e) {
+                // Log the error
+                e.printStackTrace();
+            }
+        } else {
+            /*
+             * If no resolution is available, display a dialog to the
+             * user with the error.
+             */
+            LocationUtils.googlePlayServicesFailure(this);
+        }
+    }
+
+    // Define the callback method that receives location updates
+    @Override
+    public void onLocationChanged(Location location) {
+        // Report to the UI that the location was updated
+        if (location != null) {
+            myLocation = location;
+        }
     }
 }

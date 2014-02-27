@@ -10,6 +10,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.Settings;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.streetshout.android.R;
@@ -196,5 +197,21 @@ public class LocationUtils {
         Criteria criteria = new Criteria();
         String provider = locationManager.getBestProvider(criteria, true);
         return locationManager.getLastKnownLocation(provider);
+    }
+
+    public static LocationRequest createLocationRequest(int priority, int interval) {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(priority);
+        locationRequest.setInterval(interval);
+
+        return locationRequest;
+    }
+
+    public static void googlePlayServicesFailure(final Context ctx) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(ctx);
+        dialog.setTitle(ctx.getText(R.string.no_google_play_services_title));
+        dialog.setMessage(ctx.getText(R.string.no_google_play_services_message));
+        dialog.setPositiveButton("ok", null);
+        dialog.show();
     }
 }

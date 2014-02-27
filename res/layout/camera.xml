@@ -24,17 +24,11 @@
           android:background="@drawable/nav_bar_selector">
 
         <ImageView android:id="@+id/camera_explore_button"
-                android:layout_width="48dp"
+                android:layout_width="134dp"
                 android:layout_height="48dp"
                 android:padding="8dp"
-                android:src="@drawable/camera_explore_button_selector"
+                android:src="@drawable/explore_bar_button_selector"
                 android:layout_gravity="center|left"/>
-
-        <ImageView android:id="@+id/camera_explore_button"
-                android:layout_width="91dp"
-                android:layout_height="40dp"
-                android:background="@drawable/camera_shout_label"
-                android:layout_gravity="center"/>
 
         <ImageView android:id="@+id/camera_settigns_button"
                 android:layout_width="48dp"

@@ -88,14 +88,17 @@ public class WelcomeActivity extends Activity {
             if (savedInstanceState != null) {
                 session = Session.restoreSession(this, null, statusCallback, savedInstanceState);
             }
+
             if (session == null) {
                 session = new Session(this);
             }
+
             Session.setActiveSession(session);
 
             if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
                 if (SessionUtils.isSignIn(this)) {
                     fbSessionRequest(session);
+                    return;
                 }
             }
         }
@@ -198,8 +201,8 @@ public class WelcomeActivity extends Activity {
                                                 TrackingUtils.trackSignup(WelcomeActivity.this, "Facebook");
                                             }
 
-                                            goToNavActivity();
                                             connectFBDialog.cancel();
+                                            goToNavActivity();
                                         } else {
                                             Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                             toast.show();
@@ -221,7 +224,9 @@ public class WelcomeActivity extends Activity {
     private void goToNavActivity() {
         TrackingUtils.identify(WelcomeActivity.this, SessionUtils.getCurrentUser(this));
 
-        Intent nav = new Intent(WelcomeActivity.this, NavActivity.class);
+        Intent nav = new Intent(WelcomeActivity.this, CameraActivity.class);
         WelcomeActivity.this.startActivity(nav);
+
+        finish();
     }
 }
