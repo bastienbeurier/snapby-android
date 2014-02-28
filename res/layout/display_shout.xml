@@ -65,12 +65,12 @@
                     android:layout_height="match_parent"
                     android:layout_width="match_parent">
 
-                <com.streetshout.android.custom.SquareImageView android:id="@+id/display_shout_image_view_place_holder"
+                <com.streetshout.android.custom.SquareImageLayout android:id="@+id/display_shout_image_view_place_holder"
                                                                 android:layout_height="match_parent"
                                                                 android:layout_width="match_parent"
                                                                 android:background="@drawable/shout_image_place_holder_square"/>
 
-                <com.streetshout.android.custom.Banner
+                <com.streetshout.android.custom.SquareImageView
                         android:id="@+id/display_shout_image_view"
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"/>

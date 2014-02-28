@@ -7,75 +7,47 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ParcelFileDescriptor;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Display;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.R;
 import com.streetshout.android.aws.AmazonClientManager;
 import com.streetshout.android.aws.S3;
+import com.streetshout.android.custom.SquareFrameLayout;
+import com.streetshout.android.custom.SquareImageView;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.tvmclient.Response;
 import com.streetshout.android.utils.ApiUtils;
-import com.streetshout.android.utils.AppPreferences;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.ImageUtils;
-import com.streetshout.android.utils.LocationUtils;
-import com.streetshout.android.utils.SessionUtils;
-import com.streetshout.android.utils.StreetShoutApplication;
 import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.IOException;
 import java.util.Date;
 
 public class CreateShoutActivity extends Activity {
-    private static int MAX_SHOUT_DESCR_LINES = 6;
-
     private AQuery aq;
-
-    private AppPreferences appPrefs = null;
 
     private ConnectivityManager connectivityManager = null;
 
     public static AmazonClientManager clientManager = null;
-
-    private GoogleMap mMap = null;
 
     private Location shoutLocation = null;
 
@@ -89,36 +61,37 @@ public class CreateShoutActivity extends Activity {
 
     private String shoutDescription = null;
 
-    private ImageView removePhotoButton = null;
-
-    private ImageView flipPhotoButton = null;
-
-    private ImageView shoutImageView = null;
-
-    private File shoutPhotoFile = null;
+    private SquareImageView shoutImageView = null;
 
     private String shoutPhotoPath = null;
 
-    private Menu menu = null;
+    private EditText descriptionView = null;
 
-    private View mapView = null;
+    private ImageView cancelButton = null;
+
+    private ImageView sendButton = null;
+
+    private ImageView rotateButton = null;
+
+    private ImageView refineButton = null;
+
+    private ImageView anonymousButton = null;
+
+    private SquareFrameLayout photoContainer = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_shout);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         aq = new AQuery(this);
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        clientManager = new AmazonClientManager(getSharedPreferences(
-                "com.streetshout.android", Context.MODE_PRIVATE));
+        clientManager = new AmazonClientManager(getSharedPreferences("com.streetshout.android", Context.MODE_PRIVATE));
 
         Location savedInstanceStateShoutLocation = null;
 
         if (savedInstanceState != null) {
-            shoutPhotoFile = (File) savedInstanceState.getSerializable("highResCameraPictureFile");
             savedInstanceStateShoutLocation = savedInstanceState.getParcelable("shoutLocation");
         }
 
@@ -129,15 +102,47 @@ public class CreateShoutActivity extends Activity {
             shoutLocationRefined = true;
         }
 
-        final EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
-        descriptionView.setHorizontallyScrolling(false);
-        descriptionView.setMaxLines(MAX_SHOUT_DESCR_LINES);
+        descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
+        cancelButton = (ImageView) findViewById(R.id.create_cancel_button);
+        sendButton = (ImageView) findViewById(R.id.create_send_button);
+        rotateButton = (ImageView) findViewById(R.id.create_rotate_button);
+        refineButton = (ImageView) findViewById(R.id.create_refine_button);
+        anonymousButton = (ImageView) findViewById(R.id.create_anonymous_button);
+        photoContainer = (SquareFrameLayout) findViewById(R.id.create_photo_container);
 
-        appPrefs = ((StreetShoutApplication) getApplicationContext()).getAppPrefs();
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validateShoutInfo();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                (new File(shoutPhotoPath)).delete();
+                finish();
+            }
+        });
+
+        rotateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flipPhoto();
+            }
+        });
+
+        refineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refineShoutLocation();
+            }
+        });
 
         InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
 
         descriptionView.requestFocus();
+
         imm.showSoftInput(descriptionView, 0);
 
         ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -152,61 +157,35 @@ public class CreateShoutActivity extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 descriptionView.setError(null);
-                setCharCountItemTitle(String.format("%d", Constants.MAX_DESCRIPTION_LENGTH - s.length()));
+//                setCharCountItemTitle(String.format("%d", Constants.MAX_DESCRIPTION_LENGTH - s.length()));
             }
         });
 
-        removePhotoButton = (ImageView) findViewById(R.id.remove_photo_button);
-
-        removePhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removePhoto();
-            }
-        });
-
-        flipPhotoButton = (ImageView) findViewById(R.id.flip_photo_button);
-
-        flipPhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flipPhoto();
-            }
-        });
-
-        shoutImageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
-
-        RelativeLayout newShouPhotoWrapper = (RelativeLayout) findViewById(R.id.new_shout_photo_wrapper);
-        resizeSquareOptionalViews(newShouPhotoWrapper);
-
-        ((TextView) findViewById(R.id.shout_descr_dialog_name)).setText("@" + SessionUtils.getCurrentUser(this).username);
+        shoutImageView = (SquareImageView) findViewById(R.id.new_shout_upload_photo);
 
         displayImage();
+
+        final View root = findViewById(R.id.create_root_view);
+
+        root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            public void onGlobalLayout(){
+                descriptionView.setY(Math.min(photoContainer.getHeight() - descriptionView.getHeight(),
+                                                                       root.getHeight() - descriptionView.getHeight()));
+            }
+        });
     }
 
     private void displayImage() {
         shoutPhotoPath = getIntent().getStringExtra("imagePath");
 
-        Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(shoutPhotoPath);
-
-        //Save the small res image in the shoutPhotoPath, do not alter library photos
-        ImageUtils.storeBitmapInFile(shoutPhotoPath, formattedPicture);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap formattedPicture = BitmapFactory.decodeFile(shoutPhotoPath, options);
 
         shoutImageView.setImageBitmap(formattedPicture);
 
-        removePhotoButton.setVisibility(View.VISIBLE);
-        flipPhotoButton.setVisibility(View.VISIBLE);
-
         photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
         photoUrl = Constants.S3_URL + photoName;
-    }
-
-    private void removePhoto() {
-        //Prevents from sending photo with shout
-        photoUrl = null;
-
-        removePhotoButton.setVisibility(View.GONE);
-        flipPhotoButton.setVisibility(View.GONE);
     }
 
     private void flipPhoto() {
@@ -221,101 +200,34 @@ public class CreateShoutActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        if (mMap == null) {
-            setUpMap();
-        }
     }
 
-    private void resizeSquareOptionalViews(View view) {
-        int marginLeft = 10;
-        int marginRight = 10;
-        int middleSpace = 40;
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        ViewGroup.LayoutParams params = view.getLayoutParams();
-        params.height = (width / 2) - marginLeft - marginRight - middleSpace;
-        view.setLayoutParams(params);
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
-    private void setUpMap() {
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.refine_location_map);
-        mMap = mapFragment.getMap();
-
-        mapView = mapFragment.getView();
-
-        //We want a square map
-        resizeSquareOptionalViews(mapView);
-
-        if (!shoutLocationRefined) {
-            mapView.setVisibility(View.INVISIBLE);
-        }
-
-        //Set map settings
-        UiSettings settings = mMap.getUiSettings();
-        settings.setZoomControlsEnabled(false);
-        settings.setCompassEnabled(false);
-        settings.setMyLocationButtonEnabled(false);
-        settings.setRotateGesturesEnabled(false);
-        settings.setTiltGesturesEnabled(false);
-        settings.setScrollGesturesEnabled(false);
-        settings.setZoomGesturesEnabled(false);
-
-        updateShoutMarkerLocation();
-        setUpCameraPosition();
-    }
-
-    public void refineShoutLocation(View view) {
+    public void refineShoutLocation() {
         if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
             Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
             toast.show();
             return;
         }
 
-        Intent newShoutNextStep = new Intent(CreateShoutActivity.this, RefineShoutLocationActivity.class);
+        Intent refineIntent = new Intent(CreateShoutActivity.this, RefineShoutLocationActivity.class);
 
         if (shoutLocationRefined) {
-            newShoutNextStep.putExtra("shoutRefinedLocation", shoutLocation);
+            refineIntent.putExtra("shoutRefinedLocation", shoutLocation);
         } else {
-            newShoutNextStep.putExtra("shoutRefinedLocation", shoutLocation);
+            refineIntent.putExtra("shoutRefinedLocation", shoutLocation);
         }
 
-        startActivityForResult(newShoutNextStep, Constants.NEW_SHOUT_CONTENT_ACTIVITY_REQUEST);
-    }
-
-    private void setUpCameraPosition() {
-        //Update the camera to fit this perimeter (use of listener is a hack to know when map is loaded)
-        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition arg0) {
-                mMap.setOnCameraChangeListener(null);
-                updateCameraPosition();
-            }
-        });
-    }
-
-    private void updateCameraPosition() {
-        //Compute bounds of this perimeter
-        LatLng[] boundsResult = LocationUtils.getLatLngBounds(Constants.SHOUT_RADIUS, shoutLocation);
-        final LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
-    }
-
-    private void updateShoutMarkerLocation() {
-        mMap.clear();
-
-        MarkerOptions marker = new MarkerOptions();
-        marker.position(new LatLng(shoutLocation.getLatitude(), shoutLocation.getLongitude()));
-        marker.draggable(false);
-        mMap.addMarker(marker);
+        startActivityForResult(refineIntent, Constants.REFINE_LOCATION_ACTIVITY_REQUEST);
     }
 
     public void validateShoutInfo() {
         boolean errors = false;
 
-        EditText descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
         descriptionView.setError(null);
 
         shoutDescription = descriptionView.getText().toString();
@@ -343,112 +255,20 @@ public class CreateShoutActivity extends Activity {
         super.onSaveInstanceState(savedInstanceState);
 
         //Activity often gets destroyed when taking a picture
-        if (shoutPhotoFile != null) {
-            savedInstanceState.putSerializable("highResCameraPictureFile", shoutPhotoFile);
-
-            if (shoutLocationRefined == true) {
-                savedInstanceState.putParcelable("shoutLocation", shoutLocation);
-            }
+        if (shoutLocationRefined == true) {
+            savedInstanceState.putParcelable("shoutLocation", shoutLocation);
         }
 
         super.onSaveInstanceState(savedInstanceState);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.NEW_SHOUT_CONTENT_ACTIVITY_REQUEST) {
+        if (requestCode == Constants.REFINE_LOCATION_ACTIVITY_REQUEST) {
             if (resultCode == RESULT_OK) {
-                mapView.setVisibility(View.VISIBLE);
-
                 shoutLocation = data.getParcelableExtra("accurateShoutLocation");
-                updateShoutMarkerLocation();
-                updateCameraPosition();
                 shoutLocationRefined = true;
             }
         }
-
-        if (requestCode == Constants.UPLOAD_PHOTO_REQUEST) {
-            shoutImageView.setEnabled(true);
-            if (resultCode == RESULT_OK) {
-
-                boolean photoTakenWithCamera = false;
-
-
-                shoutPhotoPath = shoutPhotoFile.getAbsolutePath();
-
-                if (shoutPhotoPath != null) {
-                    Bitmap formattedPicture = null;
-
-                    //Case where image chosen with camera -> image is already in shoutPhotoFile
-                    if (data == null || data.getData() == null) {
-                        photoTakenWithCamera = true;
-                        formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(shoutPhotoPath);
-                    //Case where image chosen with library
-                    } else {
-                        //New Kitkat way of doing things
-                        if (Build.VERSION.SDK_INT < 19) {
-                            String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
-                            formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(libraryPhotoPath);
-                        } else {
-                            ParcelFileDescriptor parcelFileDescriptor;
-                            try {
-                                parcelFileDescriptor = getContentResolver().openFileDescriptor(data.getData(), "r");
-                                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                                formattedPicture = ImageUtils.shrinkAndMakeSquareBitmap(BitmapFactory.decodeFileDescriptor(fileDescriptor));
-                                parcelFileDescriptor.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-
-                    }
-
-                    shoutImageView.setImageBitmap(formattedPicture);
-
-                    //Save the small res image in the shoutPhotoPath, do not alter library photos
-                    ImageUtils.storeBitmapInFile(shoutPhotoPath, formattedPicture);
-
-                    removePhotoButton.setVisibility(View.VISIBLE);
-                    flipPhotoButton.setVisibility(View.VISIBLE);
-
-                    photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
-                    photoUrl = Constants.S3_URL + photoName;
-
-                    //Save the small res image, otherwise we get memory crashes
-                    if (photoTakenWithCamera) {
-                        ImageUtils.savePictureToGallery(this, shoutPhotoPath);
-                    }
-                } else {
-                    Toast toast = Toast.makeText(this, this.getString(R.string.photo_not_found), Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            }
-        }
-    }
-
-    public void letUserChooseImage(View view) {
-        //Avoid double clicking (crash)
-        shoutImageView.setEnabled(false);
-
-        if (ImageUtils.isSDPresent() == false){
-            Toast toast = Toast.makeText(this, this.getString(R.string.no_sd_card), Toast.LENGTH_LONG);
-            toast.show();
-            return;
-        }
-
-        if (shoutPhotoFile == null) {
-            shoutPhotoFile = ImageUtils.getFileToStoreImage();
-        }
-
-        if (shoutPhotoFile == null) {
-            Toast toast = Toast.makeText(this, this.getString(R.string.no_space_picture), Toast.LENGTH_LONG);
-            toast.show();
-            return;
-        }
-
-        Intent chooserIntent = ImageUtils.getPhotoChooserIntent(this, shoutPhotoFile);
-
-        startActivityForResult(chooserIntent, Constants.UPLOAD_PHOTO_REQUEST);
     }
 
     private class ValidateCredentialsTask extends
@@ -546,43 +366,4 @@ public class CreateShoutActivity extends Activity {
         Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
         toast.show();
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        this.menu = menu;
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.create_shout_actions, menu);
-
-        MenuItem item = menu.findItem(R.id.action_shout);
-        if (Constants.PRODUCTION) {
-            item.setTitle("SHOUT!");
-        } else {
-            item.setTitle("SHATTE!");
-        }
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_shout) {
-            validateShoutInfo();
-            return false;
-        } else if (item.getItemId() == R.id.char_count) {
-            return false;
-        } else {
-            Intent returnIntent = new Intent();
-            setResult(RESULT_CANCELED, returnIntent);
-            finish();
-            return true;
-        }
-    }
-
-    private void setCharCountItemTitle(String title)
-    {
-        MenuItem item = menu.findItem(R.id.char_count);
-        item.setTitle(title);
-    }
-
 }

@@ -28,8 +28,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.R;
-import com.streetshout.android.custom.Banner;
 import com.streetshout.android.custom.SquareImageView;
+import com.streetshout.android.custom.SquareImageLayout;
 import com.streetshout.android.models.Like;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.ApiUtils;
@@ -55,9 +55,9 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
     private Shout shout = null;
 
-    private SquareImageView imageViewPlaceHolder = null;
+    private SquareImageLayout imageViewPlaceHolder = null;
 
-    private Banner imageView = null;
+    private SquareImageView imageView = null;
 
     private TextView likeCountView = null;
 
@@ -83,8 +83,8 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
 
         likeCountView = (TextView) findViewById(R.id.display_shout_like_count_textView);
         commentCountView = (TextView) findViewById(R.id.display_shout_comment_count_textView);
-        imageView = (Banner) findViewById(R.id.display_shout_image_view);
-        imageViewPlaceHolder = (SquareImageView) findViewById(R.id.display_shout_image_view_place_holder);
+        imageView = (SquareImageView) findViewById(R.id.display_shout_image_view);
+        imageViewPlaceHolder = (SquareImageLayout) findViewById(R.id.display_shout_image_view_place_holder);
 
         commentCountView.setOnClickListener(new View.OnClickListener() {
             @Override

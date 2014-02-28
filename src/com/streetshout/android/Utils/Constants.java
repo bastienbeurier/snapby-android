@@ -29,7 +29,7 @@ public class Constants {
     public static final int SHOUT_RADIUS = 300;
 
     /** StartActivityForResult codes **/
-    public static final int NEW_SHOUT_CONTENT_ACTIVITY_REQUEST = 13450;
+    public static final int REFINE_LOCATION_ACTIVITY_REQUEST = 13450;
     public static final int CREATE_SHOUT_REQUEST = 11101;
     public static final int EXPLORE_REQUEST = 12376;
     public static final int SETTINGS_REQUEST = 14760;

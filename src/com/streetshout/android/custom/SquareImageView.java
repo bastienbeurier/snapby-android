@@ -2,9 +2,10 @@ package com.streetshout.android.custom;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 
-public class SquareImageView extends LinearLayout {
+public class SquareImageView extends ImageView {
+
     public SquareImageView(Context context) {
         super(context);
     }
@@ -17,8 +18,10 @@ public class SquareImageView extends LinearLayout {
         super(context, attrs, defStyle);
     }
 
-    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth());
+    @Override protected void onMeasure(int widthMeasureSpec,
+                                       int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = width;
+        setMeasuredDimension(width, height);
     }
 }

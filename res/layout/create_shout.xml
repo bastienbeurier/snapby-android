@@ -1,119 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/create_root_view"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/white">
 
-    <TextView android:id="@+id/shout_descr_dialog_name"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="16dp"
-              android:layout_marginLeft="10dp"
-              android:layout_marginRight="10dp"
-              android:layout_marginBottom="4dp"
-              android:textColor="@color/shoutBlue"
-              android:textSize="18dp"
-              android:textColorHint="@color/shoutBlue"
-              android:fontFamily="sans-serif"
-              android:textStyle="bold"/>
-
-    <EditText android:id="@+id/shout_descr_dialog_descr"
-              android:inputType="textCapSentences"
-              android:imeOptions="actionDone"
-              android:gravity="top|left"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginLeft="10dp"
-              android:layout_marginRight="10dp"
-              android:layout_marginBottom="4dp"
-              android:textColorHint="@color/lightGrey"
-              style="@style/CreateShoutEditText"
-              android:hint="@string/create_shout_dialog" />
-
-    <LinearLayout android:orientation="horizontal"
+    <LinearLayout android:orientation="vertical"
                   android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_marginTop="15dp">
+                  android:layout_height="match_parent"
+                  android:background="@color/white">
 
-        <LinearLayout android:layout_height="wrap_content"
+        <com.streetshout.android.custom.SquareFrameLayout android:id="@+id/create_photo_container"
+                                                          android:layout_width="fill_parent"
+                                                          android:layout_height="fill_parent">
+
+            <com.streetshout.android.custom.SquareImageView android:id="@+id/new_shout_upload_photo"
+                                                            android:layout_height="match_parent"
+                                                            android:layout_width="match_parent"
+                                                            android:background="@color/white"/>
+
+            <EditText android:id="@+id/shout_descr_dialog_descr"
+                      android:inputType="textCapSentences|textNoSuggestions"
+                      android:imeOptions="actionDone"
                       android:layout_width="match_parent"
-                      android:layout_weight="1"
-                      android:layout_marginLeft="10dp"
-                      android:orientation="vertical">
+                      android:layout_height="50dp"
+                      android:paddingLeft="10dp"
+                      android:paddingRight="10dp"
+                      android:paddingBottom="4dp"
+                      android:textColorHint="@color/lightGrey"
+                      android:textColor="@color/white"
+                      android:textCursorDrawable="@null"
+                      android:singleLine="true"
+                      android:background="@color/semiTransparentBlackDarker"
+                      style="@style/CreateShoutEditText"
+                      android:textSize="20dp"
+                      android:hint="@string/create_shout_dialog"
+                      android:gravity="center|left"
+                      android:layout_gravity="bottom"/>
 
-            <Button android:id="@+id/add_photo"
-                    android:layout_height="40dp"
-                    android:layout_width="match_parent"
-                    android:text="@string/add_photo"
-                    android:textSize="16dp"
-                    android:background="@drawable/create_shout_option_button_selector"
-                    android:onClick="letUserChooseImage"/>
+            <LinearLayout android:id="@+id/create_button_container"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:layout_marginLeft="10dp"
+                          android:layout_gravity="center|left">
 
-            <RelativeLayout android:id="@+id/new_shout_photo_wrapper"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:layout_marginTop="10dp">
+                <ImageView android:id="@+id/create_rotate_button"
+                           android:layout_width="40dp"
+                           android:layout_height="40dp"
+                           android:background="@drawable/create_rotate_button_selector"/>
 
-                <ImageView android:id="@+id/new_shout_upload_photo"
-                           android:layout_height="match_parent"
-                           android:layout_width="match_parent"
-                           android:background="@color/white"/>
+                <ImageView android:id="@+id/create_refine_button"
+                           android:layout_width="40dp"
+                           android:layout_height="45dp"
+                           android:layout_marginTop="10dp"
+                           android:background="@drawable/create_refine_button_selector"/>
 
-                <ImageView
-                        android:id="@+id/remove_photo_button"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginRight="10dp"
-                        android:src="@drawable/remove_photo_button"
-                        android:visibility="gone"/>
-
-                <ImageView
-                        android:id="@+id/flip_photo_button"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:src="@drawable/rotate_photo"
-                        android:visibility="gone"/>
-            </RelativeLayout>
-
-         </LinearLayout>
-
-        <View android:layout_height="40dp"
-              android:layout_width="20dp"/>
-
-        <LinearLayout android:layout_height="wrap_content"
-                      android:layout_width="match_parent"
-                      android:layout_weight="1"
-                      android:layout_marginRight="10dp"
-                      android:orientation="vertical">
-
-            <Button android:id="@+id/refine_location_button"
-                    android:layout_height="40dp"
-                    android:layout_width="match_parent"
-                    android:text="@string/refine_location"
-                    android:textSize="16dp"
-                    android:background="@drawable/create_shout_option_button_selector"
-                    android:onClick="refineShoutLocation"/>
+                <ImageView android:id="@+id/create_anonymous_button"
+                            android:layout_width="40dp"
+                            android:layout_height="27dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/create_anonymous_button_selector"/>
 
 
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                      android:id="@+id/refine_location_map"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:layout_marginTop="10dp"
-                      android:layout_marginRight="5dp"
-                      android:layout_marginLeft="5dp"
-                      class="com.google.android.gms.maps.MapFragment" />
+            </LinearLayout>
 
+            <ImageView android:id="@+id/create_cancel_button"
+                       android:layout_width="40dp"
+                       android:layout_height="40dp"
+                       android:layout_gravity="top|left"
+                       android:layout_margin="10dp"
+                       android:background="@drawable/create_cancel_button_selector"/>
 
-        </LinearLayout>
+            <ImageView android:id="@+id/create_send_button"
+                       android:layout_width="40dp"
+                       android:layout_height="40dp"
+                       android:layout_gravity="top|right"
+                       android:layout_margin="10dp"
+                       android:background="@drawable/create_send_button_selector"/>
+
+        </com.streetshout.android.custom.SquareFrameLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

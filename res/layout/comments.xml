@@ -54,13 +54,14 @@
 
     <EditText
             android:id="@+id/create_comment_editText"
+            android:inputType="textCapSentences"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:fontFamily="sans-serif"
             android:textColor="@color/darkGrey"
             android:layout_marginBottom="10dp"
             android:hint="@string/create_comment_hint"
-            android:imeOptions="actionSend"
+            android:imeOptions="actionSearch"
             android:singleLine="true"/>
 
 </LinearLayout>

@@ -51,7 +51,7 @@
         </activity>
         <activity android:name=".activities.ExploreActivity" android:finishOnTaskLaunch ="true" android:label="Explore" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar"> </activity>
         <activity android:name=".activities.RefineShoutLocationActivity" android:label="" android:screenOrientation="portrait"/>
-        <activity android:name=".activities.CreateShoutActivity" android:label="Create" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".activities.CreateShoutActivity" android:label="Create" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar" android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".activities.SettingsActivity" android:finishOnTaskLaunch ="true" android:label="" android:screenOrientation="portrait"/>
         <activity android:name=".activities.SigninActivity" android:label="" android:screenOrientation="portrait"/>
         <activity android:name=".activities.SignupActivity" android:label="" android:screenOrientation="portrait"/>
