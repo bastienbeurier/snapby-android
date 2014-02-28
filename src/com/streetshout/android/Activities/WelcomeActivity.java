@@ -153,6 +153,10 @@ public class WelcomeActivity extends Activity {
         public void call(Session session, SessionState state, Exception exception) {
             if (session.isOpened()) {
                 if (SessionUtils.isSignIn(WelcomeActivity.this)) {
+                    if (connectFBDialog != null) {
+                        connectFBDialog.cancel();
+                    }
+
                     goToNavActivity();
                 } else {
                     Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
@@ -201,7 +205,9 @@ public class WelcomeActivity extends Activity {
                                                 TrackingUtils.trackSignup(WelcomeActivity.this, "Facebook");
                                             }
 
-                                            connectFBDialog.cancel();
+                                            if (connectFBDialog != null) {
+                                                connectFBDialog.cancel();
+                                            }
                                             goToNavActivity();
                                         } else {
                                             Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
@@ -224,8 +230,9 @@ public class WelcomeActivity extends Activity {
     private void goToNavActivity() {
         TrackingUtils.identify(WelcomeActivity.this, SessionUtils.getCurrentUser(this));
 
-        Intent nav = new Intent(WelcomeActivity.this, CameraActivity.class);
-        WelcomeActivity.this.startActivity(nav);
+        Intent camera = new Intent(WelcomeActivity.this, CameraActivity.class);
+        camera.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        WelcomeActivity.this.startActivity(camera);
 
         finish();
     }

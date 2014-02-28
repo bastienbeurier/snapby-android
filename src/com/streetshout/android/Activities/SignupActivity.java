@@ -149,8 +149,10 @@ public class SignupActivity extends Activity {
                     TrackingUtils.identify(SignupActivity.this, currentUser);
                     TrackingUtils.trackSignup(SignupActivity.this, "Email");
 
-                    Intent nav = new Intent(SignupActivity.this, CameraActivity.class);
-                    SignupActivity.this.startActivity(nav);
+                    Intent camera = new Intent(SignupActivity.this, CameraActivity.class);
+                    camera.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    SignupActivity.this.startActivity(camera);
+                    finish();
                 } else if (status.getError() == null && status.getCode() == 222) {
                     Toast toast = null;
 

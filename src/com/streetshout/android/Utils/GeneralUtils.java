@@ -87,7 +87,7 @@ public class GeneralUtils {
     public static boolean isValidUsername(String username) {
         boolean isValid = false;
 
-        String expression = "[A-Z0-9a-z._+-]{6,20}";
+        String expression = "[A-Z0-9a-z._+-]{1,20}";
         CharSequence inputStr = username;
 
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
