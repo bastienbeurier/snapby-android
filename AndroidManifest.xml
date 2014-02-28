@@ -43,34 +43,23 @@
                  android:icon="@drawable/ic_launcher"
                  android:theme="@style/ShoutStyle">
         <uses-library android:name="com.google.android.maps" />
-        <activity android:name=".activities.ExploreActivity"
-                  android:label="@string/app_name"
-                  android:screenOrientation="portrait"
-                  android:theme="@style/ShoutStyle.NoBar">
-        </activity>
-        <activity android:name=".activities.RefineShoutLocationActivity"
-                  android:label=""
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.CreateShoutActivity"
-                  android:label="Create"
-                  android:screenOrientation="portrait"
-                  android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".activities.SettingsActivity"
-                  android:label="Settings"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.SigninActivity" android:label="Sign In" android:screenOrientation="portrait"/>
-        <activity android:name=".activities.SignupActivity" android:label="Sign Up" android:screenOrientation="portrait"/>
         <activity android:name=".activities.WelcomeActivity" android:label="Shout" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".activities.ExploreActivity" android:finishOnTaskLaunch ="true" android:label="Explore" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar"> </activity>
+        <activity android:name=".activities.RefineShoutLocationActivity" android:label="" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.CreateShoutActivity" android:label="Create" android:screenOrientation="portrait" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".activities.SettingsActivity" android:finishOnTaskLaunch ="true" android:label="" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.SigninActivity" android:label="" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.SignupActivity" android:label="" android:screenOrientation="portrait"/>
         <activity android:name="com.facebook.LoginActivity"/>
-        <activity android:name=".activities.ResetPasswordActivity" android:label="Reset Password" android:screenOrientation="portrait"/>
-        <activity android:name=".activities.DisplayShoutActivity" android:label="DisplayShoutActivity" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar"/>
-        <activity android:name=".activities.CommentsActivity" android:label="Comments" android:screenOrientation="portrait"/>
-        <activity android:name=".activities.LikesActivity" android:label="Likes" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.ResetPasswordActivity" android:label="" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.DisplayShoutActivity" android:finishOnTaskLaunch ="true" android:label="DisplayShoutActivity" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar"/>
+        <activity android:name=".activities.CommentsActivity" android:finishOnTaskLaunch ="true" android:label="Comments" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.LikesActivity" android:finishOnTaskLaunch ="true" android:label="Likes" android:screenOrientation="portrait"/>
         <activity android:name=".activities.CameraActivity" android:label="Camera" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar"/>
         <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
