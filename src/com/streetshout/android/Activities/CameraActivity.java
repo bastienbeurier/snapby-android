@@ -9,7 +9,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -105,7 +104,7 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         exploreButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent exploreIntent = new Intent(CameraActivity.this, NavActivity.class);
+                Intent exploreIntent = new Intent(CameraActivity.this, ExploreActivity.class);
                 if (myLocation != null & myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
                     exploreIntent.putExtra("myLocation", myLocation);
                 }
@@ -114,7 +113,7 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
             }
         });
 
-        ImageView settingsButtonView = (ImageView) findViewById(R.id.camera_settigns_button);
+        ImageView settingsButtonView = (ImageView) findViewById(R.id.camera_settings_button);
 
         settingsButtonView.setOnClickListener(new View.OnClickListener() {
             @Override

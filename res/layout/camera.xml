@@ -24,13 +24,13 @@
           android:background="@drawable/nav_bar_selector">
 
         <ImageView android:id="@+id/camera_explore_button"
-                android:layout_width="134dp"
+                android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="8dp"
-                android:src="@drawable/explore_bar_button_selector"
+                android:src="@drawable/camera_explore_button_selector"
                 android:layout_gravity="center|left"/>
 
-        <ImageView android:id="@+id/camera_settigns_button"
+        <ImageView android:id="@+id/camera_settings_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:padding="8dp"

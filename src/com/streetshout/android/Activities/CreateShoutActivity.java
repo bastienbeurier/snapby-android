@@ -205,7 +205,6 @@ public class CreateShoutActivity extends Activity {
         //Prevents from sending photo with shout
         photoUrl = null;
 
-        shoutImageView.setImageResource(R.drawable.ic_photo);
         removePhotoButton.setVisibility(View.GONE);
         flipPhotoButton.setVisibility(View.GONE);
     }

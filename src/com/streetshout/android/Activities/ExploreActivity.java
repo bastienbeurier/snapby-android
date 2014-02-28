@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -43,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NavActivity extends Activity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, FeedFragment.OnFeedShoutSelectedListener {
+public class ExploreActivity extends Activity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, FeedFragment.OnFeedShoutSelectedListener {
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -80,7 +77,7 @@ public class NavActivity extends Activity implements GooglePlayServicesClient.Co
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.nav);
+        setContentView(R.layout.explore);
 
         if (getIntent().hasExtra("myLocation")) {
             myLocation = getIntent().getParcelableExtra("myLocation");
@@ -195,7 +192,7 @@ public class NavActivity extends Activity implements GooglePlayServicesClient.Co
 
                         displayShoutsOnMap(shouts);
                         feedFragment.hideFeedProgressBar();
-                        feedFragment.setAdapter(NavActivity.this, shouts);
+                        feedFragment.setAdapter(ExploreActivity.this, shouts);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -382,7 +379,7 @@ public class NavActivity extends Activity implements GooglePlayServicesClient.Co
                         }
                         mMap.animateCamera(update);
                     } else {
-                        Toast toast = Toast.makeText(NavActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(ExploreActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }

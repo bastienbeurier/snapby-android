@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import com.streetshout.android.activities.NavActivity;
+import com.streetshout.android.activities.ExploreActivity;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
@@ -23,7 +23,7 @@ public class PushNotificationReceiver extends BroadcastReceiver {
     private void handleOpen(Context context, Intent intent)  {
         if(intent.getStringExtra("shout") != null) {
             Application app	= (Application) UAirship.shared().getApplicationContext();
-            Intent start = new Intent(app, NavActivity.class);
+            Intent start = new Intent(app, ExploreActivity.class);
             start.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             start.putExtra("notificationShout", intent.getStringExtra("shout"));
             app.startActivity(start);

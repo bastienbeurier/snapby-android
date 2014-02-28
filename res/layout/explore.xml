@@ -24,7 +24,7 @@
                    android:layout_width="48dp"
                    android:layout_height="48dp"
                    android:padding="8dp"
-                   android:src="@drawable/camera_settings_button_selector"
+                   android:src="@drawable/explore_my_location_button_selector"
                    android:layout_gravity="center|left"/>
     </FrameLayout>
 
