@@ -66,8 +66,6 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
      * Define a request code to send to Google Play services
      * This code is returned in Activity.onActivityResult
      */
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera);
@@ -149,11 +147,30 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         );
     }
 
+    private Camera.Size getOptimalCameraSize(List<Camera.Size> sizes, int w, int h) {
+        final double ASPECT_TOLERANCE = 0.05;
+        double targetRatio = (double) w/h;
+
+        Camera.Size optimalSize = null;
+
+        // Find size
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (size.width >= Constants.SHOUT_BIG_RES || size.height >= Constants.SHOUT_BIG_RES) {
+                optimalSize = size;
+            }
+        }
+
+        if (optimalSize == null) {
+            optimalSize = sizes.get(0);
+        }
+
+        return optimalSize;
+    }
+
     private void setUpCamera(int cameraId) {
         releaseCamera();
-
-        int screenHeight = ImageUtils.getScreenHeight(this);
-        int screenWidth = ImageUtils.getScreenWidth(this);
 
         // Create an instance of Camera
         mCamera = getCameraInstance(cameraId);
@@ -168,19 +185,20 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         //Portrait mode
         mCamera.setDisplayOrientation(90);
 
-        //Set Camera size
+
+        //Get optimal camera size for screen aspect ratio and min resolution
         Camera.Parameters parameters = mCamera.getParameters();
-        Camera.Size cameraSize = getBestCameraSize(parameters);
-        parameters.setPictureSize(cameraSize.width, cameraSize.height);
+        List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
+        View root = findViewById(R.id.camera_activity_frame);
+        Camera.Size optimalSize = getOptimalCameraSize(sizes, root.getWidth(), root.getHeight());
+        parameters.setPictureSize(optimalSize.width, optimalSize.height);
+
+        //Set continuous autofocus
+        List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        }
         mCamera.setParameters(parameters);
-
-        //Add stripes
-        View topStripe = findViewById(R.id.camera_top_stripe);
-        topStripe.setLayoutParams(new FrameLayout.LayoutParams(screenWidth, (screenHeight - screenWidth)/2));
-
-        View bottomStripe = findViewById(R.id.camera_bottom_stripe);
-        bottomStripe.setLayoutParams(new FrameLayout.LayoutParams(screenWidth, (screenHeight + ImageUtils.getNavigationBarHeight(this) - screenWidth)/2));
-        bottomStripe.setY(screenHeight - (screenHeight - screenWidth)/2);
 
         if (mPreview != null) {
             preview.removeView(mPreview);
@@ -189,31 +207,9 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         //Create Preview view
         mPreview = new CameraPreview(this, mCamera);
 
-        //Set the preview view size
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) preview.getLayoutParams();
-        int cameraHeight = Math.min(screenWidth * cameraSize.width/cameraSize.height, screenHeight);
-        params.height = cameraHeight;
-        preview.setLayoutParams(params);
-        preview.setY((screenHeight - cameraHeight)/2);
-
         //Set preview as the content of activity.
         preview.addView(mPreview);
 
-    }
-
-    private Camera.Size getBestCameraSize(Camera.Parameters parameters) {
-        List<Camera.Size> sizes = mCamera.getParameters().getSupportedPictureSizes();
-
-        int len = parameters.getSupportedPictureSizes().size();
-
-        //Sizes are in descending order
-        for (int i = len - 1; i >= 0; i--) {
-            if (sizes.get(i).height >= Constants.SHOUT_BIG_RES && sizes.get(i).width >= Constants.SHOUT_BIG_RES) {
-                return sizes.get(i);
-            }
-        }
-
-        return(sizes.get(0));
     }
 
     public Camera getCameraInstance(int cameraId) {
@@ -222,7 +218,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         try {
             c = Camera.open(cameraId); // attempt to get a Camera instance
         } catch (Exception e) {
-            pictureFailed();
+            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_camera_avaiable), Toast.LENGTH_LONG);
+            toast.show();
         }
 
         return c; // returns null if camera is unavailable
@@ -263,12 +260,13 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
 
             String imagePath = pictureFile.getAbsolutePath().toString();
 
-            Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkAndMakeSquareBitmap(imagePath);
+            Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath);
 
             if (frontCamera) {
                 formattedPicture = ImageUtils.rotateImage(formattedPicture);
             } else {
                 formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
+                formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
             }
 
             //Save the small res image in the imagePath

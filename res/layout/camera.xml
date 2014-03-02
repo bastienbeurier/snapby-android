@@ -6,45 +6,28 @@
     <FrameLayout
             android:id="@+id/camera_preview"
             android:layout_width="fill_parent"
-            android:layout_height="1dp"/>
+            android:layout_height="fill_parent"/>
 
-    <View android:id="@+id/camera_top_stripe"
-          android:layout_width="fill_parent"
-          android:layout_height="1dp"
-          android:background="@color/semiTransparentBlack"/>
+    <ImageView android:id="@+id/camera_explore_button"
+               android:layout_width="65dp"
+               android:layout_height="65dp"
+               android:padding="10dp"
+               android:layout_margin="10dp"
+               android:src="@drawable/camera_explore_button_selector"
+               android:layout_gravity="top|left"/>
 
-    <View android:id="@+id/camera_bottom_stripe"
-          android:layout_width="fill_parent"
-          android:layout_height="1dp"
-          android:background="@color/semiTransparentBlack"/>
-
-    <FrameLayout android:id="@+id/camera_top_bar"
-          android:layout_width="fill_parent"
-          android:layout_height="@dimen/camera_top_bar"
-          android:background="@drawable/nav_bar_selector">
-
-        <ImageView android:id="@+id/camera_explore_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:src="@drawable/camera_explore_button_selector"
-                android:layout_gravity="center|left"/>
-
-        <ImageView android:id="@+id/camera_settings_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:src="@drawable/camera_settings_button_selector"
-                android:layout_gravity="center|right"/>
-
-
-    </FrameLayout>
+    <ImageView android:id="@+id/camera_settings_button"
+               android:layout_width="65dp"
+               android:layout_height="65dp"
+               android:padding="10dp"
+               android:layout_margin="10dp"
+               android:src="@drawable/camera_settings_button_selector"
+               android:layout_gravity="top|right"/>
 
     <FrameLayout android:id="@+id/camera_bottom_bar"
           android:layout_width="fill_parent"
           android:layout_height="@dimen/camera_bottom_bar"
-          android:layout_gravity="bottom"
-          android:background="@drawable/nav_bar_selector">
+          android:layout_gravity="bottom">
 
         <Button android:id="@+id/capture_button"
                 android:layout_width="100dp"

@@ -331,7 +331,7 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
             //Set map settings
             UiSettings settings = mMap.getUiSettings();
             settings.setZoomControlsEnabled(false);
-            settings.setMyLocationButtonEnabled(false);
+            settings.setMyLocationButtonEnabled(true);
             settings.setRotateGesturesEnabled(false);
             settings.setTiltGesturesEnabled(false);
             mMap.setMyLocationEnabled(true);

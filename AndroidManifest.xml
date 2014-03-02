@@ -60,7 +60,7 @@
         <activity android:name=".activities.DisplayShoutActivity" android:finishOnTaskLaunch ="true" android:label="DisplayShoutActivity" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar"/>
         <activity android:name=".activities.CommentsActivity" android:finishOnTaskLaunch ="true" android:label="Comments" android:screenOrientation="portrait"/>
         <activity android:name=".activities.LikesActivity" android:finishOnTaskLaunch ="true" android:label="Likes" android:screenOrientation="portrait"/>
-        <activity android:name=".activities.CameraActivity" android:label="Camera" android:screenOrientation="portrait" android:theme="@style/ShoutStyle.NoBar"/>
+        <activity android:name=".activities.CameraActivity" android:label="Camera" android:screenOrientation="portrait" android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"/>
         <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
                 android:value="AIzaSyAhJpucfrY791-bMEQHP0tbEe4gIIYcctQ"/>

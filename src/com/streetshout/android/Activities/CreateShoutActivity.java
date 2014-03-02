@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,14 +29,11 @@ import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
 import com.streetshout.android.aws.AmazonClientManager;
 import com.streetshout.android.aws.S3;
-import com.streetshout.android.custom.SquareFrameLayout;
-import com.streetshout.android.custom.SquareImageView;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.tvmclient.Response;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
-import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +60,7 @@ public class CreateShoutActivity extends Activity {
 
     private String shoutDescription = null;
 
-    private SquareImageView shoutImageView = null;
+    private ImageView shoutImageView = null;
 
     private String shoutPhotoPath = null;
 
@@ -72,15 +70,13 @@ public class CreateShoutActivity extends Activity {
 
     private ImageView sendButton = null;
 
-    private ImageView rotateButton = null;
-
     private ImageView refineButton = null;
 
     private ImageView anonymousButton = null;
 
     private TextView descriptionCharCount = null;
 
-    private SquareFrameLayout photoContainer = null;
+    private FrameLayout photoContainer = null;
 
     private boolean anonymousUser = false;
 
@@ -110,10 +106,9 @@ public class CreateShoutActivity extends Activity {
         descriptionView = (EditText) findViewById(R.id.shout_descr_dialog_descr);
         cancelButton = (ImageView) findViewById(R.id.create_cancel_button);
         sendButton = (ImageView) findViewById(R.id.create_send_button);
-        rotateButton = (ImageView) findViewById(R.id.create_rotate_button);
         refineButton = (ImageView) findViewById(R.id.create_refine_button);
         anonymousButton = (ImageView) findViewById(R.id.create_anonymous_button);
-        photoContainer = (SquareFrameLayout) findViewById(R.id.create_photo_container);
+        photoContainer = (FrameLayout) findViewById(R.id.create_photo_container);
         descriptionCharCount = (TextView) findViewById(R.id.create_description_count_text);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -131,13 +126,6 @@ public class CreateShoutActivity extends Activity {
             }
         });
 
-        rotateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flipPhoto();
-            }
-        });
-
         refineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,12 +137,13 @@ public class CreateShoutActivity extends Activity {
             @Override
             public void onClick(View v) {
                 anonymousUser = !anonymousUser;
+
                 if (anonymousUser) {
-                    ImageUtils.setBackground(CreateShoutActivity.this, anonymousButton, R.drawable.create_anonymous_button_pressed_selector);
+                    anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button_pressed_selector));
                     Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
-                    ImageUtils.setBackground(CreateShoutActivity.this, anonymousButton, R.drawable.create_anonymous_button_selector);
+                    anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button_selector));
                     Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.anonymous_mode_disabled), Toast.LENGTH_SHORT);
                     toast.show();
                 }
@@ -175,7 +164,7 @@ public class CreateShoutActivity extends Activity {
             }
         });
 
-        shoutImageView = (SquareImageView) findViewById(R.id.new_shout_upload_photo);
+        shoutImageView = (ImageView) findViewById(R.id.new_shout_upload_photo);
 
         displayImage();
 
@@ -183,8 +172,10 @@ public class CreateShoutActivity extends Activity {
 
         root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
             public void onGlobalLayout(){
-                findViewById(R.id.create_description_container).setY(Math.min(photoContainer.getHeight() - descriptionView.getHeight(),
-                                                                       root.getHeight() - descriptionView.getHeight()));
+                View container = findViewById(R.id.create_description_container);
+
+
+                container.setY(Math.min(photoContainer.getHeight() - container.getHeight(), root.getHeight() - container.getHeight()));
             }
         });
     }
@@ -200,14 +191,6 @@ public class CreateShoutActivity extends Activity {
 
         photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
         photoUrl = Constants.S3_URL + photoName;
-    }
-
-    private void flipPhoto() {
-        Bitmap flippedBitmap = ImageUtils.rotateImage(((BitmapDrawable) shoutImageView.getDrawable()).getBitmap());
-
-        shoutImageView.setImageBitmap(flippedBitmap);
-
-        ImageUtils.storeBitmapInFile(shoutPhotoPath, flippedBitmap);
     }
 
     @Override

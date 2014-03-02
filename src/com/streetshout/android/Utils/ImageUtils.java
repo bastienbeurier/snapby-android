@@ -326,14 +326,4 @@ public class ImageUtils {
         }
         return 0;
     }
-
-    public static void setBackground(Context ctx, ImageView image, int id) {
-        int sdk = android.os.Build.VERSION.SDK_INT;
-        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            image.setBackgroundDrawable(ctx.getResources().getDrawable(id));
-        } else {
-            image.setBackground(ctx.getResources().getDrawable(id));
-        }
-    }
-
 }

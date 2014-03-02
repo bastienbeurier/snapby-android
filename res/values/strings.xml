@@ -47,6 +47,7 @@
     <string name="no_connection">No internet connection</string>
     <string name="no_camera">No available camera on your device.</string>
     <string name="picture_failed">Failed to take a picture.</string>
+    <string name="no_camera_avaiable">No camera available. Please close other camera apps.</string>
     <string name="no_shout_displayed">No shout displayed...</string>
     <string name="status_bar_notification_title">Shout</string>
     <string name="create_shout_map_instruction">Tap on the map to refine your location</string>

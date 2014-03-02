@@ -72,6 +72,7 @@
 
                 <com.streetshout.android.custom.SquareImageView
                         android:id="@+id/display_shout_image_view"
+                        android:scaleType="centerCrop"
                         android:layout_height="match_parent"
                         android:layout_width="match_parent"/>
 
