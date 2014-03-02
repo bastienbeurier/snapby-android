@@ -44,8 +44,6 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
-    private ConnectivityManager connectivityManager = null;
-
     private AQuery aq = null;
 
     private GoogleMap mMap = null;
@@ -63,11 +61,7 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
 
     private boolean notificationRedirectionHandled = false;
 
-    private ImageView createShoutImageView = null;
-
     private boolean newMap = false;
-
-    private boolean shoutJustCreated = false;
 
     private LocationClient locationClient = null;
 
@@ -75,12 +69,18 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
 
     public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
+    private Shout redirectToShout = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
 
         if (getIntent().hasExtra("myLocation")) {
             myLocation = getIntent().getParcelableExtra("myLocation");
+        }
+
+        if (getIntent().hasExtra("newShout")) {
+            redirectToShout = getIntent().getParcelableExtra("newShout");
         }
 
         this.aq = new AQuery(this);
@@ -95,8 +95,6 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
             LocationUtils.googlePlayServicesFailure(this);
         }
 
-        this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
         displayedShoutModels = new HashMap<Integer, Shout>();
         displayedShoutMarkers = new HashMap<Integer, Marker>();
 
@@ -105,8 +103,6 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
         if (savedInstanceState != null) {
             savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
-
-        createShoutImageView = (ImageView) findViewById(R.id.create_shout_button);
 
         newMap = setUpMapIfNeeded();
     }
@@ -140,9 +136,14 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
             }
         }
 
+        //Case where user just created a shout (deprecated :) )
+        if (redirectToShout != null) {
+            redirectToShout();
+        }
+
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         //But activity gets destroyed when user shout with photo (memory issue), so don't initialize in that case!
-        if (newMap && !shoutJustCreated) {
+        if (newMap && redirectToShout == null) {
             if (savedInstanceStateCameraPosition != null) {
                 initializeCameraWithCameraPosition(savedInstanceStateCameraPosition);
                 savedInstanceStateCameraPosition = null;
@@ -151,7 +152,8 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
             }
             newMap = false;
         }
-        shoutJustCreated = false;
+
+        redirectToShout = null;
 
         pullShouts();
     }
@@ -276,21 +278,6 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.CREATE_SHOUT_REQUEST) {
-            createShoutImageView.setEnabled(true);
-
-            if (resultCode == RESULT_OK) {
-                Shout shout = data.getParcelableExtra("newShout");
-
-                displayedShoutModels.put(shout.id, shout);
-                Marker shoutMarker = displayShoutOnMap(shout);
-                displayedShoutMarkers.put(shout.id, shoutMarker);
-
-                onShoutCreationShoutSelected(shout, shoutMarker);
-
-                shoutJustCreated = true;
-            }
-        }
     }
 
     @Override
@@ -407,6 +394,14 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
 
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
         mMap.moveCamera(update);
+    }
+
+    private void redirectToShout() {
+        displayedShoutModels.put(redirectToShout.id, redirectToShout);
+        Marker shoutMarker = displayShoutOnMap(redirectToShout);
+        displayedShoutMarkers.put(redirectToShout.id, shoutMarker);
+
+        onShoutCreationShoutSelected(redirectToShout, shoutMarker);
     }
 
     /**

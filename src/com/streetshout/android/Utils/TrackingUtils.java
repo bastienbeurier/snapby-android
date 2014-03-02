@@ -34,17 +34,17 @@ public class TrackingUtils {
     }
 
     public static void trackAppOpened(Context ctx) {
-//        JSONObject properties = new JSONObject();
-//        try {
-//            if (SessionUtils.isSignIn(ctx)) {
-//                properties.put("Signed in", "Yes");
-//            } else {
-//                properties.put("Signed in", "No");
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        getMixpanel(ctx).track("Open app", properties);
+        JSONObject properties = new JSONObject();
+        try {
+            if (SessionUtils.isSignIn(ctx)) {
+                properties.put("Signed in", "Yes");
+            } else {
+                properties.put("Signed in", "No");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        getMixpanel(ctx).track("Open app", properties);
 
         getMixpanel(ctx).getPeople().increment("Open app count", 1);
     }

@@ -47,6 +47,6 @@
     </style>
 
     <style name="CreateShoutEditText">
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 </resources>

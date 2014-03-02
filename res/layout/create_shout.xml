@@ -20,24 +20,49 @@
                                                             android:layout_width="match_parent"
                                                             android:background="@color/white"/>
 
-            <EditText android:id="@+id/shout_descr_dialog_descr"
-                      android:inputType="textCapSentences|textNoSuggestions"
-                      android:imeOptions="actionDone"
-                      android:layout_width="match_parent"
-                      android:layout_height="50dp"
-                      android:paddingLeft="10dp"
-                      android:paddingRight="10dp"
-                      android:paddingBottom="4dp"
-                      android:textColorHint="@color/lightGrey"
-                      android:textColor="@color/white"
-                      android:textCursorDrawable="@null"
-                      android:singleLine="true"
-                      android:background="@color/semiTransparentBlackDarker"
-                      style="@style/CreateShoutEditText"
-                      android:textSize="20dp"
-                      android:hint="@string/create_shout_dialog"
-                      android:gravity="center|left"
-                      android:layout_gravity="bottom"/>
+            <LinearLayout android:id="@+id/create_description_container"
+                          android:orientation="horizontal"
+                          android:layout_width="match_parent"
+                          android:layout_height="50dp"
+                          android:background="@color/semiTransparentBlackDarker"
+                          android:layout_gravity="bottom">
+
+                <EditText android:id="@+id/shout_descr_dialog_descr"
+                          android:inputType="textCapSentences|textNoSuggestions"
+                          android:imeOptions="actionDone"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          android:layout_weight="1"
+                          android:paddingLeft="10dp"
+                          android:paddingRight="10dp"
+                          android:paddingBottom="4dp"
+                          android:textColorHint="@color/lightGrey"
+                          android:textColor="@color/white"
+                          android:textCursorDrawable="@null"
+                          android:singleLine="true"
+                          android:background="@null"
+                          style="@style/CreateShoutEditText"
+                          android:textSize="20dp"
+                          android:hint="@string/create_shout_dialog"
+                          android:gravity="center|left"/>
+
+                <View android:layout_height="match_parent"
+                      android:layout_width="1dp"
+                      android:background="@color/darkGrey" />
+
+                <TextView android:id="@+id/create_description_count_text"
+                          android:layout_width="50dp"
+                          android:layout_height="match_parent"
+                          android:maxLines="1"
+                          android:fontFamily="sans-serif"
+                          android:textSize="15dp"
+                          android:textColor="@color/lightGrey"
+                          android:text="140"
+                          android:gravity="center"/>
+
+            </LinearLayout>
+
+
 
             <LinearLayout android:id="@+id/create_button_container"
                           android:layout_width="wrap_content"

@@ -33,7 +33,6 @@ public class Constants {
     public static final int CREATE_SHOUT_REQUEST = 11101;
     public static final int EXPLORE_REQUEST = 12376;
     public static final int SETTINGS_REQUEST = 14760;
-    public static final int UPLOAD_PHOTO_REQUEST = 15849;
     public static final int RESET_PASSWORD_REQUEST = 64783;
 
     /** AWS S3 **/

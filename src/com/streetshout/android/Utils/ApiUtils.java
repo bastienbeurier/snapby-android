@@ -63,7 +63,7 @@ public class ApiUtils {
     }
 
     /** API call to create a new shout */
-    public static void createShout(Activity activity, AQuery aq, double lat, double lng, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
+    public static void createShout(Activity activity, AQuery aq, double lat, double lng, String description, String shoutImageUrl, boolean anonymousUser, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/shouts.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
@@ -73,6 +73,7 @@ public class ApiUtils {
         params.put("lat", lat);
         params.put("lng", lng);
         params.put("device_id", GeneralUtils.getDeviceId(activity));
+        params.put("anonymous", anonymousUser ? 1 : 0);
 
         params = enrichParametersWithToken(activity, params);
 

@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -22,6 +23,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.streetshout.android.R;
 import com.streetshout.android.custom.CameraPreview;
+import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.LocationUtils;
@@ -57,6 +59,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     private LocationManager locationManager = null;
 
     public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
+
+    private boolean createShoutRedirect = false;
 
     /*
      * Define a request code to send to Google Play services
@@ -124,6 +128,25 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         });
 
         preview = (FrameLayout) findViewById(R.id.camera_preview);
+
+        Button captureButton = (Button) findViewById(R.id.capture_button);
+        captureButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (myLocation != null && myLocation.getLongitude() != 0 && myLocation.getLatitude() != 0 && mCamera != null) {
+                            // get an image from the camera
+                            mCamera.takePicture(null, null, mPicture);
+                        } else if (mCamera == null) {
+                            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_camera), Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else {
+                            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    }
+                }
+        );
     }
 
     private void setUpCamera(int cameraId) {
@@ -198,9 +221,7 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
 
         try {
             c = Camera.open(cameraId); // attempt to get a Camera instance
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             pictureFailed();
         }
 
@@ -297,6 +318,11 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     protected void onResume() {
         super.onResume();
 
+        if (createShoutRedirect) {
+            createShoutRedirect = false;
+            return;
+        }
+
         LocationUtils.checkLocationServicesEnabled(this, locationManager);
 
         if (frontCamera) {
@@ -304,25 +330,6 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         } else {
             setUpCamera(1);
         }
-
-        Button captureButton = (Button) findViewById(R.id.capture_button);
-        captureButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (myLocation != null && myLocation.getLongitude() != 0 && myLocation.getLatitude() != 0 && mCamera != null) {
-                            // get an image from the camera
-                            mCamera.takePicture(null, null, mPicture);
-                        } else if (mCamera == null) {
-                            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_camera), Toast.LENGTH_SHORT);
-                            toast.show();
-                        } else {
-                            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-                    }
-                }
-        );
     }
 
     private void releaseCamera(){
@@ -335,6 +342,23 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     private void pictureFailed() {
         Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.picture_failed), Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.CREATE_SHOUT_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                createShoutRedirect = true;
+
+                Shout shout = data.getParcelableExtra("newShout");
+
+                Intent redirectToShout = new Intent(this, ExploreActivity.class);
+                redirectToShout.putExtra("newShout", shout);
+                if (myLocation != null & myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+                    redirectToShout.putExtra("myLocation", myLocation);
+                }
+                startActivityForResult(redirectToShout, Constants.EXPLORE_REQUEST);
+            }
+        }
     }
 
     /**
@@ -397,32 +421,7 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
      */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        /*
-         * Google Play services can resolve some errors it detects.
-         * If the error has a resolution, try sending an Intent to
-         * start a Google Play services activity that can resolve
-         * error.
-         */
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-                /*
-                 * Thrown if Google Play services canceled the original
-                 * PendingIntent
-                 */
-            } catch (IntentSender.SendIntentException e) {
-                // Log the error
-                e.printStackTrace();
-            }
-        } else {
-            /*
-             * If no resolution is available, display a dialog to the
-             * user with the error.
-             */
-            LocationUtils.googlePlayServicesFailure(this);
-        }
+        LocationUtils.googlePlayServicesFailure(this);
     }
 
     // Define the callback method that receives location updates

@@ -20,6 +20,7 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -77,7 +78,11 @@ public class CreateShoutActivity extends Activity {
 
     private ImageView anonymousButton = null;
 
+    private TextView descriptionCharCount = null;
+
     private SquareFrameLayout photoContainer = null;
+
+    private boolean anonymousUser = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +114,7 @@ public class CreateShoutActivity extends Activity {
         refineButton = (ImageView) findViewById(R.id.create_refine_button);
         anonymousButton = (ImageView) findViewById(R.id.create_anonymous_button);
         photoContainer = (SquareFrameLayout) findViewById(R.id.create_photo_container);
+        descriptionCharCount = (TextView) findViewById(R.id.create_description_count_text);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,13 +145,21 @@ public class CreateShoutActivity extends Activity {
             }
         });
 
-        InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
-
-        descriptionView.requestFocus();
-
-        imm.showSoftInput(descriptionView, 0);
-
-        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        anonymousButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                anonymousUser = !anonymousUser;
+                if (anonymousUser) {
+                    ImageUtils.setBackground(CreateShoutActivity.this, anonymousButton, R.drawable.create_anonymous_button_pressed_selector);
+                    Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    ImageUtils.setBackground(CreateShoutActivity.this, anonymousButton, R.drawable.create_anonymous_button_selector);
+                    Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.anonymous_mode_disabled), Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
 
         descriptionView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -157,7 +171,7 @@ public class CreateShoutActivity extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 descriptionView.setError(null);
-//                setCharCountItemTitle(String.format("%d", Constants.MAX_DESCRIPTION_LENGTH - s.length()));
+                descriptionCharCount.setText(String.format("%d", Constants.MAX_DESCRIPTION_LENGTH - s.length()));
             }
         });
 
@@ -169,7 +183,7 @@ public class CreateShoutActivity extends Activity {
 
         root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
             public void onGlobalLayout(){
-                descriptionView.setY(Math.min(photoContainer.getHeight() - descriptionView.getHeight(),
+                findViewById(R.id.create_description_container).setY(Math.min(photoContainer.getHeight() - descriptionView.getHeight(),
                                                                        root.getHeight() - descriptionView.getHeight()));
             }
         });
@@ -200,6 +214,13 @@ public class CreateShoutActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
+        InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
+
+        descriptionView.requestFocus();
+
+        imm.showSoftInput(descriptionView, 0);
+
+        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     @Override
@@ -327,7 +348,7 @@ public class CreateShoutActivity extends Activity {
     }
 
     public void createNewShoutFromInfo() {
-        ApiUtils.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), shoutDescription, photoUrl, new AjaxCallback<JSONObject>() {
+        ApiUtils.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), shoutDescription, photoUrl, anonymousUser, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -344,9 +365,7 @@ public class CreateShoutActivity extends Activity {
 
                     Shout newShout = Shout.rawShoutToInstance(rawShout);
 
-                    boolean imagePresent = newShout.image != null && newShout.image.length() > 0;
-
-                    TrackingUtils.trackCreateShout(CreateShoutActivity.this, imagePresent, newShout.description.length());
+                    TrackingUtils.trackCreateShout(CreateShoutActivity.this);
 
                     createShoutDialog.cancel();
 
