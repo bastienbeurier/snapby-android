@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.androidquery.AQuery;
 import com.streetshout.android.custom.CircleImageView;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.R;
@@ -23,13 +22,9 @@ public class NewShoutFeedAdapter extends BaseAdapter {
 
     private ArrayList<Shout> items = null;
 
-    private AQuery feedFragmentAQuery = null;
-
-
     public NewShoutFeedAdapter(Context context, ArrayList<Shout> shouts) {
         this.context = context;
         this.items = shouts;
-        feedFragmentAQuery = new AQuery(context);
     }
 
     @Override
@@ -58,7 +53,7 @@ public class NewShoutFeedAdapter extends BaseAdapter {
 
             if (shout.image != null && shout.image.length() > 0) {
                 shoutImageViewPlaceHolder.setVisibility(View.VISIBLE);
-                feedFragmentAQuery.id(shoutImageView).image(shout.image + "--400");
+                GeneralUtils.getAquery(context).id(shoutImageView).image(shout.image + "--400");
                 shoutImageView.setVisibility(View.VISIBLE);
             } else {
                 shoutImageView.setVisibility(View.GONE);

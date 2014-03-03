@@ -41,6 +41,8 @@ public class Shout implements Parcelable {
 
     public Boolean removed = false;
 
+    public Boolean anonymous = false;
+
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static ArrayList<Shout> rawShoutsToInstances(JSONArray rawShouts) {
         ArrayList<Shout> shouts = new ArrayList<Shout>();
@@ -76,6 +78,7 @@ public class Shout implements Parcelable {
                 shout.username = rawShout.getString("username");
                 shout.image = rawShout.getString("image");
                 shout.removed = rawShout.getBoolean("removed");
+                shout.anonymous = rawShout.getBoolean("anonymous");
                 shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
             }
         } catch (JSONException e) {
@@ -131,6 +134,7 @@ public class Shout implements Parcelable {
         out.writeDouble(lat);
         out.writeDouble(lng);
         out.writeByte((byte) (removed ? 1 : 0));
+        out.writeByte((byte) (anonymous ? 1 : 0));
         out.writeString(image);
     }
 
@@ -147,6 +151,7 @@ public class Shout implements Parcelable {
         lat = in.readDouble();
         lng = in.readDouble();
         removed = in.readByte() != 0;
+        anonymous = in.readByte() != 0;
         image = in.readString();
     }
 }

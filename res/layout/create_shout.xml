@@ -34,9 +34,12 @@
                               android:layout_gravity="center|left">
 
                     <ImageView android:id="@+id/create_anonymous_button"
-                               android:layout_width="91dp"
+                               android:layout_width="75dp"
                                android:layout_height="65dp"
-                               android:padding="10dp"
+                               android:paddingTop="15dp"
+                               android:paddingBottom="15dp"
+                               android:paddingLeft="10dp"
+                               android:paddingRight="10dp"
                                android:src="@drawable/create_anonymous_button_selector"/>
 
                     <ImageView android:id="@+id/create_refine_button"

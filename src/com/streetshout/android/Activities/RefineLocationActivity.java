@@ -22,7 +22,7 @@ import com.streetshout.android.R;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.LocationUtils;
 
-public class RefineShoutLocationActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
+public class RefineLocationActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
 
     private Location myLocation = null;
 
@@ -110,7 +110,7 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
                     //Update shout position to most recent user position if available
                     boolean myLocationAvailable = setMapCameraPositionAndShoutPositionOnUserLocation();
 
-                    //Otherwise use position given by CreateShoutActivity
+                    //Otherwise use position given by CreateActivity
                     if (!myLocationAvailable) {
                         shoutLocation = getIntent().getParcelableExtra("shoutInitialLocation");
                         setMapCameraPositionOnShoutLocation();
@@ -137,7 +137,7 @@ public class RefineShoutLocationActivity extends Activity implements GoogleMap.O
         }
 
         if (myLocation == null) {
-            myLocation = LocationUtils.getLastLocationWithLocationManager(RefineShoutLocationActivity.this, locationManager);
+            myLocation = LocationUtils.getLastLocationWithLocationManager(RefineLocationActivity.this, locationManager);
         }
 
         if (myLocation == null) {

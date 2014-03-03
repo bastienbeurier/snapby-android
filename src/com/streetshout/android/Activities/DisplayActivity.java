@@ -47,7 +47,7 @@ import java.util.ArrayList;
 /**
  * Created by bastien on 1/29/14.
  */
-public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
+public class DisplayActivity extends Activity implements GoogleMap.OnMyLocationChangeListener {
 
     private GoogleMap mMap = null;
 
@@ -98,10 +98,10 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
             public void onClick(View v) {
                 v.setEnabled(false);
                 if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-                    Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
-                    Intent likes = new Intent(DisplayShoutActivity.this, LikesActivity.class);
+                    Intent likes = new Intent(DisplayActivity.this, LikesActivity.class);
                     likes.putExtra("shout", shout);
                     startActivity(likes);
                 }
@@ -145,7 +145,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
             @Override
             public void onClick(View v) {
                 createLikeButton.setEnabled(false);
-                likerIds.add(0, SessionUtils.getCurrentUser(DisplayShoutActivity.this).id);
+                likerIds.add(0, SessionUtils.getCurrentUser(DisplayActivity.this).id);
                 updateUIOnShoutLiked(true);
 
                 double lat = 0;
@@ -156,7 +156,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                     lng = myLocation.getLongitude();
                 }
 
-                ApiUtils.createLike(DisplayShoutActivity.this, shout, lat, lng, new AjaxCallback<JSONObject>() {
+                ApiUtils.createLike(DisplayActivity.this, shout, lat, lng, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject object, AjaxStatus status) {
                         super.callback(url, object, status);
@@ -164,7 +164,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                         createLikeButton.setEnabled(true);
 
                         if (status.getError() != null) {
-                            Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
                             toast.show();
                             likerIds.remove(0);
                             updateUIOnShoutLiked(false);
@@ -189,10 +189,10 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
     private void startCommentsActivity(View v) {
         v.setEnabled(false);
         if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-            Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
             toast.show();
         } else {
-            Intent comments = new Intent(DisplayShoutActivity.this, CommentsActivity.class);
+            Intent comments = new Intent(DisplayActivity.this, CommentsActivity.class);
             comments.putExtra("shout", shout);
             comments.putExtra("myLocation", myLocation);
             startActivity(comments);
@@ -248,7 +248,7 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                         boolean currentUserLikedShout = false;
 
                         for (int i = 0; i < likerIds.size(); i++) {
-                            if (likerIds.get(i).intValue() == SessionUtils.getCurrentUser(DisplayShoutActivity.this).id) {
+                            if (likerIds.get(i).intValue() == SessionUtils.getCurrentUser(DisplayActivity.this).id) {
                                 currentUserLikedShout = true;
                             }
                         }
@@ -396,19 +396,19 @@ public class DisplayShoutActivity extends Activity implements GoogleMap.OnMyLoca
                 startActivity(intent);
                 return true;
             case R.id.report_item:
-                ApiUtils.reportShout(DisplayShoutActivity.this, shout.id, "general", new AjaxCallback<JSONObject>() {
+                ApiUtils.reportShout(DisplayActivity.this, shout.id, "general", new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject object, AjaxStatus status) {
                         super.callback(url, object, status);
 
                         if (status.getError() != null) {
-                            Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.report_shout_failed), Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.report_shout_failed), Toast.LENGTH_SHORT);
                             toast.show();
                         }
                     }
                 });
 
-                Toast toast = Toast.makeText(DisplayShoutActivity.this, getString(R.string.report_shout_successful), Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.report_shout_successful), Toast.LENGTH_SHORT);
                 toast.show();
                 return true;
         }

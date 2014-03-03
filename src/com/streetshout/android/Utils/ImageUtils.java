@@ -15,6 +15,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -325,5 +326,14 @@ public class ImageUtils {
             return resources.getDimensionPixelSize(resourceId);
         }
         return 0;
+    }
+
+    public static void setBackground(Context context, View view, int drawable) {
+        int sdk = android.os.Build.VERSION.SDK_INT;
+        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackgroundDrawable(context.getResources().getDrawable(drawable));
+        } else {
+            view.setBackground(context.getResources().getDrawable(drawable));
+        }
     }
 }

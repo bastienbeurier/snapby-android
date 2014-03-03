@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -41,7 +40,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.Date;
 
-public class CreateShoutActivity extends Activity {
+public class CreateActivity extends Activity {
     private AQuery aq;
 
     private ConnectivityManager connectivityManager = null;
@@ -140,11 +139,11 @@ public class CreateShoutActivity extends Activity {
 
                 if (anonymousUser) {
                     anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button_pressed_selector));
-                    Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(CreateActivity.this, getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
                     anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button_selector));
-                    Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.anonymous_mode_disabled), Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(CreateActivity.this, getString(R.string.anonymous_mode_disabled), Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }
@@ -218,7 +217,7 @@ public class CreateShoutActivity extends Activity {
             return;
         }
 
-        Intent refineIntent = new Intent(CreateShoutActivity.this, RefineShoutLocationActivity.class);
+        Intent refineIntent = new Intent(CreateActivity.this, RefineLocationActivity.class);
 
         if (shoutLocationRefined) {
             refineIntent.putExtra("shoutRefinedLocation", shoutLocation);
@@ -279,7 +278,7 @@ public class CreateShoutActivity extends Activity {
             AsyncTask<Void, Void, Response> {
 
         protected Response doInBackground(Void... params) {
-            return CreateShoutActivity.clientManager.validateCredentials();
+            return CreateActivity.clientManager.validateCredentials();
         }
 
         protected void onPostExecute(Response response) {
@@ -348,7 +347,7 @@ public class CreateShoutActivity extends Activity {
 
                     Shout newShout = Shout.rawShoutToInstance(rawShout);
 
-                    TrackingUtils.trackCreateShout(CreateShoutActivity.this);
+                    TrackingUtils.trackCreateShout(CreateActivity.this);
 
                     createShoutDialog.cancel();
 
@@ -365,7 +364,7 @@ public class CreateShoutActivity extends Activity {
 
     public void shoutCreationFailed() {
         createShoutDialog.cancel();
-        Toast toast = Toast.makeText(CreateShoutActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(CreateActivity.this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
         toast.show();
     }
 }

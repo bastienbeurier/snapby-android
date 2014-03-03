@@ -130,4 +130,5 @@
     <string name="create_comment_failed">We couldn\'t save your comment, please try again.</string>
     <string name="anonymous_mode_enabled">Anonymous mode enabled.</string>
     <string name="anonymous_mode_disabled">Anonymous mode disabled.</string>
+    <string name="anonymous_name">Anonymous</string>
 </resources>

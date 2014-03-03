@@ -1,14 +1,13 @@
 package com.streetshout.android.activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
@@ -29,7 +28,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.adapters.MapWindowAdapter;
-import com.streetshout.android.fragments.FeedFragment;
+import com.streetshout.android.adapters.ShoutSlidePagerAdapter;
+import com.streetshout.android.custom.ZoomOutPageTransformer;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.*;
@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExploreActivity extends Activity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, FeedFragment.OnFeedShoutSelectedListener {
+public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -53,11 +53,9 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
 
     private HashMap<Integer, Marker>  displayedShoutMarkers = null;
 
-    private Location myLocation = null;
+    public Location myLocation = null;
 
     private CameraPosition savedInstanceStateCameraPosition = null;
-
-    private FeedFragment feedFragment = null;
 
     private boolean notificationRedirectionHandled = false;
 
@@ -70,6 +68,10 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
     public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     private Shout redirectToShout = null;
+
+    private ViewPager shoutViewPager;
+
+    private PagerAdapter shoutPagerAdapter;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,8 +99,6 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
 
         displayedShoutModels = new HashMap<Integer, Shout>();
         displayedShoutMarkers = new HashMap<Integer, Marker>();
-
-        feedFragment = (FeedFragment) getFragmentManager().findFragmentById(R.id.feed_fragment);
 
         if (savedInstanceState != null) {
             savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
@@ -166,12 +166,12 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
     }
 
     private void pullShouts() {
-        findViewById(R.id.no_connection_feed).setVisibility(View.GONE);
-        findViewById(R.id.feed_wrapper).setVisibility(View.VISIBLE);
+//        findViewById(R.id.no_connection_feed).setVisibility(View.GONE);
+//        findViewById(R.id.feed_wrapper).setVisibility(View.VISIBLE);
 
         MapRequestHandler mapReqHandler = new MapRequestHandler();
 
-        feedFragment.showFeedProgressBar();
+//        feedFragment.showFeedProgressBar();
 
         //Set listener to catch API response from the MapRequestHandler
         mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
@@ -193,8 +193,17 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
                         shouts = checkForRemovedShouts(shouts);
 
                         displayShoutsOnMap(shouts);
-                        feedFragment.hideFeedProgressBar();
-                        feedFragment.setAdapter(ExploreActivity.this, shouts);
+
+                        if (shouts.size() > 0) {
+                            // Instantiate a ViewPager and a PagerAdapter.
+                            shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
+                            shoutPagerAdapter = new ShoutSlidePagerAdapter(ExploreActivity.this.getSupportFragmentManager(), ExploreActivity.this, shouts);
+                            shoutViewPager.setAdapter(shoutPagerAdapter);
+                            shoutViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+                        } else {
+                            shoutViewPager.setAdapter(null);
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -221,10 +230,10 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
     }
 
     private void showNoConnectionInFeedMessage() {
-        feedFragment.hideFeedProgressBar();
-        findViewById(R.id.feed_progress_bar).setVisibility(View.GONE);
-        findViewById(R.id.no_connection_feed).setVisibility(View.VISIBLE);
-        findViewById(R.id.feed_wrapper).setVisibility(View.GONE);
+//        feedFragment.hideFeedProgressBar();
+//        findViewById(R.id.feed_progress_bar).setVisibility(View.GONE);
+//        findViewById(R.id.no_connection_feed).setVisibility(View.VISIBLE);
+//        findViewById(R.id.feed_wrapper).setVisibility(View.GONE);
     }
 
     private void displayShoutsOnMap(List<Shout> shouts) {
@@ -280,13 +289,6 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
-    @Override
-    public void onFeedShoutSelected(Shout shout) {
-        TrackingUtils.trackDisplayShout(this, shout, "Feed");
-
-        shoutSelected(shout);
-    }
-
     private void onMapShoutSelected(Marker marker) {
         Shout shout = displayedShoutModels.get(Integer.parseInt(marker.getTitle()));
 
@@ -310,7 +312,7 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
     }
 
     private void shoutSelected(Shout shout) {
-        Intent displayShout = new Intent(this, DisplayShoutActivity.class);
+        Intent displayShout = new Intent(this, DisplayActivity.class);
         displayShout.putExtra("shout", shout);
         displayShout.putExtra("myLocation", myLocation);
         startActivity(displayShout);
@@ -331,7 +333,7 @@ public class ExploreActivity extends Activity implements GooglePlayServicesClien
             //Set map settings
             UiSettings settings = mMap.getUiSettings();
             settings.setZoomControlsEnabled(false);
-            settings.setMyLocationButtonEnabled(true);
+            settings.setMyLocationButtonEnabled(false);
             settings.setRotateGesturesEnabled(false);
             settings.setTiltGesturesEnabled(false);
             mMap.setMyLocationEnabled(true);

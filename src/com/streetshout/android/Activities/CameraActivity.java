@@ -2,14 +2,12 @@ package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -226,7 +224,7 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     }
 
     private void goToCreateShout(String imagePath) {
-        Intent createShout = new Intent(this, CreateShoutActivity.class);
+        Intent createShout = new Intent(this, CreateActivity.class);
         createShout.putExtra("myLocation", myLocation);
         createShout.putExtra("imagePath", imagePath);
         startActivityForResult(createShout, Constants.CREATE_SHOUT_REQUEST);
@@ -262,11 +260,14 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
 
             Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath);
 
-            if (frontCamera) {
-                formattedPicture = ImageUtils.rotateImage(formattedPicture);
-            } else {
-                formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
-                formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
+            //TODO: check with Philippe's phone
+            if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
+                if (frontCamera) {
+                    formattedPicture = ImageUtils.rotateImage(formattedPicture);
+                } else {
+                    formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
+                    formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
+                }
             }
 
             //Save the small res image in the imagePath
@@ -281,7 +282,7 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
-        if (ImageUtils.isSDPresent() == false){
+        if (!ImageUtils.isSDPresent()){
             pictureFailed();
             return null;
         }

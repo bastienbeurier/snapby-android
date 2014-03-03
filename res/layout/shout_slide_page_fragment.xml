@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white">
+
+    <View android:id="@+id/explore_shout_colored_bar"
+          android:layout_width="10dp"
+          android:layout_height="fill_parent"
+          android:background="@color/shoutBlue"/>
+
+    <ImageView android:id="@+id/explore_shout_image"
+               android:scaleType="centerCrop"
+               android:layout_height="match_parent"
+               android:layout_width="match_parent"
+               android:layout_weight="0.8"/>
+
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:layout_weight="0.5">
+
+        <LinearLayout android:id="@+id/explore_shout_colored_container"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="horizontal"
+                      android:layout_weight="1"
+                      android:layout_margin="10dp"
+                      android:background="@drawable/public_shout_meta_info">
+
+            <FrameLayout android:layout_width="match_parent"
+                         android:layout_height="match_parent"
+                         android:layout_weight="1">
+
+                <LinearLayout android:layout_width="wrap_content"
+                              android:layout_height="match_parent"
+                              android:orientation="vertical"
+                              android:layout_gravity="center"
+                              android:layout_marginLeft="10dp">
+
+                    <LinearLayout android:layout_width="wrap_content"
+                                  android:layout_height="match_parent"
+                                  android:layout_weight="1"
+                                  android:orientation="horizontal"
+                                  android:gravity="center">
+
+                        <ImageView android:layout_width="18dp"
+                                   android:layout_height="18dp"
+                                   android:src="@drawable/explore_shout_age_icon"
+                                   android:layout_marginRight="5dp"/>
+
+                        <TextView android:id="@+id/explore_shout_age"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="9min"
+                                  android:textColor="@color/white"
+                                  android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="wrap_content"
+                                  android:layout_height="match_parent"
+                                  android:layout_weight="1"
+                                  android:orientation="horizontal"
+                                  android:gravity="center">
+
+                        <ImageView android:layout_width="18dp"
+                                   android:layout_height="18dp"
+                                   android:src="@drawable/explore_shout_distance_icon"
+                                   android:layout_marginRight="5dp"/>
+
+                        <TextView android:id="@+id/explore_shout_distance"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="15km"
+                                  android:textColor="@color/white"
+                                  android:textStyle="bold"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </FrameLayout>
+            <FrameLayout android:layout_width="match_parent"
+                         android:layout_height="match_parent"
+                         android:layout_weight="1">
+
+                <LinearLayout android:layout_width="wrap_content"
+                              android:layout_height="match_parent"
+                              android:orientation="vertical"
+                              android:layout_gravity="center"
+                              android:layout_marginRight="10dp">
+
+                    <LinearLayout android:layout_width="wrap_content"
+                                  android:layout_height="match_parent"
+                                  android:layout_weight="1"
+                                  android:orientation="horizontal"
+                                  android:gravity="center">
+
+                        <ImageView android:layout_width="18dp"
+                                   android:layout_height="18dp"
+                                   android:src="@drawable/explore_shout_like_count_icon"
+                                   android:layout_marginRight="5dp"/>
+
+                        <TextView android:id="@+id/explore_shout_like_count"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="9"
+                                  android:textColor="@color/white"
+                                  android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="wrap_content"
+                                  android:layout_height="match_parent"
+                                  android:layout_weight="1"
+                                  android:orientation="horizontal"
+                                  android:gravity="center">
+
+                        <ImageView android:layout_width="18dp"
+                                   android:layout_height="18dp"
+                                   android:src="@drawable/explore_shout_comment_count_icon"
+                                   android:layout_marginRight="5dp"/>
+
+                        <TextView android:id="@+id/explore_shout_comment_count"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="4"
+                                  android:textColor="@color/white"
+                                  android:textStyle="bold"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout android:orientation="vertical"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp"
+                      android:layout_weight="0.5">
+
+            <TextView android:id="@+id/explore_shout_username"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:textColor="@color/shoutBlue"
+                      android:textStyle="bold"
+                      android:fontFamily="sans-serif"
+                      android:text="Username"
+                      android:gravity="left"/>
+
+            <TextView android:id="@+id/explore_shout_description"
+                      android:layout_width="fill_parent"
+                      android:layout_height="fill_parent"
+                      android:layout_weight="1"
+                      android:text="Description"
+                      android:gravity="top|left"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
