@@ -1,8 +1,10 @@
 package com.streetshout.android.fragments;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
+import com.streetshout.android.activities.DisplayActivity;
 import com.streetshout.android.activities.ExploreActivity;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.GeneralUtils;
@@ -100,6 +103,21 @@ public class ShoutSlidePageFragment extends Fragment {
             ImageUtils.setBackground(getActivity(), coloredContainer, R.drawable.public_shout_meta_info);
         }
         descriptionView.setText(shout.description);
+
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ExploreActivity exploreActivity = ((ExploreActivity) getActivity());
+
+                Intent displayShout = new Intent(exploreActivity, DisplayActivity.class);
+                displayShout.putExtra("shout", shout);
+
+                if (exploreActivity.myLocation != null && exploreActivity.myLocation.getLatitude() != 0 && exploreActivity.myLocation.getLongitude() != 0)  {
+                    displayShout.putExtra("myLocation", exploreActivity.myLocation);
+                }
+                startActivity(displayShout);
+            }
+        });
 
         return rootView;
     }

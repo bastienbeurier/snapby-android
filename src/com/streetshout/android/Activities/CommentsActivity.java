@@ -35,6 +35,8 @@ public class CommentsActivity extends ListActivity {
 
     private View feedWrapperView = null;
 
+    private Location myLocation = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.comments);
@@ -44,8 +46,12 @@ public class CommentsActivity extends ListActivity {
         progressBarWrapper = findViewById(R.id.comments_feed_progress_bar);
         feedWrapperView = findViewById(R.id.comments_feed_wrapper);
 
-        final Shout shout = getIntent().getParcelableExtra("shout");
-        final Location myLocation = getIntent().getParcelableExtra("myLocation");
+        Intent intent = getIntent();
+
+        final Shout shout = intent.getParcelableExtra("shout");
+        if (intent.hasExtra("myLocation")) {
+            myLocation = getIntent().getParcelableExtra("myLocation");
+        }
 
         final Location shoutLocation = new Location("");
         shoutLocation.setLatitude(shout.lat);
