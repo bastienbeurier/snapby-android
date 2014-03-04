@@ -92,6 +92,16 @@ public class GeneralUtils {
         return R.drawable.public_shout_marker;
     }
 
+    public static int getShoutColor(Context ctx, Shout shout) {
+        //TODO Implement following
+
+        if (shout.anonymous) {
+            return R.color.anonymousGrey;
+        }
+
+        return R.color.publicYellow;
+    }
+
     public static boolean isValidEmail(String email) {
         boolean isValid = false;
 

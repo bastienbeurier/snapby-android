@@ -26,8 +26,6 @@ import com.streetshout.android.utils.TimeUtils;
  */
 public class ShoutSlidePageFragment extends Fragment {
 
-    private OnFeedShoutSelectedListener shoutSelectedListener;
-
     private Shout shout = null;
 
     private AQuery aq = null;
@@ -96,13 +94,13 @@ public class ShoutSlidePageFragment extends Fragment {
 
         if (shout.anonymous) {
             usernameView.setText(getResources().getString(R.string.anonymous_name));
-            usernameView.setTextColor(getResources().getColor(R.color.lightGrey));
-            coloredBar.setBackgroundColor(getResources().getColor(R.color.lightGrey));
+            usernameView.setTextColor(getResources().getColor(R.color.anonymousGrey));
+            coloredBar.setBackgroundColor(getResources().getColor(R.color.anonymousGrey));
             ImageUtils.setBackground(getActivity(), coloredContainer, R.drawable.anonymous_shout_meta_info);
         } else {
             usernameView.setText("@" + shout.username);
 
-            coloredBar.setBackgroundColor(getResources().getColor(R.color.shoutPink));
+            coloredBar.setBackgroundColor(getResources().getColor(R.color.publicYellow));
             ImageUtils.setBackground(getActivity(), coloredContainer, R.drawable.public_shout_meta_info);
         }
         descriptionView.setText(shout.description);
@@ -123,28 +121,5 @@ public class ShoutSlidePageFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-//    @Override
-//    public void setMenuVisibility(final boolean visible) {
-//        super.setMenuVisibility(visible);
-//        if (visible) {
-//            shoutSelectedListener.onFeedShoutSelected(shout);
-//        }
-//    }
-
-
-    public interface OnFeedShoutSelectedListener {
-        public void onFeedShoutSelected(Shout shout);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            shoutSelectedListener = (OnFeedShoutSelectedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnFeedShoutSelectedListener");
-        }
     }
 }

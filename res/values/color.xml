@@ -19,4 +19,6 @@
     <color name="veryVeryLightGrey">#F2F2F2</color>
     <color name="shoutLightRed">#ED4723</color>
     <color name="facebookBlue">#3b5999</color>
+    <color name="publicYellow">#E9C820</color>
+    <color name="anonymousGrey">#AAAAAA</color>
 </resources>

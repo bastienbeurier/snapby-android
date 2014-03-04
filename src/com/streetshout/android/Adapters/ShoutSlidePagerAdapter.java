@@ -13,14 +13,11 @@ import java.util.ArrayList;
  * Created by bastien on 3/3/14.
  */
 public class ShoutSlidePagerAdapter extends FragmentStatePagerAdapter {
-    private Context context = null;
-
     private ArrayList<Shout> items = null;
 
-    public ShoutSlidePagerAdapter(FragmentManager fm, Context context, ArrayList<Shout> shouts) {
+    public ShoutSlidePagerAdapter(FragmentManager fm, ArrayList<Shout> shouts) {
         super(fm);
 
-        this.context = context;
         this.items = shouts;
     }
 

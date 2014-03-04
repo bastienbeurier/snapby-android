@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, ShoutSlidePageFragment.OnFeedShoutSelectedListener {
+public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -121,6 +121,23 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
         shoutProgressBar = (FrameLayout) findViewById(R.id.explore_shout_progress_bar);
         shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
+        shoutViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i2) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                updateSelectedShoutMarker(shouts.get(i));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
+
         noShoutInFeed = (TextView) findViewById(R.id.explore_shout_no_shout);
         noConnectionInFeed = (TextView) findViewById(R.id.explore_shout_no_connection);
 
@@ -184,7 +201,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     }
 
     private void pullShouts() {
-        shoutViewPager.setAdapter(null);
         mMap.clear();
         shoutSelectedOnMap = null;
         displayedShoutModels = new HashMap<Integer, Shout>();
@@ -221,8 +237,9 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
                         if (shouts.size() > 0) {
                             // Instantiate a ViewPager and a PagerAdapter.
-                            shoutPagerAdapter = new ShoutSlidePagerAdapter(ExploreActivity.this.getSupportFragmentManager(), ExploreActivity.this, shouts);
+                            shoutPagerAdapter = new ShoutSlidePagerAdapter(ExploreActivity.this.getSupportFragmentManager(), shouts);
                             shoutViewPager.setAdapter(shoutPagerAdapter);
+                            updateSelectedShoutMarker(shouts.get(0));
                             shoutViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
                             shoutViewPager.setVisibility(View.VISIBLE);
                             noShoutInFeed.setVisibility(View.GONE);
@@ -344,10 +361,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 break;
             }
         }
-    }
-
-    public void onFeedShoutSelected(Shout shout) {
-        updateSelectedShoutMarker(shout);
     }
 
     private void onNotificationShoutSelected(Shout shout, Marker marker) {
