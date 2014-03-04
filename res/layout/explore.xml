@@ -59,10 +59,36 @@
         <RelativeLayout android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1.2">
+
+            <FrameLayout android:id="@+id/explore_shout_progress_bar"
+                         android:layout_width="match_parent"
+                         android:layout_height="match_parent">
+
+                <ProgressBar android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:layout_gravity="center"/>
+
+            </FrameLayout>
+
+            <TextView android:id="@+id/explore_shout_no_connection"
+                      android:text="@string/no_connection_feed"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:gravity="center"
+                      android:visibility="gone"/>
+
+            <TextView android:id="@+id/explore_shout_no_shout"
+                      android:text="@string/empty_feed"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:gravity="center"
+                      android:visibility="gone"/>
+
             <android.support.v4.view.ViewPager
                     android:id="@+id/explore_view_pager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:visibility="gone"/>
 
 
             <ImageView android:layout_height="7dp"

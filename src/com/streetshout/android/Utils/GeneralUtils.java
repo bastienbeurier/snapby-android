@@ -44,28 +44,52 @@ public class GeneralUtils {
         }
     }
 
-    public static int getShoutMarkerImageResource(Shout shout, boolean selected) {
+    public static int getShoutMarkerImageResourceAccordingToAge(Shout shout, boolean selected) {
         long shoutAge = TimeUtils.getShoutAge(shout.created);
 
         if (shoutAge < Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS) {
             if (selected) {
-                return R.drawable.marker_shout_red_selected;
+//                return R.drawable.marker_shout_red_selected;
             } else {
-                return R.drawable.marker_shout_red;
+//                return R.drawable.marker_shout_red;
             }
         } else if (shoutAge < 2 * (Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS)) {
             if (selected) {
-                return R.drawable.marker_shout_pink_selected;
+//                return R.drawable.marker_shout_pink_selected;
             } else {
-                return R.drawable.marker_shout_pink;
+//                return R.drawable.marker_shout_pink;
             }
         } else {
             if (selected) {
-                return R.drawable.marker_shout_lightpink_selected;
+//                return R.drawable.marker_shout_lightpink_selected;
             } else {
-                return R.drawable.marker_shout_lightpink;
+//                return R.drawable.marker_shout_lightpink;
             }
         }
+
+        return 0;
+    }
+
+    public static int getShoutMarkerImageResource(Context ctx, Shout shout, boolean selected) {
+        if (selected) {
+            return R.drawable.selected_shout_marker;
+        }
+
+        if (SessionUtils.getCurrentUser(ctx).id == shout.userId) {
+            return R.drawable.my_shout_marker;
+        }
+
+        //TODO Implement following
+
+        if (shout.trending) {
+            return R.drawable.trending_shout_marker;
+        }
+
+        if (shout.anonymous) {
+            return R.drawable.anonymous_shout_marker;
+        }
+
+        return R.drawable.public_shout_marker;
     }
 
     public static boolean isValidEmail(String email) {

@@ -1,5 +1,6 @@
 package com.streetshout.android.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ import com.streetshout.android.utils.TimeUtils;
  * Created by bastien on 3/3/14.
  */
 public class ShoutSlidePageFragment extends Fragment {
+
+    private OnFeedShoutSelectedListener shoutSelectedListener;
 
     private Shout shout = null;
 
@@ -120,5 +123,28 @@ public class ShoutSlidePageFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+//    @Override
+//    public void setMenuVisibility(final boolean visible) {
+//        super.setMenuVisibility(visible);
+//        if (visible) {
+//            shoutSelectedListener.onFeedShoutSelected(shout);
+//        }
+//    }
+
+
+    public interface OnFeedShoutSelectedListener {
+        public void onFeedShoutSelected(Shout shout);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            shoutSelectedListener = (OnFeedShoutSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFeedShoutSelectedListener");
+        }
     }
 }

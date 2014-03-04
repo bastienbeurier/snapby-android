@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
@@ -30,6 +33,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.adapters.MapWindowAdapter;
 import com.streetshout.android.adapters.ShoutSlidePagerAdapter;
 import com.streetshout.android.custom.ZoomOutPageTransformer;
+import com.streetshout.android.fragments.ShoutSlidePageFragment;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.*;
@@ -40,7 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
+public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, ShoutSlidePageFragment.OnFeedShoutSelectedListener {
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -73,6 +77,16 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     private PagerAdapter shoutPagerAdapter;
 
+    private FrameLayout shoutProgressBar = null;
+
+    private TextView noShoutInFeed = null;
+
+    private TextView noConnectionInFeed = null;
+
+    private Shout shoutSelectedOnMap = null;
+
+    private ArrayList<Shout> shouts = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
@@ -97,12 +111,14 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             LocationUtils.googlePlayServicesFailure(this);
         }
 
-        displayedShoutModels = new HashMap<Integer, Shout>();
-        displayedShoutMarkers = new HashMap<Integer, Marker>();
-
         if (savedInstanceState != null) {
             savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
+
+        shoutProgressBar = (FrameLayout) findViewById(R.id.explore_shout_progress_bar);
+        shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
+        noShoutInFeed = (TextView) findViewById(R.id.explore_shout_no_shout);
+        noConnectionInFeed = (TextView) findViewById(R.id.explore_shout_no_connection);
 
         newMap = setUpMapIfNeeded();
     }
@@ -136,10 +152,11 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             }
         }
 
-        //Case where user just created a shout (deprecated :) )
-        if (redirectToShout != null) {
-            redirectToShout();
-        }
+        //TODO: change implementation
+//        if (redirectToShout != null) {
+//            redirectToShout();
+//        }
+        //        redirectToShout = null;
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         //But activity gets destroyed when user shout with photo (memory issue), so don't initialize in that case!
@@ -151,11 +168,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 initializeCameraWithLocation(myLocation);
             }
             newMap = false;
+            pullShouts();
         }
-
-        redirectToShout = null;
-
-        pullShouts();
     }
 
     @Override
@@ -166,12 +180,18 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     }
 
     private void pullShouts() {
-//        findViewById(R.id.no_connection_feed).setVisibility(View.GONE);
-//        findViewById(R.id.feed_wrapper).setVisibility(View.VISIBLE);
-
         MapRequestHandler mapReqHandler = new MapRequestHandler();
 
-//        feedFragment.showFeedProgressBar();
+        shoutViewPager.setAdapter(null);
+        mMap.clear();
+        shoutSelectedOnMap = null;
+        displayedShoutModels = new HashMap<Integer, Shout>();
+        displayedShoutMarkers = new HashMap<Integer, Marker>();
+        shouts = null;
+        shoutViewPager.setVisibility(View.GONE);
+        noConnectionInFeed.setVisibility(View.GONE);
+        noShoutInFeed.setVisibility(View.GONE);
+        shoutProgressBar.setVisibility(View.VISIBLE);
 
         //Set listener to catch API response from the MapRequestHandler
         mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
@@ -189,19 +209,25 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                             return;
                         }
 
-                        ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
+                        shouts = Shout.rawShoutsToInstances(rawShouts);
                         shouts = checkForRemovedShouts(shouts);
 
                         displayShoutsOnMap(shouts);
 
+                        noConnectionInFeed.setVisibility(View.GONE);
+                        shoutProgressBar.setVisibility(View.GONE);
+
                         if (shouts.size() > 0) {
                             // Instantiate a ViewPager and a PagerAdapter.
-                            shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
                             shoutPagerAdapter = new ShoutSlidePagerAdapter(ExploreActivity.this.getSupportFragmentManager(), ExploreActivity.this, shouts);
                             shoutViewPager.setAdapter(shoutPagerAdapter);
                             shoutViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+                            shoutViewPager.setVisibility(View.VISIBLE);
+                            noShoutInFeed.setVisibility(View.GONE);
                         } else {
                             shoutViewPager.setAdapter(null);
+                            shoutViewPager.setVisibility(View.GONE);
+                            noShoutInFeed.setVisibility(View.VISIBLE);
                         }
 
                     } catch (Exception e) {
@@ -230,10 +256,10 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     }
 
     private void showNoConnectionInFeedMessage() {
-//        feedFragment.hideFeedProgressBar();
-//        findViewById(R.id.feed_progress_bar).setVisibility(View.GONE);
-//        findViewById(R.id.no_connection_feed).setVisibility(View.VISIBLE);
-//        findViewById(R.id.feed_wrapper).setVisibility(View.GONE);
+        shoutViewPager.setVisibility(View.GONE);
+        shoutProgressBar.setVisibility(View.GONE);
+        noShoutInFeed.setVisibility(View.GONE);
+        noConnectionInFeed.setVisibility(View.VISIBLE);
     }
 
     private void displayShoutsOnMap(List<Shout> shouts) {
@@ -266,7 +292,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
         markerOptions.position(new LatLng(shout.lat, shout.lng));
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout, false)));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, false)));
 
         markerOptions.title(Integer.toString(shout.id));
 
@@ -286,36 +312,54 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         super.onSaveInstanceState(outState);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    }
+   private void updateSelectedShoutMarker(Shout shout) {
+       if (shoutSelectedOnMap != null) {
+           Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
+           if (oldSelectedMarker != null) {
+               oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shoutSelectedOnMap, false)));
+           }
+       }
+
+       shoutSelectedOnMap = shout;
+
+       Marker marker = displayedShoutMarkers.get(shout.id);
+
+       Log.d("BAB", "SELECTING ICON FROM SHOUT WITH DESC:" + shout.description);
+
+       marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, true)));
+   }
 
     private void onMapShoutSelected(Marker marker) {
-        Shout shout = displayedShoutModels.get(Integer.parseInt(marker.getTitle()));
+        Shout selectedShout = displayedShoutModels.get(Integer.parseInt(marker.getTitle()));
 
-        TrackingUtils.trackDisplayShout(this, shout, "Map");
+        int count = shouts.size();
 
-        shoutSelected(shout);
+        for (int i = 0; i < count; i++) {
+            if (shouts.get(i).id == selectedShout.id) {
+                //Creates a fragment that calls onFeedShoutSelected
+                shoutViewPager.setCurrentItem(i);
+                Log.d("BAB", "MAP SELECTED SHOUT: " + i + "WITH DESC:" + selectedShout.description);
+                break;
+            }
+        }
+    }
+
+    public void onFeedShoutSelected(Shout shout) {
+        updateSelectedShoutMarker(shout);
     }
 
     private void onNotificationShoutSelected(Shout shout, Marker marker) {
-        TrackingUtils.trackDisplayShout(this, shout, "Notification");
 
-        shoutSelected(shout);
+        //TODO only display the notified shout?
 
         updateMapOnShoutSelectedFromNotificationOrCreation(shout, marker);
     }
 
     private void onShoutCreationShoutSelected(Shout shout, Marker marker) {
-        shoutSelected(shout);
+
+        //TODO only display the created shout?
 
         updateMapOnShoutSelectedFromNotificationOrCreation(shout, marker);
-    }
-
-    private void shoutSelected(Shout shout) {
-        Intent displayShout = new Intent(this, DisplayActivity.class);
-        displayShout.putExtra("shout", shout);
-        displayShout.putExtra("myLocation", myLocation);
-        startActivity(displayShout);
     }
 
     /**
