@@ -45,6 +45,10 @@ public class Shout implements Parcelable {
 
     public Boolean trending = false;
 
+    public int likeCount = 0;
+
+    public int commentCount = 0;
+
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static ArrayList<Shout> rawShoutsToInstances(JSONArray rawShouts) {
         ArrayList<Shout> shouts = new ArrayList<Shout>();
@@ -82,6 +86,8 @@ public class Shout implements Parcelable {
                 shout.removed = rawShout.getBoolean("removed");
                 shout.anonymous = rawShout.getBoolean("anonymous");
                 shout.trending = rawShout.getBoolean("trending");
+                shout.likeCount = Integer.parseInt(rawShout.getString("like_count"));
+                shout.commentCount = Integer.parseInt(rawShout.getString("comment_count"));
                 shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
             }
         } catch (JSONException e) {
@@ -139,6 +145,8 @@ public class Shout implements Parcelable {
         out.writeByte((byte) (removed ? 1 : 0));
         out.writeByte((byte) (anonymous ? 1 : 0));
         out.writeByte((byte) (trending ? 1 : 0));
+        out.writeInt(likeCount);
+        out.writeInt(commentCount);
         out.writeString(image);
     }
 
@@ -157,6 +165,8 @@ public class Shout implements Parcelable {
         removed = in.readByte() != 0;
         anonymous = in.readByte() != 0;
         trending = in.readByte() != 0;
+        likeCount = in.readInt();
+        commentCount = in.readInt();
         image = in.readString();
     }
 }

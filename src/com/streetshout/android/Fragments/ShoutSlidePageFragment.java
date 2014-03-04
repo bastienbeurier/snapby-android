@@ -1,11 +1,9 @@
 package com.streetshout.android.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,12 +66,15 @@ public class ShoutSlidePageFragment extends Fragment {
         imageView = (ImageView) rootView.findViewById(R.id.explore_shout_image);
         ageView = (TextView) rootView.findViewById(R.id.explore_shout_age);
         distanceView = (TextView) rootView.findViewById(R.id.explore_shout_distance);
-        likeCountView = (TextView) rootView.findViewById(R.id.explore_shout_distance);
-        commentCountView = (TextView) rootView.findViewById(R.id.explore_shout_distance);
+        likeCountView = (TextView) rootView.findViewById(R.id.explore_shout_like_count);
+        commentCountView = (TextView) rootView.findViewById(R.id.explore_shout_comment_count);
         usernameView = (TextView) rootView.findViewById(R.id.explore_shout_username);
         descriptionView = (TextView) rootView.findViewById(R.id.explore_shout_description);
         coloredBar = rootView.findViewById(R.id.explore_shout_colored_bar);
         coloredContainer = rootView.findViewById(R.id.explore_shout_colored_container);
+
+        likeCountView.setText(Integer.toString(shout.likeCount));
+        commentCountView.setText(Integer.toString(shout.commentCount));
 
         aq.id(imageView).image(shout.image + "--400");
 

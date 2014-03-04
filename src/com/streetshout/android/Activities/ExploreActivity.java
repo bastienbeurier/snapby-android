@@ -174,10 +174,10 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         }
 
         //TODO: change implementation
-//        if (redirectToShout != null) {
-//            redirectToShout();
-//        }
-        //        redirectToShout = null;
+        if (redirectToShout != null) {
+            redirectToShout();
+        }
+        redirectToShout = null;
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         //But activity gets destroyed when user shout with photo (memory issue), so don't initialize in that case!
@@ -343,8 +343,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
        Marker marker = displayedShoutMarkers.get(shout.id);
 
-       Log.d("BAB", "SELECTING ICON FROM SHOUT WITH DESC:" + shout.description);
-
        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, true)));
    }
 
@@ -357,7 +355,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             if (shouts.get(i).id == selectedShout.id) {
                 //Creates a fragment that calls onFeedShoutSelected
                 shoutViewPager.setCurrentItem(i);
-                Log.d("BAB", "MAP SELECTED SHOUT: " + i + "WITH DESC:" + selectedShout.description);
                 break;
             }
         }
