@@ -87,6 +87,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     private ArrayList<Shout> shouts = null;
 
+    private MapRequestHandler mapReqHandler = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
@@ -114,6 +116,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         if (savedInstanceState != null) {
             savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
         }
+
+        mapReqHandler = new MapRequestHandler();
 
         shoutProgressBar = (FrameLayout) findViewById(R.id.explore_shout_progress_bar);
         shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
@@ -180,8 +184,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     }
 
     private void pullShouts() {
-        MapRequestHandler mapReqHandler = new MapRequestHandler();
-
         shoutViewPager.setAdapter(null);
         mMap.clear();
         shoutSelectedOnMap = null;
