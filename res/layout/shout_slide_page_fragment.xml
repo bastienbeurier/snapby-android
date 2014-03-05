@@ -11,11 +11,21 @@
           android:layout_height="fill_parent"
           android:background="@color/shoutBlue"/>
 
-    <ImageView android:id="@+id/explore_shout_image"
-               android:scaleType="centerCrop"
-               android:layout_height="match_parent"
-               android:layout_width="match_parent"
-               android:layout_weight="0.7"/>
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:layout_weight="0.7"
+                 android:background="@color/lightShoutBlue">
+
+        <ImageView android:layout_width="100dp"
+                   android:layout_height="100dp"
+                   android:src="@drawable/shout_image_place_holder"
+                   android:layout_gravity="center"/>
+
+        <ImageView android:id="@+id/explore_shout_image"
+                   android:scaleType="centerCrop"
+                   android:layout_height="match_parent"
+                   android:layout_width="match_parent"/>
+    </FrameLayout>
 
     <LinearLayout android:orientation="vertical"
                   android:layout_width="match_parent"

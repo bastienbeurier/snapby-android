@@ -6,6 +6,7 @@
     <color name="darkGrey">#CC343434</color>
     <!-- Real shout blue is #8AB0DD but android displays it differently-->
     <color name="shoutBlue">#7A9ED3</color>
+    <color name="lightShoutBlue">#447A9ED3</color>
     <color name="transparentShoutBlue">#667A9ED3</color>
     <color name="shoutPink">#FD6E8A</color>
     <color name="shoutLightPink">#FFC2CE</color>

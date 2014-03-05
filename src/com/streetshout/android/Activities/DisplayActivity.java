@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
@@ -210,6 +211,13 @@ public class DisplayActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
+            case R.id.zoom_item:
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("zoomOnShout", shout);
+                setResult(RESULT_OK, returnIntent);
+                finish();
+
+                return true;
             case R.id.directions_item:
                 String uri = "http://maps.google.com/maps?daddr=" + shout.lat + "," + shout.lng;
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
@@ -236,57 +244,4 @@ public class DisplayActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public boolean onDown(MotionEvent e) {
-//        return false;
-//    }
-//
-//    @Override
-//    public void onShowPress(MotionEvent e) {
-//
-//    }
-//
-//    @Override
-//    public boolean onSingleTapUp(MotionEvent e) {
-//        Log.d("BAB", "SINGLE TAP UP");
-////        DisplayActivity.this.onBackPressed();
-//
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//        return false;
-//    }
-//
-//    @Override
-//    public void onLongPress(MotionEvent e) {
-//        Log.d("BAB", "LONG PRESS");
-////        createLike();
-//    }
-//
-//    @Override
-//    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean onDoubleTap(MotionEvent event) {
-//        Log.d("BAB", "DOUBLE TAP");
-////        createLike();
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onDoubleTapEvent(MotionEvent event) {
-//        Log.d("BAB", "DOUBLE TAP");
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onSingleTapConfirmed(MotionEvent event) {
-//        Log.d("BAB", "SINGLE TAP CONFIRMED");
-//        return true;
-//    }
 }

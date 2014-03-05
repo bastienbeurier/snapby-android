@@ -34,6 +34,8 @@ public class Constants {
     public static final int EXPLORE_REQUEST = 12376;
     public static final int SETTINGS_REQUEST = 14760;
     public static final int RESET_PASSWORD_REQUEST = 64783;
+    public static final int DISPLAY_SHOUT_REQUEST = 48392;
+
 
     /** AWS S3 **/
     public static final String PICTURE_BUCKET = "street-shout1";

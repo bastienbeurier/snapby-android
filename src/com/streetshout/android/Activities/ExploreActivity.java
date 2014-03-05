@@ -70,7 +70,9 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
-    private Shout shoutRedirect = null;
+    private Shout shoutToRedirectToFromCreateOrNotif = null;
+
+    private Shout shoutToRedirectToFromZoom = null;
 
     private ViewPager shoutViewPager;
 
@@ -97,7 +99,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         }
 
         if (getIntent().hasExtra("newShout")) {
-            shoutRedirect = getIntent().getParcelableExtra("newShout");
+            shoutToRedirectToFromCreateOrNotif = getIntent().getParcelableExtra("newShout");
         }
 
         this.aq = new AQuery(this);
@@ -147,6 +149,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     protected void onResume() {
         super.onResume();
 
+        ApiUtils.updateUserInfoWithLocation(this, aq, myLocation);
+
         //Handles case when user clicked a shout notification
         if (!notificationRedirectionHandled && savedInstanceStateCameraPosition == null && getIntent().hasExtra("notificationShout")) {
             //To avoid going through here after before OnActivityResult
@@ -161,25 +165,19 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
             if (rawShout != null) {
                 Shout shout = Shout.rawShoutToInstance(rawShout);
-                if (!displayedShoutModels.containsKey(shout.id)) {
-                    Marker marker = displayShoutOnMap(shout);
-                    displayedShoutMarkers.put(shout.id, marker);
-                    displayedShoutModels.put(shout.id, shout);
-                }
 
-                onNotificationShoutSelected(shout, displayedShoutMarkers.get(shout.id));
-                return;
+                shoutToRedirectToFromCreateOrNotif = shout;
             }
         }
 
-        //TODO: change implementation
-        if (shoutRedirect != null) {
-            redirectToShout();
+        //Case where user just created a shout
+        if (shoutToRedirectToFromCreateOrNotif != null) {
+            redirectToShout(shoutToRedirectToFromCreateOrNotif);
         }
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         //But activity gets destroyed when user shout with photo (memory issue), so don't initialize in that case!
-        if (newMap && shoutRedirect == null) {
+        if (newMap && shoutToRedirectToFromCreateOrNotif == null) {
             if (savedInstanceStateCameraPosition != null) {
                 initializeCameraWithCameraPosition(savedInstanceStateCameraPosition);
                 savedInstanceStateCameraPosition = null;
@@ -216,8 +214,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                             showNoConnectionInFeedMessage();
                             return;
                         }
-
-                        Log.d("BAB", "SHOUTS HAVE BEEN PULLED");
 
                         shouts = Shout.rawShoutsToInstances(rawShouts);
                         shouts = checkForRemovedShouts(shouts);
@@ -355,6 +351,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
        Marker marker = displayedShoutMarkers.get(shout.id);
 
        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, true)));
+
+       marker.showInfoWindow();
    }
 
     private void onMapShoutSelected(Marker marker) {
@@ -369,20 +367,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 break;
             }
         }
-    }
-
-    private void onNotificationShoutSelected(Shout shout, Marker marker) {
-
-        //TODO only display the notified shout?
-
-        updateMapOnShoutSelectedFromNotificationOrCreation(shout, marker);
-    }
-
-    private void onShoutCreationShoutSelected(Shout shout, Marker marker) {
-
-        //TODO only display the created shout?
-
-        updateMapOnShoutSelectedFromNotificationOrCreation(shout, marker);
     }
 
     /**
@@ -409,11 +393,11 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
-                    if (shoutRedirect == null) {
-                        Log.d("BAB", "PULL SHOUT");
+                    if (shoutToRedirectToFromCreateOrNotif == null && shoutToRedirectToFromZoom == null) {
                         pullShouts();
                     } else {
-                        shoutRedirect = null;
+                        shoutToRedirectToFromCreateOrNotif = null;
+                        shoutToRedirectToFromZoom = null;
                     }
                 }
             });
@@ -424,6 +408,9 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     onMapShoutSelected(marker);
+
+                    marker.showInfoWindow();
+
                     return true;
                 }
             });
@@ -462,28 +449,47 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         mMap.moveCamera(update);
     }
 
-    private void updateMapOnShoutSelectedFromNotificationOrCreation(Shout shout, Marker marker) {
-        //Hack to make to the marker come to front when click (warning! to work, a marker title must be set)
-        marker.showInfoWindow();
-    }
-
-    private void redirectToShout() {
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shoutRedirect.lat, shoutRedirect.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
+    private void redirectToShout(Shout shoutToRedirectTo) {
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shoutToRedirectTo.lat, shoutToRedirectTo.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
         mMap.moveCamera(update);
-
-
-        Log.d("BAB", "SETTINGS SHOUTS TO THE CREATED SHOUT");
 
         shouts = new ArrayList<Shout>();
         displayedShoutModels = new HashMap<Integer, Shout>();
         displayedShoutMarkers = new HashMap<Integer, Marker>();
+        mMap.clear();
 
-        displayedShoutModels.put(shoutRedirect.id, shoutRedirect);
-        Marker shoutMarker = displayShoutOnMap(shoutRedirect);
-        displayedShoutMarkers.put(shoutRedirect.id, shoutMarker);
-        shouts.add(shoutRedirect);
+        displayedShoutModels.put(shoutToRedirectTo.id, shoutToRedirectTo);
+        Marker shoutMarker = displayShoutOnMap(shoutToRedirectTo);
+        displayedShoutMarkers.put(shoutToRedirectTo.id, shoutMarker);
+        shouts.add(shoutToRedirectTo);
 
         updateUIForDisplayShouts();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("BAB", "onActivityResult");
+        Log.d("BAB", "request code: " + requestCode + " - display request: " + Constants.DISPLAY_SHOUT_REQUEST);
+        if (requestCode == Constants.DISPLAY_SHOUT_REQUEST) {
+            Log.d("BAB", "request code ok");
+            if (resultCode == RESULT_OK) {
+                Log.d("BAB", "result code ok");
+                if (data.hasExtra("zoomOnShout")) {
+                    Log.d("BAB", "SHOULD TRIGGER REDIRECT");
+                    shoutToRedirectToFromZoom = data.getParcelableExtra("zoomOnShout");
+                    redirectToShout(shoutToRedirectToFromZoom);
+                }
+            }
+        }
+    }
+
+    public void startDisplayActivity(Shout shout) {
+        Intent displayShout = new Intent(this, DisplayActivity.class);
+        displayShout.putExtra("shout", shout);
+
+        if (this.myLocation != null && this.myLocation.getLatitude() != 0 && this.myLocation.getLongitude() != 0)  {
+            displayShout.putExtra("myLocation", this.myLocation);
+        }
+        startActivityForResult(displayShout, Constants.DISPLAY_SHOUT_REQUEST);
     }
 
     /**

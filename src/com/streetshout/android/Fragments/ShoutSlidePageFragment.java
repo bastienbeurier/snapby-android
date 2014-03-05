@@ -76,7 +76,7 @@ public class ShoutSlidePageFragment extends Fragment {
         likeCountView.setText(Integer.toString(shout.likeCount));
         commentCountView.setText(Integer.toString(shout.commentCount));
 
-        aq.id(imageView).image(shout.image + "--400");
+        aq.id(imageView).image(shout.image + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
 
         String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(shout.created));
         ageView.setText(ageStrings[0] + ageStrings[1]);
@@ -109,15 +109,7 @@ public class ShoutSlidePageFragment extends Fragment {
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ExploreActivity exploreActivity = ((ExploreActivity) getActivity());
-
-                Intent displayShout = new Intent(exploreActivity, DisplayActivity.class);
-                displayShout.putExtra("shout", shout);
-
-                if (exploreActivity.myLocation != null && exploreActivity.myLocation.getLatitude() != 0 && exploreActivity.myLocation.getLongitude() != 0)  {
-                    displayShout.putExtra("myLocation", exploreActivity.myLocation);
-                }
-                startActivity(displayShout);
+                ((ExploreActivity) getActivity()).startDisplayActivity(shout);
             }
         });
 
