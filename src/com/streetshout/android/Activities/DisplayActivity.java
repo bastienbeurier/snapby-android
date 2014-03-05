@@ -8,9 +8,11 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,7 +24,10 @@ import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.GeneralUtils;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  * Created by bastien on 1/29/14.
@@ -39,6 +44,10 @@ public class DisplayActivity extends Activity {
 
     private ImageView createLikeButton = null;
 
+    private long firstTapTime = 0;
+
+    private Timer timer = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.display_shout);
@@ -54,6 +63,35 @@ public class DisplayActivity extends Activity {
         shout = getIntent().getParcelableExtra("shout");
 
         imageView = (ImageView) findViewById(R.id.display_shout_image_view);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long tapTime = (new Date()).getTime();
+                Log.d("BAB", "TAP");
+
+                if (firstTapTime != 0 && (tapTime - firstTapTime) < 300) {
+                    Log.d("BAB", "DOUBLE TAP");
+//                    if (timer != null) {
+//                        timer.cancel();
+//                        timer = null;
+//                    }
+//                    createLike();
+                    firstTapTime = 0;
+                } else {
+//                    timer = new Timer();
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            //Single tap: to test
+//                        }
+//                    }, 300);
+                    firstTapTime = tapTime;
+                }
+
+                firstTapTime = 0;
+            }
+        });
 
         findViewById(R.id.shout_comment_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,13 +122,10 @@ public class DisplayActivity extends Activity {
         });
 
         createLikeButton = (ImageView) findViewById(R.id.shout_like_button);
-        createLikeButton.setEnabled(false);
 
         createLikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("BAB", "CLICKED !!!!!!");
-
                 v.setEnabled(false);
                 if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
                     Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
@@ -107,35 +142,6 @@ public class DisplayActivity extends Activity {
                 }
 
                 v.setEnabled(true);
-//
-//
-//                createLikeButton.setEnabled(false);
-//                likerIds.add(0, SessionUtils.getCurrentUser(DisplayActivity.this).id);
-//                updateUIOnShoutLiked(true);
-//
-//                double lat = 0;
-//                double lng = 0;
-//
-//                if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
-//                    lat = myLocation.getLatitude();
-//                    lng = myLocation.getLongitude();
-//                }
-//
-//                ApiUtils.createLike(DisplayActivity.this, shout, lat, lng, new AjaxCallback<JSONObject>() {
-//                    @Override
-//                    public void callback(String url, JSONObject object, AjaxStatus status) {
-//                        super.callback(url, object, status);
-//
-//                        createLikeButton.setEnabled(true);
-//
-//                        if (status.getError() != null) {
-//                            Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
-//                            toast.show();
-//                            likerIds.remove(0);
-//                            updateUIOnShoutLiked(false);
-//                        }
-//                    }
-//                });
             }
         });
 
@@ -164,6 +170,34 @@ public class DisplayActivity extends Activity {
         }
 
         v.setEnabled(true);
+    }
+
+    private void createLike() {
+        double lat = 0;
+        double lng = 0;
+
+        //TODO add shout to liked shouts
+
+        if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+            lat = myLocation.getLatitude();
+            lng = myLocation.getLongitude();
+        }
+
+        ApiUtils.createLike(DisplayActivity.this, shout, lat, lng, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+                createLikeButton.setEnabled(true);
+
+                if (status.getError() != null) {
+                    Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
+                    toast.show();
+
+                    //TODO remove shout from my likes
+                }
+            }
+        });
     }
 
     @Override
@@ -202,4 +236,57 @@ public class DisplayActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+//    @Override
+//    public boolean onDown(MotionEvent e) {
+//        return false;
+//    }
+//
+//    @Override
+//    public void onShowPress(MotionEvent e) {
+//
+//    }
+//
+//    @Override
+//    public boolean onSingleTapUp(MotionEvent e) {
+//        Log.d("BAB", "SINGLE TAP UP");
+////        DisplayActivity.this.onBackPressed();
+//
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//        return false;
+//    }
+//
+//    @Override
+//    public void onLongPress(MotionEvent e) {
+//        Log.d("BAB", "LONG PRESS");
+////        createLike();
+//    }
+//
+//    @Override
+//    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean onDoubleTap(MotionEvent event) {
+//        Log.d("BAB", "DOUBLE TAP");
+////        createLike();
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onDoubleTapEvent(MotionEvent event) {
+//        Log.d("BAB", "DOUBLE TAP");
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onSingleTapConfirmed(MotionEvent event) {
+//        Log.d("BAB", "SINGLE TAP CONFIRMED");
+//        return true;
+//    }
 }

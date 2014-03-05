@@ -2,11 +2,11 @@ package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
@@ -14,9 +14,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -79,6 +80,8 @@ public class CreateActivity extends Activity {
 
     private boolean anonymousUser = false;
 
+    private View buttonContainer = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_shout);
@@ -109,6 +112,15 @@ public class CreateActivity extends Activity {
         anonymousButton = (ImageView) findViewById(R.id.create_anonymous_button);
         photoContainer = (FrameLayout) findViewById(R.id.create_photo_container);
         descriptionCharCount = (TextView) findViewById(R.id.create_description_count_text);
+        buttonContainer = findViewById(R.id.create_description_container);
+
+        //Hack so that the window doesn't resize when descriptionView is clicked
+        descriptionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                descriptionView.setVisibility(View.GONE);
+            }
+        });
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,10 +163,12 @@ public class CreateActivity extends Activity {
 
         descriptionView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -167,14 +181,19 @@ public class CreateActivity extends Activity {
 
         displayImage();
 
-        final View root = findViewById(R.id.create_root_view);
-
-        root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+        photoContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
             public void onGlobalLayout(){
-                View container = findViewById(R.id.create_description_container);
+                Rect r = new Rect();
+                photoContainer.getWindowVisibleDisplayFrame(r);
 
+                int windowHeight = photoContainer.getRootView().getHeight();
+                int heightDiff = windowHeight - (r.bottom - r.top);
 
-                container.setY(Math.min(photoContainer.getHeight() - container.getHeight(), root.getHeight() - container.getHeight()));
+                buttonContainer.setY(windowHeight - heightDiff - buttonContainer.getHeight());
+
+                if (heightDiff > 150) {
+                    descriptionView.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -195,14 +214,6 @@ public class CreateActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
-
-        descriptionView.requestFocus();
-
-        imm.showSoftInput(descriptionView, 0);
-
-        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
     @Override
@@ -234,11 +245,6 @@ public class CreateActivity extends Activity {
         descriptionView.setError(null);
 
         shoutDescription = descriptionView.getText().toString();
-
-        if (shoutDescription.length() == 0) {
-            descriptionView.setError(getString(R.string.description_not_empty));
-            errors = true;
-        }
 
         if (shoutDescription.length() > Constants.MAX_DESCRIPTION_LENGTH) {
             descriptionView.setError(getString(R.string.description_too_long));

@@ -33,7 +33,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.adapters.MapWindowAdapter;
 import com.streetshout.android.adapters.ShoutSlidePagerAdapter;
 import com.streetshout.android.custom.ZoomOutPageTransformer;
-import com.streetshout.android.fragments.ShoutSlidePageFragment;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.*;
@@ -44,7 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener{
+public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -71,7 +70,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
-    private Shout redirectToShout = null;
+    private Shout shoutRedirect = null;
 
     private ViewPager shoutViewPager;
 
@@ -98,7 +97,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         }
 
         if (getIntent().hasExtra("newShout")) {
-            redirectToShout = getIntent().getParcelableExtra("newShout");
+            shoutRedirect = getIntent().getParcelableExtra("newShout");
         }
 
         this.aq = new AQuery(this);
@@ -174,14 +173,13 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         }
 
         //TODO: change implementation
-        if (redirectToShout != null) {
+        if (shoutRedirect != null) {
             redirectToShout();
         }
-        redirectToShout = null;
 
         //If the map is new, camera hasn't been initialized to user position, let's do it if we have the user location
         //But activity gets destroyed when user shout with photo (memory issue), so don't initialize in that case!
-        if (newMap && redirectToShout == null) {
+        if (newMap && shoutRedirect == null) {
             if (savedInstanceStateCameraPosition != null) {
                 initializeCameraWithCameraPosition(savedInstanceStateCameraPosition);
                 savedInstanceStateCameraPosition = null;
@@ -201,15 +199,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     }
 
     private void pullShouts() {
-        mMap.clear();
-        shoutSelectedOnMap = null;
-        displayedShoutModels = new HashMap<Integer, Shout>();
-        displayedShoutMarkers = new HashMap<Integer, Marker>();
-        shouts = null;
-        shoutViewPager.setVisibility(View.GONE);
-        noConnectionInFeed.setVisibility(View.GONE);
-        noShoutInFeed.setVisibility(View.GONE);
-        shoutProgressBar.setVisibility(View.VISIBLE);
+        updateUIForLoadingShouts();
 
         //Set listener to catch API response from the MapRequestHandler
         mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
@@ -227,6 +217,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                             return;
                         }
 
+                        Log.d("BAB", "SHOUTS HAVE BEEN PULLED");
+
                         shouts = Shout.rawShoutsToInstances(rawShouts);
                         shouts = checkForRemovedShouts(shouts);
 
@@ -236,19 +228,10 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                         shoutProgressBar.setVisibility(View.GONE);
 
                         if (shouts.size() > 0) {
-                            // Instantiate a ViewPager and a PagerAdapter.
-                            shoutPagerAdapter = new ShoutSlidePagerAdapter(ExploreActivity.this.getSupportFragmentManager(), shouts);
-                            shoutViewPager.setAdapter(shoutPagerAdapter);
-                            updateSelectedShoutMarker(shouts.get(0));
-                            shoutViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-                            shoutViewPager.setVisibility(View.VISIBLE);
-                            noShoutInFeed.setVisibility(View.GONE);
+                            updateUIForDisplayShouts();
                         } else {
-                            shoutViewPager.setAdapter(null);
-                            shoutViewPager.setVisibility(View.GONE);
-                            noShoutInFeed.setVisibility(View.VISIBLE);
+                            showNoShoutInFeedMessage();
                         }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -262,6 +245,41 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         mapReqHandler.addMapRequest(aq, mMap.getProjection().getVisibleRegion().latLngBounds);
     }
 
+    private void updateUIForDisplayShouts() {
+        // Instantiate a ViewPager and a PagerAdapter.                   (
+        shoutPagerAdapter = new ShoutSlidePagerAdapter(ExploreActivity.this.getSupportFragmentManager(), shouts);
+        shoutViewPager.setAdapter(shoutPagerAdapter);
+        updateSelectedShoutMarker(shouts.get(0));
+        shoutViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        shoutViewPager.setVisibility(View.VISIBLE);
+        noShoutInFeed.setVisibility(View.GONE);
+    }
+
+    private void updateUIForLoadingShouts() {
+        mMap.clear();
+        shoutSelectedOnMap = null;
+        displayedShoutModels = new HashMap<Integer, Shout>();
+        displayedShoutMarkers = new HashMap<Integer, Marker>();
+        shouts = null;
+        shoutViewPager.setVisibility(View.GONE);
+        noConnectionInFeed.setVisibility(View.GONE);
+        noShoutInFeed.setVisibility(View.GONE);
+        shoutProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoConnectionInFeedMessage() {
+        shoutViewPager.setVisibility(View.GONE);
+        shoutProgressBar.setVisibility(View.GONE);
+        noShoutInFeed.setVisibility(View.GONE);
+        noConnectionInFeed.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoShoutInFeedMessage() {
+        shoutViewPager.setAdapter(null);
+        shoutViewPager.setVisibility(View.GONE);
+        noShoutInFeed.setVisibility(View.VISIBLE);
+    }
+
     private ArrayList<Shout> checkForRemovedShouts(ArrayList<Shout> shouts) {
         ArrayList<Shout> newShouts = new ArrayList<Shout>();
 
@@ -272,13 +290,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         }
 
         return newShouts;
-    }
-
-    private void showNoConnectionInFeedMessage() {
-        shoutViewPager.setVisibility(View.GONE);
-        shoutProgressBar.setVisibility(View.GONE);
-        noShoutInFeed.setVisibility(View.GONE);
-        noConnectionInFeed.setVisibility(View.VISIBLE);
     }
 
     private void displayShoutsOnMap(List<Shout> shouts) {
@@ -398,7 +409,12 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
                 @Override
                 public void onCameraChange(CameraPosition cameraPosition) {
-                    pullShouts();
+                    if (shoutRedirect == null) {
+                        Log.d("BAB", "PULL SHOUT");
+                        pullShouts();
+                    } else {
+                        shoutRedirect = null;
+                    }
                 }
             });
 
@@ -449,17 +465,25 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     private void updateMapOnShoutSelectedFromNotificationOrCreation(Shout shout, Marker marker) {
         //Hack to make to the marker come to front when click (warning! to work, a marker title must be set)
         marker.showInfoWindow();
-
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shout.lat, shout.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
-        mMap.moveCamera(update);
     }
 
     private void redirectToShout() {
-        displayedShoutModels.put(redirectToShout.id, redirectToShout);
-        Marker shoutMarker = displayShoutOnMap(redirectToShout);
-        displayedShoutMarkers.put(redirectToShout.id, shoutMarker);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shoutRedirect.lat, shoutRedirect.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
+        mMap.moveCamera(update);
 
-        onShoutCreationShoutSelected(redirectToShout, shoutMarker);
+
+        Log.d("BAB", "SETTINGS SHOUTS TO THE CREATED SHOUT");
+
+        shouts = new ArrayList<Shout>();
+        displayedShoutModels = new HashMap<Integer, Shout>();
+        displayedShoutMarkers = new HashMap<Integer, Marker>();
+
+        displayedShoutModels.put(shoutRedirect.id, shoutRedirect);
+        Marker shoutMarker = displayShoutOnMap(shoutRedirect);
+        displayedShoutMarkers.put(shoutRedirect.id, shoutMarker);
+        shouts.add(shoutRedirect);
+
+        updateUIForDisplayShouts();
     }
 
     /**
