@@ -1,103 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="match_parent">
 
-    <FrameLayout android:id="@+id/explore_top_bar"
-                 android:layout_width="fill_parent"
-                 android:layout_height="@dimen/camera_top_bar"
-                 android:background="@drawable/nav_bar_selector">
+    <!--<FrameLayout android:id="@+id/explore_top_bar"-->
+                 <!--android:layout_width="fill_parent"-->
+                 <!--android:layout_height="@dimen/camera_top_bar"-->
+                 <!--android:background="@drawable/nav_bar_selector">-->
 
-        <ImageView android:id="@+id/create_shout_button"
-                   android:layout_width="126dp"
-                   android:layout_height="48dp"
-                   android:paddingLeft="8dp"
-                   android:paddingTop="8dp"
-                   android:paddingBottom="8dp"
-                   android:src="@drawable/shout_bar_button_selector"
-                   android:layout_gravity="center|right"
-                   android:onClick="createShout"/>
 
-        <ImageView android:id="@+id/my_location_button"
-                   android:layout_width="48dp"
-                   android:layout_height="48dp"
-                   android:padding="8dp"
-                   android:src="@drawable/explore_my_location_button_selector"
-                   android:layout_gravity="center|left"/>
-    </FrameLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:id="@+id/fragment_container"
+        <!--<ImageView android:id="@+id/my_location_button"-->
+                   <!--android:layout_width="48dp"-->
+                   <!--android:layout_height="48dp"-->
+                   <!--android:padding="8dp"-->
+                   <!--android:src="@drawable/explore_my_location_button_selector"-->
+                   <!--android:layout_gravity="center|left"/>-->
+    <!--</FrameLayout>-->
+
+    <RelativeLayout android:id="@+id/map_fragment_container"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent">
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/map"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  class="com.google.android.gms.maps.MapFragment" />
+
+        <LinearLayout android:layout_height="wrap_content"
+                      android:layout_width="wrap_content"
+                      android:orientation="vertical"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginRight="15dp"
+                      android:layout_alignParentRight="true">
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout android:id="@+id/fragment_container"
                   android:orientation="vertical"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent">
 
-        <RelativeLayout android:id="@+id/map_fragment_container"
-                        android:layout_height="match_parent"
+        <View android:id="@+id/explore_pull_shout_area"
+              android:layout_height="match_parent"
+              android:layout_width="match_parent"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp"
+              android:layout_marginTop="10dp"
+              android:layout_weight="1"/>
+
+
+        <ImageView android:layout_height="10dp"
+                   android:layout_width="match_parent"
+                   android:layout_marginLeft="10dp"
+                   android:layout_marginRight="10dp"
+                   android:background="@drawable/bottom_shadow"/>
+
+        <LinearLayout android:orientation="horizontal"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp"
+                      android:layout_weight="2">
+
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="10dp"
+                            android:background="@color/white">
+
+                <FrameLayout android:id="@+id/explore_shout_progress_bar"
+                             android:layout_width="match_parent"
+                             android:layout_height="match_parent">
+
+                    <ProgressBar android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:layout_gravity="center"/>
+
+                </FrameLayout>
+
+                <TextView android:id="@+id/explore_shout_no_connection"
+                          android:text="@string/no_connection_feed"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          android:gravity="center"
+                          android:visibility="gone"/>
+
+                <TextView android:id="@+id/explore_shout_no_shout"
+                          android:text="@string/empty_feed"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          android:gravity="center"
+                          android:visibility="gone"/>
+
+                <android.support.v4.view.ViewPager
+                        android:id="@+id/explore_view_pager"
                         android:layout_width="match_parent"
-                        android:layout_weight="0.8">
-
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                      android:id="@+id/map"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      class="com.google.android.gms.maps.MapFragment" />
-
-            <LinearLayout android:layout_height="wrap_content"
-                          android:layout_width="wrap_content"
-                          android:orientation="vertical"
-                          android:layout_marginTop="10dp"
-                          android:layout_marginRight="15dp"
-                          android:layout_alignParentRight="true">
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <RelativeLayout android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1.2">
+                        android:visibility="gone"/>
 
-            <FrameLayout android:id="@+id/explore_shout_progress_bar"
-                         android:layout_width="match_parent"
-                         android:layout_height="match_parent">
+            </RelativeLayout>
 
-                <ProgressBar android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:layout_gravity="center"/>
-
-            </FrameLayout>
-
-            <TextView android:id="@+id/explore_shout_no_connection"
-                      android:text="@string/no_connection_feed"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:gravity="center"
-                      android:visibility="gone"/>
-
-            <TextView android:id="@+id/explore_shout_no_shout"
-                      android:text="@string/empty_feed"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:gravity="center"
-                      android:visibility="gone"/>
-
-            <android.support.v4.view.ViewPager
-                    android:id="@+id/explore_view_pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"/>
-
-
-            <ImageView android:layout_height="7dp"
-                       android:layout_width="match_parent"
-                       android:layout_alignParentTop="true"
-                       android:background="@drawable/top_shadow"/>
-
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+    <ImageView android:id="@+id/create_shout_button"
+               android:layout_width="126dp"
+               android:layout_height="48dp"
+               android:paddingLeft="8dp"
+               android:paddingTop="8dp"
+               android:paddingBottom="8dp"
+               android:src="@drawable/shout_bar_button_selector"
+               android:layout_gravity="top|right"
+               android:onClick="createShout"/>
+
+</FrameLayout>

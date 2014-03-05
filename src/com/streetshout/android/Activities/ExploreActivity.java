@@ -2,12 +2,15 @@ package com.streetshout.android.activities;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -24,10 +27,12 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.adapters.MapWindowAdapter;
@@ -90,6 +95,10 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     private MapRequestHandler mapReqHandler = null;
 
+    private View pullShoutAreaView = null;
+
+    private Point[] shoutAreaPoints = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
@@ -120,6 +129,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
         mapReqHandler = new MapRequestHandler();
 
+        pullShoutAreaView = findViewById(R.id.explore_pull_shout_area);
+
         shoutProgressBar = (FrameLayout) findViewById(R.id.explore_shout_progress_bar);
         shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
         shoutViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -148,7 +159,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     @Override
     protected void onResume() {
         super.onResume();
-
         ApiUtils.updateUserInfoWithLocation(this, aq, myLocation);
 
         //Handles case when user clicked a shout notification
@@ -237,8 +247,40 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             }
         });
 
+        if (shoutAreaPoints == null) {
+            setPullShoutArea();
+        }
+
         //Add a request to populate the map with shouts
-        mapReqHandler.addMapRequest(aq, mMap.getProjection().getVisibleRegion().latLngBounds);
+        Projection projection = mMap.getProjection();
+        LatLngBounds bounds = new LatLngBounds(projection.fromScreenLocation(shoutAreaPoints[0]),
+                                               projection.fromScreenLocation(shoutAreaPoints[1]));
+
+        mapReqHandler.addMapRequest(aq, bounds);
+    }
+
+    private void setPullShoutArea() {
+        int SHOUT_AREA_MARGIN = 10;
+        double MAP_FEED_DISPLAY_RATIO = 0.66;
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHOUT_AREA_MARGIN, getResources().getDisplayMetrics());
+
+
+        Log.d("BAB", "SCREEN HEIGHT: " + size.y);
+        Log.d("BAB", "DISPLAY RATIO: " + MAP_FEED_DISPLAY_RATIO);
+        Log.d("BAB", "MARGIN: " + margin);
+        double height = (size.y * MAP_FEED_DISPLAY_RATIO) - (2 * margin);
+
+
+        Log.d("BAB", "HEIGHT !!!!!! " + height);
+
+        Point bottomLeft = new Point(margin, (int) height);
+        Point TopRight = new Point(size.x - margin, margin);
+
+        shoutAreaPoints = new Point[] {bottomLeft, TopRight};
     }
 
     private void updateUIForDisplayShouts() {
@@ -415,23 +457,23 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 }
             });
 
-            findViewById(R.id.my_location_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (myLocation != null) {
-                        CameraUpdate update;
-                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_MY_LOCATION_BUTTON) {
-                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_MY_LOCATION_BUTTON);
-                        } else {
-                            update = CameraUpdateFactory.newLatLng(LocationUtils.toLatLng(myLocation));
-                        }
-                        mMap.animateCamera(update);
-                    } else {
-                        Toast toast = Toast.makeText(ExploreActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
-            });
+//            findViewById(R.id.my_location_button).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (myLocation != null) {
+//                        CameraUpdate update;
+//                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_MY_LOCATION_BUTTON) {
+//                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_MY_LOCATION_BUTTON);
+//                        } else {
+//                            update = CameraUpdateFactory.newLatLng(LocationUtils.toLatLng(myLocation));
+//                        }
+//                        mMap.animateCamera(update);
+//                    } else {
+//                        Toast toast = Toast.makeText(ExploreActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
+//                        toast.show();
+//                    }
+//                }
+//            });
 
             return true;
         }
@@ -467,14 +509,9 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("BAB", "onActivityResult");
-        Log.d("BAB", "request code: " + requestCode + " - display request: " + Constants.DISPLAY_SHOUT_REQUEST);
         if (requestCode == Constants.DISPLAY_SHOUT_REQUEST) {
-            Log.d("BAB", "request code ok");
             if (resultCode == RESULT_OK) {
-                Log.d("BAB", "result code ok");
                 if (data.hasExtra("zoomOnShout")) {
-                    Log.d("BAB", "SHOULD TRIGGER REDIRECT");
                     shoutToRedirectToFromZoom = data.getParcelableExtra("zoomOnShout");
                     redirectToShout(shoutToRedirectToFromZoom);
                 }
