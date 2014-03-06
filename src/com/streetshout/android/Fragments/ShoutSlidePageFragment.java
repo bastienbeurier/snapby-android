@@ -1,8 +1,6 @@
 package com.streetshout.android.fragments;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,6 +26,8 @@ import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.TimeUtils;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by bastien on 3/3/14.
@@ -63,6 +63,10 @@ public class ShoutSlidePageFragment extends Fragment {
     private ImageView shareButton = null;
 
     private ImageView zoomButton = null;
+
+    private boolean liked = false;
+
+    private ExploreActivity activity = null;
 
     public static ShoutSlidePageFragment newInstance(Shout shout) {
         ShoutSlidePageFragment shoutSlidePageFragment = new ShoutSlidePageFragment();
@@ -100,10 +104,20 @@ public class ShoutSlidePageFragment extends Fragment {
         setLikeCountUI(shout.likeCount);
         setCommentCountUI(shout.commentCount);
 
+        activity = (ExploreActivity) getActivity();
+
+        if (activity.currentUserShoutLiked.contains(shout.id)) {
+            liked = true;
+            likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button_liked));
+        } else {
+            liked = false;
+            likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button));
+        }
+
         String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(shout.created));
         ageView.setText(ageStrings[0] + ageStrings[1]);
 
-        Location myLocation = ((ExploreActivity) getActivity()).myLocation;
+        Location myLocation = activity.myLocation;
         if (myLocation != null) {
             Location shoutLocation = new Location("");
             shoutLocation.setLatitude(shout.lat);
@@ -115,7 +129,7 @@ public class ShoutSlidePageFragment extends Fragment {
             distanceView.setText("?");
         }
 
-        if (shout.id == SessionUtils.getCurrentUser(getActivity()).id) {
+        if (shout.userId == SessionUtils.getCurrentUser(getActivity()).id) {
             updateShoutUI(R.color.myShoutPurple);
         } else if (shout.anonymous) {
             updateShoutUI(R.color.anonymousGrey);
@@ -139,7 +153,7 @@ public class ShoutSlidePageFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ExploreActivity) getActivity()).startDisplayActivity(shout);
+                activity.startDisplayActivity(shout);
             }
         });
 
@@ -147,58 +161,67 @@ public class ShoutSlidePageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 likeButton.setEnabled(false);
-                //TODO: Add to liked shouts
 
-                setLikeCountUI(shout.likeCount + 1);
-                likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button_liked));
+                if (liked) {
+                    unlikeShout(true);
 
-                double lat = 0;
-                double lng = 0;
+                    ApiUtils.removeLike(getActivity(), shout.id, new AjaxCallback<JSONObject>() {
+                        @Override
+                        public void callback(String url, JSONObject object, AjaxStatus status) {
+                            super.callback(url, object, status);
 
-                Location myLocation = ((ExploreActivity) getActivity()).myLocation;
-                if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
-                    lat = myLocation.getLatitude();
-                    lng = myLocation.getLongitude();
-                }
+                            likeButton.setEnabled(true);
 
-                ApiUtils.createLike(getActivity(), shout, lat, lng, new AjaxCallback<JSONObject>() {
-                    @Override
-                    public void callback(String url, JSONObject object, AjaxStatus status) {
-                        super.callback(url, object, status);
+                            if (status.getError() != null) {
+                                Toast toast = Toast.makeText(getActivity(), getString(R.string.shout_unlike_failed), Toast.LENGTH_SHORT);
+                                toast.show();
 
-                        likeButton.setEnabled(true);
-
-                        if (status.getError() != null) {
-                            Toast toast = Toast.makeText(getActivity(), getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
-                            toast.show();
-
-                            //TODO: Remove from liked shouts
-                            setLikeCountUI(shout.likeCount);
-                            likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button));
+                                likeShout(false);
+                            }
                         }
+                    });
+                } else {
+                    likeShout(true);
+
+                    double lat = 0;
+                    double lng = 0;
+
+                    Location myLocation = activity.myLocation;
+                    if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+                        lat = myLocation.getLatitude();
+                        lng = myLocation.getLongitude();
                     }
-                });
+
+                    ApiUtils.createLike(getActivity(), shout, lat, lng, new AjaxCallback<JSONObject>() {
+                        @Override
+                        public void callback(String url, JSONObject object, AjaxStatus status) {
+                            super.callback(url, object, status);
+
+                            likeButton.setEnabled(true);
+
+                            if (status.getError() != null) {
+                                Toast toast = Toast.makeText(getActivity(), getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
+                                toast.show();
+
+                                unlikeShout(false);
+                            }
+                        }
+                    });
+                }
             }
         });
 
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = ApiUtils.getUserSiteUrl() + "/shouts/" + shout.id;
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_shout_text, url));
-                sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_shout_subject));
-                sendIntent.setType("text/plain");
-
-                startActivity(sendIntent);
+                GeneralUtils.shareShout(getActivity(), shout);
             }
         });
 
         zoomButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ExploreActivity) getActivity()).redirectToShout(shout);
+                activity.redirectToShout(shout);
             }
         });
 
@@ -208,7 +231,7 @@ public class ShoutSlidePageFragment extends Fragment {
                 Intent likes = new Intent(getActivity(), LikesActivity.class);
                 likes.putExtra("shout", shout);
 
-                Location myLocation = ((ExploreActivity) getActivity()).myLocation;
+                Location myLocation = activity.myLocation;
                 if (myLocation != null  && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
                     likes.putExtra("myLocation", myLocation);
                 }
@@ -223,7 +246,7 @@ public class ShoutSlidePageFragment extends Fragment {
                 Intent comments = new Intent(getActivity(), CommentsActivity.class);
                 comments.putExtra("shout", shout);
 
-                Location myLocation = ((ExploreActivity) getActivity()).myLocation;
+                Location myLocation = activity.myLocation;
                 if (myLocation != null  && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
                     comments.putExtra("myLocation", myLocation);
                 }
@@ -235,15 +258,40 @@ public class ShoutSlidePageFragment extends Fragment {
         return rootView;
     }
 
+    private void likeShout(boolean increment) {
+        liked = true;
+        likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button_liked));
+        activity.currentUserShoutLiked.add(shout.id);
+
+        if (increment) {
+            setLikeCountUI(shout.likeCount + 1);
+        } else {
+            setLikeCountUI(shout.likeCount);
+        }
+    }
+
+    private void unlikeShout(boolean decrement) {
+        liked = false;
+        likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button));
+        setLikeCountUI(shout.likeCount - 1);
+        activity.currentUserShoutLiked = removeIntegerFromArray(activity.currentUserShoutLiked, shout.id);
+
+        if (decrement) {
+            setLikeCountUI(shout.likeCount - 1);
+        } else {
+            setLikeCountUI(shout.likeCount);
+        }
+    }
+
     private void updateShoutUI(int color) {
         switch(color){
             case R.color.myShoutPurple:
                 ImageUtils.setBackground(getActivity(), coloredTimeDistanceContainer, R.drawable.my_shout_meta_info);
                 ImageUtils.setBackground(getActivity(), coloredLikeCountButton, R.drawable.my_shout_count_button_selector);
                 ImageUtils.setBackground(getActivity(), coloredCommentCountButton, R.drawable.my_shout_count_button_selector);
-                ImageUtils.setBackground(getActivity(), coloredCommentCountButton, R.drawable.my_shout_count_button_selector);
-                ImageUtils.setBackground(getActivity(), coloredCommentCountButton, R.drawable.my_shout_count_button_selector);
-                ImageUtils.setBackground(getActivity(), coloredCommentCountButton, R.drawable.my_shout_count_button_selector);
+                ImageUtils.setBackground(getActivity(), likeButton, R.drawable.my_shout_count_button_selector);
+                ImageUtils.setBackground(getActivity(), shareButton, R.drawable.my_shout_count_button_selector);
+                ImageUtils.setBackground(getActivity(), zoomButton, R.drawable.my_shout_count_button_selector);
                 return;
             case R.color.anonymousGrey:
                 ImageUtils.setBackground(getActivity(), coloredTimeDistanceContainer, R.drawable.anonymous_shout_meta_info);
@@ -278,5 +326,16 @@ public class ShoutSlidePageFragment extends Fragment {
         } else {
             commentCountView.setText(Integer.toString(count) + " " + getString(R.string.comment));
         }
+    }
+
+    private ArrayList<Integer> removeIntegerFromArray(ArrayList<Integer> array, Integer integer) {
+        int count = array.size();
+        for (int i = 0; i < count ; i++) {
+            if (array.get(i).equals(integer)) {
+                array.remove(i);
+            }
+        }
+
+        return array;
     }
 }

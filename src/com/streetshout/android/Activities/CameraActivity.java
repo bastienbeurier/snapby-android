@@ -22,9 +22,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.streetshout.android.R;
 import com.streetshout.android.custom.CameraPreview;
 import com.streetshout.android.models.Shout;
+import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
+import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.LocationUtils;
+import com.streetshout.android.utils.SessionUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -316,6 +319,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     @Override
     protected void onResume() {
         super.onResume();
+
+        SessionUtils.sendAndReceiveUserInfo(this, myLocation);
 
         if (createShoutRedirect) {
             createShoutRedirect = false;

@@ -7,4 +7,6 @@
           android:title="@string/directions_to_shout"/>
     <item android:id="@+id/report_item"
           android:title="@string/report_shout"/>
+    <item android:id="@+id/delete_item"
+          android:title="@string/delete_shout"/>
 </menu>

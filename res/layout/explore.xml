@@ -93,13 +93,19 @@
     </LinearLayout>
 
     <ImageView android:id="@+id/create_shout_button"
-               android:layout_width="126dp"
-               android:layout_height="48dp"
-               android:paddingLeft="8dp"
-               android:paddingTop="8dp"
-               android:paddingBottom="8dp"
-               android:src="@drawable/shout_bar_button_selector"
+               android:layout_width="80dp"
+               android:layout_height="80dp"
+               android:padding="10dp"
+               android:src="@drawable/explore_create_shout_button_selector"
                android:layout_gravity="top|right"
+               android:onClick="createShout"/>
+
+    <ImageView android:id="@+id/explore_my_location_button"
+               android:layout_width="60dp"
+               android:layout_height="60dp"
+               android:padding="10dp"
+               android:src="@drawable/explore_my_location_button_selector"
+               android:layout_gravity="top|left"
                android:onClick="createShout"/>
 
 </FrameLayout>

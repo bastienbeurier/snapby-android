@@ -110,11 +110,17 @@
     <string name="comments">comments</string>
     <string name="share_shout_text">Hey, check this shout before it\'s too late! %s</string>
     <string name="share_shout_subject">Sharing a shout with you.</string>
-    <string name="report_shout">Report this shout</string>
-    <string name="directions_to_shout">Directions to shout</string>
-    <string name="zoom_to_shout">Zoom to shout</string>
+    <string name="report_shout">Report</string>
+    <string name="delete_shout">Delete</string>
+    <string name="trending_shout">Trending</string>
+    <string name="share_shout">Share</string>
+    <string name="directions_to_shout">Directions</string>
     <string name="report_shout_successful">Thank you for sharing your concern!</string>
     <string name="report_shout_failed">We couldn\'t report this shout, please try again.</string>
+    <string name="successful_delete_shout">Shout successfully deleted.</string>
+    <string name="failed_delete_shout">Failed to delete shout.</string>
+    <string name="successful_trending_shout">Let\'s spice it up!.</string>
+    <string name="failed_trending_shout">Failed!!!</string>
     <string name="no_comments_in_feed">No comments yet...</string>
     <string name="no_likes_in_feed">No likes yet...</string>
     <string name="your_email">Your email</string>
@@ -126,9 +132,11 @@
     <string name="signup_with_email">Sign up with Email</string>
     <string name="signin_with_email">Already have an account? Sign in here.</string>
     <string name="shout_like_failed">We couldn\'t save your like, please try again.</string>
+    <string name="shout_unlike_failed">We couldn\'t unlike your shout, please try again.</string>
     <string name="create_comment_hint">Write a comment...</string>
     <string name="create_comment_failed">We couldn\'t save your comment, please try again.</string>
     <string name="anonymous_mode_enabled">Anonymous mode enabled.</string>
     <string name="anonymous_mode_disabled">Anonymous mode disabled.</string>
     <string name="anonymous_name">Anonymous</string>
+    <string name="user_blacklisted">You have been blacklisted due to Terms of Use violations.</string>
 </resources>

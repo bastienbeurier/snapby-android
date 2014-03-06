@@ -3,14 +3,65 @@ package com.streetshout.android.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.facebook.Session;
 import com.streetshout.android.activities.WelcomeActivity;
 import com.streetshout.android.models.User;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by bastien on 1/27/14.
  */
 public class SessionUtils {
+
+    public static void sendAndReceiveUserInfo(final Activity activity, Location myLocation) {
+        ApiUtils.updateUserInfoWithLocation(activity, GeneralUtils.getAquery(activity), myLocation, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+                saveUserInfoInPhoneAndGetLikes(activity, object, status);
+            }
+        });
+    }
+
+    public static ArrayList<Integer> saveUserInfoInPhoneAndGetLikes(Activity activity, JSONObject object, AjaxStatus status) {
+        if (status.getError() == null) {
+            JSONObject result = null;
+            JSONObject rawUser = null;
+            ArrayList<Integer> likes = new ArrayList<Integer>();
+
+
+            try {
+                result = object.getJSONObject("result");
+
+                rawUser = result.getJSONObject("user");
+                JSONArray rawLikes = result.getJSONArray("likes");
+
+                int count = rawLikes.length();
+
+                for (int i = 0 ; i < count ; i++) {
+                    likes.add(Integer.parseInt(((JSONObject) rawLikes.get(i)).getString("shout_id")));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            User currentUser = User.rawUserToInstance(rawUser);
+            SessionUtils.updateCurrentUserInfoInPhone(activity, currentUser);
+            SessionUtils.setCurrentUserLikes(activity, likes);
+
+            return likes;
+        } else {
+            return null;
+        }
+    }
 
     public static void updateCurrentUserInfoInPhone(Context ctx, User user) {
         AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
@@ -46,6 +97,18 @@ public class SessionUtils {
         } else {
             return null;
         }
+    }
+
+    public static ArrayList<Integer> getCurrentUserLikes(Context ctx) {
+        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+
+        return appPrefs.getCurrentUserLikes();
+    }
+
+    public static void setCurrentUserLikes(Context ctx, ArrayList<Integer> likes) {
+        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+
+        appPrefs.setCurrentUserLikes(likes);
     }
 
     public static void saveCurrentUserToken(Context ctx, String authToken) {

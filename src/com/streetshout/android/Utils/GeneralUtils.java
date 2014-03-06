@@ -1,7 +1,9 @@
 package com.streetshout.android.utils;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -146,5 +148,16 @@ public class GeneralUtils {
         parameters.put("api_version", Constants.API);
 
         return parameters;
+    }
+
+    public static void shareShout(Activity activity, Shout shout) {
+        String url = ApiUtils.getUserSiteUrl() + "/shouts/" + shout.id;
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, activity.getString(R.string.share_shout_text, url));
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_shout_subject));
+        sendIntent.setType("text/plain");
+
+        activity.startActivity(sendIntent);
     }
 }

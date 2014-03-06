@@ -32,6 +32,7 @@ import com.streetshout.android.tvmclient.Response;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
+import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -238,6 +239,13 @@ public class CreateActivity extends Activity {
     }
 
     public void validateShoutInfo() {
+        if (SessionUtils.getCurrentUser(this).isBlackListed) {
+            Toast toast = Toast.makeText(this, getString(R.string.user_blacklisted), Toast.LENGTH_SHORT);
+            toast.show();
+
+            return;
+        }
+
         boolean errors = false;
 
         descriptionView.setError(null);

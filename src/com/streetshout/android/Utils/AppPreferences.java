@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
+
 public class AppPreferences {
     private static final String DISTANCE_UNIT = "ss_saved_distance_unit";
 
@@ -17,6 +19,8 @@ public class AppPreferences {
     private static final String CURRENT_USER_BLACKLISTED_PREF = "ss_current_user_blacklisted_pref";
 
     private static final String CURRENT_USER_TOKEN_PREF = "ss_current_user_token_pref";
+
+    private static final String CURRENT_USER_LIKES_PREF = "ss_current_user_likes_array_pref";
 
     private static final String APP_SHARED_PREFS = AppPreferences.class.getSimpleName();
 
@@ -103,5 +107,27 @@ public class AppPreferences {
             prefsEditor.putString(CURRENT_USER_TOKEN_PREF, value);
         }
         prefsEditor.commit();
+    }
+
+    public void setCurrentUserLikes(ArrayList<Integer> array) {
+        prefsEditor.putInt(CURRENT_USER_LIKES_PREF +"_size", array.size());
+
+        for( int i=0 ; i < array.size() ; i++) {
+            prefsEditor.putInt(CURRENT_USER_LIKES_PREF + "_" + i, array.get(i));
+        }
+
+        prefsEditor.commit();
+    }
+
+    public ArrayList<Integer> getCurrentUserLikes() {
+        int size = sharedPrefs.getInt(CURRENT_USER_LIKES_PREF + "_size", 0);
+
+        ArrayList<Integer> array = new ArrayList<Integer>();
+
+        for(int i=0; i < size ; i++) {
+            array.add(sharedPrefs.getInt(CURRENT_USER_LIKES_PREF+ "_" + i, 0));
+        }
+
+        return array;
     }
 }

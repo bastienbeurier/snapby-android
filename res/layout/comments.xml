@@ -61,7 +61,7 @@
             android:textColor="@color/darkGrey"
             android:layout_marginBottom="10dp"
             android:hint="@string/create_comment_hint"
-            android:imeOptions="actionSearch"
+            android:imeOptions="actionSend"
             android:singleLine="true"/>
 
 </LinearLayout>

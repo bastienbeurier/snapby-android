@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.streetshout.android.models.Shout;
@@ -103,7 +104,7 @@ public class ApiUtils {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void updateUserInfoWithLocation(Activity activity, AQuery aq, Location lastLocation) {
+    public static void updateUserInfoWithLocation(Activity activity, AQuery aq, Location lastLocation, AjaxCallback<JSONObject> cb) {
         User currentUser = SessionUtils.getCurrentUser(activity);
         String url = getBasePath() + "/users/" + currentUser.id + ".json";
 
@@ -118,8 +119,6 @@ public class ApiUtils {
         enrichParametersWithToken(activity, params);
 
         if (params == null) return;
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 
         cb.method(AQuery.METHOD_PUT);
 
@@ -289,6 +288,8 @@ public class ApiUtils {
             return;
         }
 
+        Log.d("BAB", "TOKEN FROM CREATE: " + params.get("auth_token"));
+
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
@@ -309,6 +310,54 @@ public class ApiUtils {
         if (params == null) {
             return;
         }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void removeShout(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/shouts/remove.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shoutId);
+
+        params = enrichParametersWithToken(activity, params);
+        if (params == null) {
+            return;
+        }
+
+        cb.method(AQuery.METHOD_PUT);
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void removeLike(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/likes/delete.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shoutId);
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void makeTrendingShout(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/shouts/trending.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shoutId);
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        cb.method(AQuery.METHOD_PUT);
 
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }

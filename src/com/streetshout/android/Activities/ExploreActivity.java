@@ -2,7 +2,6 @@ package com.streetshout.android.activities;
 
 import android.content.Intent;
 import android.content.IntentSender;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
@@ -17,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -98,9 +98,14 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     private Point[] shoutAreaPoints = null;
 
+    public ArrayList<Integer> currentUserShoutLiked = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
+
+        currentUserShoutLiked = new ArrayList<Integer>();
+        currentUserShoutLiked = SessionUtils.getCurrentUserLikes(this);
 
         if (getIntent().hasExtra("myLocation")) {
             myLocation = getIntent().getParcelableExtra("myLocation");
@@ -150,14 +155,28 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         noShoutInFeed = (TextView) findViewById(R.id.explore_shout_no_shout);
         noConnectionInFeed = (TextView) findViewById(R.id.explore_shout_no_connection);
 
+        ApiUtils.updateUserInfoWithLocation(this, GeneralUtils.getAquery(this), myLocation, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+                currentUserShoutLiked = SessionUtils.saveUserInfoInPhoneAndGetLikes(ExploreActivity.this, object, status);
+            }
+        });
+
         newMap = setUpMapIfNeeded();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //Save shouts that the user have liked in user prefs before activity is destroyed
+        SessionUtils.setCurrentUserLikes(this, currentUserShoutLiked);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ApiUtils.updateUserInfoWithLocation(this, aq, myLocation);
-
         //Handles case when user clicked a shout notification
         if (!notificationRedirectionHandled && savedInstanceStateCameraPosition == null && getIntent().hasExtra("notificationShout")) {
             //To avoid going through here after before OnActivityResult
@@ -194,13 +213,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             newMap = false;
             pullShouts();
         }
-    }
-
-    @Override
-    protected void onPause () {
-        super.onPause();
-
-        ApiUtils.updateUserInfoWithLocation(this, aq, myLocation);
     }
 
     private void pullShouts() {
@@ -449,23 +461,23 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 }
             });
 
-//            findViewById(R.id.my_location_button).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (myLocation != null) {
-//                        CameraUpdate update;
-//                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_MY_LOCATION_BUTTON) {
-//                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_MY_LOCATION_BUTTON);
-//                        } else {
-//                            update = CameraUpdateFactory.newLatLng(LocationUtils.toLatLng(myLocation));
-//                        }
-//                        mMap.animateCamera(update);
-//                    } else {
-//                        Toast toast = Toast.makeText(ExploreActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
-//                        toast.show();
-//                    }
-//                }
-//            });
+            findViewById(R.id.explore_my_location_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (myLocation != null) {
+                        CameraUpdate update;
+                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_MY_LOCATION_BUTTON) {
+                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_MY_LOCATION_BUTTON);
+                        } else {
+                            update = CameraUpdateFactory.newLatLng(LocationUtils.toLatLng(myLocation));
+                        }
+                        mMap.animateCamera(update);
+                    } else {
+                        Toast toast = Toast.makeText(ExploreActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+            });
 
             return true;
         }
@@ -500,17 +512,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         updateUIForDisplayShouts();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.DISPLAY_SHOUT_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                if (data.hasExtra("zoomOnShout")) {
-                    shoutToRedirectToFromZoom = data.getParcelableExtra("zoomOnShout");
-                    redirectToShout(shoutToRedirectToFromZoom);
-                }
-            }
-        }
-    }
-
     public void startDisplayActivity(Shout shout) {
         Intent displayShout = new Intent(this, DisplayActivity.class);
         displayShout.putExtra("shout", shout);
@@ -519,6 +520,16 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             displayShout.putExtra("myLocation", this.myLocation);
         }
         startActivityForResult(displayShout, Constants.DISPLAY_SHOUT_REQUEST);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.DISPLAY_SHOUT_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                if (data.hasExtra("delete")) {
+                    pullShouts();
+                }
+            }
+        }
     }
 
     /**
