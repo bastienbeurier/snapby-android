@@ -1,22 +1,23 @@
 package com.streetshout.android.fragments;
 
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
-import com.streetshout.android.activities.DisplayActivity;
 import com.streetshout.android.activities.ExploreActivity;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.LocationUtils;
+import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.TimeUtils;
 
 /**
@@ -44,7 +45,9 @@ public class ShoutSlidePageFragment extends Fragment {
 
     private View coloredBar = null;
 
-    private View coloredContainer = null;
+    private View coloredMetaDataContainer = null;
+
+    private LinearLayout coloredButtonContainer = null;
 
     public static ShoutSlidePageFragment newInstance(Shout shout) {
         ShoutSlidePageFragment shoutSlidePageFragment = new ShoutSlidePageFragment();
@@ -60,7 +63,7 @@ public class ShoutSlidePageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         aq = GeneralUtils.getAquery(getActivity());
 
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.shout_slide_page_fragment, container, false);
+        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.shout_slide_page_fragment, container, false);
         shout = getArguments().getParcelable("shout");
 
         imageView = (ImageView) rootView.findViewById(R.id.explore_shout_image);
@@ -71,7 +74,8 @@ public class ShoutSlidePageFragment extends Fragment {
         usernameView = (TextView) rootView.findViewById(R.id.explore_shout_username);
         descriptionView = (TextView) rootView.findViewById(R.id.explore_shout_description);
         coloredBar = rootView.findViewById(R.id.explore_shout_colored_bar);
-        coloredContainer = rootView.findViewById(R.id.explore_shout_colored_container);
+        coloredMetaDataContainer = rootView.findViewById(R.id.explore_shout_colored_meta_data_container);
+        coloredButtonContainer = (LinearLayout) rootView.findViewById(R.id.explore_shout_colored_button_container);
 
         likeCountView.setText(Integer.toString(shout.likeCount));
         commentCountView.setText(Integer.toString(shout.commentCount));
@@ -93,20 +97,30 @@ public class ShoutSlidePageFragment extends Fragment {
             distanceView.setText("?");
         }
 
-        if (shout.anonymous) {
-            usernameView.setText(getResources().getString(R.string.anonymous_name));
-            usernameView.setTextColor(getResources().getColor(R.color.anonymousGrey));
+        if (shout.id == SessionUtils.getCurrentUser(getActivity()).id) {
+            coloredBar.setBackgroundColor(getResources().getColor(R.color.myShoutPurple));
+            coloredButtonContainer.setBackgroundColor(getResources().getColor(R.color.myShoutPurple));
+            ImageUtils.setBackground(getActivity(), coloredMetaDataContainer, R.drawable.my_shout_meta_info);
+        } else if (shout.anonymous) {
             coloredBar.setBackgroundColor(getResources().getColor(R.color.anonymousGrey));
-            ImageUtils.setBackground(getActivity(), coloredContainer, R.drawable.anonymous_shout_meta_info);
+            coloredButtonContainer.setBackgroundColor(getResources().getColor(R.color.anonymousGrey));
+            ImageUtils.setBackground(getActivity(), coloredMetaDataContainer, R.drawable.anonymous_shout_meta_info);
+        } else {
+            coloredBar.setBackgroundColor(getResources().getColor(R.color.publicYellow));
+            coloredButtonContainer.setBackgroundColor(getResources().getColor(R.color.publicYellow));
+            ImageUtils.setBackground(getActivity(), coloredMetaDataContainer, R.drawable.public_shout_meta_info);
+        }
+
+        if (shout.anonymous) {
+            usernameView.setTextColor(getResources().getColor(R.color.anonymousGrey));
+            usernameView.setText(getResources().getString(R.string.anonymous_name));
         } else {
             usernameView.setText("@" + shout.username);
-
-            coloredBar.setBackgroundColor(getResources().getColor(R.color.publicYellow));
-            ImageUtils.setBackground(getActivity(), coloredContainer, R.drawable.public_shout_meta_info);
         }
+
         descriptionView.setText(shout.description);
 
-        rootView.setOnClickListener(new View.OnClickListener() {
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((ExploreActivity) getActivity()).startDisplayActivity(shout);

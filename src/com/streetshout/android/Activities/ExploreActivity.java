@@ -95,8 +95,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     private MapRequestHandler mapReqHandler = null;
 
-    private View pullShoutAreaView = null;
-
     private Point[] shoutAreaPoints = null;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -128,8 +126,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         }
 
         mapReqHandler = new MapRequestHandler();
-
-        pullShoutAreaView = findViewById(R.id.explore_pull_shout_area);
 
         shoutProgressBar = (FrameLayout) findViewById(R.id.explore_shout_progress_bar);
         shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
@@ -260,24 +256,19 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     }
 
     private void setPullShoutArea() {
-        int SHOUT_AREA_MARGIN = 10;
-        double MAP_FEED_DISPLAY_RATIO = 0.66;
+        int SHOUT_AREA_MARGIN_IN_DPI = 10;
+        int FEED_HEIGHT_IN_DPI = 150;
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHOUT_AREA_MARGIN, getResources().getDisplayMetrics());
+        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHOUT_AREA_MARGIN_IN_DPI, getResources().getDisplayMetrics());
+        int feedHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, FEED_HEIGHT_IN_DPI, getResources().getDisplayMetrics());
 
 
-        Log.d("BAB", "SCREEN HEIGHT: " + size.y);
-        Log.d("BAB", "DISPLAY RATIO: " + MAP_FEED_DISPLAY_RATIO);
-        Log.d("BAB", "MARGIN: " + margin);
-        double height = (size.y * MAP_FEED_DISPLAY_RATIO) - (2 * margin);
+        int height = size.y - feedHeight - 2 * margin;
 
-
-        Log.d("BAB", "HEIGHT !!!!!! " + height);
-
-        Point bottomLeft = new Point(margin, (int) height);
+        Point bottomLeft = new Point(margin, height);
         Point TopRight = new Point(size.x - margin, margin);
 
         shoutAreaPoints = new Point[] {bottomLeft, TopRight};

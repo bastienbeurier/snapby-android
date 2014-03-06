@@ -31,11 +31,12 @@
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     android:background="@drawable/fb_button_selector"
-                    android:id="@+id/connect_fb_button"
+                    android:id="@+id/welcome_connect_fb_button"
                     android:gravity="center"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:visibility="gone"/>
 
             <Button
                     android:layout_width="match_parent"
@@ -46,10 +47,11 @@
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     android:background="@drawable/welcome_button_selector"
-                    android:id="@+id/signup_button"
+                    android:id="@+id/welcome_signup_button"
                     android:gravity="center"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"/>
+                    android:layout_marginRight="20dp"
+                    android:visibility="gone"/>
 
             <Button
                     android:layout_width="wrap_content"
@@ -58,11 +60,12 @@
                     android:textSize="16dp"
                     android:fontFamily="sans-serif"
                     android:textColor="@color/white"
-                    android:id="@+id/signin_button"
+                    android:id="@+id/welcome_signin_button"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="25dp"
-                    android:background="@android:color/transparent"
-                    android:layout_gravity="center_horizontal"/>
+                    android:background="@null"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="gone"/>
 
         </LinearLayout>
 

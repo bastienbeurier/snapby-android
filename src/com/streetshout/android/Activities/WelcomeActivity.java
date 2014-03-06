@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -53,9 +52,9 @@ public class WelcomeActivity extends Activity {
         //Mixpanel
         TrackingUtils.trackAppOpened(this);
 
-        signinButton = (Button) findViewById(R.id.signin_button);
-        signupButton = (Button) findViewById(R.id.signup_button);
-        connectFBButton = (Button) findViewById(R.id.connect_fb_button);
+        signinButton = (Button) findViewById(R.id.welcome_signin_button);
+        signupButton = (Button) findViewById(R.id.welcome_signup_button);
+        connectFBButton = (Button) findViewById(R.id.welcome_connect_fb_button);
 
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +75,7 @@ public class WelcomeActivity extends Activity {
         connectFBButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setButtonsVisibility(View.GONE);
                 connectToFB();
             }
         });
@@ -106,6 +106,14 @@ public class WelcomeActivity extends Activity {
         if (SessionUtils.isSignIn(this)) {
             goToNavActivity();
         }
+
+        setButtonsVisibility(View.VISIBLE);
+    }
+
+    private void setButtonsVisibility(int visibility) {
+        signinButton.setVisibility(visibility);
+        signupButton.setVisibility(visibility);
+        connectFBButton.setVisibility(visibility);
     }
 
     @Override
@@ -167,8 +175,13 @@ public class WelcomeActivity extends Activity {
                             if (user != null) {
 
                                 if (user.getUsername() == null || user.asMap().get("email").toString() == null || user.getId() == null || user.getName() == null) {
+                                    if (connectFBDialog != null) {
+                                        connectFBDialog.cancel();
+                                    }
+                                    setButtonsVisibility(View.VISIBLE);
                                     Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                     toast.show();
+
                                     return;
                                 }
 
@@ -210,12 +223,17 @@ public class WelcomeActivity extends Activity {
                                             }
                                             goToNavActivity();
                                         } else {
+                                            setButtonsVisibility(View.VISIBLE);
                                             Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                             toast.show();
                                         }
                                     }
                                 });
                             } else {
+                                if (connectFBDialog != null) {
+                                    connectFBDialog.cancel();
+                                }
+                                setButtonsVisibility(View.VISIBLE);
                                 Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                 toast.show();
                             }
