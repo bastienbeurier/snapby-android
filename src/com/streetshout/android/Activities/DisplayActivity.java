@@ -3,6 +3,7 @@ package com.streetshout.android.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -45,13 +46,11 @@ public class DisplayActivity extends Activity {
 
     private ImageView createLikeButton = null;
 
-    private long firstTapTime = 0;
-
-    private Timer timer = null;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.display_shout);
+
+
 
         Intent intent = getIntent();
 
@@ -64,40 +63,12 @@ public class DisplayActivity extends Activity {
         shout = getIntent().getParcelableExtra("shout");
 
         imageView = (ImageView) findViewById(R.id.display_shout_image_view);
+        GeneralUtils.getAquery(this).id(imageView).image(shout.image + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long tapTime = (new Date()).getTime();
-                Log.d("BAB", "TAP");
-
-                if (firstTapTime != 0 && (tapTime - firstTapTime) < 300) {
-                    Log.d("BAB", "DOUBLE TAP");
-//                    if (timer != null) {
-//                        timer.cancel();
-//                        timer = null;
-//                    }
-//                    createLike();
-                    firstTapTime = 0;
-                } else {
-//                    timer = new Timer();
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            //Single tap: to test
-//                        }
-//                    }, 300);
-                    firstTapTime = tapTime;
-                }
-
-                firstTapTime = 0;
-            }
-        });
-
-        findViewById(R.id.shout_comment_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startCommentsActivity(v);
+                //TODO toggle hiding views
             }
         });
 
@@ -121,32 +92,6 @@ public class DisplayActivity extends Activity {
                 openOptionsMenu();
             }
         });
-
-        createLikeButton = (ImageView) findViewById(R.id.shout_like_button);
-
-        createLikeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setEnabled(false);
-                if (connectivityManager != null && connectivityManager.getActiveNetworkInfo() == null) {
-                    Toast toast = Toast.makeText(DisplayActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
-                    toast.show();
-                } else {
-                    Intent likes = new Intent(DisplayActivity.this, LikesActivity.class);
-                    likes.putExtra("shout", shout);
-
-                    if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0)  {
-                        likes.putExtra("myLocation", myLocation);
-                    }
-
-                    startActivity(likes);
-                }
-
-                v.setEnabled(true);
-            }
-        });
-
-        GeneralUtils.getAquery(this).id(imageView).image(shout.image + "--400");
     }
 
     @Override

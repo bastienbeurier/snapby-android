@@ -76,30 +76,29 @@ public class GeneralUtils {
         }
 
         if (SessionUtils.getCurrentUser(ctx).id == shout.userId) {
-            return R.drawable.my_shout_marker;
+            if (shout.trending) {
+                return R.drawable.my_shout_marker_trending;
+            } else {
+                return R.drawable.my_shout_marker;
+            }
         }
 
         //TODO Implement following
+
+        if (shout.anonymous) {
+            if (shout.trending) {
+                return R.drawable.anonymous_shout_marker_trending;
+            } else {
+                return R.drawable.anonymous_shout_marker;
+            }
+        }
+
 
         if (shout.trending) {
-            return R.drawable.trending_shout_marker;
+            return R.drawable.public_shout_marker_trending;
+        } else {
+            return R.drawable.public_shout_marker;
         }
-
-        if (shout.anonymous) {
-            return R.drawable.anonymous_shout_marker;
-        }
-
-        return R.drawable.public_shout_marker;
-    }
-
-    public static int getShoutColor(Context ctx, Shout shout) {
-        //TODO Implement following
-
-        if (shout.anonymous) {
-            return R.color.anonymousGrey;
-        }
-
-        return R.color.publicYellow;
     }
 
     public static boolean isValidEmail(String email) {

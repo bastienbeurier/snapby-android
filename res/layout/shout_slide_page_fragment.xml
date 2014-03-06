@@ -18,9 +18,9 @@
                    android:layout_weight="1"
                    android:paddingLeft="12dp"
                    android:paddingRight="12dp"
-                   android:src="@drawable/explore_shout_like_button_selector"/>
+                   android:src="@drawable/explore_shout_like_button"/>
 
-        <ImageView android:id="@+id/explore_shout_colored_share_button"
+        <ImageView android:id="@+id/explore_shout_share_button"
                    android:layout_width="match_parent"
                    android:layout_height="match_parent"
                    android:layout_weight="1"
@@ -28,7 +28,7 @@
                    android:paddingRight="12dp"
                    android:src="@drawable/explore_shout_share_button"/>
 
-        <ImageView android:id="@+id/explore_shout_colored_zoom_button"
+        <ImageView android:id="@+id/explore_shout_zoom_button"
                    android:layout_width="match_parent"
                    android:layout_height="match_parent"
                    android:layout_weight="1"
@@ -51,6 +51,12 @@
                    android:scaleType="centerCrop"
                    android:layout_height="match_parent"
                    android:layout_width="match_parent"/>
+
+        <ImageView android:id="@+id/explore_shout_trending_mark"
+                   android:layout_height="50dp"
+                   android:layout_width="50dp"
+                   android:src="@drawable/explore_shout_trending_mark"
+                   android:visibility="gone"/>
     </FrameLayout>
 
     <LinearLayout android:orientation="vertical"

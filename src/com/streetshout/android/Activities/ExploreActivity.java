@@ -2,6 +2,7 @@ package com.streetshout.android.activities;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
@@ -482,7 +483,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         mMap.moveCamera(update);
     }
 
-    private void redirectToShout(Shout shoutToRedirectTo) {
+    public void redirectToShout(Shout shoutToRedirectTo) {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shoutToRedirectTo.lat, shoutToRedirectTo.lng), Constants.REDIRECTION_FROM_CREATE_SHOUT);
         mMap.moveCamera(update);
 
