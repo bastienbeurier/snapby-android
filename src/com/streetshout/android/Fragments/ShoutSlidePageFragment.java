@@ -163,7 +163,7 @@ public class ShoutSlidePageFragment extends Fragment {
                 likeButton.setEnabled(false);
 
                 if (liked) {
-                    unlikeShout(true);
+                    unlikeShout();
 
                     ApiUtils.removeLike(getActivity(), shout.id, new AjaxCallback<JSONObject>() {
                         @Override
@@ -176,12 +176,12 @@ public class ShoutSlidePageFragment extends Fragment {
                                 Toast toast = Toast.makeText(getActivity(), getString(R.string.shout_unlike_failed), Toast.LENGTH_SHORT);
                                 toast.show();
 
-                                likeShout(false);
+                                likeShout();
                             }
                         }
                     });
                 } else {
-                    likeShout(true);
+                    likeShout();
 
                     double lat = 0;
                     double lng = 0;
@@ -203,7 +203,7 @@ public class ShoutSlidePageFragment extends Fragment {
                                 Toast toast = Toast.makeText(getActivity(), getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
                                 toast.show();
 
-                                unlikeShout(false);
+                                unlikeShout();
                             }
                         }
                     });
@@ -258,29 +258,22 @@ public class ShoutSlidePageFragment extends Fragment {
         return rootView;
     }
 
-    private void likeShout(boolean increment) {
+    private void likeShout() {
         liked = true;
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button_liked));
         activity.currentUserShoutLiked.add(shout.id);
 
-        if (increment) {
-            setLikeCountUI(shout.likeCount + 1);
-        } else {
-            setLikeCountUI(shout.likeCount);
-        }
+        shout.likeCount++;
+        setLikeCountUI(shout.likeCount);
     }
 
-    private void unlikeShout(boolean decrement) {
+    private void unlikeShout() {
         liked = false;
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button));
-        setLikeCountUI(shout.likeCount - 1);
-        activity.currentUserShoutLiked = removeIntegerFromArray(activity.currentUserShoutLiked, shout.id);
+        activity.currentUserShoutLiked.remove(shout.id);
 
-        if (decrement) {
-            setLikeCountUI(shout.likeCount - 1);
-        } else {
-            setLikeCountUI(shout.likeCount);
-        }
+        shout.likeCount--;
+        setLikeCountUI(shout.likeCount);
     }
 
     private void updateShoutUI(int color) {
@@ -326,16 +319,5 @@ public class ShoutSlidePageFragment extends Fragment {
         } else {
             commentCountView.setText(Integer.toString(count) + " " + getString(R.string.comment));
         }
-    }
-
-    private ArrayList<Integer> removeIntegerFromArray(ArrayList<Integer> array, Integer integer) {
-        int count = array.size();
-        for (int i = 0; i < count ; i++) {
-            if (array.get(i).equals(integer)) {
-                array.remove(i);
-            }
-        }
-
-        return array;
     }
 }

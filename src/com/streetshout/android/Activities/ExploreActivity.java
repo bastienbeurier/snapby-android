@@ -46,8 +46,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
@@ -98,14 +103,13 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     private Point[] shoutAreaPoints = null;
 
-    public ArrayList<Integer> currentUserShoutLiked = null;
+    public TreeSet<Integer> currentUserShoutLiked = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
 
-        currentUserShoutLiked = new ArrayList<Integer>();
-        currentUserShoutLiked = SessionUtils.getCurrentUserLikes(this);
+        currentUserShoutLiked = new TreeSet<Integer>();
 
         if (getIntent().hasExtra("myLocation")) {
             myLocation = getIntent().getParcelableExtra("myLocation");
@@ -159,19 +163,17 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
+
+                if (status.getCode() == 401) {
+                    SessionUtils.logOut(ExploreActivity.this);
+                    return;
+                }
+
                 currentUserShoutLiked = SessionUtils.saveUserInfoInPhoneAndGetLikes(ExploreActivity.this, object, status);
             }
         });
 
         newMap = setUpMapIfNeeded();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        //Save shouts that the user have liked in user prefs before activity is destroyed
-        SessionUtils.setCurrentUserLikes(this, currentUserShoutLiked);
     }
 
     @Override

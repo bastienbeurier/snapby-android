@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
@@ -346,6 +347,11 @@ public class CreateActivity extends Activity {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
+
+                if (status.getCode() == 401) {
+                    SessionUtils.logOut(CreateActivity.this);
+                    return;
+                }
 
                 if (status.getError() == null && object != null) {
                     JSONObject rawShout = null;

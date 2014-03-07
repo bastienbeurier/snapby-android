@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  * Created by bastien on 1/27/14.
@@ -26,16 +27,21 @@ public class SessionUtils {
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
 
+                if (status.getCode() == 401) {
+                    SessionUtils.logOut(activity);
+                    return;
+                }
+
                 saveUserInfoInPhoneAndGetLikes(activity, object, status);
             }
         });
     }
 
-    public static ArrayList<Integer> saveUserInfoInPhoneAndGetLikes(Activity activity, JSONObject object, AjaxStatus status) {
+    public static TreeSet<Integer> saveUserInfoInPhoneAndGetLikes(Activity activity, JSONObject object, AjaxStatus status) {
         if (status.getError() == null) {
             JSONObject result = null;
             JSONObject rawUser = null;
-            ArrayList<Integer> likes = new ArrayList<Integer>();
+            TreeSet<Integer> likes = new TreeSet<Integer>();
 
 
             try {
@@ -55,7 +61,6 @@ public class SessionUtils {
 
             User currentUser = User.rawUserToInstance(rawUser);
             SessionUtils.updateCurrentUserInfoInPhone(activity, currentUser);
-            SessionUtils.setCurrentUserLikes(activity, likes);
 
             return likes;
         } else {
@@ -99,17 +104,17 @@ public class SessionUtils {
         }
     }
 
-    public static ArrayList<Integer> getCurrentUserLikes(Context ctx) {
-        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
-
-        return appPrefs.getCurrentUserLikes();
-    }
-
-    public static void setCurrentUserLikes(Context ctx, ArrayList<Integer> likes) {
-        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
-
-        appPrefs.setCurrentUserLikes(likes);
-    }
+//    public static ArrayList<Integer> getCurrentUserLikes(Context ctx) {
+//        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+//
+//        return appPrefs.getCurrentUserLikes();
+//    }
+//
+//    public static void setCurrentUserLikes(Context ctx, ArrayList<Integer> likes) {
+//        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+//
+//        appPrefs.setCurrentUserLikes(likes);
+//    }
 
     public static void saveCurrentUserToken(Context ctx, String authToken) {
         AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
