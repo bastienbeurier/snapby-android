@@ -34,44 +34,6 @@ public class GeneralUtils {
         return Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static int getShoutAgeColor(Context ctx, Shout shout) {
-        long shoutAge = TimeUtils.getShoutAge(shout.created);
-
-        if (shoutAge < Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS) {
-            return ctx.getResources().getColor(R.color.shoutRed);
-        } else if (shoutAge < 3 * (Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS)) {
-            return ctx.getResources().getColor(R.color.shoutPink);
-        } else {
-            return ctx.getResources().getColor(R.color.shoutLightPink);
-        }
-    }
-
-    public static int getShoutMarkerImageResourceAccordingToAge(Shout shout, boolean selected) {
-        long shoutAge = TimeUtils.getShoutAge(shout.created);
-
-        if (shoutAge < Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS) {
-            if (selected) {
-//                return R.drawable.marker_shout_red_selected;
-            } else {
-//                return R.drawable.marker_shout_red;
-            }
-        } else if (shoutAge < 2 * (Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS)) {
-            if (selected) {
-//                return R.drawable.marker_shout_pink_selected;
-            } else {
-//                return R.drawable.marker_shout_pink;
-            }
-        } else {
-            if (selected) {
-//                return R.drawable.marker_shout_lightpink_selected;
-            } else {
-//                return R.drawable.marker_shout_lightpink;
-            }
-        }
-
-        return 0;
-    }
-
     public static int getShoutMarkerImageResource(Context ctx, Shout shout, boolean selected) {
         if (selected) {
             return R.drawable.selected_shout_marker;

@@ -87,18 +87,4 @@ public class PushNotifications {
     public static String getPushToken() {
         return PushManager.shared().getAPID();
     }
-
-    public static HashMap<String, Object> getDeviceInfo(Context ctx) {
-        HashMap<String, Object> deviceInfo = new HashMap<String, Object>();
-
-        deviceInfo.put("device_id", GeneralUtils.getDeviceId(ctx));
-        deviceInfo.put("push_token", PushNotifications.getPushToken());
-        deviceInfo.put("device_model", Build.BRAND + " " + Build.PRODUCT);
-        deviceInfo.put("os_version", Build.VERSION.RELEASE);
-        deviceInfo.put("os_type", "android");
-        deviceInfo.put("app_version", GeneralUtils.getAppVersion(ctx));
-        deviceInfo.put("api_version", Constants.API);
-
-        return deviceInfo;
-    }
 }

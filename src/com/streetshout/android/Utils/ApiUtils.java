@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
-import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.streetshout.android.models.Shout;
@@ -287,8 +286,6 @@ public class ApiUtils {
         if (params == null) {
             return;
         }
-
-        Log.d("BAB", "TOKEN FROM CREATE: " + params.get("auth_token"));
 
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }

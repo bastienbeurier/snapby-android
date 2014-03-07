@@ -109,25 +109,25 @@ public class AppPreferences {
         prefsEditor.commit();
     }
 
-    public void setCurrentUserLikes(ArrayList<Integer> array) {
-        prefsEditor.putInt(CURRENT_USER_LIKES_PREF +"_size", array.size());
-
-        for( int i=0 ; i < array.size() ; i++) {
-            prefsEditor.putInt(CURRENT_USER_LIKES_PREF + "_" + i, array.get(i));
-        }
-
-        prefsEditor.commit();
-    }
-
-    public ArrayList<Integer> getCurrentUserLikes() {
-        int size = sharedPrefs.getInt(CURRENT_USER_LIKES_PREF + "_size", 0);
-
-        ArrayList<Integer> array = new ArrayList<Integer>();
-
-        for(int i=0; i < size ; i++) {
-            array.add(sharedPrefs.getInt(CURRENT_USER_LIKES_PREF+ "_" + i, 0));
-        }
-
-        return array;
-    }
+//    public void setCurrentUserLikes(ArrayList<Integer> array) {
+//        prefsEditor.putInt(CURRENT_USER_LIKES_PREF +"_size", array.size());
+//
+//        for( int i=0 ; i < array.size() ; i++) {
+//            prefsEditor.putInt(CURRENT_USER_LIKES_PREF + "_" + i, array.get(i));
+//        }
+//
+//        prefsEditor.commit();
+//    }
+//
+//    public ArrayList<Integer> getCurrentUserLikes() {
+//        int size = sharedPrefs.getInt(CURRENT_USER_LIKES_PREF + "_size", 0);
+//
+//        ArrayList<Integer> array = new ArrayList<Integer>();
+//
+//        for(int i=0; i < size ; i++) {
+//            array.add(sharedPrefs.getInt(CURRENT_USER_LIKES_PREF+ "_" + i, 0));
+//        }
+//
+//        return array;
+//    }
 }

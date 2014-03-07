@@ -10,6 +10,7 @@
     <style name="StreetShoutActionBar" parent="@android:style/Widget.Holo.ActionBar">
         <item name="android:background">@color/shoutBlue</item>
         <item name="android:titleTextStyle">@style/ActionBarText</item>
+        <item name="android:icon">@drawable/shout_image_place_holder</item>
     </style>
 
     <style name="ShoutStyle.NoBar" parent="ShoutStyle">
