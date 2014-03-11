@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.location.Location;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -335,11 +336,21 @@ public class CreateActivity extends Activity {
     public void uploadImageBeforeCreatingShout() {
         createShoutDialog = ProgressDialog.show(this, "", getString(R.string.shout_processing), false);
 
+        galleryAddPic();
+
         if (photoUrl != null) {
             new ValidateCredentialsTask().execute();
         } else {
-            createNewShoutFromInfo();
+            shoutCreationFailed();
         }
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(shoutPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 
     public void createNewShoutFromInfo() {
