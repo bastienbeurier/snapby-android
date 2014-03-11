@@ -8,7 +8,6 @@ public class Constants {
     public static final String API = "2";
 
     public static final int SHOUT_DURATION = 4 * 60 * 60 * 1000;
-    public static final int SHOUT_DURATION_HOURS = 4;
 
     public static final int MAX_DESCRIPTION_LENGTH = 140;
 
@@ -33,9 +32,9 @@ public class Constants {
     public static final int CREATE_SHOUT_REQUEST = 11101;
     public static final int EXPLORE_REQUEST = 12376;
     public static final int SETTINGS_REQUEST = 14760;
+    public static final int PROFILE_REQUEST = 14555;
     public static final int RESET_PASSWORD_REQUEST = 64783;
     public static final int DISPLAY_SHOUT_REQUEST = 48392;
-
 
     /** AWS S3 **/
     public static final String PICTURE_BUCKET = "street-shout1";
@@ -43,7 +42,7 @@ public class Constants {
 
     /** Shout image res **/
     public static final int SHOUT_BIG_RES_SUFFIX = 400;
-    public static final int SHOUT_BIG_RES = 800;
+    public static final int SHOUT_BIG_RES = 400;
 
     /** Mixpanel tokens **/
     public static final String PROD_MIXPANEL_TOKEN = "24dc482a232028564063bd3dd7e84e93";

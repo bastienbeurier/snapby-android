@@ -120,8 +120,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         settingsButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent settings = new Intent(CameraActivity.this, SettingsActivity.class);
-                startActivityForResult(settings, Constants.SETTINGS_REQUEST);
+                Intent profile = new Intent(CameraActivity.this, ProfileActivity.class);
+                startActivityForResult(profile, Constants.PROFILE_REQUEST);
             }
         });
 
