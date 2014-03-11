@@ -35,6 +35,7 @@ public class Constants {
     public static final int PROFILE_REQUEST = 14555;
     public static final int RESET_PASSWORD_REQUEST = 64783;
     public static final int DISPLAY_SHOUT_REQUEST = 48392;
+    public static final int PHOTO_GALLERY_REQUEST = 37489;
 
     /** AWS S3 **/
     public static final String PICTURE_BUCKET = "street-shout1";
@@ -43,6 +44,7 @@ public class Constants {
     /** Shout image res **/
     public static final int SHOUT_BIG_RES_SUFFIX = 400;
     public static final int SHOUT_BIG_RES = 400;
+    public static final int SHOUT_THUMB_RES = 100;
 
     /** Mixpanel tokens **/
     public static final String PROD_MIXPANEL_TOKEN = "24dc482a232028564063bd3dd7e84e93";

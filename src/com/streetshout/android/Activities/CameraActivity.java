@@ -260,9 +260,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
 
             String imagePath = pictureFile.getAbsolutePath().toString();
 
-            Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath);
+            Bitmap formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath, Constants.SHOUT_BIG_RES);
 
-            //TODO: check with Philippe's phone
             if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
                 if (frontCamera) {
                     formattedPicture = ImageUtils.rotateImage(formattedPicture);

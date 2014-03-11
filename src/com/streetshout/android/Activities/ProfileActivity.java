@@ -2,13 +2,19 @@ package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -16,13 +22,18 @@ import com.androidquery.callback.ImageOptions;
 import com.streetshout.android.R;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
+import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.SessionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.TreeSet;
 
 /**
@@ -38,6 +49,9 @@ public class ProfileActivity extends Activity {
     private TextView followingCount = null;
     private LinearLayout followersButton = null;
     private LinearLayout followingButton = null;
+    private FrameLayout profilePictureContainer = null;
+    private File profilePictureFile = null;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +66,7 @@ public class ProfileActivity extends Activity {
         followingCount = (TextView) findViewById(R.id.profile_following_count);
         followersButton = (LinearLayout) findViewById(R.id.profile_followers_button);
         followingButton = (LinearLayout) findViewById(R.id.profile_following_button);
+        profilePictureContainer = (FrameLayout) findViewById(R.id.profile_profile_picture_container);
 
 
 
@@ -106,6 +121,15 @@ public class ProfileActivity extends Activity {
 
             }
         });
+
+        profilePictureContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                profilePictureContainer.setEnabled(false);
+
+                letUserChooseImage();
+            }
+        });
     }
 
     @Override
@@ -114,5 +138,46 @@ public class ProfileActivity extends Activity {
         setResult(RESULT_CANCELED, returnIntent);
         finish();
         return true;
+    }
+
+    public void letUserChooseImage() {
+        if (ImageUtils.isSDPresent() == false){
+            Toast toast = Toast.makeText(this, this.getString(R.string.no_sd_card), Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+
+        Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(galleryIntent, Constants.PHOTO_GALLERY_REQUEST);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.PHOTO_GALLERY_REQUEST) {
+            profilePictureContainer.setEnabled(true);
+
+            if (resultCode == RESULT_OK) {
+                Bitmap formattedPicture = null;
+
+                //New Kitkat way of doing things
+                if (Build.VERSION.SDK_INT < 19) {
+                    String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
+                    formattedPicture = ImageUtils.decodeAndMakeThumb(libraryPhotoPath);
+                } else {
+                    ParcelFileDescriptor parcelFileDescriptor;
+                    try {
+                        parcelFileDescriptor = getContentResolver().openFileDescriptor(data.getData(), "r");
+                        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                        formattedPicture = ImageUtils.makeThumb(BitmapFactory.decodeFileDescriptor(fileDescriptor));
+                        parcelFileDescriptor.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                profilePicture.setImageBitmap(formattedPicture);
+            }
+        }
     }
 }
