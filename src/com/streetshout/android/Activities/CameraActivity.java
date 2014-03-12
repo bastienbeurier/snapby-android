@@ -114,7 +114,7 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
             }
         });
 
-        ImageView settingsButtonView = (ImageView) findViewById(R.id.camera_settings_button);
+        ImageView settingsButtonView = (ImageView) findViewById(R.id.camera_profile_button);
 
         settingsButtonView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -16,12 +16,12 @@
                android:src="@drawable/camera_explore_button_selector"
                android:layout_gravity="top|left"/>
 
-    <ImageView android:id="@+id/camera_settings_button"
+    <ImageView android:id="@+id/camera_profile_button"
                android:layout_width="65dp"
                android:layout_height="65dp"
                android:padding="10dp"
                android:layout_margin="10dp"
-               android:src="@drawable/camera_settings_button_selector"
+               android:src="@drawable/camera_profile_button_selector"
                android:layout_gravity="top|right"/>
 
     <FrameLayout android:id="@+id/camera_bottom_bar"

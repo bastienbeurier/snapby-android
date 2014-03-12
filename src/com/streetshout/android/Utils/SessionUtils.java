@@ -90,6 +90,7 @@ public class SessionUtils {
         appPrefs.setCurrentUserIdPref(user.id);
         appPrefs.setCurrentUserEmailPref(user.email);
         appPrefs.setCurrentUsernamePref(user.username);
+        appPrefs.setCurrentProfilePicPref(user.profilePicture);
         appPrefs.setCurrentUserBlacklistedPref(user.isBlackListed);
     }
 
@@ -99,6 +100,7 @@ public class SessionUtils {
         appPrefs.setCurrentUserIdPref(0);
         appPrefs.setCurrentUserEmailPref(null);
         appPrefs.setCurrentUsernamePref(null);
+        appPrefs.setCurrentProfilePicPref(null);
         appPrefs.setCurrentUserBlacklistedPref(null);
     }
 
@@ -111,6 +113,7 @@ public class SessionUtils {
         currentUser.email = appPrefs.getCurrentUserEmailPref();
         currentUser.username = appPrefs.getCurrentUsernamePref();
         currentUser.isBlackListed = appPrefs.getCurrentUserBlacklistedPref();
+        currentUser.profilePicture = appPrefs.getCurrentProfilePicPref();
 
         if (currentUser.id != 0 && !currentUser.email.isEmpty() &&
                                                 !currentUser.username.isEmpty() && currentUser.isBlackListed != null) {

@@ -20,7 +20,7 @@ public class AppPreferences {
 
     private static final String CURRENT_USER_TOKEN_PREF = "ss_current_user_token_pref";
 
-    private static final String CURRENT_USER_LIKES_PREF = "ss_current_user_likes_array_pref";
+    private static final String CURRENT_USER_PROFILE_PIC_PREF = "ss_current_user_profile_pic_pref";
 
     private static final String APP_SHARED_PREFS = AppPreferences.class.getSimpleName();
 
@@ -106,6 +106,20 @@ public class AppPreferences {
         } else {
             prefsEditor.putString(CURRENT_USER_TOKEN_PREF, value);
         }
+        prefsEditor.commit();
+    }
+
+    public String getCurrentProfilePicPref() {
+        return sharedPrefs.getString(CURRENT_USER_PROFILE_PIC_PREF, "");
+    }
+
+    public void setCurrentProfilePicPref(String value) {
+        if (value == null) {
+            prefsEditor.remove(CURRENT_USER_PROFILE_PIC_PREF);
+        } else {
+            prefsEditor.putString(CURRENT_USER_PROFILE_PIC_PREF, value);
+        }
+
         prefsEditor.commit();
     }
 }

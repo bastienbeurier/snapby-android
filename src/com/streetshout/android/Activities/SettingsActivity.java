@@ -1,14 +1,17 @@
 package com.streetshout.android.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.ParcelFileDescriptor;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,22 +20,27 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.facebook.Session;
-import com.facebook.Settings;
 import com.streetshout.android.R;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.AppPreferences;
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
+import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.SessionUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.IOException;
 
 public class SettingsActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
@@ -42,7 +50,15 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
     private EditText settingsUsernameEditText = null;
 
+    private ImageView profilePictureView = null;
+
+    private FrameLayout profilePictureContainer = null;
+
     private ConnectivityManager connectivityManager = null;
+
+    private User currentUser = null;
+
+    private boolean profileUpdated = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +70,22 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
         appPrefs = new AppPreferences(getApplicationContext());
 
-        settingsUsernameEditText = (EditText) findViewById(R.id.settings_username_editText);
+        currentUser = SessionUtils.getCurrentUser(this);
 
-        setCurrentUsername();
+        settingsUsernameEditText = (EditText) findViewById(R.id.settings_username_editText);
+        profilePictureContainer = (FrameLayout) findViewById(R.id.settings_edit_profile_picture_container);
+        profilePictureView = (ImageView) findViewById(R.id.settings_profile_picture);
+
+        updateUI();
+
+        profilePictureContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                profilePictureContainer.setEnabled(false);
+
+                letUserChooseProfilePicture();
+            }
+        });
 
         settingsUsernameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -82,7 +111,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
                         Toast toast = Toast.makeText(SettingsActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
                         toast.show();
                     } else if (errors) {
-                        setCurrentUsername();
+                        updateUI();
                     } else {
                         settingsUsernameEditText.setError(null);
 
@@ -106,12 +135,14 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
                                     Toast toast = Toast.makeText(SettingsActivity.this, getString(R.string.username_successfully_updated), Toast.LENGTH_SHORT);
                                     toast.show();
+
+                                    profileUpdated = true;
                                 } else if (status.getError() == null && status.getCode() == 222) {
-                                    setCurrentUsername();
+                                    updateUI();
                                     Toast toast = Toast.makeText(SettingsActivity.this, getString(R.string.username_taken_error), Toast.LENGTH_SHORT);
                                     toast.show();
                                 } else {
-                                    setCurrentUsername();
+                                    updateUI();
                                     Toast toast = Toast.makeText(SettingsActivity.this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
                                     toast.show();
                                 }
@@ -167,14 +198,32 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         ((TextView) findViewById(R.id.app_name_and_version)).setText(getString(R.string.app_full_name) + " (v." + GeneralUtils.getAppVersion(this) + ")");
     }
 
-    private void setCurrentUsername() {
-        settingsUsernameEditText.setText(SessionUtils.getCurrentUser(this).username);
-        settingsUsernameEditText.setSelection(settingsUsernameEditText.getText().length());
+    private void letUserChooseProfilePicture() {
+        if (ImageUtils.isSDPresent() == false){
+            Toast toast = Toast.makeText(this, this.getString(R.string.no_sd_card), Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+
+        Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(galleryIntent, Constants.PHOTO_GALLERY_REQUEST);
+    }
+
+    private void updateUI() {
+        settingsUsernameEditText.setText(currentUser.username);
+//        settingsUsernameEditText.setSelection(settingsUsernameEditText.getText().length());
+
+        GeneralUtils.getAquery(this).id(profilePictureView).image(currentUser.profilePicture);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         Intent returnIntent = new Intent();
+        if (profileUpdated) {
+            returnIntent.putExtra("profileUpdated", true);
+        }
         setResult(RESULT_CANCELED, returnIntent);
         finish();
         return true;
@@ -203,5 +252,69 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
             distanceSpinner.setSelection(distancePref);
         }
 
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.PHOTO_GALLERY_REQUEST) {
+            profilePictureContainer.setEnabled(true);
+
+            if (resultCode == RESULT_OK) {
+                Bitmap formattedPicture = null;
+
+                //New Kitkat way of doing things
+                if (Build.VERSION.SDK_INT < 19) {
+                    String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
+                    formattedPicture = ImageUtils.decodeAndMakeThumb(libraryPhotoPath);
+                } else {
+                    ParcelFileDescriptor parcelFileDescriptor;
+                    try {
+                        parcelFileDescriptor = getContentResolver().openFileDescriptor(data.getData(), "r");
+                        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                        formattedPicture = ImageUtils.makeThumb(BitmapFactory.decodeFileDescriptor(fileDescriptor));
+                        parcelFileDescriptor.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //Convert bitmap to byte array
+                Bitmap bitmap = formattedPicture;
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+                byte[] bmData = stream.toByteArray();
+                String encodedImage = Base64.encodeToString(bmData, Base64.DEFAULT);
+
+                ApiUtils.updateUserInfoWithLocation(SettingsActivity.this, GeneralUtils.getAquery(SettingsActivity.this), null, encodedImage, null, new AjaxCallback<JSONObject>() {
+                    @Override
+                    public void callback(String url, JSONObject object, AjaxStatus status) {
+                        super.callback(url, object, status);
+
+                        if (status.getError() == null && object != null && status.getCode() != 222) {
+                            JSONObject result = null;
+                            JSONObject rawUser = null;
+
+
+                            try {
+                                result = object.getJSONObject("result");
+
+                                rawUser = result.getJSONObject("user");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            currentUser = User.rawUserToInstance(rawUser);
+                            SessionUtils.updateCurrentUserInfoInPhone(SettingsActivity.this, currentUser);
+                            Toast toast = Toast.makeText(SettingsActivity.this, SettingsActivity.this.getString(R.string.update_profile_picture_success), Toast.LENGTH_LONG);
+                            toast.show();
+                            updateUI();
+                            profileUpdated = true;
+                        } else {
+                            Toast toast = Toast.makeText(SettingsActivity.this, SettingsActivity.this.getString(R.string.update_profile_picture_failure), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    }
+                });
+            }
+        }
     }
 }

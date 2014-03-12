@@ -62,8 +62,9 @@
     <string name="refine_location_failure">No better location available.</string>
     <string name="new_shout_geocoding_failed">Not found or not nearby location</string>
     <string name="address_geocoding_failed">Location not found</string>
-    <string name="username_preference_button">Username</string>
     <string name="notification_preference_dialog_instruction">Adjust your notification radius to get notified when somebody shouts near you. Choose \"none\" to disable notifications.</string>
+    <string name="username_preference_button">Username</string>
+    <string name="profile_picture_preference_button">Profile picture</string>
     <string name="notification_preference_dialog_title">Notification radius</string>
     <string name="distance_unit_preference_button">Distance unit</string>
     <string name="feedback_preference_button">Feedback or bug report</string>
@@ -72,6 +73,8 @@
     <string name="feed_back_mail_title">Feedback for Shout on Android (v%s)</string>
     <string name="no_google_play_store">Couldn\'t launch the google play store</string>
     <string name="no_sd_card">Please insert an SD card in your phone.</string>
+    <string name="update_profile_picture_failure">Failed to update profile picture, please try again.</string>
+    <string name="update_profile_picture_success">Profile picture updated!</string>
     <string name="no_space_picture">Couldn\'t find a place to store a picture.</string>
     <string name="photo_choosing_error">An error occured while selecting your image, please try again.</string>
     <string name="photo_not_found">Couldn\'t find your image, please try again.</string>
@@ -84,7 +87,8 @@
     <string name="far">far</string>
     <string name="meters">meters</string>
     <string name="away">away</string>
-    <string name="shout_settings">GENERAL SETTINGS</string>
+    <string name="shout_settings">SETTINGS</string>
+    <string name="edit_profile">EDIT PROFILE</string>
     <string name="participate">PARTICIPATE</string>
     <string name="add_photo">Add photo</string>
     <string name="refine_location">Refine location</string>

@@ -223,6 +223,9 @@ public class WelcomeActivity extends Activity {
                                             }
                                             goToNavActivity();
                                         } else {
+                                            if (connectFBDialog != null) {
+                                                connectFBDialog.cancel();
+                                            }
                                             setButtonsVisibility(View.VISIBLE);
                                             Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                             toast.show();

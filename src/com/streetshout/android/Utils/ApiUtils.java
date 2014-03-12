@@ -194,7 +194,6 @@ public class ApiUtils {
         aq.ajax(url, params, JSONObject.class, cb);
     }
 
-
     public static void sendResetPasswordInstructions(AQuery aq, String email, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/users/password.json";
 
