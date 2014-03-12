@@ -159,7 +159,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         noShoutInFeed = (TextView) findViewById(R.id.explore_shout_no_shout);
         noConnectionInFeed = (TextView) findViewById(R.id.explore_shout_no_connection);
 
-        ApiUtils.updateUserInfoWithLocation(this, GeneralUtils.getAquery(this), myLocation, new AjaxCallback<JSONObject>() {
+        //TODO change with get User Info
+        ApiUtils.updateUserInfoWithLocation(this, GeneralUtils.getAquery(this), myLocation, null, null, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);

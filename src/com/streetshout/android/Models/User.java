@@ -2,6 +2,7 @@ package com.streetshout.android.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,7 +36,10 @@ public class User implements Parcelable {
                 user.username = rawUser.getString("username");
                 user.isBlackListed = Boolean.parseBoolean(rawUser.getString("black_listed"));
                 user.profilePicture = rawUser.getString("profile_picture");
-                user.profilePicture = user.profilePicture.equals("null") ? "" : "http://" + user.profilePicture;
+
+                if (user.profilePicture.equals("null") || user.profilePicture.contains("missing")) {
+                    user.profilePicture = "";
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

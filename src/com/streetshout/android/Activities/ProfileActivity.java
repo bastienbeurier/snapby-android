@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -69,8 +71,8 @@ public class ProfileActivity extends Activity {
         profilePictureContainer = (FrameLayout) findViewById(R.id.profile_profile_picture_container);
 
 
-
-        ApiUtils.updateUserInfoWithLocation(this, GeneralUtils.getAquery(this), null, new AjaxCallback<JSONObject>() {
+        //TODO change method to get user info
+        ApiUtils.getUserInfo(this, SessionUtils.getCurrentUser(this).id, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -175,6 +177,26 @@ public class ProfileActivity extends Activity {
                         e.printStackTrace();
                     }
                 }
+
+                //Convert bitmap to byte array
+                Bitmap bitmap = formattedPicture;
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+                byte[] bmData = stream.toByteArray();
+                String encodedImage = Base64.encodeToString(bmData, Base64.DEFAULT);
+
+                ApiUtils.updateUserInfoWithLocation(ProfileActivity.this, GeneralUtils.getAquery(ProfileActivity.this), null, encodedImage, null, new AjaxCallback<JSONObject>() {
+                    @Override
+                    public void callback(String url, JSONObject object, AjaxStatus status) {
+                        super.callback(url, object, status);
+
+                        if (status.getCode() == 401) {
+                            //TODO
+                        } else {
+                            //TODO ERROR
+                        }
+                    }
+                });
 
                 profilePicture.setImageBitmap(formattedPicture);
             }

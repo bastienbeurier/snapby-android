@@ -86,7 +86,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
                     } else {
                         settingsUsernameEditText.setError(null);
 
-                        ApiUtils.updateUsername(SettingsActivity.this, GeneralUtils.getAquery(SettingsActivity.this), username, new AjaxCallback<JSONObject>() {
+                        ApiUtils.updateUserInfoWithLocation(SettingsActivity.this, GeneralUtils.getAquery(SettingsActivity.this), null, null, username, new AjaxCallback<JSONObject>() {
                             @Override
                             public void callback(String url, JSONObject object, AjaxStatus status) {
                                 super.callback(url, object, status);

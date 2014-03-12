@@ -8,7 +8,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -318,7 +317,7 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     protected void onResume() {
         super.onResume();
 
-        SessionUtils.sendAndReceiveUserInfo(this, myLocation);
+        SessionUtils.synchronizeUserInfo(this, myLocation);
 
         if (createShoutRedirect) {
             createShoutRedirect = false;

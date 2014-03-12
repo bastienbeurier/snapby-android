@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -144,6 +145,7 @@ public class SignupActivity extends Activity {
                     SessionUtils.saveCurrentUserToken(SignupActivity.this, token);
 
                     User currentUser = User.rawUserToInstance(rawUser);
+
                     SessionUtils.updateCurrentUserInfoInPhone(SignupActivity.this, currentUser);
 
                     TrackingUtils.identify(SignupActivity.this, currentUser);
