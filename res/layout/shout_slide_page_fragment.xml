@@ -6,39 +6,11 @@
               android:layout_height="match_parent"
               android:background="@color/white">
 
-    <LinearLayout android:id="@+id/explore_shout_colored_button_container"
-                  android:orientation="vertical"
-                  android:layout_width="50dp"
-                  android:layout_height="match_parent"
-                  android:background="@color/lightShoutBlue">
+    <View android:id="@+id/explore_shout_colored_bar"
+          android:layout_width="10dp"
+          android:layout_height="match_parent" />
 
-        <ImageView android:id="@+id/explore_shout_like_button"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_weight="1"
-                   android:paddingLeft="12dp"
-                   android:paddingRight="12dp"
-                   android:src="@drawable/explore_shout_like_button"/>
-
-        <ImageView android:id="@+id/explore_shout_share_button"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_weight="1"
-                   android:paddingLeft="12dp"
-                   android:paddingRight="12dp"
-                   android:src="@drawable/explore_shout_share_button"/>
-
-        <ImageView android:id="@+id/explore_shout_zoom_button"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent"
-                   android:layout_weight="1"
-                   android:paddingLeft="12dp"
-                   android:paddingRight="12dp"
-                   android:src="@drawable/explore_shout_zoom_button"/>
-
-    </LinearLayout>
-
-    <FrameLayout android:layout_width="100dp"
+    <FrameLayout android:layout_width="145dp"
                  android:layout_height="match_parent"
                  android:background="@color/lightShoutBlue">
 
@@ -51,6 +23,45 @@
                    android:scaleType="centerCrop"
                    android:layout_height="match_parent"
                    android:layout_width="match_parent"/>
+
+        <FrameLayout android:layout_width="match_parent"
+                     android:layout_height="50dp"
+                     android:gravity="center"
+                     android:layout_gravity="bottom"
+                     android:background="@color/semiTransparentBlackDarker">
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:layout_gravity="center"
+                          android:gravity="center">
+
+                <ImageView android:layout_width="20dp"
+                           android:layout_height="20dp"
+                           android:src="@drawable/explore_shout_age_icon"
+                           android:layout_marginRight="1dp"/>
+
+                <TextView android:id="@+id/explore_shout_age"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textSize="16dp"
+                          android:text="9min"
+                          android:textColor="@color/white"/>
+
+                <ImageView android:layout_width="20dp"
+                           android:layout_height="20dp"
+                           android:layout_marginLeft="3dp"
+                           android:src="@drawable/explore_shout_distance_icon"
+                           android:layout_marginRight="1dp"/>
+
+                <TextView android:id="@+id/explore_shout_distance"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textSize="16dp"
+                          android:text="15km"
+                          android:textColor="@color/white"/>
+            </LinearLayout>
+        </FrameLayout>
 
         <ImageView android:id="@+id/explore_shout_trending_mark"
                    android:layout_height="50dp"
@@ -69,124 +80,147 @@
                     android:layout_weight="1">
             <LinearLayout android:orientation="vertical"
                           android:layout_width="match_parent"
-                          android:layout_height="match_parent">
+                          android:layout_height="wrap_content">
 
-                <LinearLayout android:id="@+id/explore_shout_colored_time_distance_container"
+                <FrameLayout android:id="@+id/explore_shout_colored_time_distance_container"
                               android:layout_width="match_parent"
-                              android:layout_height="24dp"
-                              android:orientation="horizontal"
-                              android:layout_margin="5dp"
-                              android:background="@drawable/public_shout_meta_info">
+                              android:layout_height="wrap_content">
 
-                    <LinearLayout android:layout_width="wrap_content"
-                                  android:layout_height="match_parent"
-                                  android:layout_weight="1"
-                                  android:orientation="horizontal"
-                                  android:gravity="center">
-
-                        <ImageView android:layout_width="18dp"
-                                   android:layout_height="18dp"
-                                   android:src="@drawable/explore_shout_age_icon"
-                                   android:layout_marginRight="5dp"/>
-
-                        <TextView android:id="@+id/explore_shout_age"
-                                  android:layout_width="wrap_content"
+                    <LinearLayout android:id="@+id/explore_shout_user_container"
+                                  android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
-                                  android:text="9min"
-                                  android:textColor="@color/white"
-                                  android:textStyle="bold"/>
+                                  android:layout_marginLeft="5dp"
+                                  android:layout_marginTop="5dp"
+                                  android:layout_gravity="left">
+
+                        <com.streetshout.android.custom.CircleImageView android:id="@+id/explore_shout_user_picture"
+                                                                        android:layout_height="40dp"
+                                                                        android:layout_width="40dp"
+                                                                        android:layout_marginRight="5dp"
+                                                                        android:layout_gravity="center"
+                                                                        android:visibility="gone"/>
+
+                        <TextView android:id="@+id/explore_shout_username"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:textColor="@color/shoutBlue"
+                                  android:textStyle="bold"
+                                  android:fontFamily="sans-serif"
+                                  android:layout_gravity="center"
+                                  android:text="Username"
+                                  android:gravity="center|left"/>
+
                     </LinearLayout>
 
-                    <LinearLayout android:layout_width="wrap_content"
-                                  android:layout_height="match_parent"
-                                  android:layout_weight="1"
-                                  android:orientation="horizontal"
-                                  android:gravity="center">
-
-                        <ImageView android:layout_width="18dp"
-                                   android:layout_height="18dp"
-                                   android:src="@drawable/explore_shout_distance_icon"
-                                   android:layout_marginRight="5dp"/>
-
-                        <TextView android:id="@+id/explore_shout_distance"
-                                  android:layout_width="wrap_content"
-                                  android:layout_height="wrap_content"
-                                  android:text="15km"
-                                  android:textColor="@color/white"
-                                  android:textStyle="bold"/>
-                    </LinearLayout>
-
-                </LinearLayout>
+                </FrameLayout>
 
                 <LinearLayout android:orientation="vertical"
                               android:layout_width="match_parent"
-                              android:layout_height="match_parent"
-                              android:layout_marginLeft="10dp"
-                              android:layout_marginRight="10dp"
-                              android:layout_weight="0.5">
-
-                    <TextView android:id="@+id/explore_shout_username"
-                              android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
-                              android:textColor="@color/shoutBlue"
-                              android:textStyle="bold"
-                              android:fontFamily="sans-serif"
-                              android:text="Username"
-                              android:gravity="left"/>
+                              android:layout_marginLeft="5dp"
+                              android:layout_marginRight="5dp">
 
                     <TextView android:id="@+id/explore_shout_description"
+                              android:layout_marginTop="5dp"
                               android:layout_width="fill_parent"
-                              android:layout_height="fill_parent"
-                              android:layout_weight="1"
+                              android:layout_height="wrap_content"
                               android:text="Description"
-                              android:gravity="top|left"/>
+                              android:gravity="top|left"
+                              android:visibility="gone"/>
                 </LinearLayout>
+
+                <FrameLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="5dp"
+                          android:layout_marginLeft="5dp"
+                          android:layout_marginRight="5dp"
+                          android:layout_marginBottom="15dp">
+
+                    <LinearLayout android:id="@+id/explore_shout_like_count_button"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="match_parent"
+                                  android:layout_gravity="left"
+                                  android:orientation="horizontal"
+                                  android:gravity="center">
+
+                        <ImageView android:layout_width="18dp"
+                                   android:layout_height="18dp"
+                                   android:padding="3dp"
+                                   android:src="@drawable/explore_shout_like_count_icon"/>
+
+                        <TextView android:id="@+id/explore_shout_like_count"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:textStyle="bold"
+                                  android:fontFamily="sans-serif"
+                                  android:text="9 likes"
+                                  android:textColor="@color/shoutBlue"/>
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/explore_shout_comment_count_button"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="match_parent"
+                                  android:layout_gravity="right"
+                                  android:orientation="horizontal"
+                                  android:gravity="center">
+
+                        <ImageView android:layout_width="18dp"
+                                   android:layout_height="18dp"
+                                   android:padding="3dp"
+                                   android:src="@drawable/explore_shout_comment_count_icon"/>
+
+                        <TextView android:id="@+id/explore_shout_comment_count"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:textStyle="bold"
+                                  android:fontFamily="sans-serif"
+                                  android:text="4 comments"
+                                  android:textColor="@color/shoutBlue"/>
+                    </LinearLayout>
+
+                </FrameLayout>
+
+
 
             </LinearLayout>
 
         </ScrollView>
 
         <LinearLayout android:layout_width="match_parent"
-                      android:layout_height="40dp"
+                      android:layout_height="50dp"
                       android:orientation="horizontal">
 
-            <LinearLayout android:id="@+id/explore_shout_like_count_button"
-                          android:layout_width="wrap_content"
-                          android:layout_height="match_parent"
-                          android:layout_weight="1"
-                          android:orientation="horizontal"
-                          android:gravity="center">
+            <ImageView android:id="@+id/explore_shout_like_button"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_weight="1"
+                       android:paddingTop="12dp"
+                       android:paddingBottom="12dp"
+                       android:src="@drawable/explore_shout_like_button"/>
 
-                <ImageView android:layout_width="18dp"
-                           android:layout_height="18dp"
-                           android:src="@drawable/explore_shout_like_count_icon"
-                           android:layout_marginRight="5dp"/>
+            <ImageView android:id="@+id/explore_shout_comment_button"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_weight="1"
+                       android:paddingTop="12dp"
+                       android:paddingBottom="12dp"
+                       android:src="@drawable/explore_shout_comment_button"/>
 
-                <TextView android:id="@+id/explore_shout_like_count"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="9 likes"
-                          android:textColor="@color/white"/>
-            </LinearLayout>
+            <ImageView android:id="@+id/explore_shout_share_button"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_weight="1"
+                       android:paddingTop="10dp"
+                       android:paddingBottom="10dp"
+                       android:src="@drawable/explore_shout_share_button"/>
 
-            <LinearLayout android:id="@+id/explore_shout_comment_count_button"
-                          android:layout_width="wrap_content"
-                          android:layout_height="match_parent"
-                          android:layout_weight="1"
-                          android:orientation="horizontal"
-                          android:gravity="center">
-
-                <ImageView android:layout_width="18dp"
-                           android:layout_height="18dp"
-                           android:src="@drawable/explore_shout_comment_count_icon"
-                           android:layout_marginRight="5dp"/>
-
-                <TextView android:id="@+id/explore_shout_comment_count"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="4 comments"
-                          android:textColor="@color/white"/>
-            </LinearLayout>
+            <ImageView android:id="@+id/explore_shout_zoom_button"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:layout_weight="1"
+                       android:paddingTop="10dp"
+                       android:paddingBottom="10dp"
+                       android:src="@drawable/explore_shout_zoom_button"/>
 
         </LinearLayout>
 

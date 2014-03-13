@@ -57,13 +57,12 @@ public class ProfileActivity extends Activity {
         followingButton = (LinearLayout) findViewById(R.id.profile_following_button);
         profilePictureContainer = (FrameLayout) findViewById(R.id.profile_profile_picture_container);
 
-        if (getIntent().hasExtra("userId")) {
-            userId = getIntent().getIntExtra("userId", 0);
-
+        if (!getIntent().hasExtra("userId")) {
             user = SessionUtils.getCurrentUser(this);
+            userId = user.id;
             updateUI();
         } else {
-            userId = SessionUtils.getCurrentUser(this).id;
+            userId = getIntent().getIntExtra("userId", 0);
 
             ApiUtils.getUserInfo(this, userId, new AjaxCallback<JSONObject>() {
                 @Override

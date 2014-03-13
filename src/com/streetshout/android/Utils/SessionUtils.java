@@ -46,7 +46,10 @@ public class SessionUtils {
                     }
 
                     User currentUser = User.rawUserToInstance(rawUser);
-                    SessionUtils.updateCurrentUserInfoInPhone(activity, currentUser);
+
+                    if (currentUser != null) {
+                        SessionUtils.updateCurrentUserInfoInPhone(activity, currentUser);
+                    }
                 }
             }
         });

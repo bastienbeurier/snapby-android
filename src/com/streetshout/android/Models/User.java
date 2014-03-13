@@ -27,19 +27,21 @@ public class User implements Parcelable {
     public String profilePicture = "";
 
     public static User rawUserToInstance(JSONObject rawUser) {
+        if (rawUser == null) {
+            return null;
+        }
+
         User user = new User();
 
         try {
-            if (rawUser != null) {
-                user.id = Integer.parseInt(rawUser.getString("id"));
-                user.email = rawUser.getString("email");
-                user.username = rawUser.getString("username");
-                user.isBlackListed = Boolean.parseBoolean(rawUser.getString("black_listed"));
-                user.profilePicture = rawUser.getString("profile_picture");
+            user.id = Integer.parseInt(rawUser.getString("id"));
+            user.email = rawUser.getString("email");
+            user.username = rawUser.getString("username");
+            user.isBlackListed = Boolean.parseBoolean(rawUser.getString("black_listed"));
+            user.profilePicture = rawUser.getString("profile_picture");
 
-                if (user.profilePicture.equals("null") || user.profilePicture.contains("missing")) {
-                    user.profilePicture = "";
-                }
+            if (user.profilePicture.equals("null") || user.profilePicture.contains("missing")) {
+                user.profilePicture = "";
             }
         } catch (JSONException e) {
             e.printStackTrace();

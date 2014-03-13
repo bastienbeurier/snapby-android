@@ -40,6 +40,7 @@ public class Constants {
     /** AWS S3 **/
     public static final String PICTURE_BUCKET = "street-shout1";
     public static final String S3_URL = "street-shout1.s3.amazonaws.com/";
+    public static final String PROFILE_PICS_URL_PREFIX = "http://s3.amazonaws.com/shout_profile_pics/thumb/profile_";
 
     /** Shout image res **/
     public static final int SHOUT_BIG_RES_SUFFIX = 400;
