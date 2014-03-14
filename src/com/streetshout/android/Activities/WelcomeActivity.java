@@ -53,9 +53,9 @@ public class WelcomeActivity extends Activity {
         //Mixpanel
         TrackingUtils.trackAppOpened(this);
 
-        signinButton = (Button) findViewById(R.id.signin_button);
-        signupButton = (Button) findViewById(R.id.signup_button);
-        connectFBButton = (Button) findViewById(R.id.connect_fb_button);
+        signinButton = (Button) findViewById(R.id.welcome_signin_button);
+        signupButton = (Button) findViewById(R.id.welcome_signup_button);
+        connectFBButton = (Button) findViewById(R.id.welcome_connect_fb_button);
 
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +76,7 @@ public class WelcomeActivity extends Activity {
         connectFBButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setButtonsVisibility(View.GONE);
                 connectToFB();
             }
         });
@@ -88,14 +89,17 @@ public class WelcomeActivity extends Activity {
             if (savedInstanceState != null) {
                 session = Session.restoreSession(this, null, statusCallback, savedInstanceState);
             }
+
             if (session == null) {
                 session = new Session(this);
             }
+
             Session.setActiveSession(session);
 
             if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
                 if (SessionUtils.isSignIn(this)) {
                     fbSessionRequest(session);
+                    return;
                 }
             }
         }
@@ -103,6 +107,14 @@ public class WelcomeActivity extends Activity {
         if (SessionUtils.isSignIn(this)) {
             goToNavActivity();
         }
+
+        setButtonsVisibility(View.VISIBLE);
+    }
+
+    private void setButtonsVisibility(int visibility) {
+        signinButton.setVisibility(visibility);
+        signupButton.setVisibility(visibility);
+        connectFBButton.setVisibility(visibility);
     }
 
     @Override
@@ -150,6 +162,10 @@ public class WelcomeActivity extends Activity {
         public void call(Session session, SessionState state, Exception exception) {
             if (session.isOpened()) {
                 if (SessionUtils.isSignIn(WelcomeActivity.this)) {
+                    if (connectFBDialog != null) {
+                        connectFBDialog.cancel();
+                    }
+
                     goToNavActivity();
                 } else {
                     Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
@@ -160,8 +176,13 @@ public class WelcomeActivity extends Activity {
                             if (user != null) {
 
                                 if (user.getUsername() == null || user.asMap().get("email").toString() == null || user.getId() == null || user.getName() == null) {
+                                    if (connectFBDialog != null) {
+                                        connectFBDialog.cancel();
+                                    }
+                                    setButtonsVisibility(View.VISIBLE);
                                     Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                     toast.show();
+
                                     return;
                                 }
 
@@ -198,15 +219,25 @@ public class WelcomeActivity extends Activity {
                                                 TrackingUtils.trackSignup(WelcomeActivity.this, "Facebook");
                                             }
 
+                                            if (connectFBDialog != null) {
+                                                connectFBDialog.cancel();
+                                            }
                                             goToNavActivity();
-                                            connectFBDialog.cancel();
                                         } else {
+                                            if (connectFBDialog != null) {
+                                                connectFBDialog.cancel();
+                                            }
+                                            setButtonsVisibility(View.VISIBLE);
                                             Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                             toast.show();
                                         }
                                     }
                                 });
                             } else {
+                                if (connectFBDialog != null) {
+                                    connectFBDialog.cancel();
+                                }
+                                setButtonsVisibility(View.VISIBLE);
                                 Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                 toast.show();
                             }
@@ -221,7 +252,10 @@ public class WelcomeActivity extends Activity {
     private void goToNavActivity() {
         TrackingUtils.identify(WelcomeActivity.this, SessionUtils.getCurrentUser(this));
 
-        Intent nav = new Intent(WelcomeActivity.this, NavActivity.class);
-        WelcomeActivity.this.startActivity(nav);
+        Intent camera = new Intent(WelcomeActivity.this, CameraActivity.class);
+        camera.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        WelcomeActivity.this.startActivity(camera);
+
+        finish();
     }
 }

@@ -1,17 +1,17 @@
 package com.streetshout.android.utils;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
-import com.amazonaws.services.simpleemail.model.Content;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
 import com.streetshout.android.models.Shout;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,39 +32,34 @@ public class GeneralUtils {
         return Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static int getShoutAgeColor(Context ctx, Shout shout) {
-        long shoutAge = TimeUtils.getShoutAge(shout.created);
-
-        if (shoutAge < Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS) {
-            return ctx.getResources().getColor(R.color.shoutRed);
-        } else if (shoutAge < 3 * (Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS)) {
-            return ctx.getResources().getColor(R.color.shoutPink);
-        } else {
-            return ctx.getResources().getColor(R.color.shoutLightPink);
+    public static int getShoutMarkerImageResource(Context ctx, Shout shout, boolean selected) {
+        if (selected) {
+            return R.drawable.selected_shout_marker;
         }
-    }
 
-    public static int getShoutMarkerImageResource(Shout shout, boolean selected) {
-        long shoutAge = TimeUtils.getShoutAge(shout.created);
+        if (SessionUtils.getCurrentUser(ctx).id == shout.userId) {
+            if (shout.trending) {
+                return R.drawable.my_shout_marker_trending;
+            } else {
+                return R.drawable.my_shout_marker;
+            }
+        }
 
-        if (shoutAge < Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS) {
-            if (selected) {
-                return R.drawable.marker_shout_red_selected;
+        //TODO Implement following
+
+        if (shout.anonymous) {
+            if (shout.trending) {
+                return R.drawable.anonymous_shout_marker_trending;
             } else {
-                return R.drawable.marker_shout_red;
+                return R.drawable.anonymous_shout_marker;
             }
-        } else if (shoutAge < 2 * (Constants.SHOUT_DURATION / Constants.SHOUT_DURATION_HOURS)) {
-            if (selected) {
-                return R.drawable.marker_shout_pink_selected;
-            } else {
-                return R.drawable.marker_shout_pink;
-            }
+        }
+
+
+        if (shout.trending) {
+            return R.drawable.public_shout_marker_trending;
         } else {
-            if (selected) {
-                return R.drawable.marker_shout_lightpink_selected;
-            } else {
-                return R.drawable.marker_shout_lightpink;
-            }
+            return R.drawable.public_shout_marker;
         }
     }
 
@@ -87,7 +82,7 @@ public class GeneralUtils {
     public static boolean isValidUsername(String username) {
         boolean isValid = false;
 
-        String expression = "[A-Z0-9a-z._+-]{6,20}";
+        String expression = "[A-Z0-9a-z._+-]{1,20}";
         CharSequence inputStr = username;
 
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
@@ -113,5 +108,16 @@ public class GeneralUtils {
         parameters.put("api_version", Constants.API);
 
         return parameters;
+    }
+
+    public static void shareShout(Activity activity, Shout shout) {
+        String url = ApiUtils.getUserSiteUrl() + "/shouts/" + shout.id;
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, activity.getString(R.string.share_shout_text, url));
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_shout_subject));
+        sendIntent.setType("text/plain");
+
+        activity.startActivity(sendIntent);
     }
 }

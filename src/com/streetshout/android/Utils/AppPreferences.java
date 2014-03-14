@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
+
 public class AppPreferences {
     private static final String DISTANCE_UNIT = "ss_saved_distance_unit";
 
@@ -17,6 +19,8 @@ public class AppPreferences {
     private static final String CURRENT_USER_BLACKLISTED_PREF = "ss_current_user_blacklisted_pref";
 
     private static final String CURRENT_USER_TOKEN_PREF = "ss_current_user_token_pref";
+
+    private static final String CURRENT_USER_PROFILE_PIC_PREF = "ss_current_user_profile_pic_pref";
 
     private static final String APP_SHARED_PREFS = AppPreferences.class.getSimpleName();
 

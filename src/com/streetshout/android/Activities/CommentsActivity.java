@@ -3,11 +3,14 @@ package com.streetshout.android.activities;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,6 +38,20 @@ public class CommentsActivity extends ListActivity {
 
     private View feedWrapperView = null;
 
+    private View sendCommentButton = null;
+
+    private EditText createCommentEditText = null;
+
+    private Location myLocation = null;
+
+    private View createCommentContainer = null;
+
+    private Shout shout = null;
+
+    private Location shoutLocation = null;
+
+    private String sentComment = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.comments);
@@ -43,11 +60,50 @@ public class CommentsActivity extends ListActivity {
 
         progressBarWrapper = findViewById(R.id.comments_feed_progress_bar);
         feedWrapperView = findViewById(R.id.comments_feed_wrapper);
+        sendCommentButton = findViewById(R.id.create_comment_send_button);
+        createCommentEditText = (EditText) findViewById(R.id.create_comment_editText);
+        createCommentContainer = findViewById(R.id.comment_edittext_container);
 
-        final Shout shout = getIntent().getParcelableExtra("shout");
-        final Location myLocation = getIntent().getParcelableExtra("myLocation");
+        //Hack so that the window doesn't resize when descriptionView is clicked
+        createCommentEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createCommentEditText.setVisibility(View.GONE);
+            }
+        });
 
-        final Location shoutLocation = new Location("");
+        final View rootView = getWindow().getDecorView();
+
+        //Get action bar size
+        final TypedArray styledAttributes = getTheme().obtainStyledAttributes(
+                new int[] { android.R.attr.actionBarSize });
+        final int actionBarSize = (int) styledAttributes.getDimension(0, 0);
+
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener(){
+            public void onGlobalLayout(){
+                Rect r = new Rect();
+                rootView.getWindowVisibleDisplayFrame(r);
+
+                int windowHeight = rootView.getHeight();
+                int heightDiff = windowHeight - (r.bottom - r.top);
+
+                createCommentContainer.setY(windowHeight - heightDiff - createCommentContainer.getHeight() - actionBarSize);
+
+                if (heightDiff > 150) {
+                    createCommentEditText.setVisibility(View.VISIBLE);
+                    createCommentContainer.requestFocus();
+                }
+            }
+        });
+
+        Intent intent = getIntent();
+
+        shout = intent.getParcelableExtra("shout");
+        if (intent.hasExtra("myLocation")) {
+            myLocation = getIntent().getParcelableExtra("myLocation");
+        }
+
+        shoutLocation = new Location("");
         shoutLocation.setLatitude(shout.lat);
         shoutLocation.setLongitude(shout.lng);
 
@@ -79,57 +135,63 @@ public class CommentsActivity extends ListActivity {
             }
         });
 
-        final EditText createCommentEditText = (EditText) findViewById(R.id.create_comment_editText);
-        createCommentEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        sendCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    createCommentEditText.setEnabled(false);
+            public void onClick(View v) {
+                sendComment();
+            }
+        });
+    }
 
-                    double lat = 0;
-                    double lng = 0;
+    private void sendComment() {
+        sentComment = createCommentEditText.getText().toString();
 
-                    if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
-                        lat = myLocation.getLatitude();
-                        lng = myLocation.getLongitude();
+        if (sentComment == null || sentComment.length() == 0) {
+            return;
+        }
+
+        createCommentEditText.setText("");
+        sendCommentButton.setEnabled(false);
+
+        double lat = 0;
+        double lng = 0;
+
+        if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+            lat = myLocation.getLatitude();
+            lng = myLocation.getLongitude();
+        }
+
+        ApiUtils.createComment(CommentsActivity.this, sentComment, shout, lat, lng, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+
+                if (status.getError() == null && object != null) {
+
+                    JSONArray rawComments = null;
+
+                    try {
+                        JSONObject result = object.getJSONObject("result");
+                        rawComments = result.getJSONArray("comments");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
-                    ApiUtils.createComment(CommentsActivity.this, createCommentEditText.getText().toString(), shout, lat, lng, new AjaxCallback<JSONObject>() {
-                        @Override
-                        public void callback(String url, JSONObject object, AjaxStatus status) {
-                            super.callback(url, object, status);
+                    if (rawComments != null) {
+                        ArrayList<Comment> comments = Comment.rawCommentsToInstances(rawComments);
+                        setAdapter(CommentsActivity.this, comments, shoutLocation);
+                    }
+                } else {
+                    if (sentComment != null) {
+                        createCommentEditText.setText(sentComment);
+                    }
 
-                            createCommentEditText.setEnabled(false);
-
-                            if (status.getError() == null && object != null) {
-
-                                JSONArray rawComments = null;
-
-                                try {
-                                    JSONObject result = object.getJSONObject("result");
-                                    rawComments = result.getJSONArray("comments");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                if (rawComments != null) {
-                                    createCommentEditText.setEnabled(true);
-                                    createCommentEditText.setText("");
-                                    ArrayList<Comment> comments = Comment.rawCommentsToInstances(rawComments);
-                                    setAdapter(CommentsActivity.this, comments, shoutLocation);
-                                }
-                            } else {
-                                Toast toast = Toast.makeText(CommentsActivity.this, getString(R.string.create_comment_failed), Toast.LENGTH_SHORT);
-                                toast.show();
-
-                                createCommentEditText.setEnabled(true);
-                            }
-                        }
-                    });
-
+                    Toast toast = Toast.makeText(CommentsActivity.this, getString(R.string.create_comment_failed), Toast.LENGTH_SHORT);
+                    toast.show();
                 }
-
-                return false;
+                sendCommentButton.setEnabled(true);
+                sentComment = null;
             }
         });
     }

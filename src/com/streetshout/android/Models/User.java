@@ -2,8 +2,11 @@ package com.streetshout.android.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by bastien on 1/27/14.
@@ -22,21 +25,55 @@ public class User implements Parcelable {
     /** User blacklisted */
     public Boolean isBlackListed = false;
 
-    /** Profile picture */
-    public String profilePicture = "";
+    /** User latitude */
+    public double lat = 0;
+
+    /** User longitude */
+    public double lng = 0;
+
+    public int shoutCount = 0;
+
+    public static ArrayList<User> rawUsersToInstances(JSONArray rawUsers) {
+        ArrayList<User> users = new ArrayList<User>();
+
+        int len = rawUsers.length();
+        for (int i = 0; i < len; i++) {
+            try {
+                JSONObject rawUser = rawUsers.getJSONObject(i);
+                if (rawUser != null) {
+                    User user = rawUserToInstance(rawUser);
+                    users.add(user);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return users;
+    }
 
     public static User rawUserToInstance(JSONObject rawUser) {
+        if (rawUser == null) {
+            return null;
+        }
+
         User user = new User();
 
         try {
-            if (rawUser != null) {
-                user.id = Integer.parseInt(rawUser.getString("id"));
-                user.email = rawUser.getString("email");
-                user.username = rawUser.getString("username");
-                user.isBlackListed = Boolean.parseBoolean(rawUser.getString("black_listed"));
-                user.profilePicture = rawUser.getString("profile_picture");
-                user.profilePicture = user.profilePicture.equals("null") ? "" : "http://" + user.profilePicture;
+            user.id = Integer.parseInt(rawUser.getString("id"));
+            user.email = rawUser.getString("email");
+            user.username = rawUser.getString("username");
+            user.isBlackListed = Boolean.parseBoolean(rawUser.getString("black_listed"));
+
+            String rawLat = rawUser.getString("lat");
+            String rawLng = rawUser.getString("lng");
+
+            if (!rawLat.equals("null") && !rawLng.equals("null")) {
+                user.lat = Double.parseDouble(rawLat);
+                user.lng = Double.parseDouble(rawLng);
             }
+
+            user.shoutCount = Integer.parseInt(rawUser.getString("shout_count"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -85,7 +122,9 @@ public class User implements Parcelable {
         out.writeString(email);
         out.writeString(username);
         out.writeByte((byte) (isBlackListed ? 1 : 0));
-        out.writeString(profilePicture);
+        out.writeDouble(lat);
+        out.writeDouble(lng);
+        out.writeInt(shoutCount);
     }
 
     /**
@@ -96,6 +135,8 @@ public class User implements Parcelable {
         email = in.readString();
         username = in.readString();
         isBlackListed = in.readByte() != 0;
-        profilePicture = in.readString();
+        lat = in.readDouble();
+        lng = in.readDouble();
+        shoutCount = in.readInt();
     }
 }

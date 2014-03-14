@@ -3,44 +3,74 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
               android:background="@color/white">
 
-    <LinearLayout android:orientation="horizontal"
+    <LinearLayout android:id="@+id/comment_feed_user_container"
+                  android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content">
 
-        <TextView android:id="@+id/comment_feed_username_textView"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="1"
-                  android:padding="10dp"
-                  android:maxLines="1"
-                  android:fontFamily="sans-serif"
-                  android:textSize="16dp"
-                  android:textStyle="bold"
-                  android:textColor="@color/shoutBlue"
-                  android:gravity="center_vertical"/>
 
-        <TextView android:id="@+id/comment_feed_stamp_textView"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:maxLines="1"
-                  android:padding="10dp"
-                  android:fontFamily="sans-serif"
-                  android:textSize="16dp"
-                  android:textColor="@color/lightGrey"
-                  android:gravity="center_vertical"/>
+        <FrameLayout android:layout_width="50dp"
+                     android:layout_height="50dp"
+                     android:layout_margin="10dp"
+                     android:layout_gravity="center">
+
+            <com.streetshout.android.custom.CircleImageView android:id="@+id/like_feed_user_picture"
+                                                            android:layout_height="match_parent"
+                                                            android:layout_width="match_parent"
+                                                            android:visibility="gone"/>
+
+        </FrameLayout>
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:layout_marginTop="10dp"
+                      android:layout_marginBottom="10dp"
+                      android:layout_marginRight="10dp"
+                      android:layout_gravity="center">
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal">
+
+                <TextView android:id="@+id/comment_feed_username_textView"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:maxLines="1"
+                          android:fontFamily="sans-serif"
+                          android:textSize="16dp"
+                          android:textStyle="bold"
+                          android:textColor="@color/shoutBlue"
+                          android:gravity="center_vertical"/>
+
+                <TextView android:id="@+id/comment_feed_stamp_textView"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:maxLines="1"
+                          android:layout_marginLeft="10dp"
+                          android:textSize="16dp"
+                          android:textColor="@color/lightGrey"
+                          android:gravity="center_vertical"/>
+
+            </LinearLayout>
+
+            <TextView android:id="@+id/comment_feed_description_textView"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="5dp"
+                      android:textSize="16dp"
+                      android:textColor="@color/darkGrey"/>
+
+
+        </LinearLayout>
+
+
     </LinearLayout>
 
-    <TextView android:id="@+id/comment_feed_description_textView"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginLeft="10dp"
-              android:layout_marginRight="10dp"
-              android:paddingBottom="10dp"
-              android:fontFamily="sans-serif"
-              android:textSize="16dp"
-              android:textColor="@color/darkGrey"/>
+
 
 </LinearLayout>

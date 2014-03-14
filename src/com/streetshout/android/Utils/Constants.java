@@ -1,14 +1,13 @@
 package com.streetshout.android.utils;
 
 public class Constants {
-    public static boolean PRODUCTION = false;
+    public static boolean PRODUCTION = true;
 
     public static final boolean ADMIN = false;
 
     public static final String API = "2";
 
     public static final int SHOUT_DURATION = 4 * 60 * 60 * 1000;
-    public static final int SHOUT_DURATION_HOURS = 4;
 
     public static final int MAX_DESCRIPTION_LENGTH = 140;
 
@@ -29,19 +28,26 @@ public class Constants {
     public static final int SHOUT_RADIUS = 300;
 
     /** StartActivityForResult codes **/
-    public static final int NEW_SHOUT_CONTENT_ACTIVITY_REQUEST = 13450;
+    public static final int REFINE_LOCATION_ACTIVITY_REQUEST = 13450;
     public static final int CREATE_SHOUT_REQUEST = 11101;
+    public static final int EXPLORE_REQUEST = 12376;
     public static final int SETTINGS_REQUEST = 14760;
-    public static final int UPLOAD_PHOTO_REQUEST = 15849;
+    public static final int PROFILE_REQUEST = 14555;
     public static final int RESET_PASSWORD_REQUEST = 64783;
+    public static final int DISPLAY_SHOUT_REQUEST = 48392;
+    public static final int PHOTO_GALLERY_REQUEST = 37489;
+    public static final int FOLLOWERS_REQUEST = 323489;
 
     /** AWS S3 **/
-    public static final String PICTURE_BUCKET = "street-shout1";
-    public static final String S3_URL = "street-shout1.s3.amazonaws.com/";
+    public static final String SMALL_SHOUT_IMAGE_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_development/small/image_";
+    public static final String BIG_SHOUT_IMAGE_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_development/original/image_";
+    public static final String SMALL_SHOUT_IMAGE_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_production1/small/image_";
+    public static final String BIG_SHOUT_IMAGE_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_production1/original/image_";
+    public static final String PROFILE_PICS_URL_PREFIX = "http://s3.amazonaws.com/shout_profile_pics/thumb/profile_";
 
     /** Shout image res **/
-    public static final int SHOUT_BIG_RES_SUFFIX = 400;
-    public static final int SHOUT_BIG_RES = 800;
+    public static final int SHOUT_BIG_RES = 400;
+    public static final int SHOUT_THUMB_RES = 100;
 
     /** Mixpanel tokens **/
     public static final String PROD_MIXPANEL_TOKEN = "24dc482a232028564063bd3dd7e84e93";

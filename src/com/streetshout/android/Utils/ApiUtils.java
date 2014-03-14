@@ -3,7 +3,9 @@ package com.streetshout.android.utils;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.location.Location;
+import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.streetshout.android.models.Shout;
@@ -63,7 +65,7 @@ public class ApiUtils {
     }
 
     /** API call to create a new shout */
-    public static void createShout(Activity activity, AQuery aq, double lat, double lng, String description, String shoutImageUrl, AjaxCallback<JSONObject> cb) {
+    public static void createShout(Activity activity, AQuery aq, double lat, double lng, String description, boolean anonymousUser, String image, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/shouts.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
@@ -73,14 +75,12 @@ public class ApiUtils {
         params.put("lat", lat);
         params.put("lng", lng);
         params.put("device_id", GeneralUtils.getDeviceId(activity));
+        params.put("anonymous", anonymousUser ? 1 : 0);
+        params.put("avatar", image);
 
         params = enrichParametersWithToken(activity, params);
 
         if (params == null) return;
-
-        if (shoutImageUrl != null) {
-            params.put("image", shoutImageUrl);
-        }
 
         cb.timeout(10000);
 
@@ -102,7 +102,7 @@ public class ApiUtils {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void updateUserInfoWithLocation(Activity activity, AQuery aq, Location lastLocation) {
+    public static void updateUserInfoWithLocation(Activity activity, AQuery aq, Location lastLocation, String image, String username, AjaxCallback<JSONObject> cb) {
         User currentUser = SessionUtils.getCurrentUser(activity);
         String url = getBasePath() + "/users/" + currentUser.id + ".json";
 
@@ -113,12 +113,18 @@ public class ApiUtils {
             params.put("lng", lastLocation.getLongitude());
         }
 
+        if (image != null) {
+            params.put("avatar", image);
+        }
+
+        if (username != null) {
+            params.put("username", username);
+        }
+
         GeneralUtils.enrichParamsWithWithGeneralUserAndDeviceInfo(activity, params);
         enrichParametersWithToken(activity, params);
 
         if (params == null) return;
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
 
         cb.method(AQuery.METHOD_PUT);
 
@@ -146,12 +152,6 @@ public class ApiUtils {
         cb.method(AQuery.METHOD_PUT);
 
         aq.ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void getValidAPIVersion(AQuery aq, AjaxCallback<JSONObject> cb) {
-        String url = getBasePath() + "/obsolete_api.json";
-
-        aq.ajax(url, JSONObject.class, cb);
     }
 
     public static void signinWithEmail(AQuery aq, String email, String password, AjaxCallback<JSONObject> cb) {
@@ -191,7 +191,6 @@ public class ApiUtils {
         aq.ajax(url, params, JSONObject.class, cb);
     }
 
-
     public static void sendResetPasswordInstructions(AQuery aq, String email, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/users/password.json";
 
@@ -199,31 +198,6 @@ public class ApiUtils {
         params.put("email", String.valueOf(email));
 
         aq.ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void updateUsername(Activity activity, AQuery aq, String username, AjaxCallback<JSONObject> cb) {
-        String url = getBasePath() + "/modify_user_credentials.json";
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("username", username);
-
-        enrichParametersWithToken(activity, params);
-
-        if (params == null) return;
-
-        cb.method(AQuery.METHOD_PUT);
-
-        aq.ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void getShoutMetaData(Context ctx, AQuery aq, int shoutId, AjaxCallback<JSONObject> cb) {
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shoutId);
-
-        String url = getBasePath() + "/get_shout_meta_data.json" + encodeParamsAsUrlParams(params);
-
-        aq.ajax(url, JSONObject.class, cb);
     }
 
     public static void getComments(Activity activity, Shout shout, AjaxCallback<JSONObject> cb) {
@@ -305,6 +279,147 @@ public class ApiUtils {
         }
 
         params = enrichParametersWithToken(activity, params);
+        if (params == null) {
+            return;
+        }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void removeShout(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/shouts/remove.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shoutId);
+
+        params = enrichParametersWithToken(activity, params);
+        if (params == null) {
+            return;
+        }
+
+        cb.method(AQuery.METHOD_PUT);
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void removeLike(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/likes/delete.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shoutId);
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void makeTrendingShout(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/shouts/trending.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("shout_id", shoutId);
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        cb.method(AQuery.METHOD_PUT);
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void getUserInfo(Activity activity, int userId, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user_id", userId);
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/get_user_info.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void getSuggestedFriends(Activity activity, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/suggested_friends.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void getFollowers(Activity activity, int userId, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user_id", userId);
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/followers.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void getFollowingUsers(Activity activity, int userId, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user_id", userId);
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/followed_users.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void followUser(Activity activity, int followedId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/relationships.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("followed_id", followedId);
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void unfollowUser(Activity activity, int followedId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/relationships/delete.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("followed_id", followedId);
+
+        params = enrichParametersWithToken(activity, params);
+
         if (params == null) {
             return;
         }

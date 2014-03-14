@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -144,14 +145,19 @@ public class SignupActivity extends Activity {
                     SessionUtils.saveCurrentUserToken(SignupActivity.this, token);
 
                     User currentUser = User.rawUserToInstance(rawUser);
+
                     SessionUtils.updateCurrentUserInfoInPhone(SignupActivity.this, currentUser);
 
                     TrackingUtils.identify(SignupActivity.this, currentUser);
                     TrackingUtils.trackSignup(SignupActivity.this, "Email");
 
-                    Intent nav = new Intent(SignupActivity.this, NavActivity.class);
-                    SignupActivity.this.startActivity(nav);
+                    Intent camera = new Intent(SignupActivity.this, CameraActivity.class);
+                    camera.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    SignupActivity.this.startActivity(camera);
+                    finish();
                 } else if (status.getError() == null && status.getCode() == 222) {
+                    Log.d("BAB", "ERROR: " + object);
+
                     Toast toast = null;
 
                     try {

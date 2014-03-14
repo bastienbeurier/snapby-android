@@ -136,8 +136,10 @@ public class SigninActivity extends Activity {
 
                     TrackingUtils.identify(SigninActivity.this, currentUser);
 
-                    Intent nav = new Intent(SigninActivity.this, NavActivity.class);
-                    SigninActivity.this.startActivity(nav);
+                    Intent camera = new Intent(SigninActivity.this, CameraActivity.class);
+                    camera.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    SigninActivity.this.startActivity(camera);
+                    finish();
                 } else if (status.getCode() == 401) {
                     Toast toast = Toast.makeText(SigninActivity.this, getString(R.string.invalid_signin_message), Toast.LENGTH_SHORT);
                     toast.show();

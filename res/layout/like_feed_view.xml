@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/like_feed_container"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
               android:background="@color/white">
+
+    <FrameLayout android:layout_width="50dp"
+                 android:layout_height="50dp"
+                 android:layout_margin="10dp"
+                 android:layout_gravity="center">
+
+        <com.streetshout.android.custom.CircleImageView android:id="@+id/like_feed_user_picture"
+                                                        android:layout_height="match_parent"
+                                                        android:layout_width="match_parent"
+                                                        android:visibility="gone"/>
+
+    </FrameLayout>
+
 
     <TextView android:id="@+id/like_feed_username_textView"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:layout_gravity="center"
               android:layout_weight="1"
-              android:padding="15dp"
               android:maxLines="1"
               android:fontFamily="sans-serif"
               android:textSize="16dp"
               android:textStyle="bold"
-              android:textColor="@color/shoutBlue"
-              android:gravity="center_vertical"/>
+              android:textColor="@color/shoutBlue"/>
 
     <TextView android:id="@+id/like_feed_stamp_textView"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_gravity="center"
               android:maxLines="1"
-              android:padding="15dp"
-              android:fontFamily="sans-serif"
+              android:layout_margin="10dp"
               android:textSize="16dp"
-              android:textColor="@color/lightGrey"
-              android:gravity="center_vertical"/>
+              android:textColor="@color/lightGrey"/>
 </LinearLayout>
 

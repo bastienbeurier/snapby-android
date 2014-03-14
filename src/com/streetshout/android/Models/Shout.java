@@ -32,14 +32,19 @@ public class Shout implements Parcelable {
     /** Shout creation date/time */
     public String created = "";
 
-    /** Shout source (ex: Twitter) */
-    public String source = "";
-
     public String username = "";
 
     public String image = "";
 
     public Boolean removed = false;
+
+    public Boolean anonymous = false;
+
+    public Boolean trending = false;
+
+    public int likeCount = 0;
+
+    public int commentCount = 0;
 
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static ArrayList<Shout> rawShoutsToInstances(JSONArray rawShouts) {
@@ -72,10 +77,13 @@ public class Shout implements Parcelable {
                 shout.lng = Double.parseDouble(rawShout.getString("lng"));
                 shout.description = rawShout.getString("description");
                 shout.created = rawShout.getString("created_at");
-                shout.source = rawShout.getString("source");
                 shout.username = rawShout.getString("username");
                 shout.image = rawShout.getString("image");
                 shout.removed = rawShout.getBoolean("removed");
+                shout.anonymous = rawShout.getBoolean("anonymous");
+                shout.trending = rawShout.getBoolean("trending");
+                shout.likeCount = Integer.parseInt(rawShout.getString("like_count"));
+                shout.commentCount = Integer.parseInt(rawShout.getString("comment_count"));
                 shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
             }
         } catch (JSONException e) {
@@ -124,13 +132,16 @@ public class Shout implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(description);
         out.writeString(created);
-        out.writeString(source);
         out.writeString(username);
         out.writeInt(id);
         out.writeInt(userId);
         out.writeDouble(lat);
         out.writeDouble(lng);
         out.writeByte((byte) (removed ? 1 : 0));
+        out.writeByte((byte) (anonymous ? 1 : 0));
+        out.writeByte((byte) (trending ? 1 : 0));
+        out.writeInt(likeCount);
+        out.writeInt(commentCount);
         out.writeString(image);
     }
 
@@ -140,13 +151,16 @@ public class Shout implements Parcelable {
     public void readFromParcel(Parcel in) {
         description = in.readString();
         created = in.readString();
-        source = in.readString();
         username = in.readString();
         id = in.readInt();
         userId = in.readInt();
         lat = in.readDouble();
         lng = in.readDouble();
         removed = in.readByte() != 0;
+        anonymous = in.readByte() != 0;
+        trending = in.readByte() != 0;
+        likeCount = in.readInt();
+        commentCount = in.readInt();
         image = in.readString();
     }
 }
