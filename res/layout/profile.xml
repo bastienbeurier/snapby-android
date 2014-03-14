@@ -127,7 +127,7 @@
                       android:textSize="16dp"
                       android:fontFamily="sans-serif"
                       android:textStyle="bold"
-                      android:text="Find friends"
+                      android:text=""
                       android:gravity="center"/>
 
          </FrameLayout>
