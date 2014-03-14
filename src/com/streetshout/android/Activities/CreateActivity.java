@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -39,6 +40,7 @@ import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Date;
 
@@ -52,10 +54,6 @@ public class CreateActivity extends Activity {
     private Location shoutLocation = null;
 
     private boolean shoutLocationRefined = false;
-
-    private String photoName = null;
-
-    private String photoUrl = null;
 
     private ProgressDialog createShoutDialog;
 
@@ -82,6 +80,8 @@ public class CreateActivity extends Activity {
     private boolean anonymousUser = false;
 
     private View buttonContainer = null;
+
+    private Bitmap formattedPicture = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,12 +204,9 @@ public class CreateActivity extends Activity {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap formattedPicture = BitmapFactory.decodeFile(shoutPhotoPath, options);
+        formattedPicture = BitmapFactory.decodeFile(shoutPhotoPath, options);
 
         shoutImageView.setImageBitmap(formattedPicture);
-
-        photoName = GeneralUtils.getDeviceId(this) + "--" + (new Date()).getTime();
-        photoUrl = Constants.S3_URL + photoName;
     }
 
     @Override
@@ -263,98 +260,22 @@ public class CreateActivity extends Activity {
             Toast toast = Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT);
             toast.show();
         } else if (!errors) {
-            //Save user name in prefs
-            uploadImageBeforeCreatingShout();
+            createShout();
         }
     }
 
-    protected void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-
-        //Activity often gets destroyed when taking a picture
-        if (shoutLocationRefined == true) {
-            savedInstanceState.putParcelable("shoutLocation", shoutLocation);
-        }
-
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.REFINE_LOCATION_ACTIVITY_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                shoutLocation = data.getParcelableExtra("accurateShoutLocation");
-                shoutLocationRefined = true;
-            }
-        }
-    }
-
-    private class ValidateCredentialsTask extends
-            AsyncTask<Void, Void, Response> {
-
-        protected Response doInBackground(Void... params) {
-            return CreateActivity.clientManager.validateCredentials();
-        }
-
-        protected void onPostExecute(Response response) {
-            if (response != null && response.requestWasSuccessful()) {
-                final AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        if (S3.addImageInBucket(shoutPhotoPath, photoName)) {
-                            return "success";
-                        } else {
-                            return "failure";
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(String result) {
-                        if (result.equals("success")) {
-                            createNewShoutFromInfo();
-                        } else {
-                            shoutCreationFailed();
-                        }
-                    }
-                };
-                task.execute((Void[])null);
-
-                Handler handler = new Handler();
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (task.getStatus() == Status.RUNNING) {
-                            task.cancel(true);
-                            shoutCreationFailed();
-                        }
-                    }
-                }, 30000);
-            }
-        }
-    }
-
-    public void uploadImageBeforeCreatingShout() {
+    private void createShout() {
         createShoutDialog = ProgressDialog.show(this, "", getString(R.string.shout_processing), false);
 
         galleryAddPic();
 
-        if (photoUrl != null) {
-            new ValidateCredentialsTask().execute();
-        } else {
-            shoutCreationFailed();
-        }
-    }
+        //Convert bitmap to byte array
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        formattedPicture.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+        byte[] bmData = stream.toByteArray();
+        String encodedImage = Base64.encodeToString(bmData, Base64.DEFAULT);
 
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(shoutPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
-    }
-
-    public void createNewShoutFromInfo() {
-        ApiUtils.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), shoutDescription, photoUrl, anonymousUser, new AjaxCallback<JSONObject>() {
+        ApiUtils.createShout(this, aq, shoutLocation.getLatitude(), shoutLocation.getLongitude(), shoutDescription, anonymousUser, encodedImage, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -389,6 +310,34 @@ public class CreateActivity extends Activity {
                 }
             }
         });
+    }
+
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        //Activity often gets destroyed when taking a picture
+        if (shoutLocationRefined == true) {
+            savedInstanceState.putParcelable("shoutLocation", shoutLocation);
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.REFINE_LOCATION_ACTIVITY_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                shoutLocation = data.getParcelableExtra("accurateShoutLocation");
+                shoutLocationRefined = true;
+            }
+        }
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(shoutPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
     }
 
     public void shoutCreationFailed() {

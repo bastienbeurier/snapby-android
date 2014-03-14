@@ -32,9 +32,6 @@ public class Shout implements Parcelable {
     /** Shout creation date/time */
     public String created = "";
 
-    /** Shout source (ex: Twitter) */
-    public String source = "";
-
     public String username = "";
 
     public String image = "";
@@ -80,7 +77,6 @@ public class Shout implements Parcelable {
                 shout.lng = Double.parseDouble(rawShout.getString("lng"));
                 shout.description = rawShout.getString("description");
                 shout.created = rawShout.getString("created_at");
-                shout.source = rawShout.getString("source");
                 shout.username = rawShout.getString("username");
                 shout.image = rawShout.getString("image");
                 shout.removed = rawShout.getBoolean("removed");
@@ -136,7 +132,6 @@ public class Shout implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(description);
         out.writeString(created);
-        out.writeString(source);
         out.writeString(username);
         out.writeInt(id);
         out.writeInt(userId);
@@ -156,7 +151,6 @@ public class Shout implements Parcelable {
     public void readFromParcel(Parcel in) {
         description = in.readString();
         created = in.readString();
-        source = in.readString();
         username = in.readString();
         id = in.readInt();
         userId = in.readInt();

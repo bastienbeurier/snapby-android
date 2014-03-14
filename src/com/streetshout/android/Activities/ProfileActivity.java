@@ -3,12 +3,10 @@ package com.streetshout.android.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -119,11 +117,13 @@ public class ProfileActivity extends Activity {
 
     private void updateUI() {
         ImageOptions options = new ImageOptions();
-        options.round = 4;
-        options.memCache = true;
+        options.round = 8;
+        //Bust cache in case user changes is profile picture
+        options.memCache = false;
+        options.fileCache = false;
         options.animation = AQuery.FADE_IN;
 
-        GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(user.profilePicture, options);
+        GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(Constants.PROFILE_PICS_URL_PREFIX + user.id, options);
 
         username.setText("@" + user.username);
     }

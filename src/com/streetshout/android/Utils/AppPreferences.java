@@ -108,18 +108,4 @@ public class AppPreferences {
         }
         prefsEditor.commit();
     }
-
-    public String getCurrentProfilePicPref() {
-        return sharedPrefs.getString(CURRENT_USER_PROFILE_PIC_PREF, "");
-    }
-
-    public void setCurrentProfilePicPref(String value) {
-        if (value == null) {
-            prefsEditor.remove(CURRENT_USER_PROFILE_PIC_PREF);
-        } else {
-            prefsEditor.putString(CURRENT_USER_PROFILE_PIC_PREF, value);
-        }
-
-        prefsEditor.commit();
-    }
 }

@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.BitmapAjaxCallback;
 import com.streetshout.android.R;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
@@ -213,9 +214,8 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
     private void updateUI() {
         settingsUsernameEditText.setText(currentUser.username);
-//        settingsUsernameEditText.setSelection(settingsUsernameEditText.getText().length());
 
-        GeneralUtils.getAquery(this).id(profilePictureView).image(currentUser.profilePicture);
+        GeneralUtils.getAquery(this).id(profilePictureView).image(Constants.PROFILE_PICS_URL_PREFIX + currentUser.id, false, false);
     }
 
     @Override

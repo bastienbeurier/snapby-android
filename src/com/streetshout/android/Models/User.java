@@ -23,9 +23,6 @@ public class User implements Parcelable {
     /** User blacklisted */
     public Boolean isBlackListed = false;
 
-    /** Profile picture */
-    public String profilePicture = "";
-
     public static User rawUserToInstance(JSONObject rawUser) {
         if (rawUser == null) {
             return null;
@@ -38,11 +35,6 @@ public class User implements Parcelable {
             user.email = rawUser.getString("email");
             user.username = rawUser.getString("username");
             user.isBlackListed = Boolean.parseBoolean(rawUser.getString("black_listed"));
-            user.profilePicture = rawUser.getString("profile_picture");
-
-            if (user.profilePicture.equals("null") || user.profilePicture.contains("missing")) {
-                user.profilePicture = "";
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -91,7 +83,6 @@ public class User implements Parcelable {
         out.writeString(email);
         out.writeString(username);
         out.writeByte((byte) (isBlackListed ? 1 : 0));
-        out.writeString(profilePicture);
     }
 
     /**
@@ -102,6 +93,5 @@ public class User implements Parcelable {
         email = in.readString();
         username = in.readString();
         isBlackListed = in.readByte() != 0;
-        profilePicture = in.readString();
     }
 }
