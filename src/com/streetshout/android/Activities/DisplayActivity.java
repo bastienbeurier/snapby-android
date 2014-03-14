@@ -3,6 +3,7 @@ package com.streetshout.android.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import com.streetshout.android.R;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.SessionUtils;
 import org.json.JSONObject;
@@ -31,15 +33,9 @@ import org.json.JSONObject;
  */
 public class DisplayActivity extends Activity {
 
-    private Location myLocation = null;
-
     private Shout shout = null;
 
     private ImageView imageView = null;
-
-    private ConnectivityManager connectivityManager = null;
-
-    private ImageView createLikeButton = null;
 
     private boolean imageFullScreen = false;
 
@@ -49,12 +45,6 @@ public class DisplayActivity extends Activity {
 
         Intent intent = getIntent();
 
-        if (intent.hasExtra("myLocation")) {
-            myLocation = intent.getParcelableExtra("myLocation");
-        }
-
-        connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
         final TextView descriptionView = (TextView) findViewById(R.id.display_description_text);
         final ImageView dismissButton = (ImageView) findViewById(R.id.display_dismiss_button);
         final ImageView moreButton = (ImageView) findViewById(R.id.display_more_button);
@@ -62,7 +52,14 @@ public class DisplayActivity extends Activity {
         shout = getIntent().getParcelableExtra("shout");
 
         imageView = (ImageView) findViewById(R.id.display_shout_image_view);
-        GeneralUtils.getAquery(this).id(imageView).image(shout.image + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
+
+        if (Constants.PRODUCTION) {
+            Bitmap preset = GeneralUtils.getAquery(this).getCachedImage(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_PROD + shout.id + "--400");
+            GeneralUtils.getAquery(this).id(imageView).image(Constants.BIG_SHOUT_IMAGE_URL_PREFIX_PROD + shout.id + "--400", true, false, 0, 0, preset, AQuery.FADE_IN);
+        } else {
+            Bitmap preset = GeneralUtils.getAquery(this).getCachedImage(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_DEV + shout.id + "--400");
+            GeneralUtils.getAquery(this).id(imageView).image(Constants.BIG_SHOUT_IMAGE_URL_PREFIX_DEV + shout.id + "--400", true, false, 0, 0, preset, AQuery.FADE_IN);
+        }
 
         //Don't see TextView if no text in Shout
         if (shout.description.length() == 0) {

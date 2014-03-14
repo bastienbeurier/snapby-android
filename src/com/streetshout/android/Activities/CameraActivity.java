@@ -114,12 +114,17 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
             }
         });
 
-        ImageView settingsButtonView = (ImageView) findViewById(R.id.camera_profile_button);
+        ImageView profileButtonView = (ImageView) findViewById(R.id.camera_profile_button);
 
-        settingsButtonView.setOnClickListener(new View.OnClickListener() {
+        profileButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent profile = new Intent(CameraActivity.this, ProfileActivity.class);
+
+                if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+                    profile.putExtra("myLocation", myLocation);
+                }
+
                 startActivityForResult(profile, Constants.PROFILE_REQUEST);
             }
         });

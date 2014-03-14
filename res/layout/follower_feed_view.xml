@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/follower_feed_container"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white">
+
+    <FrameLayout android:layout_width="50dp"
+                 android:layout_height="50dp"
+                 android:layout_margin="10dp"
+                 android:layout_gravity="center">
+
+        <com.streetshout.android.custom.CircleImageView android:id="@+id/follower_feed_user_picture"
+                                                        android:layout_height="match_parent"
+                                                        android:layout_width="match_parent"
+                                                        android:visibility="gone"/>
+
+    </FrameLayout>
+
+    <LinearLayout android:id="@+id/follower_feed_username_container"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_weight="1"
+                  android:orientation="vertical">
+
+        <TextView android:id="@+id/follower_feed_username_textView"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:layout_marginTop="5dp"
+                  android:maxLines="1"
+                  android:fontFamily="sans-serif"
+                  android:textSize="16dp"
+                  android:textStyle="bold"
+                  android:textColor="@color/shoutBlue"/>
+
+        <TextView android:id="@+id/follower_feed_stamp_textView"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="left"
+                  android:maxLines="1"
+                  android:textSize="16dp"
+                  android:textColor="@color/lightGrey"
+                  android:visibility="gone"/>
+
+        <TextView android:id="@+id/follower_feed_shout_count_textView"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="left"
+                  android:maxLines="1"
+                  android:layout_marginBottom="5dp"
+                  android:textSize="16dp"
+                  android:textColor="@color/lightGrey"/>
+
+    </LinearLayout>
+
+
+    <FrameLayout android:id="@+id/follower_feed_follow_button"
+                 android:layout_width="87dp"
+                 android:layout_height="35dp"
+                 android:layout_gravity="center"
+                 android:layout_marginTop="5dp"
+                 android:layout_marginBottom="5dp"
+                 android:layout_marginRight="5dp">
+
+        <ImageView android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:background="@drawable/follower_feed_follow_button_selector"/>
+
+        <TextView android:id="@+id/follower_feed_follow_label"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:textColor="@color/white"
+                  android:textSize="16dp"
+                  android:fontFamily="sans-serif"
+                  android:textStyle="bold"
+                  android:text="unfollow"
+                  android:gravity="center"/>
+
+    </FrameLayout>
+</LinearLayout>

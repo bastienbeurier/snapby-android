@@ -87,6 +87,8 @@
     <string name="far">far</string>
     <string name="meters">meters</string>
     <string name="away">away</string>
+    <string name="shouts_so_far">shouts so far</string>
+    <string name="shout_so_far">shout so far</string>
     <string name="shout_settings">SETTINGS</string>
     <string name="edit_profile">EDIT PROFILE</string>
     <string name="participate">PARTICIPATE</string>
@@ -143,4 +145,9 @@
     <string name="anonymous_mode_disabled">Anonymous mode disabled.</string>
     <string name="anonymous_name">Anonymous</string>
     <string name="user_blacklisted">You have been blacklisted due to Terms of Use violations.</string>
+    <string name="follow_cap">FOLLOW</string>
+    <string name="unfollow_cap">UNFOLLOW</string>
+    <string name="follow">follow</string>
+    <string name="unfollow">unfollow</string>
+    <string name="find_friends">Find friends</string>
 </resources>

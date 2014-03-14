@@ -340,9 +340,90 @@ public class ApiUtils {
 
         enrichParametersWithToken(activity, params);
 
+        if (params == null) {
+            return;
+        }
+
         String url = getBasePath() + "/users/get_user_info.json";
 
-        //Must be a POST request to avoid putting params in url
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void getSuggestedFriends(Activity activity, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/suggested_friends.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void getFollowers(Activity activity, int userId, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user_id", userId);
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/followers.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void getFollowingUsers(Activity activity, int userId, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user_id", userId);
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/followed_users.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void followUser(Activity activity, int followedId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/relationships.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("followed_id", followedId);
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void unfollowUser(Activity activity, int followedId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/relationships/delete.json";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("followed_id", followedId);
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 }

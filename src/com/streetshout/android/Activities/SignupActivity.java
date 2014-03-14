@@ -156,6 +156,8 @@ public class SignupActivity extends Activity {
                     SignupActivity.this.startActivity(camera);
                     finish();
                 } else if (status.getError() == null && status.getCode() == 222) {
+                    Log.d("BAB", "ERROR: " + object);
+
                     Toast toast = null;
 
                     try {

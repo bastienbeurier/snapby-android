@@ -108,10 +108,13 @@ public class ShoutSlidePageFragment extends Fragment {
         userProfilePic = (ImageView) rootView.findViewById(R.id.explore_shout_user_picture);
         userContainer = (LinearLayout) rootView.findViewById(R.id.explore_shout_user_container);
 
-
         activity = (ExploreActivity) getActivity();
 
-        aq.id(imageView).image(shout.image + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
+        if (Constants.PRODUCTION) {
+            aq.id(imageView).image(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_PROD + shout.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
+        } else {
+            aq.id(imageView).image(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_DEV + shout.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
+        }
 
         if (!shout.anonymous) {
             aq.id(userProfilePic).image(Constants.PROFILE_PICS_URL_PREFIX + shout.userId, true, false, 0, 0, null, AQuery.FADE_IN);

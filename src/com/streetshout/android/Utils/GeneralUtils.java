@@ -8,12 +8,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
-import com.amazonaws.services.simpleemail.model.Content;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
 import com.streetshout.android.models.Shout;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

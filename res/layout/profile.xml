@@ -15,7 +15,8 @@
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:layout_gravity="center"
-                     android:layout_margin="10dp"
+                     android:layout_marginTop="15dp"
+                     android:layout_marginBottom="10dp"
                      android:background="@drawable/profile_user_picture_rounded_border">
 
             <FrameLayout android:layout_width="70dp"
@@ -38,35 +39,45 @@
         </FrameLayout>
 
         <TextView android:id="@+id/profile_username"
-                  android:layout_height="35dp"
+                  android:layout_height="wrap_content"
                   android:layout_width="match_parent"
                   android:textColor="@color/white"
                   android:fontFamily="sans-serif"
                   android:textStyle="bold"
-                  android:textSize="25dp"
+                  android:textSize="32dp"
                   android:gravity="center"/>
+
+        <TextView android:id="@+id/profile_shout_count"
+                  android:layout_height="wrap_content"
+                  android:layout_width="match_parent"
+                  android:textColor="@color/lightGrey"
+                  android:textSize="14dp"
+                  android:gravity="center"
+                  android:text="(0 shouts)"/>
 
         <LinearLayout android:orientation="horizontal"
                       android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
+                      android:layout_height="40dp"
                       android:layout_margin="10dp"
                       android:layout_gravity="center">
 
             <LinearLayout android:id="@+id/profile_followers_button"
                           android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
+                          android:layout_height="match_parent"
                           android:orientation="horizontal">
 
                 <TextView android:id="@+id/profile_follower_count"
-                          android:layout_height="wrap_content"
+                          android:layout_height="match_parent"
                           android:layout_width="wrap_content"
                           android:text="0"
+                          android:textSize="16dp"
                           android:textColor="@color/white"
                           android:gravity="center"/>
 
                 <TextView android:id="@+id/profile_follower_label"
-                          android:layout_height="wrap_content"
+                          android:layout_height="match_parent"
                           android:layout_width="match_parent"
+                          android:textSize="16dp"
                           android:text=" FOLLOWERS - "
                           android:textColor="@color/lightGrey"
                           android:gravity="center"/>
@@ -75,27 +86,26 @@
 
             <LinearLayout android:id="@+id/profile_following_button"
                           android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
+                          android:layout_height="match_parent"
                           android:orientation="horizontal">
 
                 <TextView android:id="@+id/profile_following_count"
-                          android:layout_height="wrap_content"
+                          android:layout_height="match_parent"
                           android:layout_width="wrap_content"
+                          android:textSize="16dp"
                           android:text="0"
                           android:textColor="@color/white"
                           android:gravity="center"/>
 
                 <TextView android:id="@+id/profile_following_label"
-                          android:layout_height="wrap_content"
+                          android:layout_height="match_parent"
                           android:layout_width="match_parent"
+                          android:textSize="16dp"
                           android:text=" FOLLOWING"
                           android:textColor="@color/lightGrey"
                           android:gravity="center"/>
 
             </LinearLayout>
-
-
-
 
         </LinearLayout>
 
@@ -103,14 +113,15 @@
                      android:layout_height="50dp"
                      android:layout_gravity="center"
                      android:layout_marginTop="5dp"
-                     android:layout_marginBottom="10dp">
+                     android:layout_marginBottom="15dp">
 
             <ImageView android:id="@+id/profile_find_follow_button"
                        android:layout_width="match_parent"
                        android:layout_height="match_parent"
                        android:background="@drawable/profile_find_follow_button_selector"/>
 
-            <TextView android:layout_width="match_parent"
+            <TextView android:id="@+id/profile_find_follow_label"
+                      android:layout_width="match_parent"
                       android:layout_height="match_parent"
                       android:textColor="@color/shoutBlue"
                       android:textSize="16dp"

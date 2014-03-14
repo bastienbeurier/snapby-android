@@ -2,6 +2,7 @@ package com.streetshout.android.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +16,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.ImageOptions;
+import com.facebook.Session;
 import com.streetshout.android.R;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
@@ -34,11 +36,18 @@ public class ProfileActivity extends Activity {
 
     private ImageView profilePicture = null;
     private TextView username = null;
-    private TextView followerCount = null;
-    private TextView followingCount = null;
+    private TextView followerCountView = null;
+    private TextView followingCountView = null;
     private LinearLayout followersButton = null;
     private LinearLayout followingButton = null;
     private FrameLayout profilePictureContainer = null;
+    private Location myLocation = null;
+    private int followerCount = 0;
+    private int followingCount = 0;
+    private boolean following = false;
+    private ImageView findFollowButton = null;
+    private TextView findFollowLabel = null;
+    private TextView shoutCountView = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,73 +58,173 @@ public class ProfileActivity extends Activity {
 
         profilePicture = (ImageView) findViewById(R.id.profile_user_picture);
         username = (TextView) findViewById(R.id.profile_username);
-        followerCount = (TextView) findViewById(R.id.profile_follower_count);
-        followingCount = (TextView) findViewById(R.id.profile_following_count);
+        followerCountView = (TextView) findViewById(R.id.profile_follower_count);
+        followingCountView = (TextView) findViewById(R.id.profile_following_count);
         followersButton = (LinearLayout) findViewById(R.id.profile_followers_button);
         followingButton = (LinearLayout) findViewById(R.id.profile_following_button);
         profilePictureContainer = (FrameLayout) findViewById(R.id.profile_profile_picture_container);
+        findFollowButton = (ImageView) findViewById(R.id.profile_find_follow_button);
+        findFollowLabel = (TextView) findViewById(R.id.profile_find_follow_label);
+        shoutCountView = (TextView) findViewById(R.id.profile_shout_count);
 
-        if (!getIntent().hasExtra("userId")) {
-            user = SessionUtils.getCurrentUser(this);
-            userId = user.id;
-            updateUI();
-        } else {
+        //Not my profile
+        if (getIntent().hasExtra("userId")) {
             userId = getIntent().getIntExtra("userId", 0);
-
-            ApiUtils.getUserInfo(this, userId, new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-
-                    if (status.getError() == null) {
-                        JSONObject result = null;
-                        JSONObject rawUser = null;
-
-                        try {
-                            result = object.getJSONObject("result");
-
-                            rawUser = result.getJSONObject("user");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        user = User.rawUserToInstance(rawUser);
-                        updateUI();
-                    }
-                }
-            });
-        }
-
-        findViewById(R.id.profile_find_follow_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+        //My profile
+        } else {
+            //For suggested friends distance
+            if (getIntent().hasExtra("myLocation")) {
+                myLocation = getIntent().getParcelableExtra("myLocation");
             }
-        });
+
+            userId = SessionUtils.getCurrentUser(this).id;
+        }
 
         followersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent followers = new Intent(ProfileActivity.this, FollowerActivity.class);
 
+                if (userId != SessionUtils.getCurrentUser(ProfileActivity.this).id) {
+                    followers.putExtra("userId", userId);
+                }
+
+                followers.putExtra("adapterType", "followers");
+
+                startActivityForResult(followers, Constants.FOLLOWERS_REQUEST);
             }
         });
 
         followingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent following = new Intent(ProfileActivity.this, FollowerActivity.class);
 
+                if (userId != SessionUtils.getCurrentUser(ProfileActivity.this).id) {
+                    following.putExtra("userId", userId);
+                }
+
+                following.putExtra("adapterType", "following");
+
+                startActivityForResult(following, Constants.FOLLOWERS_REQUEST);
             }
         });
 
-        profilePictureContainer.setOnClickListener(new View.OnClickListener() {
+        if (userId == SessionUtils.getCurrentUser(this).id) {
+            profilePictureContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO let user choose image if no image
+                }
+            });
+
+            findFollowButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent suggestedUsers = new Intent(ProfileActivity.this, FollowerActivity.class);
+
+                    if (myLocation != null) {
+                        suggestedUsers.putExtra("myLocation", myLocation);
+                    }
+
+                    startActivityForResult(suggestedUsers, Constants.FOLLOWERS_REQUEST);
+                }
+            });
+        } else {
+            //updateUI
+            findFollowButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toggleFollow();
+                }
+            });
+        }
+
+        //Don't tap before loading
+        findFollowButton.setEnabled(false);
+        followersButton.setEnabled(false);
+        followingButton.setEnabled(false);
+    }
+
+    private void toggleFollow() {
+        if (following) {
+            ApiUtils.unfollowUser(this, userId, new AjaxCallback<JSONObject>() {
+                @Override
+                public void callback(String url, JSONObject object, AjaxStatus status) {
+                    super.callback(url, object, status);
+
+                    getUserInfo(userId);
+                }
+            });
+
+            following = !following;
+            updateUI();
+        } else {
+            ApiUtils.followUser(this, userId, new AjaxCallback<JSONObject>() {
+                @Override
+                public void callback(String url, JSONObject object, AjaxStatus status) {
+                    super.callback(url, object, status);
+
+                    getUserInfo(userId);
+                }
+            });
+
+            following = !following;
+            updateUI();
+        }
+    }
+
+    protected void onResume() {
+        super.onResume();
+
+        getUserInfo(userId);
+    }
+
+    private void getUserInfo(int userId) {
+        ApiUtils.getUserInfo(this, userId, new AjaxCallback<JSONObject>() {
             @Override
-            public void onClick(View v) {
-                //TODO let user choose image if no image
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+                if (status.getError() == null) {
+                    JSONObject result = null;
+                    JSONObject rawUser = null;
+
+                    try {
+                        result = object.getJSONObject("result");
+
+                        rawUser = result.getJSONObject("user");
+
+                        followerCount = Integer.parseInt(result.getString("followers_count"));
+                        followingCount = Integer.parseInt(result.getString("followed_count"));
+                        following = Boolean.parseBoolean(result.getString("is_followed"));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    user = User.rawUserToInstance(rawUser);
+                    updateUI();
+                }
             }
         });
     }
 
     private void updateUI() {
+        followerCountView.setText("" + followerCount);
+        followingCountView.setText("" + followingCount);
+        shoutCountView.setText("(" + user.shoutCount + " shouts)");
+
+        if (userId == SessionUtils.getCurrentUser(this).id) {
+            findFollowLabel.setText(getString(R.string.find_friends));
+        } else {
+            if (following) {
+                findFollowLabel.setText(this.getResources().getString(R.string.unfollow_cap));
+            } else {
+                findFollowLabel.setText(this.getResources().getString(R.string.follow_cap));
+            }
+        }
+
         ImageOptions options = new ImageOptions();
         options.round = 8;
         //Bust cache in case user changes is profile picture
@@ -126,6 +235,10 @@ public class ProfileActivity extends Activity {
         GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(Constants.PROFILE_PICS_URL_PREFIX + user.id, options);
 
         username.setText("@" + user.username);
+
+        findFollowButton.setEnabled(true);
+        followersButton.setEnabled(true);
+        followingButton.setEnabled(true);
     }
 
     @Override

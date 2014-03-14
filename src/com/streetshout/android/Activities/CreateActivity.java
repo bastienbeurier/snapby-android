@@ -16,7 +16,6 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
@@ -28,13 +27,9 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
-import com.streetshout.android.aws.AmazonClientManager;
-import com.streetshout.android.aws.S3;
 import com.streetshout.android.models.Shout;
-import com.streetshout.android.tvmclient.Response;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
-import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
@@ -42,14 +37,11 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.Date;
 
 public class CreateActivity extends Activity {
     private AQuery aq;
 
     private ConnectivityManager connectivityManager = null;
-
-    public static AmazonClientManager clientManager = null;
 
     private Location shoutLocation = null;
 
@@ -90,8 +82,6 @@ public class CreateActivity extends Activity {
         aq = new AQuery(this);
 
         this.connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        clientManager = new AmazonClientManager(getSharedPreferences("com.streetshout.android", Context.MODE_PRIVATE));
 
         Location savedInstanceStateShoutLocation = null;
 
