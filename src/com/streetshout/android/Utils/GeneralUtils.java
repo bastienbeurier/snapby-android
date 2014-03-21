@@ -6,15 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
 import com.streetshout.android.models.Shout;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

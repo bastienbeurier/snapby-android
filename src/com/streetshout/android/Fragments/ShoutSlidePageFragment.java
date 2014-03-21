@@ -131,9 +131,7 @@ public class ShoutSlidePageFragment extends Fragment {
             userContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent profile = new Intent(activity, ProfileActivity.class);
-                    profile.putExtra("userId", shout.userId);
-                    startActivityForResult(profile, Constants.PROFILE_REQUEST);
+                    activity.displayProfile(shout.userId);
                 }
             });
         }

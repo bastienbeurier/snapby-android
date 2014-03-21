@@ -1,7 +1,7 @@
 package com.streetshout.android.utils;
 
 public class Constants {
-    public static boolean PRODUCTION = false;
+    public static boolean PRODUCTION = true;
 
     public static final boolean ADMIN = false;
 
@@ -35,7 +35,7 @@ public class Constants {
     public static final int PROFILE_REQUEST = 14555;
     public static final int RESET_PASSWORD_REQUEST = 64783;
     public static final int DISPLAY_SHOUT_REQUEST = 48392;
-    public static final int PHOTO_GALLERY_REQUEST = 37489;
+    public static final int CHOOSE_PROFILE_PICTURE_REQUEST = 37489;
     public static final int FOLLOWERS_REQUEST = 323489;
 
     /** AWS S3 **/

@@ -27,7 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.androidquery.callback.BitmapAjaxCallback;
 import com.streetshout.android.R;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
@@ -40,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 
@@ -197,6 +197,10 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
         });
 
         ((TextView) findViewById(R.id.app_name_and_version)).setText(getString(R.string.app_full_name) + " (v." + GeneralUtils.getAppVersion(this) + ")");
+
+        if (getIntent().hasExtra("chooseProfilePicture")) {
+            letUserChooseProfilePicture();
+        }
     }
 
     private void letUserChooseProfilePicture() {
@@ -206,10 +210,9 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
             return;
         }
 
-        Intent galleryIntent = new Intent();
-        galleryIntent.setType("image/*");
-        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(galleryIntent, Constants.PHOTO_GALLERY_REQUEST);
+        Intent chooserIntent = ImageUtils.getPhotoChooserIntent(this);
+
+        startActivityForResult(chooserIntent, Constants.CHOOSE_PROFILE_PICTURE_REQUEST);
     }
 
     private void updateUI() {
@@ -255,25 +258,31 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.PHOTO_GALLERY_REQUEST) {
+        if (requestCode == Constants.CHOOSE_PROFILE_PICTURE_REQUEST) {
             profilePictureContainer.setEnabled(true);
 
             if (resultCode == RESULT_OK) {
                 Bitmap formattedPicture = null;
 
-                //New Kitkat way of doing things
-                if (Build.VERSION.SDK_INT < 19) {
-                    String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
-                    formattedPicture = ImageUtils.decodeAndMakeThumb(libraryPhotoPath);
+                //From camera?
+                if (data.hasExtra("data")) {
+                    formattedPicture = ImageUtils.makeThumb((Bitmap) data.getExtras().get("data"));
+                //From library
                 } else {
-                    ParcelFileDescriptor parcelFileDescriptor;
-                    try {
-                        parcelFileDescriptor = getContentResolver().openFileDescriptor(data.getData(), "r");
-                        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-                        formattedPicture = ImageUtils.makeThumb(BitmapFactory.decodeFileDescriptor(fileDescriptor));
-                        parcelFileDescriptor.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    //New Kitkat way of doing things
+                    if (Build.VERSION.SDK_INT < 19) {
+                        String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
+                        formattedPicture = ImageUtils.decodeAndMakeThumb(libraryPhotoPath);
+                    } else {
+                        ParcelFileDescriptor parcelFileDescriptor;
+                        try {
+                            parcelFileDescriptor = getContentResolver().openFileDescriptor(data.getData(), "r");
+                            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                            formattedPicture = ImageUtils.makeThumb(BitmapFactory.decodeFileDescriptor(fileDescriptor));
+                            parcelFileDescriptor.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 

@@ -158,6 +158,12 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         noShoutInFeed = (TextView) findViewById(R.id.explore_shout_no_shout);
         noConnectionInFeed = (TextView) findViewById(R.id.explore_shout_no_connection);
 
+        getMyLikesAndFollowedUsers();
+
+        newMap = setUpMapIfNeeded();
+    }
+
+    private void getMyLikesAndFollowedUsers() {
         ApiUtils.getMyLikesAndFollowedUsers(this, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
@@ -194,8 +200,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 }
             }
         });
-
-        newMap = setUpMapIfNeeded();
     }
 
     @Override
@@ -290,6 +294,12 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                                                projection.fromScreenLocation(shoutAreaPoints[1]));
 
         mapReqHandler.addMapRequest(aq, bounds);
+    }
+
+    public void displayProfile(int userId) {
+        Intent profile = new Intent(this, ProfileActivity.class);
+        profile.putExtra("userId", userId);
+        startActivityForResult(profile, Constants.PROFILE_REQUEST);
     }
 
     private void setPullShoutArea() {
@@ -553,6 +563,10 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                     pullShouts();
                 }
             }
+        }
+
+        if (requestCode == Constants.PROFILE_REQUEST) {
+            getMyLikesAndFollowedUsers();
         }
     }
 

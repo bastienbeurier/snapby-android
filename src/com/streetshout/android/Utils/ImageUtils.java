@@ -1,6 +1,7 @@
 package com.streetshout.android.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -8,15 +9,19 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import com.streetshout.android.R;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImageUtils {
 
@@ -194,5 +199,21 @@ public class ImageUtils {
         } else {
             view.setBackground(context.getResources().getDrawable(drawable));
         }
+    }
+
+    public static Intent getPhotoChooserIntent(Context ctx) {
+        List<Intent> cameraIntents = new ArrayList<Intent>();
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntents.add(cameraIntent);
+
+        Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        Intent chooserIntent = Intent.createChooser(galleryIntent, ctx.getString(R.string.select_picture_from));
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+
+        return chooserIntent;
     }
 }

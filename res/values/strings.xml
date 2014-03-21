@@ -79,7 +79,7 @@
     <string name="photo_choosing_error">An error occured while selecting your image, please try again.</string>
     <string name="photo_not_found">Couldn\'t find your image, please try again.</string>
     <string name="failed_saving_photo">We couldn\'t save your picture to the gallery.</string>
-    <string name="select_picture_from">Select picture from...</string>
+    <string name="select_picture_from">Select profile picture from...</string>
     <string name="shout_by">by</string>
     <string name="rotate">rotate</string>
     <string name="crop">crop</string>

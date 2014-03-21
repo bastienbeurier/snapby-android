@@ -115,7 +115,9 @@ public class ProfileActivity extends Activity {
             profilePictureContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO let user choose image if no image
+                    Intent settings = new Intent(ProfileActivity.this, SettingsActivity.class);
+                    settings.putExtra("chooseProfilePicture", true);
+                    startActivityForResult(settings, Constants.SETTINGS_REQUEST);
                 }
             });
 
