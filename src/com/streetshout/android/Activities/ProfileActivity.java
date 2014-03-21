@@ -48,6 +48,7 @@ public class ProfileActivity extends Activity {
     private ImageView findFollowButton = null;
     private TextView findFollowLabel = null;
     private TextView shoutCountView = null;
+    private boolean imageLoaded = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,7 +159,7 @@ public class ProfileActivity extends Activity {
             });
 
             following = !following;
-            updateUI();
+            updateUI(false);
         } else {
             ApiUtils.followUser(this, userId, new AjaxCallback<JSONObject>() {
                 @Override
@@ -170,7 +171,7 @@ public class ProfileActivity extends Activity {
             });
 
             following = !following;
-            updateUI();
+            updateUI(false);
         }
     }
 
@@ -204,13 +205,19 @@ public class ProfileActivity extends Activity {
                     }
 
                     user = User.rawUserToInstance(rawUser);
-                    updateUI();
+
+                    if (imageLoaded) {
+                        updateUI(false);
+                    } else {
+                        updateUI(true);
+                        imageLoaded = true;
+                    }
                 }
             }
         });
     }
 
-    private void updateUI() {
+    private void updateUI(boolean reloadPicture) {
         followerCountView.setText("" + followerCount);
         followingCountView.setText("" + followingCount);
         shoutCountView.setText("(" + user.shoutCount + " shouts)");
@@ -225,14 +232,16 @@ public class ProfileActivity extends Activity {
             }
         }
 
-        ImageOptions options = new ImageOptions();
-        options.round = 8;
-        //Bust cache in case user changes is profile picture
-        options.memCache = false;
-        options.fileCache = false;
-        options.animation = AQuery.FADE_IN;
+        if (reloadPicture) {
+            ImageOptions options = new ImageOptions();
+            options.round = 8;
+            //Bust cache in case user changes is profile picture
+            options.memCache = false;
+            options.fileCache = false;
+            options.animation = AQuery.FADE_IN;
 
-        GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(Constants.PROFILE_PICS_URL_PREFIX + user.id, options);
+            GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(Constants.PROFILE_PICS_URL_PREFIX + user.id, options);
+        }
 
         username.setText("@" + user.username);
 
@@ -271,7 +280,7 @@ public class ProfileActivity extends Activity {
         if (requestCode == Constants.SETTINGS_REQUEST) {
             if (data.hasExtra("profileUpdated")) {
                 user = SessionUtils.getCurrentUser(this);
-                updateUI();
+                updateUI(true);
             }
         }
     }

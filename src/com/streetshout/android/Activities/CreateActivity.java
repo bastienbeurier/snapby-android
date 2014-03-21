@@ -10,9 +10,7 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -100,7 +98,7 @@ public class CreateActivity extends Activity {
         cancelButton = (ImageView) findViewById(R.id.create_cancel_button);
         sendButton = (ImageView) findViewById(R.id.create_send_button);
         refineButton = (ImageView) findViewById(R.id.create_refine_button);
-        anonymousButton = (ImageView) findViewById(R.id.create_anonymous_button);
+        anonymousButton = (ImageView) findViewById(R.id.create_mask_button);
         photoContainer = (FrameLayout) findViewById(R.id.create_photo_container);
         descriptionCharCount = (TextView) findViewById(R.id.create_description_count_text);
         buttonContainer = findViewById(R.id.create_description_container);
@@ -141,11 +139,11 @@ public class CreateActivity extends Activity {
                 anonymousUser = !anonymousUser;
 
                 if (anonymousUser) {
-                    anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button_pressed_selector));
+                    anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button_pressed));
                     Toast toast = Toast.makeText(CreateActivity.this, getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
-                    anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button_selector));
+                    anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button));
                     Toast toast = Toast.makeText(CreateActivity.this, getString(R.string.anonymous_mode_disabled), Toast.LENGTH_SHORT);
                     toast.show();
                 }

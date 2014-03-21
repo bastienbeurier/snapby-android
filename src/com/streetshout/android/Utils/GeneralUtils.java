@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
 import com.streetshout.android.models.Shout;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,34 +35,208 @@ public class GeneralUtils {
         return Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static int getShoutMarkerImageResource(Context ctx, Shout shout, boolean selected) {
-        if (selected) {
-            return R.drawable.selected_shout_marker;
-        }
+    public static int getShoutMarkerImageResource(Context ctx, Shout shout, boolean selected, boolean followed) {
 
         if (SessionUtils.getCurrentUser(ctx).id == shout.userId) {
-            if (shout.trending) {
-                return R.drawable.my_shout_marker_trending;
+            if (selected) {
+                if (shout.trending) {
+                    return R.drawable.marker_me_selected_trending;
+                } else {
+                    return R.drawable.marker_me_selected;
+                }
             } else {
-                return R.drawable.my_shout_marker;
+                if (shout.trending) {
+                    return R.drawable.marker_me_trending;
+                } else {
+                    return R.drawable.marker_me;
+                }
             }
-        }
-
-        //TODO Implement following
-
-        if (shout.anonymous) {
-            if (shout.trending) {
-                return R.drawable.anonymous_shout_marker_trending;
+        } else if (shout.anonymous) {
+            if (selected) {
+                if (shout.trending) {
+                    return R.drawable.marker_anonymous_selected_trending_1;
+                } else {
+                    return R.drawable.marker_anonymous_selected_1;
+                }
             } else {
-                return R.drawable.anonymous_shout_marker;
+                if (shout.trending) {
+                    return R.drawable.marker_anonymous_trending_1;
+                } else {
+                    return R.drawable.marker_anonymous_1;
+                }
             }
-        }
-
-
-        if (shout.trending) {
-            return R.drawable.public_shout_marker_trending;
         } else {
-            return R.drawable.public_shout_marker;
+            if (selected) {
+                if (shout.trending) {
+                    if (followed) {
+                        return R.drawable.marker_selected_followed_trending_1;
+                    } else {
+                        return R.drawable.marker_selected_trending_1;
+                    }
+                } else {
+                    if (followed) {
+                        return R.drawable.marker_selected_followed_1;
+                    } else {
+                        return R.drawable.marker_selected_1;
+                    }
+                }
+            } else {
+                if (shout.trending) {
+                    if (followed) {
+                        return R.drawable.marker_followed_trending_1;
+                    } else {
+                        return R.drawable.marker_trending_1;
+                    }
+                } else {
+                    if (followed) {
+                        return R.drawable.marker_followed_1;
+                    } else {
+                        return R.drawable.marker_1;
+                    }
+                }
+            }
+        }
+
+
+
+//        if (SessionUtils.getCurrentUser(ctx).id == shout.userId) {
+//            if (shout.trending) {
+//                if (selected) {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.my_marker_trending_1_selected;
+//                        case 2:
+//                            return R.drawable.my_marker_trending_2_selected;
+//                        case 3:
+//                            return R.drawable.my_marker_trending_3_selected;
+//                    }
+//                } else {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.my_marker_trending_1;
+//                        case 2:
+//                            return R.drawable.my_marker_trending_2;
+//                        case 3:
+//                            return R.drawable.my_marker_trending_3;
+//                    }
+//                }
+//            } else {
+//                if (selected) {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.my_marker_1_selected;
+//                        case 2:
+//                            return R.drawable.my_marker_2_selected;
+//                        case 3:
+//                            return R.drawable.my_marker_3_selected;
+//                    }
+//                } else {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.my_marker_1;
+//                        case 2:
+//                            return R.drawable.my_marker_2;
+//                        case 3:
+//                            return R.drawable.my_marker_3;
+//                    }
+//                }
+//            }
+//        } else if (shout.anonymous) {
+//            if (shout.trending) {
+//                if (selected) {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.anonymous_marker_trending_1_selected;
+//                        case 2:
+//                            return R.drawable.anonymous_marker_trending_2_selected;
+//                        case 3:
+//                            return R.drawable.anonymous_marker_trending_3_selected;
+//                    }
+//                } else {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.anonymous_marker_trending_1;
+//                        case 2:
+//                            return R.drawable.anonymous_marker_trending_2;
+//                        case 3:
+//                            return R.drawable.anonymous_marker_trending_3;
+//                    }
+//                }
+//            } else {
+//                if (selected) {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.anonymous_marker_1_selected;
+//                        case 2:
+//                            return R.drawable.anonymous_marker_2_selected;
+//                        case 3:
+//                            return R.drawable.anonymous_marker_3_selected;
+//                    }
+//                } else {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.anonymous_marker_1;
+//                        case 2:
+//                            return R.drawable.anonymous_marker_2;
+//                        case 3:
+//                            return R.drawable.anonymous_marker_3;
+//                    }
+//                }
+//            }
+//        } else {
+//            if (shout.trending) {
+//                if (selected) {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.marker_trending_1_selected;
+//                        case 2:
+//                            return R.drawable.marker_trending_2_selected;
+//                        case 3:
+//                            return R.drawable.marker_trending_3_selected;
+//                    }
+//                } else {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.marker_trending_1;
+//                        case 2:
+//                            return R.drawable.marker_trending_2;
+//                        case 3:
+//                            return R.drawable.marker_trending_3;
+//                    }
+//                }
+//            } else {
+//                if (selected) {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.marker_1_selected;
+//                        case 2:
+//                            return R.drawable.marker_2_selected;
+//                        case 3:
+//                            return R.drawable.marker_3_selected;
+//                    }
+//                } else {
+//                    switch (getShoutAgeCode(ctx, shout)) {
+//                        case 1:
+//                            return R.drawable.marker_1;
+//                        case 2:
+//                            return R.drawable.marker_2;
+//                        case 3:
+//                            return R.drawable.marker_3;
+//                    }
+//                }
+//            }
+//        }
+    }
+
+    public static int getShoutAgeCode(Context ctx, Shout shout) {
+        long shoutAge = TimeUtils.getShoutAge(shout.created);
+
+        if (shoutAge < Constants.SHOUT_DURATION / 4) {
+            return 1;
+        } else if (shoutAge < 3 * (Constants.SHOUT_DURATION / 4)) {
+            return 2;
+        } else {
+            return 3;
         }
     }
 

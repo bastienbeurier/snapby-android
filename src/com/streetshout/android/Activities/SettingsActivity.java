@@ -98,13 +98,13 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
                     String username = settingsUsernameEditText.getText().toString();
 
-                    if (!GeneralUtils.isValidUsername(username)) {
-                        settingsUsernameEditText.setError(getString(R.string.invalid_username_error));
+                    if (username.length() < Constants.MIN_USERNAME_LENGTH || username.length() > Constants.MAX_USERNAME_LENGTH) {
+                        settingsUsernameEditText.setError(getString(R.string.username_length_error));
                         errors = true;
                     }
 
-                    if (username.length() < 6 || username.length() > 20) {
-                        settingsUsernameEditText.setError(getString(R.string.username_length_error));
+                    if (!GeneralUtils.isValidUsername(username)) {
+                        settingsUsernameEditText.setError(getString(R.string.invalid_username_error));
                         errors = true;
                     }
 

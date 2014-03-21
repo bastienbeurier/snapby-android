@@ -84,13 +84,13 @@ public class SignupActivity extends Activity {
         String password = passwordEditText.getText().toString();
         String confirm = confirmPasswordEditText.getText().toString();
 
-        if (!GeneralUtils.isValidUsername(username)) {
-            usernameEditText.setError(getString(R.string.invalid_username_error));
+        if (username.length() < Constants.MIN_USERNAME_LENGTH || username.length() > Constants.MAX_USERNAME_LENGTH) {
+            usernameEditText.setError(getString(R.string.username_length_error));
             errors = true;
         }
 
-        if (username.length() < Constants.MIN_USERNAME_LENGTH || username.length() > Constants.MAX_USERNAME_LENGTH) {
-            usernameEditText.setError(getString(R.string.username_length_error));
+        if (!GeneralUtils.isValidUsername(username)) {
+            usernameEditText.setError(getString(R.string.invalid_username_error));
             errors = true;
         }
 

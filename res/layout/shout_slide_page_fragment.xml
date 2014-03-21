@@ -64,7 +64,7 @@
         </FrameLayout>
 
         <ImageView android:id="@+id/explore_shout_trending_mark"
-                   android:layout_height="50dp"
+                   android:layout_height="35dp"
                    android:layout_width="50dp"
                    android:src="@drawable/explore_shout_trending_mark"
                    android:visibility="gone"/>
@@ -102,6 +102,7 @@
 
                         <TextView android:id="@+id/explore_shout_username"
                                   android:layout_width="match_parent"
+                                  android:layout_weight="1"
                                   android:layout_height="wrap_content"
                                   android:textColor="@color/shoutBlue"
                                   android:textStyle="bold"
@@ -109,6 +110,15 @@
                                   android:layout_gravity="center"
                                   android:text="Username"
                                   android:gravity="center|left"/>
+
+                        <ImageView android:id="@+id/explore_shout_followed_mark"
+                                   android:layout_width="18dp"
+                                   android:layout_height="18dp"
+                                   android:layout_marginLeft="5dp"
+                                   android:layout_marginRight="5dp"
+                                   android:layout_gravity="center"
+                                   android:src="@drawable/explore_shout_followed_mark"
+                                   android:visibility="gone"/>
 
                     </LinearLayout>
 

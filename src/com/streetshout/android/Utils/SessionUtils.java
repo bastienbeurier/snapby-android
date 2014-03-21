@@ -55,38 +55,6 @@ public class SessionUtils {
         });
     }
 
-    //TODO: deprecated
-    public static TreeSet<Integer> saveUserInfoInPhoneAndGetLikes(Activity activity, JSONObject object, AjaxStatus status) {
-        if (status.getError() == null) {
-            JSONObject result = null;
-            JSONObject rawUser = null;
-            TreeSet<Integer> likes = new TreeSet<Integer>();
-
-
-            try {
-                result = object.getJSONObject("result");
-
-                rawUser = result.getJSONObject("user");
-                JSONArray rawLikes = result.getJSONArray("likes");
-
-                int count = rawLikes.length();
-
-                for (int i = 0 ; i < count ; i++) {
-                    likes.add(Integer.parseInt(((JSONObject) rawLikes.get(i)).getString("shout_id")));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            User currentUser = User.rawUserToInstance(rawUser);
-            SessionUtils.updateCurrentUserInfoInPhone(activity, currentUser);
-
-            return likes;
-        } else {
-            return null;
-        }
-    }
-
     public static void updateCurrentUserInfoInPhone(Context ctx, User user) {
         AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
 

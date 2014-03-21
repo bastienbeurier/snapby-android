@@ -23,20 +23,20 @@
                       android:orientation="horizontal"
                       android:layout_gravity="center|left">
 
-            <ImageView android:id="@+id/create_anonymous_button"
+            <ImageView android:id="@+id/create_mask_button"
                        android:layout_width="75dp"
                        android:layout_height="65dp"
                        android:paddingTop="15dp"
                        android:paddingBottom="15dp"
                        android:paddingLeft="10dp"
                        android:paddingRight="10dp"
-                       android:src="@drawable/create_anonymous_button_selector"/>
+                       android:src="@drawable/create_anonymous_button"/>
 
             <ImageView android:id="@+id/create_refine_button"
                        android:layout_width="59dp"
                        android:layout_height="65dp"
                        android:padding="10dp"
-                       android:src="@drawable/create_refine_button_selector"/>
+                       android:src="@drawable/create_refine_button"/>
 
             <View android:layout_width="match_parent"
                   android:layout_height="match_parent"

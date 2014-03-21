@@ -426,4 +426,19 @@ public class ApiUtils {
 
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
+
+    public static void getMyLikesAndFollowedUsers(Activity activity, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/my_likes_and_followed_users.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
 }

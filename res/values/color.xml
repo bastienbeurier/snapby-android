@@ -20,7 +20,8 @@
     <color name="veryVeryLightGrey">#F2F2F2</color>
     <color name="shoutLightRed">#ED4723</color>
     <color name="facebookBlue">#3b5999</color>
-    <color name="publicYellow">#E9C820</color>
+    <color name="publicPink1">#ec6586</color>
+    <color name="anonymousGrey1">#777777</color>
     <color name="anonymousGrey">#AAAAAA</color>
-    <color name="myShoutPurple">#9F3E97</color>
+    <color name="myShoutPurple">#913f91</color>
 </resources>

@@ -70,6 +70,8 @@ public class ShoutSlidePageFragment extends Fragment {
 
     private LinearLayout userContainer = null;
 
+    private ImageView followedMark = null;
+
     private boolean liked = false;
 
     private ExploreActivity activity = null;
@@ -107,8 +109,15 @@ public class ShoutSlidePageFragment extends Fragment {
         coloredBar = rootView.findViewById(R.id.explore_shout_colored_bar);
         userProfilePic = (ImageView) rootView.findViewById(R.id.explore_shout_user_picture);
         userContainer = (LinearLayout) rootView.findViewById(R.id.explore_shout_user_container);
+        followedMark = (ImageView) rootView.findViewById(R.id.explore_shout_followed_mark);
 
         activity = (ExploreActivity) getActivity();
+
+        if (activity.followedByMe.contains(shout.userId)) {
+            followedMark.setVisibility(View.VISIBLE);
+        } else {
+            followedMark.setVisibility(View.GONE);
+        }
 
         if (Constants.PRODUCTION) {
             aq.id(imageView).image(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_PROD + shout.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
@@ -132,7 +141,7 @@ public class ShoutSlidePageFragment extends Fragment {
         setLikeCountUI(shout.likeCount);
         setCommentCountUI(shout.commentCount);
 
-        if (activity.currentUserShoutLiked.contains(shout.id)) {
+        if (activity.myLikes.contains(shout.id)) {
             liked = true;
             likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button_liked));
         } else {
@@ -158,9 +167,9 @@ public class ShoutSlidePageFragment extends Fragment {
         if (shout.userId == SessionUtils.getCurrentUser(getActivity()).id) {
             updateShoutUI(R.color.myShoutPurple);
         } else if (shout.anonymous) {
-            updateShoutUI(R.color.anonymousGrey);
+            updateShoutUI(R.color.anonymousGrey1);
         } else {
-            updateShoutUI(R.color.publicYellow);
+            updateShoutUI(R.color.publicPink1);
         }
 
         if (shout.anonymous) {
@@ -295,7 +304,7 @@ public class ShoutSlidePageFragment extends Fragment {
     private void likeShout() {
         liked = true;
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button_liked));
-        activity.currentUserShoutLiked.add(shout.id);
+        activity.myLikes.add(shout.id);
 
         shout.likeCount++;
         setLikeCountUI(shout.likeCount);
@@ -304,7 +313,7 @@ public class ShoutSlidePageFragment extends Fragment {
     private void unlikeShout() {
         liked = false;
         likeButton.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button));
-        activity.currentUserShoutLiked.remove(shout.id);
+        activity.myLikes.remove(shout.id);
 
         shout.likeCount--;
         setLikeCountUI(shout.likeCount);
@@ -320,13 +329,13 @@ public class ShoutSlidePageFragment extends Fragment {
                 ImageUtils.setBackground(getActivity(), shareButton, R.drawable.my_shout_count_button_selector);
                 ImageUtils.setBackground(getActivity(), zoomButton, R.drawable.my_shout_count_button_selector);
                 return;
-            case R.color.anonymousGrey:
+            case R.color.anonymousGrey1:
                 ImageUtils.setBackground(getActivity(), likeButton, R.drawable.anonymous_count_button_selector);
                 ImageUtils.setBackground(getActivity(), commentButton, R.drawable.anonymous_count_button_selector);
                 ImageUtils.setBackground(getActivity(), shareButton, R.drawable.anonymous_count_button_selector);
                 ImageUtils.setBackground(getActivity(), zoomButton, R.drawable.anonymous_count_button_selector);
                 return;
-            case R.color.publicYellow:
+            case R.color.publicPink1:
                 ImageUtils.setBackground(getActivity(), likeButton, R.drawable.public_shout_count_button_selector);
                 ImageUtils.setBackground(getActivity(), commentButton, R.drawable.public_shout_count_button_selector);
                 ImageUtils.setBackground(getActivity(), shareButton, R.drawable.public_shout_count_button_selector);

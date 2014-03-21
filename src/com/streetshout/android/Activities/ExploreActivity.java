@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
@@ -43,15 +42,12 @@ import com.streetshout.android.models.Shout;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.*;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
@@ -103,13 +99,16 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     private Point[] shoutAreaPoints = null;
 
-    public TreeSet<Integer> currentUserShoutLiked = null;
+    public TreeSet<Integer> myLikes = null;
+
+    public TreeSet<Integer> followedByMe = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
 
-        currentUserShoutLiked = new TreeSet<Integer>();
+        myLikes = new TreeSet<Integer>();
+        followedByMe = new TreeSet<Integer>();
 
         if (getIntent().hasExtra("myLocation")) {
             myLocation = getIntent().getParcelableExtra("myLocation");
@@ -159,8 +158,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         noShoutInFeed = (TextView) findViewById(R.id.explore_shout_no_shout);
         noConnectionInFeed = (TextView) findViewById(R.id.explore_shout_no_connection);
 
-        //TODO change with get User Info
-        ApiUtils.updateUserInfoWithLocation(this, GeneralUtils.getAquery(this), myLocation, null, null, new AjaxCallback<JSONObject>() {
+        ApiUtils.getMyLikesAndFollowedUsers(this, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -170,7 +168,30 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                     return;
                 }
 
-                currentUserShoutLiked = SessionUtils.saveUserInfoInPhoneAndGetLikes(ExploreActivity.this, object, status);
+                if (status.getError() == null) {
+                    JSONObject result = null;
+
+                    try {
+                        result = object.getJSONObject("result");
+
+                        JSONArray rawFollowedByMe = result.getJSONArray("current_user_followed_user_ids");
+                        JSONArray rawLikes = result.getJSONArray("likes");
+
+                        int likeCount = rawLikes.length();
+
+                        for (int i = 0 ; i < likeCount ; i++) {
+                            myLikes.add(Integer.parseInt(((JSONObject) rawLikes.get(i)).getString("shout_id")));
+                        }
+
+                        int count = rawFollowedByMe.length();
+
+                        for (int i = 0 ; i < count ; i++) {
+                            followedByMe.add(Integer.parseInt(rawFollowedByMe.getString(i)));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -367,7 +388,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
         markerOptions.position(new LatLng(shout.lat, shout.lng));
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, false)));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, false, followedByMe.contains(shout.userId))));
 
         markerOptions.title(Integer.toString(shout.id));
 
@@ -391,7 +412,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
        if (shoutSelectedOnMap != null) {
            Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
            if (oldSelectedMarker != null) {
-               oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shoutSelectedOnMap, false)));
+               oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shoutSelectedOnMap, false, followedByMe.contains(shoutSelectedOnMap.userId))));
            }
        }
 
@@ -399,7 +420,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
        Marker marker = displayedShoutMarkers.get(shout.id);
 
-       marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, true)));
+       marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, true, followedByMe.contains(shout.userId))));
 
        marker.showInfoWindow();
    }
