@@ -32,34 +32,52 @@
 
             <LinearLayout android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:orientation="horizontal"
-                          android:layout_gravity="center"
-                          android:gravity="center">
+                          android:orientation="vertical"
+                          android:layout_gravity="center|left"
+                          android:layout_marginLeft="5dp">
 
-                <ImageView android:layout_width="20dp"
-                           android:layout_height="20dp"
-                           android:src="@drawable/explore_shout_age_icon"
-                           android:layout_marginRight="1dp"/>
+                <LinearLayout android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_gravity="left"
+                              android:gravity="center">
 
-                <TextView android:id="@+id/explore_shout_age"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:textSize="16dp"
-                          android:text="9min"
-                          android:textColor="@color/white"/>
+                    <ImageView android:layout_width="20dp"
+                               android:layout_height="20dp"
+                               android:src="@drawable/explore_shout_age_icon"
+                               android:layout_marginRight="1dp"/>
 
-                <ImageView android:layout_width="20dp"
-                           android:layout_height="20dp"
-                           android:layout_marginLeft="3dp"
-                           android:src="@drawable/explore_shout_distance_icon"
-                           android:layout_marginRight="1dp"/>
+                    <TextView android:id="@+id/explore_shout_age"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_marginLeft="2dp"
+                              android:textSize="16dp"
+                              android:text="9min"
+                              android:textColor="@color/white"/>
 
-                <TextView android:id="@+id/explore_shout_distance"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:textSize="16dp"
-                          android:text="15km"
-                          android:textColor="@color/white"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_gravity="left"
+                              android:gravity="center">
+
+                    <ImageView android:layout_width="20dp"
+                               android:layout_height="20dp"
+                               android:src="@drawable/explore_shout_distance_icon"
+                               android:layout_marginRight="1dp"/>
+
+                    <TextView android:id="@+id/explore_shout_distance"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_marginLeft="2dp"
+                              android:textSize="16dp"
+                              android:text="15km"
+                              android:textColor="@color/white"/>
+
+                </LinearLayout>
+
             </LinearLayout>
         </FrameLayout>
 

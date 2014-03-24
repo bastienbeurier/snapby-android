@@ -12,6 +12,7 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
@@ -103,9 +104,17 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     public TreeSet<Integer> followedByMe = null;
 
+    private int screenWidth = 0;
+
+    private int screenHeight = 0;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
+
+        if (shoutAreaPoints == null) {
+            setPullShoutArea();
+        }
 
         myLikes = new TreeSet<Integer>();
         followedByMe = new TreeSet<Integer>();
@@ -147,6 +156,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             @Override
             public void onPageSelected(int i) {
                 updateSelectedShoutMarker(shouts.get(i));
+                updateShoutCountViews(i);
             }
 
             @Override
@@ -284,10 +294,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             }
         });
 
-        if (shoutAreaPoints == null) {
-            setPullShoutArea();
-        }
-
         //Add a request to populate the map with shouts
         Projection projection = mMap.getProjection();
         LatLngBounds bounds = new LatLngBounds(projection.fromScreenLocation(shoutAreaPoints[0]),
@@ -304,19 +310,25 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
     private void setPullShoutArea() {
         int SHOUT_AREA_MARGIN_IN_DPI = 10;
-        int FEED_HEIGHT_IN_DPI = 150;
+        int FEED_HEIGHT_IN_DPI = 220;
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
+        if (screenHeight == 0 && screenWidth == 0) {
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+
+            screenWidth = size.x;
+            screenHeight = size.y;
+        }
+
+
         int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, SHOUT_AREA_MARGIN_IN_DPI, getResources().getDisplayMetrics());
         int feedHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, FEED_HEIGHT_IN_DPI, getResources().getDisplayMetrics());
 
-
-        int height = size.y - feedHeight - 2 * margin;
+        int height = screenHeight - feedHeight - 2 * margin;
 
         Point bottomLeft = new Point(margin, height);
-        Point TopRight = new Point(size.x - margin, margin);
+        Point TopRight = new Point(screenWidth - margin, margin);
 
         shoutAreaPoints = new Point[] {bottomLeft, TopRight};
     }
@@ -329,6 +341,8 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         shoutViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         shoutViewPager.setVisibility(View.VISIBLE);
         noShoutInFeed.setVisibility(View.GONE);
+
+        updateShoutCountViews(0);
     }
 
     private void updateUIForLoadingShouts() {
@@ -337,6 +351,10 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         displayedShoutModels = new HashMap<Integer, Shout>();
         displayedShoutMarkers = new HashMap<Integer, Marker>();
         shouts = null;
+        shoutPagerAdapter = null;
+
+        updateShoutCountViews(0);
+
         shoutViewPager.setVisibility(View.GONE);
         noConnectionInFeed.setVisibility(View.GONE);
         noShoutInFeed.setVisibility(View.GONE);
@@ -446,6 +464,40 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 shoutViewPager.setCurrentItem(i);
                 break;
             }
+        }
+    }
+
+    private void updateShoutCountViews(int selected) {
+        int MAX_COUNT_VIEWS = 20;
+
+        int count = 0;
+
+        if (shoutPagerAdapter != null) {
+            count = shoutPagerAdapter.getCount();
+        }
+
+        LinearLayout shoutCountContainer = (LinearLayout) findViewById(R.id.explore_shout_count_container);
+
+        shoutCountContainer.removeAllViews();
+
+        for (int i = 0 ; i < Math.min(MAX_COUNT_VIEWS, count) ; i++) {
+
+            View shoutCountView = new View(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(15, 15);
+
+            if (i != 0) {
+                params.setMargins(15, 0, 0, 0);
+            }
+
+            shoutCountView.setLayoutParams(params);
+
+            if (i == selected) {
+                shoutCountView.setBackgroundColor(getResources().getColor(R.color.shoutBlue));
+            } else {
+                shoutCountView.setBackgroundColor(getResources().getColor(R.color.semiTransparentBlack));
+            }
+
+            shoutCountContainer.addView(shoutCountView);
         }
     }
 
@@ -571,7 +623,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     }
 
     /**
-     *  Map-related methods
+     *  Location-related methods
      */
 
     @Override

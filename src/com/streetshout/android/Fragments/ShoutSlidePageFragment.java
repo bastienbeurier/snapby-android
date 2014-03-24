@@ -113,7 +113,7 @@ public class ShoutSlidePageFragment extends Fragment {
 
         activity = (ExploreActivity) getActivity();
 
-        if (activity.followedByMe.contains(shout.userId)) {
+        if (activity.followedByMe.contains(shout.userId) && !shout.anonymous) {
             followedMark.setVisibility(View.VISIBLE);
         } else {
             followedMark.setVisibility(View.GONE);
