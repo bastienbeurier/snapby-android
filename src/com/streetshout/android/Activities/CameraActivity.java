@@ -3,12 +3,15 @@ package com.streetshout.android.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -151,28 +154,6 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         );
     }
 
-    private Camera.Size getOptimalCameraSize(List<Camera.Size> sizes, int w, int h) {
-        final double ASPECT_TOLERANCE = 0.05;
-        double targetRatio = (double) w/h;
-
-        Camera.Size optimalSize = null;
-
-        // Find size
-        for (Camera.Size size : sizes) {
-            double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-            if (size.width >= Constants.SHOUT_BIG_RES || size.height >= Constants.SHOUT_BIG_RES) {
-                optimalSize = size;
-            }
-        }
-
-        if (optimalSize == null) {
-            optimalSize = sizes.get(0);
-        }
-
-        return optimalSize;
-    }
-
     private void setUpCamera(int cameraId) {
         releaseCamera();
 
@@ -189,31 +170,53 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         //Portrait mode
         mCamera.setDisplayOrientation(90);
 
-
         //Get optimal camera size for screen aspect ratio and min resolution
-        Camera.Parameters parameters = mCamera.getParameters();
-        List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
+        Camera.Parameters cameraParameters = mCamera.getParameters();
         View root = findViewById(R.id.camera_activity_frame);
-        Camera.Size optimalSize = getOptimalCameraSize(sizes, root.getWidth(), root.getHeight());
-        parameters.setPictureSize(optimalSize.width, optimalSize.height);
 
         //Set continuous autofocus
-        List<String> focusModes = parameters.getSupportedFocusModes();
+        List<String> focusModes = cameraParameters.getSupportedFocusModes();
         if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            cameraParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         }
-        mCamera.setParameters(parameters);
+
+        mCamera.setParameters(cameraParameters);
 
         if (mPreview != null) {
             preview.removeView(mPreview);
         }
 
+        //Get size information on preview
+        int previewWidth = Math.min(cameraParameters.getPreviewSize().height, cameraParameters.getPreviewSize().width);
+        int previewHeight = Math.max(cameraParameters.getPreviewSize().height, cameraParameters.getPreviewSize().width);
+        float previewRatio = ((float) previewWidth)/previewHeight;
+
+        //Get size information on window
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        int screenWidth = size.x;
+        int screenHeight = size.y;
+        float screenRatio = ((float) screenWidth)/screenHeight;
+
         //Create Preview view
         mPreview = new CameraPreview(this, mCamera);
+        ViewGroup.LayoutParams params = null;
+
+        //Set preview size so it doesn't strech (equivalent of a center crop)
+        if (previewRatio > screenRatio) {
+            params = new ViewGroup.LayoutParams((int) (screenHeight * previewRatio), screenHeight);
+            mPreview.setX(-(params.width - screenWidth)/2);
+        } else {
+            params = new ViewGroup.LayoutParams(screenWidth, (int) (screenWidth / previewRatio));
+            mPreview.setY(-(params.height - screenHeight)/2);
+        }
+
+        mPreview.setLayoutParams(params);
 
         //Set preview as the content of activity.
         preview.addView(mPreview);
-
     }
 
     public Camera getCameraInstance(int cameraId) {
