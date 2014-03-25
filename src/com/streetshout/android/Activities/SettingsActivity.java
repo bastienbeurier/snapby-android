@@ -223,13 +223,22 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
+        finishActivity();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishActivity();
+    }
+
+    private void finishActivity() {
         Intent returnIntent = new Intent();
         if (profileUpdated) {
             returnIntent.putExtra("profileUpdated", true);
         }
         setResult(RESULT_CANCELED, returnIntent);
         finish();
-        return true;
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,

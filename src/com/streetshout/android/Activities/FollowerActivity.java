@@ -1,6 +1,5 @@
 package com.streetshout.android.activities;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.location.Location;
@@ -9,6 +8,10 @@ import android.view.MenuItem;
 import android.view.View;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
 import com.streetshout.android.R;
 import com.streetshout.android.adapters.FollowerAdapter;
 import com.streetshout.android.models.User;
@@ -19,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -68,6 +72,8 @@ public class FollowerActivity extends ListActivity {
             }
         } else {
             getSuggestedUsers();
+
+            SessionUtils.autofollowFacebookFriends(this);
         }
     }
 

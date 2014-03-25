@@ -411,8 +411,6 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
 
             String imagePath = pictureFile.getAbsolutePath().toString();
 
-            galleryAddPic(imagePath);
-
             formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath, Constants.SHOUT_BIG_RES);
 
             if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
@@ -423,6 +421,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
                     formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
                 }
             }
+
+            galleryAddPic(imagePath);
 
             startCreationMode();
         }

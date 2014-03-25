@@ -3,9 +3,7 @@ package com.streetshout.android.utils;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.location.Location;
-import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.streetshout.android.models.Shout;
@@ -13,6 +11,7 @@ import com.streetshout.android.models.User;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -104,6 +103,11 @@ public class ApiUtils {
 
     public static void updateUserInfoWithLocation(Activity activity, AQuery aq, Location lastLocation, String image, String username, AjaxCallback<JSONObject> cb) {
         User currentUser = SessionUtils.getCurrentUser(activity);
+
+        if (currentUser == null) {
+            return;
+        }
+
         String url = getBasePath() + "/users/" + currentUser.id + ".json";
 
         Map<String, Object> params = new HashMap<String, Object>();
@@ -439,6 +443,24 @@ public class ApiUtils {
         String url = getBasePath() + "/users/my_likes_and_followed_users.json";
 
         //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
+
+    public static void autofollowFacebookFriends(Activity activity, List<Long> friends) {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params.put("friend_ids", friends);
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/users/autofollow.json";
+
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
+
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 }

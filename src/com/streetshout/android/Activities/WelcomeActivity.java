@@ -168,82 +168,83 @@ public class WelcomeActivity extends Activity {
 
                     goToNavActivity();
                 } else {
-                    Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+                        Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
 
-                        // callback after Graph API response with user object
-                        @Override
-                        public void onCompleted(GraphUser user, Response response) {
-                            if (user != null) {
+                            // callback after Graph API response with user object
+                            @Override
+                            public void onCompleted(GraphUser user, Response response) {
+                                if (user != null) {
 
-                                if (user.getUsername() == null || user.asMap().get("email").toString() == null || user.getId() == null || user.getName() == null) {
+                                    if (user.getUsername() == null || user.asMap().get("email").toString() == null || user.getId() == null || user.getName() == null) {
+                                        if (connectFBDialog != null) {
+                                            connectFBDialog.cancel();
+                                        }
+                                        setButtonsVisibility(View.VISIBLE);
+                                        Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
+                                        toast.show();
+
+                                        return;
+                                    }
+
+                                    ApiUtils.connectFacebook(WelcomeActivity.this, GeneralUtils.getAquery(WelcomeActivity.this), user.getUsername(), user.asMap().get("email").toString(), user.getId(), user.getName(), new AjaxCallback<JSONObject>() {
+                                        @Override
+                                        public void callback(String url, JSONObject object, AjaxStatus status) {
+                                            super.callback(url, object, status);
+
+                                            if (status.getError() == null && object != null) {
+                                                JSONObject rawUser = null;
+                                                String token = null;
+                                                Boolean isSigningUp = null;
+
+                                                try {
+                                                    result = object.getJSONObject("result");
+
+                                                    rawUser = result.getJSONObject("user");
+                                                    token = result.getString("auth_token");
+
+                                                    isSigningUp = result.getBoolean("is_signup");
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                SessionUtils.saveCurrentUserToken(WelcomeActivity.this, token);
+
+                                                User currentUser = User.rawUserToInstance(rawUser);
+                                                SessionUtils.updateCurrentUserInfoInPhone(WelcomeActivity.this, currentUser);
+
+                                                TrackingUtils.identify(WelcomeActivity.this, currentUser);
+
+                                                if (isSigningUp != null && isSigningUp) {
+                                                    TrackingUtils.trackSignup(WelcomeActivity.this, "Facebook");
+                                                    SessionUtils.autofollowFacebookFriends(WelcomeActivity.this);
+                                                }
+
+                                                if (connectFBDialog != null) {
+                                                    connectFBDialog.cancel();
+                                                }
+                                                goToNavActivity();
+                                            } else {
+                                                if (connectFBDialog != null) {
+                                                    connectFBDialog.cancel();
+                                                }
+                                                setButtonsVisibility(View.VISIBLE);
+                                                Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
+                                                toast.show();
+                                            }
+                                        }
+                                    });
+                                } else {
                                     if (connectFBDialog != null) {
                                         connectFBDialog.cancel();
                                     }
                                     setButtonsVisibility(View.VISIBLE);
                                     Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
                                     toast.show();
-
-                                    return;
                                 }
-
-                                ApiUtils.connectFacebook(WelcomeActivity.this, GeneralUtils.getAquery(WelcomeActivity.this), user.getUsername(), user.asMap().get("email").toString(), user.getId(), user.getName(), new AjaxCallback<JSONObject>() {
-                                    @Override
-                                    public void callback(String url, JSONObject object, AjaxStatus status) {
-                                        super.callback(url, object, status);
-
-                                        if (status.getError() == null && object != null) {
-                                            JSONObject rawUser = null;
-                                            String token = null;
-                                            Boolean isSigningUp = null;
-
-                                            try {
-                                                result = object.getJSONObject("result");
-
-                                                rawUser = result.getJSONObject("user");
-                                                token = result.getString("auth_token");
-
-                                                isSigningUp = result.getBoolean("is_signup");
-
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                            SessionUtils.saveCurrentUserToken(WelcomeActivity.this, token);
-
-                                            User currentUser = User.rawUserToInstance(rawUser);
-                                            SessionUtils.updateCurrentUserInfoInPhone(WelcomeActivity.this, currentUser);
-
-                                            TrackingUtils.identify(WelcomeActivity.this, currentUser);
-
-                                            if (isSigningUp != null && isSigningUp) {
-                                                TrackingUtils.trackSignup(WelcomeActivity.this, "Facebook");
-                                            }
-
-                                            if (connectFBDialog != null) {
-                                                connectFBDialog.cancel();
-                                            }
-                                            goToNavActivity();
-                                        } else {
-                                            if (connectFBDialog != null) {
-                                                connectFBDialog.cancel();
-                                            }
-                                            setButtonsVisibility(View.VISIBLE);
-                                            Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
-                                            toast.show();
-                                        }
-                                    }
-                                });
-                            } else {
-                                if (connectFBDialog != null) {
-                                    connectFBDialog.cancel();
-                                }
-                                setButtonsVisibility(View.VISIBLE);
-                                Toast toast = Toast.makeText(WelcomeActivity.this, getString(R.string.facebook_connect_failed), Toast.LENGTH_SHORT);
-                                toast.show();
                             }
-                        }
-                    });
-                    Request.executeBatchAsync(request);
+                        });
+                        Request.executeBatchAsync(request);
                 }
             }
         }

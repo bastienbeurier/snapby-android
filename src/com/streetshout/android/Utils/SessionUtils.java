@@ -7,7 +7,10 @@ import android.location.Location;
 import android.util.Log;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.model.GraphUser;
 import com.streetshout.android.activities.WelcomeActivity;
 import com.streetshout.android.models.User;
 import org.json.JSONArray;
@@ -15,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -135,5 +139,32 @@ public class SessionUtils {
         welcome.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(welcome);
         activity.finish();
+    }
+
+    public static void autofollowFacebookFriends(final Activity activity) {
+        Session session = Session.getActiveSession();
+
+        if (!session.isClosed()) {
+            Request request = Request.newMyFriendsRequest(session, new Request.GraphUserListCallback() {
+
+                // callback after Graph API response with user object
+                @Override
+                public void onCompleted(List<GraphUser> users, Response response) {
+                    if (users != null) {
+                        ArrayList<Long> friendIds = new ArrayList<Long>();
+
+                        int count = users.size();
+
+                        for (int i = 0; i < count; i++) {
+                            friendIds.add(Long.parseLong(users.get(i).getId()));
+                        }
+
+                        ApiUtils.autofollowFacebookFriends(activity, friendIds);
+                    }
+                }
+            });
+
+            Request.executeBatchAsync(request);
+        }
     }
 }
