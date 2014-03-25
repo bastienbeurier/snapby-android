@@ -68,6 +68,28 @@ public class ProfileActivity extends Activity {
         findFollowLabel = (TextView) findViewById(R.id.profile_find_follow_label);
         shoutCountView = (TextView) findViewById(R.id.profile_shout_count);
 
+        //Admin capability
+        if (Constants.ADMIN) {
+            if (Constants.PRODUCTION) {
+                shoutCountView.setTextColor(getResources().getColor(R.color.shoutBlue));
+            } else {
+                shoutCountView.setTextColor(getResources().getColor(R.color.shoutPink));
+            }
+
+            shoutCountView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Constants.PRODUCTION = !Constants.PRODUCTION;
+
+                    if (Constants.PRODUCTION) {
+                        shoutCountView.setTextColor(getResources().getColor(R.color.shoutBlue));
+                    } else {
+                        shoutCountView.setTextColor(getResources().getColor(R.color.shoutPink));
+                    }
+                }
+            });
+        }
+
         //Not my profile
         if (getIntent().hasExtra("userId")) {
             userId = getIntent().getIntExtra("userId", 0);

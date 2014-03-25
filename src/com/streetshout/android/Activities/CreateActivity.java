@@ -69,7 +69,7 @@ public class CreateActivity extends Activity {
 
     private boolean anonymousUser = false;
 
-    private View buttonContainer = null;
+    private View createBottomBar = null;
 
     private Bitmap formattedPicture = null;
 
@@ -101,7 +101,7 @@ public class CreateActivity extends Activity {
         anonymousButton = (ImageView) findViewById(R.id.create_mask_button);
         photoContainer = (FrameLayout) findViewById(R.id.create_photo_container);
         descriptionCharCount = (TextView) findViewById(R.id.create_description_count_text);
-        buttonContainer = findViewById(R.id.create_description_container);
+        createBottomBar = findViewById(R.id.create_bottom_bar);
 
         //Hack so that the window doesn't resize when descriptionView is clicked
         descriptionView.setOnClickListener(new View.OnClickListener() {
@@ -178,7 +178,7 @@ public class CreateActivity extends Activity {
                 int windowHeight = photoContainer.getRootView().getHeight();
                 int heightDiff = windowHeight - (r.bottom - r.top);
 
-                buttonContainer.setY(windowHeight - heightDiff - buttonContainer.getHeight());
+                createBottomBar.setY(windowHeight - heightDiff - createBottomBar.getHeight());
 
                 if (heightDiff > 150) {
                     descriptionView.setVisibility(View.VISIBLE);

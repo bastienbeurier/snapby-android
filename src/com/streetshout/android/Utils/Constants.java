@@ -3,7 +3,7 @@ package com.streetshout.android.utils;
 public class Constants {
     public static boolean PRODUCTION = false;
 
-    public static final boolean ADMIN = false;
+    public static final boolean ADMIN = true;
 
     public static final String API = "2";
 
@@ -29,7 +29,6 @@ public class Constants {
 
     /** StartActivityForResult codes **/
     public static final int REFINE_LOCATION_ACTIVITY_REQUEST = 13450;
-    public static final int CREATE_SHOUT_REQUEST = 11101;
     public static final int EXPLORE_REQUEST = 12376;
     public static final int SETTINGS_REQUEST = 14760;
     public static final int PROFILE_REQUEST = 14555;
