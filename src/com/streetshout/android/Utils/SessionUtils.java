@@ -144,7 +144,7 @@ public class SessionUtils {
     public static void autofollowFacebookFriends(final Activity activity) {
         Session session = Session.getActiveSession();
 
-        if (!session.isClosed()) {
+        if (session != null && !session.isClosed()) {
             Request request = Request.newMyFriendsRequest(session, new Request.GraphUserListCallback() {
 
                 // callback after Graph API response with user object

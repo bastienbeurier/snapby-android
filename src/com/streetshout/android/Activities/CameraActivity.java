@@ -332,7 +332,11 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
             cameraParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         }
 
-        mCamera.setParameters(cameraParameters);
+        try {
+            mCamera.setParameters(cameraParameters);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (mPreview != null) {
             preview.removeView(mPreview);

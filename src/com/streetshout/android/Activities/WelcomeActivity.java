@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.facebook.FacebookAuthorizationException;
+import com.facebook.FacebookOperationCanceledException;
 import com.facebook.LoggingBehavior;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -39,8 +41,6 @@ public class WelcomeActivity extends Activity {
     private Button signupButton = null;
 
     private Button connectFBButton = null;
-
-    private ConnectivityManager connectivityManager = null;
 
     private ProgressDialog connectFBDialog;
 
@@ -144,6 +144,12 @@ public class WelcomeActivity extends Activity {
 
     private void connectToFB() {
         Session session = Session.getActiveSession();
+
+        if (session == null) {
+            session = new Session(this);
+            Session.setActiveSession(session);
+        }
+
         if (!session.isOpened() && !session.isClosed()) {
             fbSessionRequest(session);
         } else {
@@ -160,6 +166,20 @@ public class WelcomeActivity extends Activity {
     private class SessionStatusCallback implements Session.StatusCallback {
         @Override
         public void call(Session session, SessionState state, Exception exception) {
+
+            //User cancel FB connect
+            if (exception instanceof FacebookOperationCanceledException || exception instanceof FacebookAuthorizationException) {
+
+                if (connectFBDialog != null) {
+                    connectFBDialog.cancel();
+                }
+                setButtonsVisibility(View.VISIBLE);
+
+                Session.setActiveSession(null);
+
+                return;
+            }
+
             if (session.isOpened()) {
                 if (SessionUtils.isSignIn(WelcomeActivity.this)) {
                     if (connectFBDialog != null) {
@@ -174,8 +194,7 @@ public class WelcomeActivity extends Activity {
                             @Override
                             public void onCompleted(GraphUser user, Response response) {
                                 if (user != null) {
-
-                                    if (user.getUsername() == null || user.asMap().get("email").toString() == null || user.getId() == null || user.getName() == null) {
+                                    if (user.getUsername() == null || user.asMap().get("email") == null || user.getId() == null || user.getName() == null) {
                                         if (connectFBDialog != null) {
                                             connectFBDialog.cancel();
                                         }

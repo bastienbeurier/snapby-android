@@ -196,7 +196,12 @@ public class LocationUtils {
 
         Criteria criteria = new Criteria();
         String provider = locationManager.getBestProvider(criteria, true);
-        return locationManager.getLastKnownLocation(provider);
+
+        if (provider != null) {
+            return locationManager.getLastKnownLocation(provider);
+        } else {
+            return null;
+        }
     }
 
     public static LocationRequest createLocationRequest(int priority, int interval) {
