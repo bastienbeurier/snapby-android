@@ -129,6 +129,7 @@
     <string name="failed_trending_shout">Failed!!!</string>
     <string name="no_comments_in_feed">No comments yet...</string>
     <string name="no_likes_in_feed">No likes yet...</string>
+    <string name="no_shouter_in_feed">No shouters to display...</string>
     <string name="your_email">Your email</string>
     <string name="your_password">Your password</string>
     <string name="your_confirmation">Confirm password</string>
@@ -149,5 +150,5 @@
     <string name="unfollow_cap">UNFOLLOW</string>
     <string name="follow">follow</string>
     <string name="unfollow">unfollow</string>
-    <string name="find_friends">Find friends</string>
+    <string name="find_friends">Find shouters around me</string>
 </resources>

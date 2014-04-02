@@ -18,7 +18,6 @@ import com.streetshout.android.R;
 import com.streetshout.android.activities.CommentsActivity;
 import com.streetshout.android.activities.ExploreActivity;
 import com.streetshout.android.activities.LikesActivity;
-import com.streetshout.android.activities.ProfileActivity;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
@@ -126,7 +125,7 @@ public class ShoutSlidePageFragment extends Fragment {
         }
 
         if (!shout.anonymous) {
-            aq.id(userProfilePic).image(Constants.PROFILE_PICS_URL_PREFIX + shout.userId, true, false, 0, 0, null, AQuery.FADE_IN);
+            aq.id(userProfilePic).image(GeneralUtils.getProfilePicturePrefix() + shout.userId, true, false, 0, 0, null, AQuery.FADE_IN);
 
             userContainer.setOnClickListener(new View.OnClickListener() {
                 @Override

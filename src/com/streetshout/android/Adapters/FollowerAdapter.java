@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.facebook.Session;
 import com.streetshout.android.R;
 import com.streetshout.android.activities.FollowerActivity;
 import com.streetshout.android.activities.ProfileActivity;
@@ -56,7 +55,7 @@ public class FollowerAdapter  extends BaseAdapter {
 
         if (user != null) {
             ImageView userPicture = (ImageView) followerView.findViewById(R.id.follower_feed_user_picture);
-            GeneralUtils.getAquery(activity).id(userPicture).image(Constants.PROFILE_PICS_URL_PREFIX + user.id, true, false, 0, 0, null, AQuery.FADE_IN);
+            GeneralUtils.getAquery(activity).id(userPicture).image(GeneralUtils.getProfilePicturePrefix() + user.id, true, false, 0, 0, null, AQuery.FADE_IN);
 
             ((TextView) followerView.findViewById(R.id.follower_feed_username_textView)).setText("@" + user.username);
 

@@ -1,6 +1,7 @@
 package com.streetshout.android.activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -16,7 +17,6 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.ImageOptions;
-import com.facebook.Session;
 import com.streetshout.android.R;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
@@ -49,6 +49,7 @@ public class ProfileActivity extends Activity {
     private TextView findFollowLabel = null;
     private TextView shoutCountView = null;
     private boolean imageLoaded = false;
+    private ProgressDialog progressDialog = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +87,8 @@ public class ProfileActivity extends Activity {
                     } else {
                         shoutCountView.setTextColor(getResources().getColor(R.color.shoutPink));
                     }
+
+                    SessionUtils.logOut(ProfileActivity.this);
                 }
             });
         }
@@ -169,6 +172,8 @@ public class ProfileActivity extends Activity {
         findFollowButton.setEnabled(false);
         followersButton.setEnabled(false);
         followingButton.setEnabled(false);
+
+        progressDialog = ProgressDialog.show(this, "", getString(R.string.loading), false);
     }
 
     private void toggleFollow() {
@@ -206,10 +211,15 @@ public class ProfileActivity extends Activity {
     }
 
     private void getUserInfo(int userId) {
+
         ApiUtils.getUserInfo(this, userId, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
+
+                if (progressDialog != null) {
+                    progressDialog.cancel();
+                }
 
                 if (status.getError() == null) {
                     JSONObject result = null;
@@ -264,7 +274,7 @@ public class ProfileActivity extends Activity {
             options.fileCache = false;
             options.animation = AQuery.FADE_IN;
 
-            GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(Constants.PROFILE_PICS_URL_PREFIX + user.id, options);
+            GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(GeneralUtils.getProfilePicturePrefix() + user.id, options);
         }
 
         username.setText("@" + user.username);

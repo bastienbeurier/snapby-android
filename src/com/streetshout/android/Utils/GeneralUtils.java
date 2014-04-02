@@ -262,4 +262,8 @@ public class GeneralUtils {
 
         activity.startActivity(sendIntent);
     }
+
+    public static String getProfilePicturePrefix() {
+        return Constants.PRODUCTION ? Constants.PROFILE_PICS_URL_PREFIX_PROD : Constants.PROFILE_PICS_URL_PREFIX_DEV;
+    }
 }

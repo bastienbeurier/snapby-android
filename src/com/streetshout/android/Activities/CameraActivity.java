@@ -300,10 +300,14 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
             }
         };
 
-        if (frontCamera) {
-            setUpCamera(0);
-        } else {
-            setUpCamera(1);
+        if (getIntent().hasExtra("notificationShout")) {
+            Intent explore = new Intent(this, ExploreActivity.class);
+            explore.putExtra("notificationShout", getIntent().getStringExtra("notificationShout"));
+            startActivityForResult(explore, Constants.EXPLORE_REQUEST);
+        }  else if (getIntent().hasExtra("notificationUser")) {
+            Intent profile = new Intent(this, ProfileActivity.class);
+            profile.putExtra("userId", Integer.parseInt(getIntent().getStringExtra("notificationUser")));
+            startActivityForResult(profile, Constants.PROFILE_REQUEST);
         }
     }
 

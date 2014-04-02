@@ -1,7 +1,6 @@
 package com.streetshout.android.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import com.streetshout.android.models.Like;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.LocationUtils;
-import com.streetshout.android.utils.TimeUtils;
 
 import java.util.ArrayList;
 
@@ -52,7 +50,7 @@ public class LikesAdapter extends BaseAdapter{
 
         if (like != null) {
             ImageView userPicture = (ImageView) likeView.findViewById(R.id.like_feed_user_picture);
-            GeneralUtils.getAquery(activity).id(userPicture).image(Constants.PROFILE_PICS_URL_PREFIX + like.likerId, true, false, 0, 0, null, AQuery.FADE_IN);
+            GeneralUtils.getAquery(activity).id(userPicture).image(GeneralUtils.getProfilePicturePrefix() + like.likerId, true, false, 0, 0, null, AQuery.FADE_IN);
 
             ((TextView) likeView.findViewById(R.id.like_feed_username_textView)).setText("@" + like.likerUsername);
 

@@ -4,7 +4,12 @@ import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+import com.streetshout.android.activities.CameraActivity;
 import com.streetshout.android.activities.ExploreActivity;
+import com.streetshout.android.activities.WelcomeActivity;
+import com.streetshout.android.models.Shout;
+import com.streetshout.android.utils.SessionUtils;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 
@@ -21,12 +26,49 @@ public class PushNotificationReceiver extends BroadcastReceiver {
     }
 
     private void handleOpen(Context context, Intent intent)  {
-        if(intent.getStringExtra("shout") != null) {
-            Application app	= (Application) UAirship.shared().getApplicationContext();
-            Intent start = new Intent(app, ExploreActivity.class);
-            start.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            start.putExtra("notificationShout", intent.getStringExtra("shout"));
-            app.startActivity(start);
+        Log.d("BAB", "HANDLE OPEN: " + intent);
+
+        if (!SessionUtils.isSignIn(context)) {
+            Log.d("BAB", "WELECOME");
+            redirectToWelcome();
+        } else if (intent.hasExtra("new_shout")) {
+            Log.d("BAB", "NEW SHOUT");
+            redirectToShout(intent.getStringExtra("shout"));
+        } else if (intent.hasExtra("new_like")) {
+            Log.d("BAB", "NEW LIKE");
+            redirectToShout(intent.getStringExtra("shout"));
+        } else if (intent.hasExtra("new_comment")) {
+            Log.d("BAB", "NEW COMMENT");
+            redirectToShout(intent.getStringExtra("shout"));
+        } else if (intent.hasExtra("new_friend")) {
+            Log.d("BAB", "NEW FRIEND");
+            redirectToUser(intent.getStringExtra("user_id"));
+        } else if (intent.hasExtra("trending")) {
+            Log.d("BAB", "NEW USER ID");
+            redirectToShout(intent.getStringExtra("shout"));
         }
+    }
+
+    private void redirectToWelcome() {
+        Application app	= (Application) UAirship.shared().getApplicationContext();
+        Intent start = new Intent(app, WelcomeActivity.class);
+        start.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        app.startActivity(start);
+    }
+
+    private void redirectToShout(String rawShout) {
+        Application app	= (Application) UAirship.shared().getApplicationContext();
+        Intent start = new Intent(app, CameraActivity.class);
+        start.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        start.putExtra("notificationShout", rawShout);
+        app.startActivity(start);
+    }
+
+    private void redirectToUser(String userId) {
+        Application app	= (Application) UAirship.shared().getApplicationContext();
+        Intent start = new Intent(app, CameraActivity.class);
+        start.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        start.putExtra("notificationUser", userId);
+        app.startActivity(start);
     }
 }

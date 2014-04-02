@@ -39,7 +39,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 
@@ -218,7 +217,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
     private void updateUI() {
         settingsUsernameEditText.setText(currentUser.username);
 
-        GeneralUtils.getAquery(this).id(profilePictureView).image(Constants.PROFILE_PICS_URL_PREFIX + currentUser.id, false, false);
+        GeneralUtils.getAquery(this).id(profilePictureView).image(GeneralUtils.getProfilePicturePrefix() + currentUser.id, false, false);
     }
 
     @Override

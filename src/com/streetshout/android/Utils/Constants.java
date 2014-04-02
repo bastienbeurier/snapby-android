@@ -3,7 +3,7 @@ package com.streetshout.android.utils;
 public class Constants {
     public static boolean PRODUCTION = false;
 
-    public static final boolean ADMIN = true;
+    public static final boolean ADMIN = false;
 
     public static final String API = "2";
 
@@ -42,7 +42,8 @@ public class Constants {
     public static final String BIG_SHOUT_IMAGE_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_development/original/image_";
     public static final String SMALL_SHOUT_IMAGE_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_production1/small/image_";
     public static final String BIG_SHOUT_IMAGE_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_production1/original/image_";
-    public static final String PROFILE_PICS_URL_PREFIX = "http://s3.amazonaws.com/shout_profile_pics/thumb/profile_";
+    public static final String PROFILE_PICS_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_profile_pics/thumb/profile_";
+    public static final String PROFILE_PICS_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_profile_pics_dev/thumb/profile_";
 
     /** Shout image res **/
     public static final int SHOUT_BIG_RES = 400;

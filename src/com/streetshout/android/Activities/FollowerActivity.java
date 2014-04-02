@@ -72,8 +72,6 @@ public class FollowerActivity extends ListActivity {
             }
         } else {
             getSuggestedUsers();
-
-            SessionUtils.autofollowFacebookFriends(this);
         }
     }
 

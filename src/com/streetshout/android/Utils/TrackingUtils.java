@@ -59,23 +59,4 @@ public class TrackingUtils {
 
         getMixpanel(ctx).track("Sign up", properties);
     }
-
-    public static void trackDisplayShout(Context ctx, Shout shout, String source) {
-//        JSONObject properties = new JSONObject();
-//        try {
-//            if (shout.image != null && shout.image.length() > 0) {
-//                properties.put("Image", "Yes");
-//            } else {
-//                properties.put("Image", "No");
-//            }
-//
-//            properties.put("Source", source);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        getMixpanel(ctx).track("Display shout", properties);
-
-        getMixpanel(ctx).getPeople().increment("Display shout count", 1);
-    }
 }

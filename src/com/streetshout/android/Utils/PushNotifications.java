@@ -7,6 +7,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.util.Log;
 import com.androidquery.AQuery;
 import com.streetshout.android.R;
 import com.streetshout.android.receivers.PushNotificationReceiver;
@@ -59,7 +60,6 @@ public class PushNotifications {
 
             @Override
             public int getNextId(String alert, Map<String, String> extras) {
-//                return 1001;
                 return super.getNextId(alert, extras);
             }
         };
