@@ -463,4 +463,19 @@ public class ApiUtils {
 
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
+
+    public static void getActivities(Activity activity, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        //TODO: Remove token from url param
+        String url = getBasePath() + "/activities.json" + encodeParamsAsUrlParams(params);
+
+        GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
+    }
 }

@@ -15,6 +15,9 @@ import java.util.TimeZone;
 public class TimeUtils {
     public static final long ONE_MIN = 60 * 1000;
     public static final long ONE_HOUR = 60 * 60 * 1000;
+    public static final long ONE_DAY = 24 * 60 * 60 * 1000;
+    public static final long ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
+
 
     //Returns long in milliseconds
     public static long getShoutAge(String dateCreated) {
@@ -72,8 +75,16 @@ public class TimeUtils {
         String[] result = new String[2];
 
         if (age > 0) {
+            long weeks = age / ONE_WEEK;
+            long days = age / ONE_DAY;
             long hours = age / ONE_HOUR;
-            if (hours >= 1) {
+            if (weeks >= 1) {
+                result[0] = String.valueOf(weeks);
+                result[1] = "w";
+            } else if (days >= 1) {
+                result[0] = String.valueOf(weeks);
+                result[1] = "d";
+            } else if (hours >= 1) {
                 result[0] = String.valueOf(hours);
                 result[1] = "h";
             } else {

@@ -266,4 +266,12 @@ public class GeneralUtils {
     public static String getProfilePicturePrefix() {
         return Constants.PRODUCTION ? Constants.PROFILE_PICS_URL_PREFIX_PROD : Constants.PROFILE_PICS_URL_PREFIX_DEV;
     }
+
+    public static String getShoutSmallPicturePrefix() {
+        return Constants.PRODUCTION ? Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_PROD : Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_DEV;
+    }
+
+    public static String getShoutBigPicturePrefix() {
+        return Constants.PRODUCTION ? Constants.BIG_SHOUT_IMAGE_URL_PREFIX_PROD : Constants.BIG_SHOUT_IMAGE_URL_PREFIX_DEV;
+    }
 }

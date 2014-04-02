@@ -53,13 +53,8 @@ public class DisplayActivity extends Activity {
 
         imageView = (ImageView) findViewById(R.id.display_shout_image_view);
 
-        if (Constants.PRODUCTION) {
-            Bitmap preset = GeneralUtils.getAquery(this).getCachedImage(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_PROD + shout.id + "--400");
-            GeneralUtils.getAquery(this).id(imageView).image(Constants.BIG_SHOUT_IMAGE_URL_PREFIX_PROD + shout.id + "--400", true, false, 0, 0, preset, AQuery.FADE_IN);
-        } else {
-            Bitmap preset = GeneralUtils.getAquery(this).getCachedImage(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_DEV + shout.id + "--400");
-            GeneralUtils.getAquery(this).id(imageView).image(Constants.BIG_SHOUT_IMAGE_URL_PREFIX_DEV + shout.id + "--400", true, false, 0, 0, preset, AQuery.FADE_IN);
-        }
+        Bitmap preset = GeneralUtils.getAquery(this).getCachedImage(GeneralUtils.getShoutSmallPicturePrefix() + shout.id + "--400");
+        GeneralUtils.getAquery(this).id(imageView).image(GeneralUtils.getShoutBigPicturePrefix() + shout.id + "--400", true, false, 0, 0, preset, AQuery.FADE_IN);
 
         //Don't see TextView if no text in Shout
         if (shout.description.length() == 0) {

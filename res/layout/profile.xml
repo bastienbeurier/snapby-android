@@ -133,9 +133,45 @@
          </FrameLayout>
     </LinearLayout>
 
-    <TextView android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center"
-              android:text="Activivity coming soon!"/>
+    <FrameLayout android:id="@+id/profile_feed_progress_bar"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:layout_weight="1"
+                 android:visibility="gone" >
+
+        <ProgressBar android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_gravity="center"/>
+
+    </FrameLayout>
+
+    <LinearLayout android:id="@+id/profile_feed_wrapper"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:layout_weight="1"
+                  android:orientation="vertical">
+
+        <ListView
+                android:id="@id/android:list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"/>
+
+        <TextView
+                android:id="@id/android:empty"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="@string/no_activity_in_feed"/>
+
+    </LinearLayout>
+
+    <TextView
+            android:id="@+id/no_connection_feed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/no_connection_feed"/>
 
 </LinearLayout>

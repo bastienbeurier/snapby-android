@@ -1,6 +1,7 @@
 package com.streetshout.android.activities;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
@@ -18,18 +19,23 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.ImageOptions;
 import com.streetshout.android.R;
+import com.streetshout.android.adapters.ActivitiesAdapter;
 import com.streetshout.android.models.User;
+import com.streetshout.android.models.UserActivity;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.SessionUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by bastien on 3/10/14.
  */
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends ListActivity {
 
     private User user = null;
     private int userId = 0;
@@ -51,6 +57,10 @@ public class ProfileActivity extends Activity {
     private boolean imageLoaded = false;
     private ProgressDialog progressDialog = null;
 
+    private View progressBarWrapper = null;
+
+    private View feedWrapperView = null;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -68,6 +78,9 @@ public class ProfileActivity extends Activity {
         findFollowButton = (ImageView) findViewById(R.id.profile_find_follow_button);
         findFollowLabel = (TextView) findViewById(R.id.profile_find_follow_label);
         shoutCountView = (TextView) findViewById(R.id.profile_shout_count);
+
+        progressBarWrapper = findViewById(R.id.profile_feed_progress_bar);
+        feedWrapperView = findViewById(R.id.profile_feed_wrapper);
 
         //Admin capability
         if (Constants.ADMIN) {
@@ -172,6 +185,34 @@ public class ProfileActivity extends Activity {
         findFollowButton.setEnabled(false);
         followersButton.setEnabled(false);
         followingButton.setEnabled(false);
+
+        showFeedProgressBar();
+
+        ApiUtils.getActivities(this, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+                if (status.getError() == null && object != null) {
+                    JSONArray rawActivities = null;
+
+                    try {
+                        JSONObject result = object.getJSONObject("result");
+                        rawActivities = result.getJSONArray("activities");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (rawActivities != null) {
+                        ArrayList<UserActivity> comments = UserActivity.rawUserActivitiesToInstances(rawActivities);
+                        hideFeedProgressBar();
+                        setAdapter(ProfileActivity.this, comments);
+                    }
+                } else {
+                    showNoConnectionInFeedMessage();
+                }
+            }
+        });
 
         progressDialog = ProgressDialog.show(this, "", getString(R.string.loading), false);
     }
@@ -317,5 +358,26 @@ public class ProfileActivity extends Activity {
                 updateUI(true);
             }
         }
+    }
+
+    private void showNoConnectionInFeedMessage() {
+        hideFeedProgressBar();
+        findViewById(R.id.comments_feed_progress_bar).setVisibility(View.GONE);
+        findViewById(R.id.no_connection_feed).setVisibility(View.VISIBLE);
+        findViewById(R.id.comments_feed_wrapper).setVisibility(View.GONE);
+    }
+
+    public void showFeedProgressBar() {
+        progressBarWrapper.setVisibility(View.VISIBLE);
+        feedWrapperView.setVisibility(View.GONE);
+    }
+
+    public void hideFeedProgressBar() {
+        progressBarWrapper.setVisibility(View.GONE);
+        feedWrapperView.setVisibility(View.VISIBLE);
+    }
+
+    public void setAdapter(Activity activity, ArrayList<UserActivity> userActivities) {
+        setListAdapter(new ActivitiesAdapter(activity, userActivities));
     }
 }
