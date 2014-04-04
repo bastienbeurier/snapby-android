@@ -18,6 +18,8 @@ import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
 import com.streetshout.android.adapters.ActivitiesAdapter;
+import com.streetshout.android.adapters.ExpiredShoutsAdapter;
+import com.streetshout.android.models.Shout;
 import com.streetshout.android.models.User;
 import com.streetshout.android.models.UserActivity;
 import com.streetshout.android.utils.ApiUtils;
@@ -45,6 +47,7 @@ public class ProfileActivity extends ListActivity {
     private TextView followingCountView = null;
     private LinearLayout followersButton = null;
     private LinearLayout followingButton = null;
+    private LinearLayout shoutCountButton = null;
     private FrameLayout profilePictureContainer = null;
     private Location myLocation = null;
     private int followerCount = 0;
@@ -55,13 +58,21 @@ public class ProfileActivity extends ListActivity {
     private TextView shoutCountView = null;
     private boolean imageLoaded = false;
     public ProgressDialog progressDialog = null;
-    private View categoriesContainer = null;
-
     private View progressBarWrapper = null;
 
     private View feedWrapperView = null;
 
+    private View categoryActivityContainer = null;
+    private View categoryShoutsContainer = null;
+    private View categoryActivityMarker = null;
+    private View categoryShoutsMarker = null;
+
     private boolean myProfileOptionsEnabled = false;
+
+    private ActivitiesAdapter activitiesAdapter = null;
+    private ExpiredShoutsAdapter expiredShoutsAdapter = null;
+
+    private String adapterType = "";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +91,12 @@ public class ProfileActivity extends ListActivity {
         findFollowButton = (FrameLayout) findViewById(R.id.profile_find_follow_button);
         findFollowLabel = (TextView) findViewById(R.id.profile_find_follow_label);
         shoutCountView = (TextView) findViewById(R.id.profile_shout_count);
-        categoriesContainer = findViewById(R.id.profile_categories_container);
+        shoutCountButton = (LinearLayout) findViewById(R.id.profile_shouts_button);
+
+        categoryActivityContainer = findViewById(R.id.profile_category_activity_title_container);
+        categoryShoutsContainer = findViewById(R.id.profile_category_shouts_title_container);
+        categoryActivityMarker = findViewById(R.id.profile_category_activity_marker);
+        categoryShoutsMarker = findViewById(R.id.profile_category_shouts_marker);
 
         progressBarWrapper = findViewById(R.id.profile_feed_progress_bar);
         feedWrapperView = findViewById(R.id.profile_feed_wrapper);
@@ -196,37 +212,34 @@ public class ProfileActivity extends ListActivity {
         getListView().setDivider(null);
 
         if (myProfileOptionsEnabled) {
-            showFeedProgressBar();
+            categoryActivityContainer.setVisibility(View.VISIBLE);
 
-            ApiUtils.getActivities(this, new AjaxCallback<JSONObject>() {
+            categoryActivityContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-
-                    if (status.getError() == null && object != null) {
-                        JSONArray rawActivities = null;
-
-                        try {
-                            JSONObject result = object.getJSONObject("result");
-                            rawActivities = result.getJSONArray("activities");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (rawActivities != null) {
-                            ArrayList<UserActivity> comments = UserActivity.rawUserActivitiesToInstances(rawActivities);
-                            hideFeedProgressBar();
-                            setAdapter(ProfileActivity.this, comments);
-                        }
-                    } else {
-                        showNoConnectionInFeedMessage();
-                    }
+                public void onClick(View v) {
+                    setActivitiesAdapter();
+                    adapterType = "activity";
+                    updateTitlesUI();
                 }
             });
+
+            View.OnClickListener displayShoutsListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setExpiredShoutsAdapter();
+                    adapterType = "shouts";
+                    updateTitlesUI();
+                }
+            };
+
+            categoryShoutsContainer.setOnClickListener(displayShoutsListener);
+            shoutCountButton.setOnClickListener(displayShoutsListener);
+
+            setActivitiesAdapter();
+            adapterType = "activity";
+            updateTitlesUI();
         } else {
-            progressBarWrapper.setVisibility(View.GONE);
-            feedWrapperView.setVisibility(View.GONE);
-            categoriesContainer.setVisibility(View.GONE);
+            setExpiredShoutsAdapter();
         }
 
         progressDialog = ProgressDialog.show(this, "", getString(R.string.loading), false);
@@ -374,9 +387,9 @@ public class ProfileActivity extends ListActivity {
 
     private void showNoConnectionInFeedMessage() {
         hideFeedProgressBar();
-        findViewById(R.id.comments_feed_progress_bar).setVisibility(View.GONE);
+        findViewById(R.id.profile_feed_progress_bar).setVisibility(View.GONE);
         findViewById(R.id.no_connection_feed).setVisibility(View.VISIBLE);
-        findViewById(R.id.comments_feed_wrapper).setVisibility(View.GONE);
+        findViewById(R.id.profile_feed_wrapper).setVisibility(View.GONE);
     }
 
     public void showFeedProgressBar() {
@@ -389,7 +402,93 @@ public class ProfileActivity extends ListActivity {
         feedWrapperView.setVisibility(View.VISIBLE);
     }
 
-    public void setAdapter(ProfileActivity activity, ArrayList<UserActivity> userActivities) {
-        setListAdapter(new ActivitiesAdapter(activity, userActivities));
+    private void setExpiredShoutsAdapter() {
+        if (expiredShoutsAdapter != null) {
+            setListAdapter(expiredShoutsAdapter);
+            return;
+        }
+
+        showFeedProgressBar();
+
+        ApiUtils.getShouts(this, userId, 1, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+                if (status.getError() == null && object != null) {
+                    JSONArray rawShouts = null;
+
+                    try {
+                        JSONObject result = object.getJSONObject("result");
+                        rawShouts = result.getJSONArray("shouts");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (rawShouts != null) {
+                        ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
+                        hideFeedProgressBar();
+                        expiredShoutsAdapter = new ExpiredShoutsAdapter(ProfileActivity.this, shouts);
+                        setListAdapter(expiredShoutsAdapter);
+                    }
+                } else {
+                    showNoConnectionInFeedMessage();
+                }
+            }
+        });
     }
+
+    private void setActivitiesAdapter() {
+        if (activitiesAdapter != null) {
+            setListAdapter(activitiesAdapter);
+            return;
+        }
+
+        showFeedProgressBar();
+
+        ApiUtils.getActivities(this, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+                if (status.getError() == null && object != null) {
+                    JSONArray rawActivities = null;
+
+                    try {
+                        JSONObject result = object.getJSONObject("result");
+                        rawActivities = result.getJSONArray("activities");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (rawActivities != null) {
+                        ArrayList<UserActivity> userActivities = UserActivity.rawUserActivitiesToInstances(rawActivities);
+                        hideFeedProgressBar();
+                        activitiesAdapter = new ActivitiesAdapter(ProfileActivity.this, userActivities);
+                        setListAdapter(activitiesAdapter);
+                    }
+                } else {
+                    showNoConnectionInFeedMessage();
+                }
+            }
+        });
+
+    }
+
+    private void updateTitlesUI() {
+        if (adapterType.equals("activity")) {
+            categoryActivityContainer.setBackgroundColor(getResources().getColor(R.color.veryLightShoutBlue));
+            categoryActivityMarker.setVisibility(View.VISIBLE);
+
+            categoryShoutsContainer.setBackgroundColor(getResources().getColor(R.color.veryVeryLightGrey));
+            categoryShoutsMarker.setVisibility(View.GONE);
+        } else {
+            categoryShoutsContainer.setBackgroundColor(getResources().getColor(R.color.veryLightShoutBlue));
+            categoryShoutsMarker.setVisibility(View.VISIBLE);
+
+            categoryActivityContainer.setBackgroundColor(getResources().getColor(R.color.veryVeryLightGrey));
+            categoryActivityMarker.setVisibility(View.GONE);
+        }
+    }
+
 }

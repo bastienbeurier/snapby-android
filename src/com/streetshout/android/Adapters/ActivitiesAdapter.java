@@ -54,10 +54,12 @@ public class ActivitiesAdapter extends BaseAdapter {
         final UserActivity userActivity = items.get(position);
 
         if (userActivity != null) {
+            View activityUserImagePlaceHolder = userActivityView.findViewById(R.id.user_activity_feed_user_picture_place_holder);
             ImageView activityUserImage = (ImageView) userActivityView.findViewById(R.id.user_activity_feed_user_picture);
             ImageView activityShoutImage = (ImageView) userActivityView.findViewById(R.id.user_activity_feed_shout_picture);
 
             if (userActivity.redirectType.equals("User")) {
+                activityUserImagePlaceHolder.setVisibility(View.VISIBLE);
                 activityShoutImage.setVisibility(View.GONE);
                 activityUserImage.setVisibility(View.VISIBLE);
                 GeneralUtils.getAquery(activity).id(activityUserImage).image(userActivity.image, true, false, 0, 0, null, AQuery.FADE_IN);

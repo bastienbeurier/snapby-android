@@ -1,11 +1,8 @@
 package com.streetshout.android.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Location;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,7 +19,6 @@ import com.streetshout.android.R;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
-import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.SessionUtils;
 import org.json.JSONObject;
@@ -39,11 +35,17 @@ public class DisplayActivity extends Activity {
 
     private boolean imageFullScreen = false;
 
+    private boolean expiredShout = false;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.display_shout);
 
         Intent intent = getIntent();
+
+        if (intent.hasExtra("expiredShout")) {
+            expiredShout = true;
+        }
 
         final TextView descriptionView = (TextView) findViewById(R.id.display_description_text);
         final ImageView dismissButton = (ImageView) findViewById(R.id.display_dismiss_button);
@@ -103,12 +105,22 @@ public class DisplayActivity extends Activity {
 
         User currentUser = SessionUtils.getCurrentUser(this);
 
-        if (currentUser.id < 3) {
-            inflater.inflate(R.menu.display_shout_more_menu_admin, menu);
-        } else if (currentUser.id == shout.userId) {
-            inflater.inflate(R.menu.display_shout_more_menu_my_shout, menu);
+        if (expiredShout) {
+            if (currentUser.id < 3) {
+                inflater.inflate(R.menu.display_expired_shout_more_menu_admin, menu);
+            } else if (currentUser.id == shout.userId) {
+                inflater.inflate(R.menu.display_expired_shout_more_menu_my_shout, menu);
+            } else {
+                inflater.inflate(R.menu.display_expired_shout_more_menu, menu);
+            }
         } else {
-            inflater.inflate(R.menu.display_shout_more_menu, menu);
+            if (currentUser.id < 3) {
+                inflater.inflate(R.menu.display_shout_more_menu_admin, menu);
+            } else if (currentUser.id == shout.userId) {
+                inflater.inflate(R.menu.display_shout_more_menu_my_shout, menu);
+            } else {
+                inflater.inflate(R.menu.display_shout_more_menu, menu);
+            }
         }
 
         return true;

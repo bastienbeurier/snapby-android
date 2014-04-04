@@ -154,4 +154,5 @@
     <string name="find_friends">FIND SHOUTERS</string>
     <string name="failed_to_retrieve_shout">Failed to retrieve shout.</string>
     <string name="shout_is_expired">Too late! This shout has expired.</string>
+    <string name="expired_shouts_cap">EXPIRED SHOUTS</string>
 </resources>

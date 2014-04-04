@@ -3,6 +3,7 @@ package com.streetshout.android.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import com.streetshout.android.utils.TimeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +47,8 @@ public class Shout implements Parcelable {
 
     public int commentCount = 0;
 
+    public Boolean expired = false;
+
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static ArrayList<Shout> rawShoutsToInstances(JSONArray rawShouts) {
         ArrayList<Shout> shouts = new ArrayList<Shout>();
@@ -85,6 +88,15 @@ public class Shout implements Parcelable {
                 shout.likeCount = Integer.parseInt(rawShout.getString("like_count"));
                 shout.commentCount = Integer.parseInt(rawShout.getString("comment_count"));
                 shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
+
+                if (shout.description.length() == 0) {
+                    shout.description = "No description.";
+                }
+
+                if (TimeUtils.shoutExpired(shout.created)) {
+                    shout.description += " (expired)";
+                    shout.expired = true;
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -143,6 +155,7 @@ public class Shout implements Parcelable {
         out.writeInt(likeCount);
         out.writeInt(commentCount);
         out.writeString(image);
+        out.writeByte((byte) (expired ? 1 : 0));
     }
 
     /**
@@ -162,5 +175,6 @@ public class Shout implements Parcelable {
         likeCount = in.readInt();
         commentCount = in.readInt();
         image = in.readString();
+        expired = in.readByte() != 0;
     }
 }

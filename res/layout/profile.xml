@@ -154,11 +154,6 @@
 
     </LinearLayout>
 
-    <View android:layout_height="1dp"
-          android:layout_width="match_parent"
-          android:layout_marginTop="5dp"
-          android:background="@color/veryVeryLightGrey"/>
-
 
     <LinearLayout android:id="@+id/profile_categories_container"
                   android:layout_width="match_parent"
@@ -166,19 +161,52 @@
                   android:orientation="horizontal"
                   android:background="@color/veryVeryLightGrey">
 
-        <TextView android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:layout_weight="1"
-                  android:text="ACTIVITY"
-                  android:textColor="@color/darkGrey"
-                  android:textSize="20dp"
-                  android:gravity="center"/>
+        <FrameLayout android:id="@+id/profile_category_activity_title_container"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1"
+                     android:visibility="gone">
+
+            <TextView android:id="@+id/profile_category_activity"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:text="ACTIVITY"
+                      android:textColor="@color/darkGrey"
+                      android:textSize="16dp"
+                      android:gravity="center"/>
+
+            <View android:id="@+id/profile_category_activity_marker"
+                  android:layout_height="5dp"
+                  android:layout_width="match_parent"
+                  android:background="@color/shoutBlue"
+                  android:layout_gravity="bottom"
+                  android:visibility="gone"/>
+
+        </FrameLayout>
+
+        <FrameLayout android:id="@+id/profile_category_shouts_title_container"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
+                     android:layout_weight="1">
+
+            <TextView android:id="@+id/profile_category_shouts"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:text="@string/expired_shouts_cap"
+                      android:textColor="@color/darkGrey"
+                      android:textSize="16dp"
+                      android:gravity="center"/>
+
+            <View android:id="@+id/profile_category_shouts_marker"
+                  android:layout_height="5dp"
+                  android:layout_width="match_parent"
+                  android:background="@color/shoutBlue"
+                  android:layout_gravity="bottom"
+                  android:visibility="gone"/>
+
+        </FrameLayout>
 
     </LinearLayout>
-
-    <View android:layout_height="1dp"
-          android:layout_width="match_parent"
-          android:background="@color/veryVeryLightGrey"/>
 
     <FrameLayout android:id="@+id/profile_feed_progress_bar"
                  android:layout_width="match_parent"

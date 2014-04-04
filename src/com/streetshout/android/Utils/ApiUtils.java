@@ -500,4 +500,21 @@ public class ApiUtils {
         //Must be a POST request to avoid putting token in url
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
+
+    public static void getShouts(Activity activity, int userId, int page, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user_id", userId);
+        params.put("page", page);
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        //TODO: Remove token from url param
+        String url = getBasePath() + "/shouts.json" + encodeParamsAsUrlParams(params);
+
+        GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
+    }
 }
