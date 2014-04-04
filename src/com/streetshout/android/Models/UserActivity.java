@@ -1,5 +1,6 @@
 package com.streetshout.android.models;
 
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +65,10 @@ public class UserActivity {
                 userActivity.created = rawUserActivity.getString("created_at");
                 String type = rawUserActivity.getString("activity_type");
 
-                userActivity.extra = rawUserActivity.getJSONObject("extra");
+                try {
+                    userActivity.extra = rawUserActivity.getJSONObject("extra");
+                } catch (JSONException e) {
+                }
 
                 if (type.equals("nearby_shout")) {
                     String shoutId = userActivity.extra.getString("shout_id");
@@ -79,7 +83,7 @@ public class UserActivity {
                     String shoutUsername = userActivity.extra.getString("shouter_username");
 
                     userActivity.image = GeneralUtils.getShoutSmallPicturePrefix() + shoutId + "--400";
-                    userActivity.message = "New shout by @" + shoutUsername + "in your area.";
+                    userActivity.message = "New shout by @" + shoutUsername + " in your area.";
 
                     userActivity.redirectType = "Shout";
                     userActivity.redirectId = Integer.parseInt(shoutId);
@@ -96,7 +100,7 @@ public class UserActivity {
                     String shoutUsername = userActivity.extra.getString("shouter_username");
 
                     userActivity.image = GeneralUtils.getShoutSmallPicturePrefix() + shoutId + "--400";
-                    userActivity.message = "@" + shoutUsername + "'shout is now trending.";
+                    userActivity.message = "@" + shoutUsername + "'s shout is now trending.";
 
                     userActivity.redirectType = "Shout";
                     userActivity.redirectId = Integer.parseInt(shoutId);
@@ -145,7 +149,7 @@ public class UserActivity {
                     if (likeCount <= 1) {
                         userActivity.message = likerUsername + " likes" + " your shout.";
                     } else {
-                        userActivity.message = likerUsername + " and"  + (likeCount - 1) + "others like your shout.";
+                        userActivity.message = likerUsername + " and"  + (likeCount - 1) + " others like your shout.";
                     }
 
                     userActivity.redirectType = "Shout";
@@ -155,7 +159,7 @@ public class UserActivity {
                     String username = userActivity.extra.getString("username");
                     String facebookName = userActivity.extra.getString("facebook_name");
 
-                    userActivity.image = GeneralUtils.getProfilePicturePrefix() + userId;
+                    userActivity.image = GeneralUtils.getProfileThumbPicturePrefix() + userId;
                     userActivity.message = facebookName + " joined Shout as @" + username + ".";
 
                     userActivity.redirectType = "User";
@@ -164,11 +168,16 @@ public class UserActivity {
                     String userId = userActivity.extra.getString("user_id");
                     String username = userActivity.extra.getString("username");
 
-                    userActivity.image = GeneralUtils.getProfilePicturePrefix() + userId;
+                    userActivity.image = GeneralUtils.getProfileThumbPicturePrefix() + userId;
                     userActivity.message = username + " is now following you.";
 
                     userActivity.redirectType = "User";
                     userActivity.redirectId = Integer.parseInt(userId);
+                } else if (type.equals("welcome")) {
+                    userActivity.redirectType = "Welcome";
+
+                    userActivity.image = Constants.SHOUT_ICON;
+                    userActivity.message = "Welcome to the Shout planet, where everything happens here and now!";
                 }
             }
         } catch (Exception e) {

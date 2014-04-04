@@ -20,7 +20,7 @@ public class AppPreferences {
 
     private static final String CURRENT_USER_TOKEN_PREF = "ss_current_user_token_pref";
 
-    private static final String CURRENT_USER_PROFILE_PIC_PREF = "ss_current_user_profile_pic_pref";
+    private static final String LAST_ACTIVITIES_READ_PREF = "ss_last_activities_read_pref";
 
     private static final String APP_SHARED_PREFS = AppPreferences.class.getSimpleName();
 
@@ -106,6 +106,16 @@ public class AppPreferences {
         } else {
             prefsEditor.putString(CURRENT_USER_TOKEN_PREF, value);
         }
+        prefsEditor.commit();
+    }
+
+    public long getLastActivitiesRead() {
+        return sharedPrefs.getLong(LAST_ACTIVITIES_READ_PREF, 0);
+    }
+
+    public void setLastActivitiesRead() {
+        prefsEditor.putLong(LAST_ACTIVITIES_READ_PREF, System.currentTimeMillis());
+
         prefsEditor.commit();
     }
 }

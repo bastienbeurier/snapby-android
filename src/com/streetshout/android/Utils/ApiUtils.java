@@ -478,4 +478,26 @@ public class ApiUtils {
 
         GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
     }
+
+    public static void getShout(AQuery aq, int shoutId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/shouts/" + shoutId;
+
+        aq.ajax(url, JSONObject.class, cb);
+    }
+
+    public static void getUnreadActivitiesCount(Activity activity, long lastRead, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("last_read", lastRead);
+
+        enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        String url = getBasePath() + "/activities/unread_activities_count.json";
+
+        //Must be a POST request to avoid putting token in url
+        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
+    }
 }

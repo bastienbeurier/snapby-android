@@ -148,8 +148,10 @@
     <string name="anonymous_name">Anonymous</string>
     <string name="user_blacklisted">You have been blacklisted due to Terms of Use violations.</string>
     <string name="follow_cap">FOLLOW</string>
-    <string name="unfollow_cap">UNFOLLOW</string>
+    <string name="following_cap">FOLLOWING</string>
     <string name="follow">follow</string>
     <string name="unfollow">unfollow</string>
-    <string name="find_friends">Find shouters around me</string>
+    <string name="find_friends">FIND SHOUTERS</string>
+    <string name="failed_to_retrieve_shout">Failed to retrieve shout.</string>
+    <string name="shout_is_expired">Too late! This shout has expired.</string>
 </resources>

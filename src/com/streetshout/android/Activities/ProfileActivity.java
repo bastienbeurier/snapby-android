@@ -1,6 +1,5 @@
 package com.streetshout.android.activities;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.androidquery.callback.ImageOptions;
 import com.streetshout.android.R;
 import com.streetshout.android.adapters.ActivitiesAdapter;
 import com.streetshout.android.models.User;
@@ -25,6 +23,7 @@ import com.streetshout.android.models.UserActivity;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
+import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.SessionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,15 +50,18 @@ public class ProfileActivity extends ListActivity {
     private int followerCount = 0;
     private int followingCount = 0;
     private boolean following = false;
-    private ImageView findFollowButton = null;
+    private FrameLayout findFollowButton = null;
     private TextView findFollowLabel = null;
     private TextView shoutCountView = null;
     private boolean imageLoaded = false;
-    private ProgressDialog progressDialog = null;
+    public ProgressDialog progressDialog = null;
+    private View categoriesContainer = null;
 
     private View progressBarWrapper = null;
 
     private View feedWrapperView = null;
+
+    private boolean myProfileOptionsEnabled = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,9 +77,10 @@ public class ProfileActivity extends ListActivity {
         followersButton = (LinearLayout) findViewById(R.id.profile_followers_button);
         followingButton = (LinearLayout) findViewById(R.id.profile_following_button);
         profilePictureContainer = (FrameLayout) findViewById(R.id.profile_profile_picture_container);
-        findFollowButton = (ImageView) findViewById(R.id.profile_find_follow_button);
+        findFollowButton = (FrameLayout) findViewById(R.id.profile_find_follow_button);
         findFollowLabel = (TextView) findViewById(R.id.profile_find_follow_label);
         shoutCountView = (TextView) findViewById(R.id.profile_shout_count);
+        categoriesContainer = findViewById(R.id.profile_categories_container);
 
         progressBarWrapper = findViewById(R.id.profile_feed_progress_bar);
         feedWrapperView = findViewById(R.id.profile_feed_wrapper);
@@ -117,6 +120,7 @@ public class ProfileActivity extends ListActivity {
             }
 
             userId = SessionUtils.getCurrentUser(this).id;
+            myProfileOptionsEnabled = true;
         }
 
         followersButton.setOnClickListener(new View.OnClickListener() {
@@ -150,14 +154,17 @@ public class ProfileActivity extends ListActivity {
         });
 
         if (userId == SessionUtils.getCurrentUser(this).id) {
-            profilePictureContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent settings = new Intent(ProfileActivity.this, SettingsActivity.class);
-                    settings.putExtra("chooseProfilePicture", true);
-                    startActivityForResult(settings, Constants.SETTINGS_REQUEST);
-                }
-            });
+
+            if (myProfileOptionsEnabled) {
+                profilePictureContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent settings = new Intent(ProfileActivity.this, SettingsActivity.class);
+                        settings.putExtra("chooseProfilePicture", true);
+                        startActivityForResult(settings, Constants.SETTINGS_REQUEST);
+                    }
+                });
+            }
 
             findFollowButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -186,33 +193,41 @@ public class ProfileActivity extends ListActivity {
         followersButton.setEnabled(false);
         followingButton.setEnabled(false);
 
-        showFeedProgressBar();
+        getListView().setDivider(null);
 
-        ApiUtils.getActivities(this, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                super.callback(url, object, status);
+        if (myProfileOptionsEnabled) {
+            showFeedProgressBar();
 
-                if (status.getError() == null && object != null) {
-                    JSONArray rawActivities = null;
+            ApiUtils.getActivities(this, new AjaxCallback<JSONObject>() {
+                @Override
+                public void callback(String url, JSONObject object, AjaxStatus status) {
+                    super.callback(url, object, status);
 
-                    try {
-                        JSONObject result = object.getJSONObject("result");
-                        rawActivities = result.getJSONArray("activities");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    if (status.getError() == null && object != null) {
+                        JSONArray rawActivities = null;
+
+                        try {
+                            JSONObject result = object.getJSONObject("result");
+                            rawActivities = result.getJSONArray("activities");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (rawActivities != null) {
+                            ArrayList<UserActivity> comments = UserActivity.rawUserActivitiesToInstances(rawActivities);
+                            hideFeedProgressBar();
+                            setAdapter(ProfileActivity.this, comments);
+                        }
+                    } else {
+                        showNoConnectionInFeedMessage();
                     }
-
-                    if (rawActivities != null) {
-                        ArrayList<UserActivity> comments = UserActivity.rawUserActivitiesToInstances(rawActivities);
-                        hideFeedProgressBar();
-                        setAdapter(ProfileActivity.this, comments);
-                    }
-                } else {
-                    showNoConnectionInFeedMessage();
                 }
-            }
-        });
+            });
+        } else {
+            progressBarWrapper.setVisibility(View.GONE);
+            feedWrapperView.setVisibility(View.GONE);
+            categoriesContainer.setVisibility(View.GONE);
+        }
 
         progressDialog = ProgressDialog.show(this, "", getString(R.string.loading), false);
     }
@@ -295,27 +310,24 @@ public class ProfileActivity extends ListActivity {
     private void updateUI(boolean reloadPicture) {
         followerCountView.setText("" + followerCount);
         followingCountView.setText("" + followingCount);
-        shoutCountView.setText("(" + user.shoutCount + " shouts)");
+        shoutCountView.setText("" + user.shoutCount);
 
         if (userId == SessionUtils.getCurrentUser(this).id) {
             findFollowLabel.setText(getString(R.string.find_friends));
+            ImageUtils.setBackground(this, findFollowButton, R.drawable.follow_button);
         } else {
             if (following) {
-                findFollowLabel.setText(this.getResources().getString(R.string.unfollow_cap));
+                findFollowLabel.setText(this.getResources().getString(R.string.following_cap));
+
+                ImageUtils.setBackground(this, findFollowButton, R.drawable.following_button);
             } else {
                 findFollowLabel.setText(this.getResources().getString(R.string.follow_cap));
+                ImageUtils.setBackground(this, findFollowButton, R.drawable.follow_button);
             }
         }
 
         if (reloadPicture) {
-            ImageOptions options = new ImageOptions();
-            options.round = 8;
-            //Bust cache in case user changes is profile picture
-            options.memCache = false;
-            options.fileCache = false;
-            options.animation = AQuery.FADE_IN;
-
-            GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(GeneralUtils.getProfilePicturePrefix() + user.id, options);
+            GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(GeneralUtils.getProfileBigPicturePrefix() + user.id, false, false, 0, 0, null, AQuery.FADE_IN);
         }
 
         username.setText("@" + user.username);
@@ -328,7 +340,7 @@ public class ProfileActivity extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Only display settings button if my profile
-        if (userId == SessionUtils.getCurrentUser(this).id) {
+        if (myProfileOptionsEnabled) {
             // Inflate the menu items for use in the action bar
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.my_profile_menu, menu);
@@ -377,7 +389,7 @@ public class ProfileActivity extends ListActivity {
         feedWrapperView.setVisibility(View.VISIBLE);
     }
 
-    public void setAdapter(Activity activity, ArrayList<UserActivity> userActivities) {
+    public void setAdapter(ProfileActivity activity, ArrayList<UserActivity> userActivities) {
         setListAdapter(new ActivitiesAdapter(activity, userActivities));
     }
 }

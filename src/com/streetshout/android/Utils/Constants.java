@@ -1,7 +1,7 @@
 package com.streetshout.android.utils;
 
 public class Constants {
-    public static boolean PRODUCTION = false;
+    public static boolean PRODUCTION = true;
 
     public static final boolean ADMIN = false;
 
@@ -42,12 +42,15 @@ public class Constants {
     public static final String BIG_SHOUT_IMAGE_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_development/original/image_";
     public static final String SMALL_SHOUT_IMAGE_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_production1/small/image_";
     public static final String BIG_SHOUT_IMAGE_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_production1/original/image_";
-    public static final String PROFILE_PICS_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_profile_pics/thumb/profile_";
-    public static final String PROFILE_PICS_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_profile_pics_dev/thumb/profile_";
+    public static final String THUMB_PROFILE_PICS_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_profile_pics/thumb/profile_";
+    public static final String THUMB_PROFILE_PICS_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_profile_pics_dev/thumb/profile_";
+    public static final String BIG_PROFILE_PICS_URL_PREFIX_PROD = "http://s3.amazonaws.com/shout_profile_pics/original/profile_";
+    public static final String BIG_PROFILE_PICS_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_profile_pics_dev/original/profile_";
+    public static final String SHOUT_ICON = "http://s3.amazonaws.com/shout_resources/app-icon-120.png";
 
     /** Shout image res **/
     public static final int SHOUT_BIG_RES = 400;
-    public static final int SHOUT_THUMB_RES = 100;
+    public static final int PROFILE_PICTURE_RES = 300;
 
     /** Mixpanel tokens **/
     public static final String PROD_MIXPANEL_TOKEN = "24dc482a232028564063bd3dd7e84e93";

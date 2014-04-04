@@ -87,24 +87,16 @@ public class SignupActivity extends Activity {
         if (username.length() < Constants.MIN_USERNAME_LENGTH || username.length() > Constants.MAX_USERNAME_LENGTH) {
             usernameEditText.setError(getString(R.string.username_length_error));
             errors = true;
-        }
-
-        if (!GeneralUtils.isValidUsername(username)) {
+        } else if (!GeneralUtils.isValidUsername(username)) {
             usernameEditText.setError(getString(R.string.invalid_username_error));
             errors = true;
-        }
-
-        if (!GeneralUtils.isValidEmail(email)) {
+        } else if (!GeneralUtils.isValidEmail(email)) {
             emailEditText.setError(getString(R.string.invalid_email_error));
             errors = true;
-        }
-
-        if (password.length() < Constants.MIN_PASSWORD_LENGTH || password.length() > Constants.MAX_PASSWORD_LENGTH) {
+        } else if (password.length() < Constants.MIN_PASSWORD_LENGTH || password.length() > Constants.MAX_PASSWORD_LENGTH) {
             passwordEditText.setError(getString(R.string.password_length_error));
             errors = true;
-        }
-
-        if (!password.equals(confirm)) {
+        } else if (!password.equals(confirm)) {
             confirmPasswordEditText.setError(getString(R.string.password_match_error));
             errors = true;
         }

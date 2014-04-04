@@ -1,6 +1,8 @@
 package com.streetshout.android.adapters;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,11 +10,20 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
+import com.streetshout.android.activities.ProfileActivity;
+import com.streetshout.android.models.Shout;
 import com.streetshout.android.models.UserActivity;
+import com.streetshout.android.utils.ApiUtils;
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.TimeUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -21,11 +32,11 @@ import java.util.ArrayList;
  */
 public class ActivitiesAdapter extends BaseAdapter {
 
-    private Activity activity = null;
+    private ProfileActivity activity = null;
 
     private ArrayList<UserActivity> items = null;
 
-    public ActivitiesAdapter(Activity activity, ArrayList<UserActivity> userActivities) {
+    public ActivitiesAdapter(ProfileActivity activity, ArrayList<UserActivity> userActivities) {
         this.activity = activity;
         this.items = userActivities;
     }
@@ -50,10 +61,17 @@ public class ActivitiesAdapter extends BaseAdapter {
                 activityShoutImage.setVisibility(View.GONE);
                 activityUserImage.setVisibility(View.VISIBLE);
                 GeneralUtils.getAquery(activity).id(activityUserImage).image(userActivity.image, true, false, 0, 0, null, AQuery.FADE_IN);
-            } else {
+            } else if (userActivity.redirectType.equals("Shout")) {
                 activityShoutImage.setVisibility(View.VISIBLE);
                 activityUserImage.setVisibility(View.GONE);
                 GeneralUtils.getAquery(activity).id(activityShoutImage).image(userActivity.image, true, false, 0, 0, null, AQuery.FADE_IN);
+            } else if (userActivity.redirectType.equals("Welcome")) {
+                activityShoutImage.setVisibility(View.VISIBLE);
+                activityUserImage.setVisibility(View.GONE);
+                GeneralUtils.getAquery(activity).id(activityShoutImage).image(userActivity.image, true, false, 0, 0, null, AQuery.FADE_IN);
+            } else {
+                activityUserImage.setVisibility(View.GONE);
+                activityShoutImage.setVisibility(View.GONE);
             }
 
             ((TextView) userActivityView.findViewById(R.id.user_activity_feed_message_textView)).setText(userActivity.message);
@@ -67,7 +85,55 @@ public class ActivitiesAdapter extends BaseAdapter {
             userActivityView.findViewById(R.id.user_activity_feed_user_container).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO: redirect!
+                    if (userActivity.redirectType.equals("User")) {
+                        Intent profile = new Intent(activity, ProfileActivity.class);
+                        profile.putExtra("userId", userActivity.redirectId);
+                        activity.startActivityForResult(profile, Constants.PROFILE_REQUEST);
+                    } else if (userActivity.redirectType.equals("Shout")) {
+
+                        if (TimeUtils.shoutExpired(userActivity.created)) {
+                            Toast toast = Toast.makeText(activity, activity.getString(R.string.shout_is_expired), Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else {
+                            activity.progressDialog = ProgressDialog.show(activity, "", activity.getString(R.string.loading), false);
+
+                            ApiUtils.getShout(GeneralUtils.getAquery(activity), userActivity.redirectId, new AjaxCallback<JSONObject>() {
+                                @Override
+                                public void callback(String url, JSONObject object, AjaxStatus status) {
+                                    super.callback(url, object, status);
+
+                                    if (status.getError() == null && object != null) {
+
+                                        Shout shout = null;
+
+                                        try {
+                                            JSONObject result = object.getJSONObject("result");
+                                            JSONObject rawShout = result.getJSONObject("shout");
+                                            shout = Shout.rawShoutToInstance(rawShout);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        if (TimeUtils.shoutExpired(shout.created)) {
+                                            Toast toast = Toast.makeText(activity, activity.getString(R.string.shout_is_expired), Toast.LENGTH_SHORT);
+                                            toast.show();
+                                        } else {
+                                            Intent returnIntent = new Intent();
+                                            returnIntent.putExtra("notificationShout", shout);
+                                            activity.setResult(Activity.RESULT_OK, returnIntent);
+                                            activity.finish();
+                                        }
+                                    } else {
+                                        Toast toast = Toast.makeText(activity, activity.getString(R.string.failed_to_retrieve_shout), Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+
+                                    activity.progressDialog.cancel();
+                                }
+                            });
+
+                        }
+                    }
                 }
             });
         }

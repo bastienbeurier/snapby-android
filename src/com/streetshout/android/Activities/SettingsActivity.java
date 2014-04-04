@@ -100,9 +100,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
                     if (username.length() < Constants.MIN_USERNAME_LENGTH || username.length() > Constants.MAX_USERNAME_LENGTH) {
                         settingsUsernameEditText.setError(getString(R.string.username_length_error));
                         errors = true;
-                    }
-
-                    if (!GeneralUtils.isValidUsername(username)) {
+                    } else if (!GeneralUtils.isValidUsername(username)) {
                         settingsUsernameEditText.setError(getString(R.string.invalid_username_error));
                         errors = true;
                     }
@@ -217,7 +215,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
     private void updateUI() {
         settingsUsernameEditText.setText(currentUser.username);
 
-        GeneralUtils.getAquery(this).id(profilePictureView).image(GeneralUtils.getProfilePicturePrefix() + currentUser.id, false, false);
+        GeneralUtils.getAquery(this).id(profilePictureView).image(GeneralUtils.getProfileThumbPicturePrefix() + currentUser.id, false, false);
     }
 
     @Override

@@ -82,14 +82,14 @@ public class ImageUtils {
     }
 
     static public Bitmap decodeAndMakeThumb(String filePath) {
-        Bitmap bitmap = decodeFileAndShrinkBitmap(filePath, Constants.SHOUT_THUMB_RES);
+        Bitmap bitmap = decodeFileAndShrinkBitmap(filePath, Constants.PROFILE_PICTURE_RES);
         bitmap = makeSquareBitmap(bitmap);
 
         return bitmap;
     }
 
     static public Bitmap makeThumb(Bitmap bitmap) {
-        bitmap = getResizedBitmap(bitmap, Constants.SHOUT_THUMB_RES);
+        bitmap = getResizedBitmap(bitmap, Constants.PROFILE_PICTURE_RES);
         bitmap = makeSquareBitmap(bitmap);
 
         return bitmap;

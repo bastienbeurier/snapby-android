@@ -28,25 +28,34 @@ public class PushNotificationReceiver extends BroadcastReceiver {
     private void handleOpen(Context context, Intent intent)  {
         Log.d("BAB", "HANDLE OPEN: " + intent);
 
-        if (!SessionUtils.isSignIn(context)) {
-            Log.d("BAB", "WELECOME");
+        if (!SessionUtils.isSignIn(context) || !intent.hasExtra("notif_type")) {
+            Log.d("BAB", "WELCOME");
             redirectToWelcome();
-        } else if (intent.hasExtra("new_shout")) {
+            return;
+        }
+
+        String type = intent.getStringExtra("notif_type");
+
+        if (type.equals("new_shout")) {
             Log.d("BAB", "NEW SHOUT");
             redirectToShout(intent.getStringExtra("shout"));
-        } else if (intent.hasExtra("new_like")) {
+        } else if (type.equals("new_like")) {
             Log.d("BAB", "NEW LIKE");
             redirectToShout(intent.getStringExtra("shout"));
-        } else if (intent.hasExtra("new_comment")) {
+        } else if (type.equals("new_comment")) {
             Log.d("BAB", "NEW COMMENT");
             redirectToShout(intent.getStringExtra("shout"));
-        } else if (intent.hasExtra("new_friend")) {
+        } else if (type.equals("new_friend")) {
             Log.d("BAB", "NEW FRIEND");
             redirectToUser(intent.getStringExtra("user_id"));
-        } else if (intent.hasExtra("trending")) {
+        } else if (type.equals("trending")) {
             Log.d("BAB", "NEW USER ID");
             redirectToShout(intent.getStringExtra("shout"));
+        } else {
+            redirectToWelcome();
         }
+
+
     }
 
     private void redirectToWelcome() {

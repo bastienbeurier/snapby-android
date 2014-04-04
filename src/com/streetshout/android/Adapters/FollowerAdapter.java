@@ -19,6 +19,7 @@ import com.streetshout.android.models.User;
 import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
+import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.SessionUtils;
 import org.json.JSONObject;
@@ -55,23 +56,25 @@ public class FollowerAdapter  extends BaseAdapter {
 
         if (user != null) {
             ImageView userPicture = (ImageView) followerView.findViewById(R.id.follower_feed_user_picture);
-            GeneralUtils.getAquery(activity).id(userPicture).image(GeneralUtils.getProfilePicturePrefix() + user.id, true, false, 0, 0, null, AQuery.FADE_IN);
+            GeneralUtils.getAquery(activity).id(userPicture).image(GeneralUtils.getProfileThumbPicturePrefix() + user.id, true, false, 0, 0, null, AQuery.FADE_IN);
 
             ((TextView) followerView.findViewById(R.id.follower_feed_username_textView)).setText("@" + user.username);
 
             final TextView followLabel = (TextView) followerView.findViewById(R.id.follower_feed_follow_label);
 
-            if (user.id == SessionUtils.getCurrentUser(activity).id) {
-                followerView.findViewById(R.id.follower_feed_follow_button).setVisibility(View.GONE);
-            } else {
-                updateUI(activity.followedByMe(user.id), followLabel);
+            final View followButton = followerView.findViewById(R.id.follower_feed_follow_button);
 
-                followerView.findViewById(R.id.follower_feed_follow_button).setVisibility(View.VISIBLE);
+            if (user.id == SessionUtils.getCurrentUser(activity).id) {
+                followButton.setVisibility(View.GONE);
+            } else {
+                updateUI(activity.followedByMe(user.id), followLabel, followButton);
+
+                followButton.setVisibility(View.VISIBLE);
 
                 followerView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        toggleFollow(user.id, followLabel);
+                        toggleFollow(user.id, followLabel, followButton);
                     }
                 });
             }
@@ -116,7 +119,7 @@ public class FollowerAdapter  extends BaseAdapter {
         return followerView;
     }
 
-    private void toggleFollow(final int userId, final TextView followLabel) {
+    private void toggleFollow(final int userId, final TextView followLabel, final View followButton) {
         if (activity.followedByMe(userId)) {
             ApiUtils.unfollowUser(activity, userId, new AjaxCallback<JSONObject>() {
                 @Override
@@ -124,13 +127,13 @@ public class FollowerAdapter  extends BaseAdapter {
                     super.callback(url, object, status);
 
                     if (status.getError() != null) {
-                        updateUI(true, followLabel);
+                        updateUI(true, followLabel, followButton);
                         activity.addToFollowedByMe(userId);
                     }
                 }
             });
 
-            updateUI(false, followLabel);
+            updateUI(false, followLabel, followButton);
             activity.removeFromFollowedByMe(userId);
         } else {
             ApiUtils.followUser(activity, userId, new AjaxCallback<JSONObject>() {
@@ -139,22 +142,24 @@ public class FollowerAdapter  extends BaseAdapter {
                     super.callback(url, object, status);
 
                     if (status.getError() != null) {
-                        updateUI(false, followLabel);
+                        updateUI(false, followLabel, followButton);
                         activity.removeFromFollowedByMe(userId);
                     }
                 }
             });
 
-            updateUI(true, followLabel);
+            updateUI(true, followLabel, followButton);
             activity.addToFollowedByMe(userId);
         }
     }
 
-    private void updateUI(boolean followedByMe, TextView followLabel) {
+    private void updateUI(boolean followedByMe, TextView followLabel, View followButton) {
         if (followedByMe) {
-            followLabel.setText(activity.getResources().getString(R.string.unfollow));
+            followLabel.setText(activity.getResources().getString(R.string.following_cap));
+            ImageUtils.setBackground(activity, followButton, R.drawable.following_button);
         } else {
-            followLabel.setText(activity.getResources().getString(R.string.follow));
+            followLabel.setText(activity.getResources().getString(R.string.follow_cap));
+            ImageUtils.setBackground(activity, followButton, R.drawable.follow_button);
         }
     }
 

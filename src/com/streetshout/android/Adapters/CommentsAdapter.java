@@ -51,7 +51,7 @@ public class CommentsAdapter extends BaseAdapter{
 
         if (comment != null) {
             ImageView userPicture = (ImageView) commentView.findViewById(R.id.like_feed_user_picture);
-            GeneralUtils.getAquery(activity).id(userPicture).image(GeneralUtils.getProfilePicturePrefix() + comment.commenterId, true, false, 0, 0, null, AQuery.FADE_IN);
+            GeneralUtils.getAquery(activity).id(userPicture).image(GeneralUtils.getProfileThumbPicturePrefix() + comment.commenterId, true, false, 0, 0, null, AQuery.FADE_IN);
 
             ((TextView) commentView.findViewById(R.id.comment_feed_username_textView)).setText("@" + comment.commenterUsername);
 

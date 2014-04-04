@@ -1,9 +1,5 @@
 package com.streetshout.android.utils;
 
-import android.app.Activity;
-import android.util.Log;
-import com.streetshout.android.R;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,44 +27,6 @@ public class TimeUtils {
         }
 
         return (new Date()).getTime() - date.getTime();
-    }
-
-    public static String[] shoutAgeToStrings(Activity activity, long age) {
-        String[] result = new String[2];
-
-        if (age > 0) {
-            long hours = age / ONE_HOUR;
-            if (hours > 1) {
-                if (age > Constants.SHOUT_DURATION) {
-                    result[0] = activity.getString(R.string.expired);
-                    result[1] = "";
-                } else {
-                    result[0] = String.valueOf(hours);
-                    result[1] = activity.getString(R.string.hours);
-                }
-            } else if (hours == 1) {
-                result[0] = String.valueOf(hours);
-                result[1] = activity.getString(R.string.hour);
-            } else {
-                long minutes = age / ONE_MIN;
-                if (minutes > 1) {
-                    result[0] = String.valueOf(minutes);
-                    result[1] = activity.getString(R.string.minutes);
-                } else if (minutes == 1) {
-                    result[0] = String.valueOf(minutes);
-                    result[1] = activity.getString(R.string.minute);
-                } else {
-                    result[0] = activity.getString(R.string.now);
-                    result[1] = "";
-                }
-            }
-        } else {
-            result[0] = activity.getString(R.string.now);
-            result[1] = "";
-        }
-
-
-        return result;
     }
 
     public static String[] shoutAgeToShortStrings(long age) {
@@ -103,5 +61,9 @@ public class TimeUtils {
         }
 
         return result;
+    }
+
+    public static boolean shoutExpired(String dateCreated) {
+        return getShoutAge(dateCreated) > Constants.SHOUT_DURATION;
     }
 }

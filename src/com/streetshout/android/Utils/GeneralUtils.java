@@ -263,8 +263,12 @@ public class GeneralUtils {
         activity.startActivity(sendIntent);
     }
 
-    public static String getProfilePicturePrefix() {
-        return Constants.PRODUCTION ? Constants.PROFILE_PICS_URL_PREFIX_PROD : Constants.PROFILE_PICS_URL_PREFIX_DEV;
+    public static String getProfileThumbPicturePrefix() {
+        return Constants.PRODUCTION ? Constants.THUMB_PROFILE_PICS_URL_PREFIX_PROD : Constants.THUMB_PROFILE_PICS_URL_PREFIX_DEV;
+    }
+
+    public static String getProfileBigPicturePrefix() {
+        return Constants.PRODUCTION ? Constants.BIG_PROFILE_PICS_URL_PREFIX_PROD : Constants.BIG_PROFILE_PICS_URL_PREFIX_DEV;
     }
 
     public static String getShoutSmallPicturePrefix() {

@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,14 +40,17 @@ import com.streetshout.android.R;
 import com.streetshout.android.custom.CameraPreview;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.ApiUtils;
+import com.streetshout.android.utils.AppPreferences;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.ImageUtils;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.SessionUtils;
+import com.streetshout.android.utils.StreetShoutApplication;
 import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -55,6 +59,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -121,6 +126,12 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
 
     private boolean creationMode = false;
 
+    private TextView activitiesUnreadCount = null;
+
+    private FrameLayout activitiesUnreadCountContainer = null;
+
+    private AppPreferences appPrefs = null;
+
     /*
      * Define a request code to send to Google Play services
      * This code is returned in Activity.onActivityResult
@@ -152,6 +163,10 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         anonymousButton = (ImageView) findViewById(R.id.create_mask_button);
         descriptionCharCount = (TextView) findViewById(R.id.create_description_count_text);
         shoutImageView = (ImageView) findViewById(R.id.create_shout_image);
+        activitiesUnreadCount = (TextView) findViewById(R.id.camera_unread_count);
+        activitiesUnreadCountContainer = (FrameLayout) findViewById(R.id.camera_unread_count_container);
+
+        appPrefs = ((StreetShoutApplication) this.getApplicationContext()).getAppPrefs();
 
         //Front camera button
         ImageView flipCameraView = (ImageView) findViewById(R.id.camera_flip_button);
@@ -478,6 +493,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     protected void onResume() {
         super.onResume();
 
+        displayUnreadActivitiesCount(appPrefs);
+
         SessionUtils.synchronizeUserInfo(this, myLocation);
 
         LocationUtils.checkLocationServicesEnabled(this, locationManager);
@@ -508,6 +525,23 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
             if (resultCode == RESULT_OK) {
                 shoutLocation = data.getParcelableExtra("accurateShoutLocation");
                 shoutLocationRefined = true;
+            }
+        }
+
+        if (requestCode == Constants.PROFILE_REQUEST) {
+            activitiesUnreadCount.setVisibility(View.GONE);
+            activitiesUnreadCountContainer.setVisibility(View.GONE);
+            appPrefs.setLastActivitiesRead();
+
+            if (resultCode == RESULT_OK) {
+                if (data.hasExtra("notificationShout")) {
+                    Intent redirectToShout = new Intent(CameraActivity.this, ExploreActivity.class);
+                    redirectToShout.putExtra("newShout", data.getParcelableExtra("notificationShout"));
+                    if (myLocation != null & myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+                        redirectToShout.putExtra("myLocation", myLocation);
+                    }
+                    startActivityForResult(redirectToShout, Constants.EXPLORE_REQUEST);
+                }
             }
         }
     }
@@ -734,5 +768,49 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
                 }
             }
         });
+    }
+
+    private void displayUnreadActivitiesCount(AppPreferences appPrefs) {
+        long lastReadTime = appPrefs.getLastActivitiesRead();
+        long secondsSinceLastRead = 0;
+
+        if (lastReadTime != 0) {
+            secondsSinceLastRead = (System.currentTimeMillis() - lastReadTime)/1000;
+            //If last read has never been set, set it now
+        } else {
+            appPrefs.setLastActivitiesRead();
+        }
+
+        if (secondsSinceLastRead != 0) {
+            ApiUtils.getUnreadActivitiesCount(this, secondsSinceLastRead, new AjaxCallback<JSONObject>() {
+                @Override
+                public void callback(String url, JSONObject object, AjaxStatus status) {
+                    super.callback(url, object, status);
+
+                    if (status.getCode() == 401) {
+                        SessionUtils.logOut(CameraActivity.this);
+                        return;
+                    }
+
+                    if (status.getError() == null && object != null) {
+                        long unreadCount = 0;
+
+                        try {
+                            JSONObject result = object.getJSONObject("result");
+                            unreadCount = result.getLong("unread_activities_count");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (unreadCount != 0) {
+                            activitiesUnreadCount.setText("" + unreadCount);
+                            activitiesUnreadCount.setVisibility(View.VISIBLE);
+                            activitiesUnreadCountContainer.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            });
+        }
+
     }
 }

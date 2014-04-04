@@ -125,7 +125,7 @@ public class ShoutSlidePageFragment extends Fragment {
         }
 
         if (!shout.anonymous) {
-            aq.id(userProfilePic).image(GeneralUtils.getProfilePicturePrefix() + shout.userId, true, false, 0, 0, null, AQuery.FADE_IN);
+            aq.id(userProfilePic).image(GeneralUtils.getProfileThumbPicturePrefix() + shout.userId, true, false, 0, 0, null, AQuery.FADE_IN);
 
             userContainer.setOnClickListener(new View.OnClickListener() {
                 @Override

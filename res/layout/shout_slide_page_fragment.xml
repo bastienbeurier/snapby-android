@@ -111,12 +111,20 @@
                                   android:layout_marginTop="5dp"
                                   android:layout_gravity="left">
 
-                        <com.streetshout.android.custom.CircleImageView android:id="@+id/explore_shout_user_picture"
-                                                                        android:layout_height="40dp"
-                                                                        android:layout_width="40dp"
-                                                                        android:layout_marginRight="5dp"
-                                                                        android:layout_gravity="center"
-                                                                        android:visibility="gone"/>
+                        <FrameLayout android:layout_height="40dp"
+                                     android:layout_width="40dp"
+                                     android:layout_marginRight="5dp"
+                                     android:layout_gravity="center">
+
+                            <ImageView android:layout_width="match_parent"
+                                       android:layout_height="match_parent"
+                                       android:src="@drawable/profile_picture_placeholder"/>
+
+                            <com.streetshout.android.custom.CircleImageView android:id="@+id/explore_shout_user_picture"
+                                                                            android:layout_height="match_parent"
+                                                                            android:layout_width="match_parent"/>
+
+                        </FrameLayout>
 
                         <TextView android:id="@+id/explore_shout_username"
                                   android:layout_width="match_parent"
