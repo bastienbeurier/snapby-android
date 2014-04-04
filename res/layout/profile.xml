@@ -192,7 +192,7 @@
             <TextView android:id="@+id/profile_category_shouts"
                       android:layout_width="match_parent"
                       android:layout_height="match_parent"
-                      android:text="@string/expired_shouts_cap"
+                      android:text="@string/shouts_cap"
                       android:textColor="@color/darkGrey"
                       android:textSize="16dp"
                       android:gravity="center"/>
@@ -226,7 +226,7 @@
                   android:layout_weight="1"
                   android:orientation="vertical">
 
-        <ListView
+        <com.streetshout.android.custom.EndlessListView
                 android:id="@id/android:list"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"/>
@@ -236,7 +236,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center"
-                android:text="@string/no_activity_in_feed"/>
+                android:text="@string/no_activity_or_shout_in_feed"/>
 
     </LinearLayout>
 

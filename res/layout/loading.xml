@@ -3,20 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
+    android:layout_gravity="center"
+    android:gravity="center"
     android:padding="20dp" >
 
     <ProgressBar
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/progressBar"/>
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_weight="1"
-        android:text="@string/loading"
-        android:textColor="#868686" />
+            android:id="@+id/progressBar"
+            android:layout_gravity="center"
+            android:gravity="center"/>
 
 </LinearLayout>

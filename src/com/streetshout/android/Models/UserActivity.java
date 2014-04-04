@@ -83,7 +83,7 @@ public class UserActivity {
                     String shoutUsername = userActivity.extra.getString("shouter_username");
 
                     userActivity.image = GeneralUtils.getShoutSmallPicturePrefix() + shoutId + "--400";
-                    userActivity.message = "New shout by @" + shoutUsername + " in your area.";
+                    userActivity.message = "New shout by @" + shoutUsername + ".";
 
                     userActivity.redirectType = "Shout";
                     userActivity.redirectId = Integer.parseInt(shoutId);

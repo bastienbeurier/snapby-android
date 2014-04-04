@@ -464,10 +464,12 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void getActivities(Activity activity, AjaxCallback<JSONObject> cb) {
+    public static void getActivities(Activity activity, int page, int pageSize, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
 
         params = enrichParametersWithToken(activity, params);
+        params.put("page", page);
+        params.put("page_size", pageSize);
 
         if (params == null) {
             return;
@@ -501,10 +503,11 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void getShouts(Activity activity, int userId, int page, AjaxCallback<JSONObject> cb) {
+    public static void getShouts(Activity activity, int userId, int page, int pageSize, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("user_id", userId);
         params.put("page", page);
+        params.put("page_size", pageSize);
 
         params = enrichParametersWithToken(activity, params);
 

@@ -19,6 +19,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
 import com.streetshout.android.adapters.ActivitiesAdapter;
 import com.streetshout.android.adapters.ExpiredShoutsAdapter;
+import com.streetshout.android.custom.EndlessListView;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.models.User;
 import com.streetshout.android.models.UserActivity;
@@ -36,7 +37,11 @@ import java.util.ArrayList;
 /**
  * Created by bastien on 3/10/14.
  */
-public class ProfileActivity extends ListActivity {
+public class ProfileActivity extends ListActivity implements EndlessListView.EndlessListener {
+
+    private int ITEM_PER_REQUEST = 20;
+    private int expiredShoutsPage = 1;
+    private int activitiesPage = 1;
 
     private User user = null;
     private int userId = 0;
@@ -180,6 +185,8 @@ public class ProfileActivity extends ListActivity {
                         startActivityForResult(settings, Constants.SETTINGS_REQUEST);
                     }
                 });
+            } else {
+                findFollowButton.setVisibility(View.GONE);
             }
 
             findFollowButton.setOnClickListener(new View.OnClickListener() {
@@ -410,7 +417,7 @@ public class ProfileActivity extends ListActivity {
 
         showFeedProgressBar();
 
-        ApiUtils.getShouts(this, userId, 1, new AjaxCallback<JSONObject>() {
+        ApiUtils.getShouts(this, userId, expiredShoutsPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -428,8 +435,11 @@ public class ProfileActivity extends ListActivity {
                     if (rawShouts != null) {
                         ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
                         hideFeedProgressBar();
+                        expiredShoutsPage++;
                         expiredShoutsAdapter = new ExpiredShoutsAdapter(ProfileActivity.this, shouts);
-                        setListAdapter(expiredShoutsAdapter);
+                        ((EndlessListView) getListView()).setAdapter(expiredShoutsAdapter);
+                        ((EndlessListView) getListView()).setLoadingView(R.layout.loading);
+                        ((EndlessListView) getListView()).setListener(ProfileActivity.this);
                     }
                 } else {
                     showNoConnectionInFeedMessage();
@@ -446,7 +456,7 @@ public class ProfileActivity extends ListActivity {
 
         showFeedProgressBar();
 
-        ApiUtils.getActivities(this, new AjaxCallback<JSONObject>() {
+        ApiUtils.getActivities(this, activitiesPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -464,8 +474,11 @@ public class ProfileActivity extends ListActivity {
                     if (rawActivities != null) {
                         ArrayList<UserActivity> userActivities = UserActivity.rawUserActivitiesToInstances(rawActivities);
                         hideFeedProgressBar();
+                        activitiesPage++;
                         activitiesAdapter = new ActivitiesAdapter(ProfileActivity.this, userActivities);
-                        setListAdapter(activitiesAdapter);
+                        ((EndlessListView) getListView()).setAdapter(activitiesAdapter);
+                        ((EndlessListView) getListView()).setLoadingView(R.layout.loading);
+                        ((EndlessListView) getListView()).setListener(ProfileActivity.this);
                     }
                 } else {
                     showNoConnectionInFeedMessage();
@@ -491,4 +504,84 @@ public class ProfileActivity extends ListActivity {
         }
     }
 
+    @Override
+    public void loadData() {
+        if (adapterType.equals("activity")) {
+            ApiUtils.getActivities(this, activitiesPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
+                @Override
+                public void callback(String url, JSONObject object, AjaxStatus status) {
+                    super.callback(url, object, status);
+
+                    if (status.getError() == null && object != null) {
+                        JSONArray rawActivities = null;
+
+                        try {
+                            JSONObject result = object.getJSONObject("result");
+                            rawActivities = result.getJSONArray("activities");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (rawActivities != null) {
+                            ArrayList<UserActivity> userActivities = UserActivity.rawUserActivitiesToInstances(rawActivities);
+                            addNewActivities(userActivities);
+                        }
+                    } else {
+                        showNoConnectionInFeedMessage();
+                    }
+                }
+            });
+        } else {
+            ApiUtils.getShouts(this, userId, expiredShoutsPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
+                @Override
+                public void callback(String url, JSONObject object, AjaxStatus status) {
+                    super.callback(url, object, status);
+
+                    if (status.getError() == null && object != null) {
+                        JSONArray rawShouts = null;
+
+                        try {
+                            JSONObject result = object.getJSONObject("result");
+                            rawShouts = result.getJSONArray("shouts");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (rawShouts != null) {
+                            ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
+                            addNewExpiredShouts(shouts);
+                        }
+                    } else {
+                        showNoConnectionInFeedMessage();
+                    }
+                }
+            });
+        }
+    }
+
+    public void addNewExpiredShouts(ArrayList<Shout> newShouts) {
+        ((EndlessListView) getListView()).newDataAdded();
+
+        int newShoutsCount = newShouts.size();
+        for (int i = 0; i < newShoutsCount; i++) {
+            expiredShoutsAdapter.items.add(newShouts.get(i));
+        }
+
+        expiredShoutsAdapter.notifyDataSetChanged();
+
+        expiredShoutsPage++;
+    }
+
+    public void addNewActivities(ArrayList<UserActivity> newUserActivities) {
+        ((EndlessListView) getListView()).newDataAdded();
+
+        int newActivitiesCount = newUserActivities.size();
+        for (int i = 0; i < newActivitiesCount; i++) {
+            activitiesAdapter.items.add(newUserActivities.get(i));
+        }
+
+        activitiesAdapter.notifyDataSetChanged();
+
+        activitiesPage++;
+    }
 }

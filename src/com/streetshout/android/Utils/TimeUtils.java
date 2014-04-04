@@ -40,7 +40,7 @@ public class TimeUtils {
                 result[0] = String.valueOf(weeks);
                 result[1] = "w";
             } else if (days >= 1) {
-                result[0] = String.valueOf(weeks);
+                result[0] = String.valueOf(days);
                 result[1] = "d";
             } else if (hours >= 1) {
                 result[0] = String.valueOf(hours);

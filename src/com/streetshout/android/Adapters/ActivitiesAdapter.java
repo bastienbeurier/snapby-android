@@ -34,7 +34,7 @@ public class ActivitiesAdapter extends BaseAdapter {
 
     private ProfileActivity activity = null;
 
-    private ArrayList<UserActivity> items = null;
+    public ArrayList<UserActivity> items = null;
 
     public ActivitiesAdapter(ProfileActivity activity, ArrayList<UserActivity> userActivities) {
         this.activity = activity;

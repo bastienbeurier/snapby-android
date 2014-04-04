@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -74,6 +76,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
 
     private boolean frontCamera = true;
 
+    private int imageCamera = 0;
+
     private FrameLayout preview = null;
 
     private LocationClient mLocationClient = null;
@@ -131,6 +135,8 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
     private FrameLayout activitiesUnreadCountContainer = null;
 
     private AppPreferences appPrefs = null;
+
+    private String imagePath = null;
 
     /*
      * Define a request code to send to Google Play services
@@ -432,24 +438,65 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
                 pictureFailed();
             }
 
-            String imagePath = pictureFile.getAbsolutePath().toString();
+            imagePath = pictureFile.getAbsolutePath().toString();
 
             formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath, Constants.SHOUT_BIG_RES);
 
             if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
                 if (frontCamera) {
+                    imageCamera = 0;
                     formattedPicture = ImageUtils.rotateImage(formattedPicture);
                 } else {
+                    imageCamera = 1;
                     formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
                     formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
                 }
             }
 
-            galleryAddPic(imagePath);
-
             startCreationMode();
         }
     };
+
+    private void saveImageToGallery(String imagePath) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+
+        if (imageCamera == 0) {
+            bitmap = ImageUtils.rotateImage(bitmap);
+        } else {
+            bitmap = ImageUtils.reverseRotateImage(bitmap);
+            bitmap = ImageUtils.mirrorBitmap(bitmap);
+        }
+
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(imagePath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        bitmap.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+
+        galleryAddPic(imagePath);
+
+        try {
+            fOut.flush();
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
+    private void galleryAddPic(String imagePath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(imagePath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
 
     /** Create a File for saving an image or video */
     private File getOutputMediaFile(int type) {
@@ -706,14 +753,6 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
         }
     }
 
-    private void galleryAddPic(String imagePath) {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(imagePath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
-    }
-
     public void shoutCreationFailed() {
         createShoutDialog.cancel();
         Toast toast = Toast.makeText(this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
@@ -768,6 +807,11 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
                 }
             }
         });
+
+        if (imagePath != null) {
+            SaveImageToGallery runner = new SaveImageToGallery();
+            runner.execute(imagePath);
+        }
     }
 
     private void displayUnreadActivitiesCount(AppPreferences appPrefs) {
@@ -812,5 +856,12 @@ public class CameraActivity extends Activity implements GooglePlayServicesClient
             });
         }
 
+    }
+
+    private class SaveImageToGallery extends AsyncTask<String, String, String> {
+        protected String doInBackground(String... params) {
+            saveImageToGallery(params[0]);
+            return "";
+        }
     }
 }

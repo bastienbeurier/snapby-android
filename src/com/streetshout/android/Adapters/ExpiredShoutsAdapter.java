@@ -34,7 +34,7 @@ public class ExpiredShoutsAdapter extends BaseAdapter {
 
     private ProfileActivity activity = null;
 
-    private ArrayList<Shout> items = null;
+    public ArrayList<Shout> items = null;
 
     public ExpiredShoutsAdapter(ProfileActivity activity, ArrayList<Shout> expiredShouts) {
         this.activity = activity;
@@ -58,7 +58,11 @@ public class ExpiredShoutsAdapter extends BaseAdapter {
 
             GeneralUtils.getAquery(activity).id(shoutImage).image(GeneralUtils.getShoutSmallPicturePrefix() + shout.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
 
-            ((TextView) expiredShoutView.findViewById(R.id.expired_shout_feed_message_textView)).setText(shout.description);
+            if (shout.description.length() > 0) {
+                ((TextView) expiredShoutView.findViewById(R.id.expired_shout_feed_message_textView)).setText(shout.description);
+            } else {
+                expiredShoutView.findViewById(R.id.expired_shout_feed_message_textView).setVisibility(View.GONE);
+            }
 
             String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(shout.created));
 
