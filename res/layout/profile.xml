@@ -227,16 +227,32 @@
                   android:orientation="vertical">
 
         <com.streetshout.android.custom.EndlessListView
-                android:id="@id/android:list"
+                android:id="@+id/profile_shouts_list_view"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
+                android:layout_height="fill_parent"
+                android:visibility="gone"/>
+
+        <com.streetshout.android.custom.EndlessListView
+                android:id="@+id/profile_activities_list_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:visibility="gone"/>
 
         <TextView
-                android:id="@id/android:empty"
+                android:id="@+id/profile_activities_list_view_empty"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center"
-                android:text="@string/no_activity_or_shout_in_feed"/>
+                android:text="@string/no_activity_in_feed"
+                android:visibility="gone"/>
+
+        <TextView
+                android:id="@+id/profile_shouts_list_view_empty"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:text="@string/no_shouts_in_feed"
+                android:visibility="gone"/>
 
     </LinearLayout>
 

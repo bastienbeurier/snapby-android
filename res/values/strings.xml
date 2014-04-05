@@ -128,7 +128,8 @@
     <string name="successful_trending_shout">Let\'s spice it up!.</string>
     <string name="failed_trending_shout">Failed!!!</string>
     <string name="no_comments_in_feed">No comments yet...</string>
-    <string name="no_activity_or_shout_in_feed">No activity/shout so far...</string>
+    <string name="no_shouts_in_feed">No shouts so far...</string>
+    <string name="no_activity_in_feed">No activity so far...</string>
     <string name="no_likes_in_feed">No likes yet...</string>
     <string name="no_shouter_in_feed">No shouters to display...</string>
     <string name="your_email">Your email</string>

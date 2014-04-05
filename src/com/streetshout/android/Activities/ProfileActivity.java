@@ -1,5 +1,6 @@
 package com.streetshout.android.activities;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -37,7 +39,7 @@ import java.util.ArrayList;
 /**
  * Created by bastien on 3/10/14.
  */
-public class ProfileActivity extends ListActivity implements EndlessListView.EndlessListener {
+public class ProfileActivity extends Activity implements EndlessListView.EndlessListener {
 
     private int ITEM_PER_REQUEST = 20;
     private int expiredShoutsPage = 1;
@@ -77,7 +79,10 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
     private ActivitiesAdapter activitiesAdapter = null;
     private ExpiredShoutsAdapter expiredShoutsAdapter = null;
 
-    private String adapterType = "";
+    private EndlessListView shoutsListView = null;
+    private EndlessListView activitiesListView = null;
+    private View shoutsListViewEmpty = null;
+    private View activitiesListViewEmpty = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -216,7 +221,16 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
         followersButton.setEnabled(false);
         followingButton.setEnabled(false);
 
-        getListView().setDivider(null);
+        shoutsListView = (EndlessListView) findViewById(R.id.profile_shouts_list_view);
+        shoutsListView.type = "shouts";
+        activitiesListView = (EndlessListView) findViewById(R.id.profile_activities_list_view);
+        activitiesListView.type = "activity";
+
+        activitiesListViewEmpty = findViewById(R.id.profile_activities_list_view_empty);
+        shoutsListViewEmpty = findViewById(R.id.profile_shouts_list_view_empty);
+
+        shoutsListView.setDivider(null);
+        activitiesListView.setDivider(null);
 
         if (myProfileOptionsEnabled) {
             categoryActivityContainer.setVisibility(View.VISIBLE);
@@ -225,8 +239,7 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
                 @Override
                 public void onClick(View v) {
                     setActivitiesAdapter();
-                    adapterType = "activity";
-                    updateTitlesUI();
+                    updateTitlesUI("activity");
                 }
             });
 
@@ -234,8 +247,7 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
                 @Override
                 public void onClick(View v) {
                     setExpiredShoutsAdapter();
-                    adapterType = "shouts";
-                    updateTitlesUI();
+                    updateTitlesUI("shouts");
                 }
             };
 
@@ -243,8 +255,7 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
             shoutCountButton.setOnClickListener(displayShoutsListener);
 
             setActivitiesAdapter();
-            adapterType = "activity";
-            updateTitlesUI();
+            updateTitlesUI("activity");
         } else {
             setExpiredShoutsAdapter();
         }
@@ -410,8 +421,20 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
     }
 
     private void setExpiredShoutsAdapter() {
+        shoutsListView.setVisibility(View.VISIBLE);
+        activitiesListView.setVisibility(View.GONE);
+
+        shoutsListViewEmpty.setVisibility(View.GONE);
+        activitiesListViewEmpty.setVisibility(View.GONE);
+
         if (expiredShoutsAdapter != null) {
-            setListAdapter(expiredShoutsAdapter);
+            shoutsListView.setAdapter(expiredShoutsAdapter);
+
+            if (shoutsListView.getAdapter().getCount() == 0) {
+                shoutsListView.setVisibility(View.GONE);
+                shoutsListViewEmpty.setVisibility(View.VISIBLE);
+            }
+
             return;
         }
 
@@ -432,14 +455,18 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
                         e.printStackTrace();
                     }
 
-                    if (rawShouts != null) {
+                    if (rawShouts != null && rawShouts.length() > 0) {
                         ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
                         hideFeedProgressBar();
                         expiredShoutsPage++;
                         expiredShoutsAdapter = new ExpiredShoutsAdapter(ProfileActivity.this, shouts);
-                        ((EndlessListView) getListView()).setAdapter(expiredShoutsAdapter);
-                        ((EndlessListView) getListView()).setLoadingView(R.layout.loading);
-                        ((EndlessListView) getListView()).setListener(ProfileActivity.this);
+                        shoutsListView.setAdapter(expiredShoutsAdapter);
+                        shoutsListView.setLoadingView(R.layout.loading);
+                        shoutsListView.setListener(ProfileActivity.this);
+                    } else {
+                        hideFeedProgressBar();
+                        shoutsListView.setVisibility(View.GONE);
+                        shoutsListViewEmpty.setVisibility(View.VISIBLE);
                     }
                 } else {
                     showNoConnectionInFeedMessage();
@@ -449,8 +476,19 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
     }
 
     private void setActivitiesAdapter() {
+        shoutsListView.setVisibility(View.GONE);
+        activitiesListView.setVisibility(View.VISIBLE);
+
+        shoutsListViewEmpty.setVisibility(View.GONE);
+        activitiesListViewEmpty.setVisibility(View.GONE);
+
         if (activitiesAdapter != null) {
-            setListAdapter(activitiesAdapter);
+            activitiesListView.setAdapter(activitiesAdapter);
+
+            if (activitiesListView.getAdapter().getCount() == 0) {
+                activitiesListView.setVisibility(View.GONE);
+                activitiesListViewEmpty.setVisibility(View.VISIBLE);
+            }
             return;
         }
 
@@ -471,14 +509,18 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
                         e.printStackTrace();
                     }
 
-                    if (rawActivities != null) {
+                    if (rawActivities != null && rawActivities.length() > 0) {
                         ArrayList<UserActivity> userActivities = UserActivity.rawUserActivitiesToInstances(rawActivities);
                         hideFeedProgressBar();
                         activitiesPage++;
                         activitiesAdapter = new ActivitiesAdapter(ProfileActivity.this, userActivities);
-                        ((EndlessListView) getListView()).setAdapter(activitiesAdapter);
-                        ((EndlessListView) getListView()).setLoadingView(R.layout.loading);
-                        ((EndlessListView) getListView()).setListener(ProfileActivity.this);
+                        activitiesListView.setAdapter(activitiesAdapter);
+                        activitiesListView.setLoadingView(R.layout.loading);
+                        activitiesListView.setListener(ProfileActivity.this);
+                    } else {
+                        hideFeedProgressBar();
+                        activitiesListView.setVisibility(View.GONE);
+                        activitiesListViewEmpty.setVisibility(View.VISIBLE);
                     }
                 } else {
                     showNoConnectionInFeedMessage();
@@ -488,8 +530,8 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
 
     }
 
-    private void updateTitlesUI() {
-        if (adapterType.equals("activity")) {
+    private void updateTitlesUI(String type) {
+        if (type.equals("activity")) {
             categoryActivityContainer.setBackgroundColor(getResources().getColor(R.color.veryLightShoutBlue));
             categoryActivityMarker.setVisibility(View.VISIBLE);
 
@@ -505,8 +547,8 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
     }
 
     @Override
-    public void loadData() {
-        if (adapterType.equals("activity")) {
+    public void loadData(String type) {
+        if (type.equals("activity")) {
             ApiUtils.getActivities(this, activitiesPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
                 @Override
                 public void callback(String url, JSONObject object, AjaxStatus status) {
@@ -522,9 +564,12 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
                             e.printStackTrace();
                         }
 
-                        if (rawActivities != null) {
+                        if (rawActivities != null && rawActivities.length() > 0) {
                             ArrayList<UserActivity> userActivities = UserActivity.rawUserActivitiesToInstances(rawActivities);
                             addNewActivities(userActivities);
+                        } else {
+                            activitiesListView.newDataAdded();
+                            activitiesListView.setListener(null);
                         }
                     } else {
                         showNoConnectionInFeedMessage();
@@ -547,9 +592,12 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
                             e.printStackTrace();
                         }
 
-                        if (rawShouts != null) {
+                        if (rawShouts != null && rawShouts.length() > 0) {
                             ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
                             addNewExpiredShouts(shouts);
+                        } else {
+                            shoutsListView.newDataAdded();
+                            shoutsListView.setListener(null);
                         }
                     } else {
                         showNoConnectionInFeedMessage();
@@ -560,7 +608,7 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
     }
 
     public void addNewExpiredShouts(ArrayList<Shout> newShouts) {
-        ((EndlessListView) getListView()).newDataAdded();
+        shoutsListView.newDataAdded();
 
         int newShoutsCount = newShouts.size();
         for (int i = 0; i < newShoutsCount; i++) {
@@ -573,7 +621,7 @@ public class ProfileActivity extends ListActivity implements EndlessListView.End
     }
 
     public void addNewActivities(ArrayList<UserActivity> newUserActivities) {
-        ((EndlessListView) getListView()).newDataAdded();
+        activitiesListView.newDataAdded();
 
         int newActivitiesCount = newUserActivities.size();
         for (int i = 0; i < newActivitiesCount; i++) {

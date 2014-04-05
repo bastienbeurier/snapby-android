@@ -17,6 +17,7 @@ public class EndlessListView extends ListView implements AbsListView.OnScrollLis
     private boolean isLoading;
     private EndlessListener listener;
     private BaseAdapter adapter;
+    public String type = "";
 
     public EndlessListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -49,10 +50,12 @@ public class EndlessListView extends ListView implements AbsListView.OnScrollLis
 
         int l = visibleItemCount + firstVisibleItem;
         if (l >= totalItemCount && !isLoading) {
-            // It is time to add new data. We call the listener
-            this.addFooterView(footer);
-            isLoading = true;
-            listener.loadData();
+
+            if (listener != null) {
+                this.addFooterView(footer);
+                isLoading = true;
+                listener.loadData(type);
+            }
         }
     }
 
@@ -84,7 +87,7 @@ public class EndlessListView extends ListView implements AbsListView.OnScrollLis
 
 
     public static interface EndlessListener {
-        public void loadData() ;
+        public void loadData(String type) ;
     }
 
 }
