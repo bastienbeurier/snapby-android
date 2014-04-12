@@ -101,6 +101,21 @@ public class ApiUtils {
         aq.ajax(url, JSONObject.class, cb);
     }
 
+    public static void pullLocalShouts(AQuery aq, double neLat, double neLng, double swLat, double swLng, int page, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("neLat", String.valueOf(neLat));
+        params.put("neLng", String.valueOf(neLng));
+        params.put("swLat", String.valueOf(swLat));
+        params.put("swLng", String.valueOf(swLng));
+        params.put("page", page);
+
+        String url = getBasePath() + "/shouts/local_shouts.json" + encodeParamsAsUrlParams(params);
+
+        cb.timeout(15000);
+
+        aq.ajax(url, JSONObject.class, cb);
+    }
+
     public static void updateUserInfoWithLocation(Activity activity, AQuery aq, Location lastLocation, String image, String username, AjaxCallback<JSONObject> cb) {
         User currentUser = SessionUtils.getCurrentUser(activity);
 
@@ -517,6 +532,21 @@ public class ApiUtils {
 
         //TODO: Remove token from url param
         String url = getBasePath() + "/shouts.json" + encodeParamsAsUrlParams(params);
+
+        GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
+    }
+
+    public static void getLocalShoutsCount(Activity activity, AjaxCallback<JSONObject> cb) {
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        params = enrichParametersWithToken(activity, params);
+
+        if (params == null) {
+            return;
+        }
+
+        //TODO: Remove token from url param
+        String url = getBasePath() + "/shouts/local_shouts_count.json" + encodeParamsAsUrlParams(params);
 
         GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
     }

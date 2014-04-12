@@ -15,6 +15,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.streetshout.android.R;
+import com.streetshout.android.activities.DisplayActivity;
 import com.streetshout.android.activities.ProfileActivity;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.models.UserActivity;
@@ -64,16 +65,19 @@ public class ActivitiesAdapter extends BaseAdapter {
                 activityUserImage.setVisibility(View.VISIBLE);
                 GeneralUtils.getAquery(activity).id(activityUserImage).image(userActivity.image, true, false, 0, 0, null, AQuery.FADE_IN);
             } else if (userActivity.redirectType.equals("Shout")) {
+                activityUserImagePlaceHolder.setVisibility(View.GONE);
                 activityShoutImage.setVisibility(View.VISIBLE);
                 activityUserImage.setVisibility(View.GONE);
                 GeneralUtils.getAquery(activity).id(activityShoutImage).image(userActivity.image, true, false, 0, 0, null, AQuery.FADE_IN);
             } else if (userActivity.redirectType.equals("Welcome")) {
+                activityUserImagePlaceHolder.setVisibility(View.GONE);
                 activityShoutImage.setVisibility(View.VISIBLE);
                 activityUserImage.setVisibility(View.GONE);
                 GeneralUtils.getAquery(activity).id(activityShoutImage).image(userActivity.image, true, false, 0, 0, null, AQuery.FADE_IN);
             } else {
                 activityUserImage.setVisibility(View.GONE);
                 activityShoutImage.setVisibility(View.GONE);
+                activityUserImagePlaceHolder.setVisibility(View.GONE);
             }
 
             ((TextView) userActivityView.findViewById(R.id.user_activity_feed_message_textView)).setText(userActivity.message);
@@ -92,49 +96,38 @@ public class ActivitiesAdapter extends BaseAdapter {
                         profile.putExtra("userId", userActivity.redirectId);
                         activity.startActivityForResult(profile, Constants.PROFILE_REQUEST);
                     } else if (userActivity.redirectType.equals("Shout")) {
+                        activity.progressDialog = ProgressDialog.show(activity, "", activity.getString(R.string.loading), false);
 
-                        if (TimeUtils.shoutExpired(userActivity.created)) {
-                            Toast toast = Toast.makeText(activity, activity.getString(R.string.shout_is_expired), Toast.LENGTH_SHORT);
-                            toast.show();
-                        } else {
-                            activity.progressDialog = ProgressDialog.show(activity, "", activity.getString(R.string.loading), false);
+                        ApiUtils.getShout(GeneralUtils.getAquery(activity), userActivity.redirectId, new AjaxCallback<JSONObject>() {
+                            @Override
+                            public void callback(String url, JSONObject object, AjaxStatus status) {
+                                super.callback(url, object, status);
 
-                            ApiUtils.getShout(GeneralUtils.getAquery(activity), userActivity.redirectId, new AjaxCallback<JSONObject>() {
-                                @Override
-                                public void callback(String url, JSONObject object, AjaxStatus status) {
-                                    super.callback(url, object, status);
+                                if (status.getError() == null && object != null) {
 
-                                    if (status.getError() == null && object != null) {
+                                    Shout shout = null;
 
-                                        Shout shout = null;
-
-                                        try {
-                                            JSONObject result = object.getJSONObject("result");
-                                            JSONObject rawShout = result.getJSONObject("shout");
-                                            shout = Shout.rawShoutToInstance(rawShout);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        if (TimeUtils.shoutExpired(shout.created)) {
-                                            Toast toast = Toast.makeText(activity, activity.getString(R.string.shout_is_expired), Toast.LENGTH_SHORT);
-                                            toast.show();
-                                        } else {
-                                            Intent returnIntent = new Intent();
-                                            returnIntent.putExtra("notificationShout", shout);
-                                            activity.setResult(Activity.RESULT_OK, returnIntent);
-                                            activity.finish();
-                                        }
-                                    } else {
-                                        Toast toast = Toast.makeText(activity, activity.getString(R.string.failed_to_retrieve_shout), Toast.LENGTH_SHORT);
-                                        toast.show();
+                                    try {
+                                        JSONObject result = object.getJSONObject("result");
+                                        JSONObject rawShout = result.getJSONObject("shout");
+                                        shout = Shout.rawShoutToInstance(rawShout);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
 
-                                    activity.progressDialog.cancel();
-                                }
-                            });
+                                    Intent displayShout = new Intent(activity, DisplayActivity.class);
+                                    displayShout.putExtra("shout", shout);
+                                    displayShout.putExtra("expiredShout", true);
 
-                        }
+                                    activity.startActivityForResult(displayShout, Constants.DISPLAY_SHOUT_REQUEST);
+                                } else {
+                                    Toast toast = Toast.makeText(activity, activity.getString(R.string.failed_to_retrieve_shout), Toast.LENGTH_SHORT);
+                                    toast.show();
+                                }
+
+                                activity.progressDialog.cancel();
+                            }
+                        });
                     }
                 }
             });

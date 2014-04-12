@@ -19,10 +19,9 @@ public class Constants {
 
     /** Zoom level set when a user clicks on a shout**/
     public static final int REDIRECTION_FROM_CREATE_SHOUT = 16;
-    public static final int CLICK_ON_MY_LOCATION_BUTTON = 13;
 
     /** Zoom for the initial camera position when we have the user location */
-    public static final int INITIAL_ZOOM = 12;
+    public static final int INITIAL_ZOOM = 15;
 
     /** Minimum radius around the user's location where he can create shout **/
     public static final int SHOUT_RADIUS = 300;

@@ -14,13 +14,32 @@
                android:scaleType="centerCrop"
                android:visibility="gone"/>
 
-    <ImageView android:id="@+id/camera_explore_button"
-               android:layout_width="65dp"
-               android:layout_height="65dp"
-               android:padding="10dp"
-               android:layout_margin="10dp"
-               android:src="@drawable/camera_explore_button_selector"
-               android:layout_gravity="top|left"/>
+    <LinearLayout android:layout_width="105dp"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_gravity="top|left">
+
+        <ImageView android:id="@+id/camera_explore_button"
+                   android:layout_width="65dp"
+                   android:layout_height="65dp"
+                   android:padding="10dp"
+                   android:layout_margin="10dp"
+                   android:src="@drawable/camera_explore_button_selector"
+                   android:layout_gravity="top|left"/>
+
+        <TextView android:id="@+id/camera_explore_local_shouts_count"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:layout_marginTop="10dp"
+                  android:background="@color/shoutBlue"
+                  android:textColor="@color/white"
+                  android:visibility="gone"/>
+
+    </LinearLayout>
+
+
 
     <FrameLayout android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
@@ -121,54 +140,6 @@
 
         </LinearLayout>
 
-
-
-
-        <LinearLayout android:orientation="horizontal"
-                      android:layout_width="match_parent"
-                      android:layout_height="50dp"
-                      android:background="@color/semiTransparentBlackDarker">
-
-            <!--hack so that EditText space is maintain when EditText has visibility GONE-->
-            <FrameLayout android:layout_width="match_parent"
-                         android:layout_height="match_parent"
-                         android:layout_weight="1">
-
-                <EditText android:id="@+id/shout_descr_dialog_descr"
-                          android:inputType="textCapSentences|textNoSuggestions"
-                          android:imeOptions="actionDone"
-                          android:layout_width="match_parent"
-                          android:layout_height="match_parent"
-                          android:paddingLeft="10dp"
-                          android:paddingRight="10dp"
-                          android:paddingBottom="4dp"
-                          android:textColorHint="@color/lightGrey"
-                          android:textColor="@color/white"
-                          android:textCursorDrawable="@null"
-                          android:singleLine="true"
-                          android:background="@null"
-                          style="@style/CreateShoutEditText"
-                          android:textSize="20dp"
-                          android:hint="@string/create_shout_dialog"
-                          android:gravity="center|left"/>
-
-            </FrameLayout>
-
-            <View android:layout_height="match_parent"
-                  android:layout_width="1dp"
-                  android:background="@color/darkGrey" />
-
-            <TextView android:id="@+id/create_description_count_text"
-                      android:layout_width="50dp"
-                      android:layout_height="match_parent"
-                      android:maxLines="1"
-                      android:fontFamily="sans-serif"
-                      android:textSize="15dp"
-                      android:textColor="@color/lightGrey"
-                      android:text="140"
-                      android:gravity="center"/>
-
-        </LinearLayout>
     </LinearLayout>
 
     <ImageView android:id="@+id/create_cancel_button"

@@ -11,8 +11,7 @@
                   android:orientation="horizontal"
                   android:gravity="center">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      android:orientation="vertical"
+        <LinearLayout android:orientation="vertical"
                       android:layout_width="100dp"
                       android:layout_height="wrap_content"
                       android:layout_marginTop="10dp"
@@ -80,51 +79,25 @@
 
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/profile_followers_button"
-                              android:layout_width="match_parent"
+                <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
                               android:layout_weight="1"
                               android:orientation="vertical"
                               android:gravity="center">
 
-                    <TextView android:id="@+id/profile_follower_count"
+                    <TextView android:id="@+id/profile_liked_count"
                               android:layout_height="match_parent"
                               android:layout_width="wrap_content"
-                              android:text="0"
+                              android:text="155"
                               android:textSize="20dp"
                               android:textColor="@color/mediumGrey"
                               android:gravity="center"/>
 
-                    <TextView android:id="@+id/profile_follower_label"
+                    <TextView android:id="@+id/profile_liked_label"
                               android:layout_height="match_parent"
                               android:layout_width="match_parent"
                               android:textSize="14dp"
-                              android:text="followers"
-                              android:textColor="@color/lightGrey"
-                              android:gravity="center"/>
-
-                </LinearLayout>
-
-                <LinearLayout android:id="@+id/profile_following_button"
-                              android:layout_width="match_parent"
-                              android:layout_height="wrap_content"
-                              android:layout_weight="1"
-                              android:orientation="vertical"
-                              android:gravity="center">
-
-                    <TextView android:id="@+id/profile_following_count"
-                              android:layout_height="match_parent"
-                              android:layout_width="wrap_content"
-                              android:textSize="20dp"
-                              android:text="0"
-                              android:textColor="@color/mediumGrey"
-                              android:gravity="center"/>
-
-                    <TextView android:id="@+id/profile_following_label"
-                              android:layout_height="match_parent"
-                              android:layout_width="match_parent"
-                              android:textSize="14dp"
-                              android:text="following"
+                              android:text="liked"
                               android:textColor="@color/lightGrey"
                               android:gravity="center"/>
 
@@ -132,137 +105,64 @@
 
             </LinearLayout>
 
-            <FrameLayout android:id="@+id/profile_find_follow_button"
-                         android:layout_width="match_parent"
-                         android:layout_margin="10dp"
-                         android:layout_height="30dp"
-                         android:layout_gravity="center"
-                         android:layout_marginTop="5dp">
-
-                <TextView android:id="@+id/profile_find_follow_label"
-                          android:layout_width="match_parent"
-                          android:layout_height="match_parent"
-                          android:textColor="@color/white"
-                          android:textSize="14dp"
-                          android:fontFamily="sans-serif"
-                          android:text=""
-                          android:gravity="center"/>
-
-            </FrameLayout>
-
         </LinearLayout>
 
     </LinearLayout>
 
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="match_parent">
 
-    <LinearLayout android:id="@+id/profile_categories_container"
-                  android:layout_width="match_parent"
-                  android:layout_height="50dp"
-                  android:orientation="horizontal"
-                  android:background="@color/veryVeryLightGrey">
-
-        <FrameLayout android:id="@+id/profile_category_activity_title_container"
-                     android:layout_width="match_parent"
-                     android:layout_height="match_parent"
-                     android:layout_weight="1"
-                     android:visibility="gone">
-
-            <TextView android:id="@+id/profile_category_activity"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:text="ACTIVITY"
-                      android:textColor="@color/darkGrey"
-                      android:textSize="16dp"
-                      android:gravity="center"/>
-
-            <View android:id="@+id/profile_category_activity_marker"
-                  android:layout_height="5dp"
-                  android:layout_width="match_parent"
-                  android:background="@color/shoutBlue"
-                  android:layout_gravity="bottom"
-                  android:visibility="gone"/>
-
-        </FrameLayout>
-
-        <FrameLayout android:id="@+id/profile_category_shouts_title_container"
-                     android:layout_width="match_parent"
-                     android:layout_height="match_parent"
-                     android:layout_weight="1">
-
-            <TextView android:id="@+id/profile_category_shouts"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:text="@string/shouts_cap"
-                      android:textColor="@color/darkGrey"
-                      android:textSize="16dp"
-                      android:gravity="center"/>
-
-            <View android:id="@+id/profile_category_shouts_marker"
-                  android:layout_height="5dp"
-                  android:layout_width="match_parent"
-                  android:background="@color/shoutBlue"
-                  android:layout_gravity="bottom"
-                  android:visibility="gone"/>
-
-        </FrameLayout>
-
-    </LinearLayout>
-
-    <FrameLayout android:id="@+id/profile_feed_progress_bar"
-                 android:layout_width="match_parent"
-                 android:layout_height="match_parent"
-                 android:layout_weight="1"
-                 android:visibility="gone" >
-
-        <ProgressBar android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:layout_gravity="center"/>
-
-    </FrameLayout>
-
-    <LinearLayout android:id="@+id/profile_feed_wrapper"
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/profile_map"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:layout_weight="1"
-                  android:orientation="vertical">
+                  class="com.google.android.gms.maps.MapFragment" />
 
-        <com.streetshout.android.custom.EndlessListView
-                android:id="@+id/profile_shouts_list_view"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:visibility="gone"/>
+        <com.streetshout.android.custom.ShoutViewPagerContainer android:id="@+id/profile_shout_view_pager_container"
+                                                                android:layout_width="match_parent"
+                                                                android:layout_height="220dp"
+                                                                android:layout_gravity="bottom"
+                                                                android:layout_marginBottom="10dp"
+                                                                android:gravity="center">
 
-        <com.streetshout.android.custom.EndlessListView
-                android:id="@+id/profile_activities_list_view"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:visibility="gone"/>
+            <android.support.v4.view.ViewPager
+                    android:id="@+id/profile_view_pager"
+                    android:layout_width="145dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"/>
 
-        <TextView
-                android:id="@+id/profile_activities_list_view_empty"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="@string/no_activity_in_feed"
-                android:visibility="gone"/>
+        </com.streetshout.android.custom.ShoutViewPagerContainer>
 
-        <TextView
-                android:id="@+id/profile_shouts_list_view_empty"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="@string/no_shouts_in_feed"
-                android:visibility="gone"/>
+        <TextView android:id="@+id/profile_shout_no_connection"
+                  android:text="@string/no_connection_feed"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingTop="3dp"
+                  android:paddingBottom="3dp"
+                  android:paddingLeft="8dp"
+                  android:paddingRight="8dp"
+                  android:background="@drawable/rounded_background"
+                  android:textSize="25dp"
+                  android:textColor="@color/white"
+                  android:gravity="center"
+                  android:layout_gravity="center"
+                  android:visibility="gone"/>
 
-    </LinearLayout>
+        <TextView android:id="@+id/profile_shout_no_shout"
+                  android:text="@string/empty_profile_feed"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:paddingTop="3dp"
+                  android:paddingBottom="3dp"
+                  android:paddingLeft="8dp"
+                  android:paddingRight="8dp"
+                  android:background="@drawable/rounded_background"
+                  android:textSize="25dp"
+                  android:textColor="@color/white"
+                  android:gravity="center"
+                  android:layout_gravity="center"
+                  android:visibility="gone"/>
 
-    <TextView
-            android:id="@+id/no_connection_feed"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="@string/no_connection_feed"/>
+    </FrameLayout>
 
 </LinearLayout>

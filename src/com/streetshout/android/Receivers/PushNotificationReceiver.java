@@ -37,20 +37,31 @@ public class PushNotificationReceiver extends BroadcastReceiver {
         String type = intent.getStringExtra("notif_type");
 
         if (type.equals("new_shout")) {
-            Log.d("BAB", "NEW SHOUT");
-            redirectToShout(intent.getStringExtra("shout"));
+            if (intent.hasExtra("shout_id")) {
+                redirectToShout(Integer.parseInt(intent.getStringExtra("shout_id")));
+            } else {
+                redirectToShout(intent.getStringExtra("shout"));
+            }
         } else if (type.equals("new_like")) {
-            Log.d("BAB", "NEW LIKE");
-            redirectToShout(intent.getStringExtra("shout"));
+            if (intent.hasExtra("shout_id")) {
+                redirectToShout(Integer.parseInt(intent.getStringExtra("shout_id")));
+            } else {
+                redirectToShout(intent.getStringExtra("shout"));
+            }
         } else if (type.equals("new_comment")) {
-            Log.d("BAB", "NEW COMMENT");
-            redirectToShout(intent.getStringExtra("shout"));
+            if (intent.hasExtra("shout_id")) {
+                redirectToShout(Integer.parseInt(intent.getStringExtra("shout_id")));
+            } else {
+                redirectToShout(intent.getStringExtra("shout"));
+            }
         } else if (type.equals("new_friend")) {
-            Log.d("BAB", "NEW FRIEND");
             redirectToUser(intent.getStringExtra("user_id"));
         } else if (type.equals("trending")) {
-            Log.d("BAB", "NEW USER ID");
-            redirectToShout(intent.getStringExtra("shout"));
+            if (intent.hasExtra("shout_id")) {
+                redirectToShout(Integer.parseInt(intent.getStringExtra("shout_id")));
+            } else {
+                redirectToShout(intent.getStringExtra("shout"));
+            }
         } else {
             redirectToWelcome();
         }
@@ -70,6 +81,14 @@ public class PushNotificationReceiver extends BroadcastReceiver {
         Intent start = new Intent(app, CameraActivity.class);
         start.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         start.putExtra("notificationShout", rawShout);
+        app.startActivity(start);
+    }
+
+    private void redirectToShout(int shoutId) {
+        Application app	= (Application) UAirship.shared().getApplicationContext();
+        Intent start = new Intent(app, CameraActivity.class);
+        start.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        start.putExtra("notificationShoutId", shoutId);
         app.startActivity(start);
     }
 

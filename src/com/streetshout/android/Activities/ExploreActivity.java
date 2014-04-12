@@ -51,15 +51,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
-public class ExploreActivity extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
+public class ExploreActivity extends FragmentActivity {
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
-    private AQuery aq = null;
-
     private GoogleMap mMap = null;
 
-    /** Set of shout ids to keep track of shouts already added to the map */
     private HashMap<Integer, Shout> displayedShoutModels = null;
 
     private HashMap<Integer, Marker>  displayedShoutMarkers = null;
@@ -71,12 +68,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
     private boolean notificationRedirectionHandled = false;
 
     private boolean newMap = false;
-
-    private LocationClient locationClient = null;
-
-    private LocationRequest locationRequest = null;
-
-    public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     private Shout shoutToRedirectToFromCreateOrNotif = null;
 
@@ -112,65 +103,52 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.explore);
 
-        if (shoutAreaPoints == null) {
-            setPullShoutArea();
-        }
-
-        myLikes = new TreeSet<Integer>();
-        followedByMe = new TreeSet<Integer>();
-
-        if (getIntent().hasExtra("myLocation")) {
-            myLocation = getIntent().getParcelableExtra("myLocation");
-        }
-
-        if (getIntent().hasExtra("newShout")) {
-            shoutToRedirectToFromCreateOrNotif = getIntent().getParcelableExtra("newShout");
-        }
-
-        this.aq = new AQuery(this);
-
-        locationRequest = LocationUtils.createLocationRequest(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS);
-
-        int statusCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-
-        if (statusCode == ConnectionResult.SUCCESS) {
-            locationClient = new LocationClient(this, this, this);
-        } else {
-            LocationUtils.googlePlayServicesFailure(this);
-        }
-
-        if (savedInstanceState != null) {
-            savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
-        }
-
-        mapReqHandler = new MapRequestHandler();
-
-        shoutProgressBar = (FrameLayout) findViewById(R.id.explore_shout_progress_bar);
-        shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
-        shoutViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i2) {
-
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                updateSelectedShoutMarker(shouts.get(i));
-                updateShoutCountViews(i);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });
-
-        noShoutInFeed = (TextView) findViewById(R.id.explore_shout_no_shout);
-        noConnectionInFeed = (TextView) findViewById(R.id.explore_shout_no_connection);
-
-        getMyLikesAndFollowedUsers();
-
-        newMap = setUpMapIfNeeded();
+//        if (shoutAreaPoints == null) {
+//            setPullShoutArea();
+//        }
+//
+//        myLikes = new TreeSet<Integer>();
+//        followedByMe = new TreeSet<Integer>();
+//
+//        myLocation = getIntent().getParcelableExtra("myLocation");
+//
+//        if (getIntent().hasExtra("newShout")) {
+//            shoutToRedirectToFromCreateOrNotif = getIntent().getParcelableExtra("newShout");
+//        }
+//
+//        if (savedInstanceState != null) {
+//        if (savedInstanceState != null) {
+//            savedInstanceStateCameraPosition = savedInstanceState.getParcelable("cameraPosition");
+//        }
+//
+//        mapReqHandler = new MapRequestHandler();
+//
+//        shoutProgressBar = (FrameLayout) findViewById(R.id.explore_shout_progress_bar);
+//        shoutViewPager = (ViewPager) findViewById(R.id.explore_view_pager);
+//        shoutViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int i, float v, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int i) {
+//                updateSelectedShoutMarker(shouts.get(i));
+//                updateShoutCountViews(i);
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int i) {
+//
+//            }
+//        });
+//
+//        noShoutInFeed = (TextView) findViewById(R.id.explore_shout_no_shout);
+//        noConnectionInFeed = (TextView) findViewById(R.id.explore_shout_no_connection);
+//
+//        getMyLikesAndFollowedUsers();
+//
+//        newMap = setUpMapIfNeeded();
     }
 
     private void getMyLikesAndFollowedUsers() {
@@ -299,7 +277,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         LatLngBounds bounds = new LatLngBounds(projection.fromScreenLocation(shoutAreaPoints[0]),
                                                projection.fromScreenLocation(shoutAreaPoints[1]));
 
-        mapReqHandler.addMapRequest(aq, bounds);
+//        mapReqHandler.addMapRequest(aq, bounds);
     }
 
     public void displayProfile(int userId) {
@@ -351,7 +329,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
         displayedShoutModels = new HashMap<Integer, Shout>();
         displayedShoutMarkers = new HashMap<Integer, Marker>();
         shouts = null;
-        shoutPagerAdapter = null;
+        shoutViewPager = null;
 
         updateShoutCountViews(0);
 
@@ -416,7 +394,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
         markerOptions.position(new LatLng(shout.lat, shout.lng));
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, false, followedByMe.contains(shout.userId))));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, false)));
 
         markerOptions.title(Integer.toString(shout.id));
 
@@ -440,7 +418,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
        if (shoutSelectedOnMap != null) {
            Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
            if (oldSelectedMarker != null) {
-               oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shoutSelectedOnMap, false, followedByMe.contains(shoutSelectedOnMap.userId))));
+               oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shoutSelectedOnMap, false)));
            }
        }
 
@@ -448,7 +426,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
        Marker marker = displayedShoutMarkers.get(shout.id);
 
-       marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, true, followedByMe.contains(shout.userId))));
+       marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, true)));
 
        marker.showInfoWindow();
    }
@@ -476,29 +454,29 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             count = shoutPagerAdapter.getCount();
         }
 
-        LinearLayout shoutCountContainer = (LinearLayout) findViewById(R.id.explore_shout_count_container);
+//        LinearLayout shoutCountContainer = (LinearLayout) findViewById(R.id.explore_shout_count_container);
 
-        shoutCountContainer.removeAllViews();
-
-        for (int i = 0 ; i < Math.min(MAX_COUNT_VIEWS, count) ; i++) {
-
-            View shoutCountView = new View(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(15, 15);
-
-            if (i != 0) {
-                params.setMargins(15, 0, 0, 0);
-            }
-
-            shoutCountView.setLayoutParams(params);
-
-            if (i == selected) {
-                shoutCountView.setBackgroundColor(getResources().getColor(R.color.shoutBlue));
-            } else {
-                shoutCountView.setBackgroundColor(getResources().getColor(R.color.semiTransparentBlack));
-            }
-
-            shoutCountContainer.addView(shoutCountView);
-        }
+//        shoutCountContainer.removeAllViews();
+//
+//        for (int i = 0 ; i < Math.min(MAX_COUNT_VIEWS, count) ; i++) {
+//
+//            View shoutCountView = new View(this);
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(15, 15);
+//
+//            if (i != 0) {
+//                params.setMargins(15, 0, 0, 0);
+//            }
+//
+//            shoutCountView.setLayoutParams(params);
+//
+//            if (i == selected) {
+//                shoutCountView.setBackgroundColor(getResources().getColor(R.color.shoutBlue));
+//            } else {
+//                shoutCountView.setBackgroundColor(getResources().getColor(R.color.semiTransparentBlack));
+//            }
+//
+//            shoutCountContainer.addView(shoutCountView);
+//        }
     }
 
     /**
@@ -517,8 +495,7 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
             UiSettings settings = mMap.getUiSettings();
             settings.setZoomControlsEnabled(false);
             settings.setMyLocationButtonEnabled(false);
-            settings.setRotateGesturesEnabled(false);
-            settings.setTiltGesturesEnabled(false);
+            settings.setAllGesturesEnabled(false);
             mMap.setMyLocationEnabled(true);
 
             //Pull shouts on the map
@@ -547,23 +524,23 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
                 }
             });
 
-            findViewById(R.id.explore_my_location_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (myLocation != null) {
-                        CameraUpdate update;
-                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_MY_LOCATION_BUTTON) {
-                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_MY_LOCATION_BUTTON);
-                        } else {
-                            update = CameraUpdateFactory.newLatLng(LocationUtils.toLatLng(myLocation));
-                        }
-                        mMap.animateCamera(update);
-                    } else {
-                        Toast toast = Toast.makeText(ExploreActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
-            });
+//            findViewById(R.id.explore_my_location_button).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (myLocation != null) {
+//                        CameraUpdate update;
+//                        if (mMap.getCameraPosition().zoom < Constants.CLICK_ON_MY_LOCATION_BUTTON) {
+//                            update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.CLICK_ON_MY_LOCATION_BUTTON);
+//                        } else {
+//                            update = CameraUpdateFactory.newLatLng(LocationUtils.toLatLng(myLocation));
+//                        }
+//                        mMap.animateCamera(update);
+//                    } else {
+//                        Toast toast = Toast.makeText(ExploreActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
+//                        toast.show();
+//                    }
+//                }
+//            });
 
             return true;
         }
@@ -619,101 +596,6 @@ public class ExploreActivity extends FragmentActivity implements GooglePlayServi
 
         if (requestCode == Constants.PROFILE_REQUEST) {
             getMyLikesAndFollowedUsers();
-        }
-    }
-
-    /**
-     *  Location-related methods
-     */
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Connect the client.
-        if (locationClient != null) {
-            locationClient.connect();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        // Disconnecting the client invalidates it.
-        if (locationClient != null) {
-            if (locationClient.isConnected()) {
-                locationClient.removeLocationUpdates(this);
-            }
-
-            locationClient.disconnect();
-        }
-
-        super.onStop();
-    }
-
-    /*
-     * Called by Location Services when the request to connect the
-     * client finishes successfully. At this point, you can
-     * request the current location or start periodic updates
-     */
-    @Override
-    public void onConnected(Bundle dataBundle) {
-        Location lastLocation = locationClient.getLastLocation();
-
-        if (lastLocation != null) {
-            myLocation = lastLocation;
-        }
-
-        // Display the connection status
-        locationClient.requestLocationUpdates(locationRequest, this);
-    }
-
-    /*
-     * Called by Location Services if the connection to the
-     * location client drops because of an error.
-     */
-    @Override
-    public void onDisconnected() {
-    }
-
-    /*
-     * Called by Location Services if the attempt to
-     * Location Services fails.
-     */
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        /*
-         * Google Play services can resolve some errors it detects.
-         * If the error has a resolution, try sending an Intent to
-         * start a Google Play services activity that can resolve
-         * error.
-         */
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-                /*
-                 * Thrown if Google Play services canceled the original
-                 * PendingIntent
-                 */
-            } catch (IntentSender.SendIntentException e) {
-                // Log the error
-                e.printStackTrace();
-            }
-        } else {
-            /*
-             * If no resolution is available, display a dialog to the
-             * user with the error.
-             */
-            LocationUtils.googlePlayServicesFailure(this);
-        }
-    }
-
-    // Define the callback method that receives location updates
-    @Override
-    public void onLocationChanged(Location location) {
-        // Report to the UI that the location was updated
-        if (location != null) {
-            myLocation = location;
         }
     }
 }

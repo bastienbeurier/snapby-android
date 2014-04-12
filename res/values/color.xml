@@ -9,6 +9,7 @@
     <color name="veryLightShoutBlue">#227A9ED3</color>
     <color name="lightShoutBlue">#447A9ED3</color>
     <color name="transparentShoutBlue">#667A9ED3</color>
+    <color name="lessTransparentShoutBlue">#AA7A9ED3</color>
     <color name="shoutPink">#FD6E8A</color>
     <color name="shoutLightPink">#FFC2CE</color>
     <color name="shoutRed">#A2122F</color>

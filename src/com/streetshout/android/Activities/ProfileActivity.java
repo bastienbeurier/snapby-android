@@ -39,50 +39,22 @@ import java.util.ArrayList;
 /**
  * Created by bastien on 3/10/14.
  */
-public class ProfileActivity extends Activity implements EndlessListView.EndlessListener {
-
-    private int ITEM_PER_REQUEST = 20;
-    private int expiredShoutsPage = 1;
-    private int activitiesPage = 1;
+public class ProfileActivity extends Activity {
 
     private User user = null;
     private int userId = 0;
 
     private ImageView profilePicture = null;
     private TextView username = null;
-    private TextView followerCountView = null;
-    private TextView followingCountView = null;
-    private LinearLayout followersButton = null;
-    private LinearLayout followingButton = null;
-    private LinearLayout shoutCountButton = null;
     private FrameLayout profilePictureContainer = null;
-    private Location myLocation = null;
-    private int followerCount = 0;
-    private int followingCount = 0;
-    private boolean following = false;
-    private FrameLayout findFollowButton = null;
-    private TextView findFollowLabel = null;
     private TextView shoutCountView = null;
     private boolean imageLoaded = false;
     public ProgressDialog progressDialog = null;
-    private View progressBarWrapper = null;
-
-    private View feedWrapperView = null;
-
-    private View categoryActivityContainer = null;
-    private View categoryShoutsContainer = null;
-    private View categoryActivityMarker = null;
-    private View categoryShoutsMarker = null;
 
     private boolean myProfileOptionsEnabled = false;
 
     private ActivitiesAdapter activitiesAdapter = null;
     private ExpiredShoutsAdapter expiredShoutsAdapter = null;
-
-    private EndlessListView shoutsListView = null;
-    private EndlessListView activitiesListView = null;
-    private View shoutsListViewEmpty = null;
-    private View activitiesListViewEmpty = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,23 +65,8 @@ public class ProfileActivity extends Activity implements EndlessListView.Endless
 
         profilePicture = (ImageView) findViewById(R.id.profile_user_picture);
         username = (TextView) findViewById(R.id.profile_username);
-        followerCountView = (TextView) findViewById(R.id.profile_follower_count);
-        followingCountView = (TextView) findViewById(R.id.profile_following_count);
-        followersButton = (LinearLayout) findViewById(R.id.profile_followers_button);
-        followingButton = (LinearLayout) findViewById(R.id.profile_following_button);
         profilePictureContainer = (FrameLayout) findViewById(R.id.profile_profile_picture_container);
-        findFollowButton = (FrameLayout) findViewById(R.id.profile_find_follow_button);
-        findFollowLabel = (TextView) findViewById(R.id.profile_find_follow_label);
         shoutCountView = (TextView) findViewById(R.id.profile_shout_count);
-        shoutCountButton = (LinearLayout) findViewById(R.id.profile_shouts_button);
-
-        categoryActivityContainer = findViewById(R.id.profile_category_activity_title_container);
-        categoryShoutsContainer = findViewById(R.id.profile_category_shouts_title_container);
-        categoryActivityMarker = findViewById(R.id.profile_category_activity_marker);
-        categoryShoutsMarker = findViewById(R.id.profile_category_shouts_marker);
-
-        progressBarWrapper = findViewById(R.id.profile_feed_progress_bar);
-        feedWrapperView = findViewById(R.id.profile_feed_wrapper);
 
         //Admin capability
         if (Constants.ADMIN) {
@@ -140,44 +97,9 @@ public class ProfileActivity extends Activity implements EndlessListView.Endless
             userId = getIntent().getIntExtra("userId", 0);
         //My profile
         } else {
-            //For suggested friends distance
-            if (getIntent().hasExtra("myLocation")) {
-                myLocation = getIntent().getParcelableExtra("myLocation");
-            }
-
             userId = SessionUtils.getCurrentUser(this).id;
             myProfileOptionsEnabled = true;
         }
-
-        followersButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent followers = new Intent(ProfileActivity.this, FollowerActivity.class);
-
-                if (userId != SessionUtils.getCurrentUser(ProfileActivity.this).id) {
-                    followers.putExtra("userId", userId);
-                }
-
-                followers.putExtra("adapterType", "followers");
-
-                startActivityForResult(followers, Constants.FOLLOWERS_REQUEST);
-            }
-        });
-
-        followingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent following = new Intent(ProfileActivity.this, FollowerActivity.class);
-
-                if (userId != SessionUtils.getCurrentUser(ProfileActivity.this).id) {
-                    following.putExtra("userId", userId);
-                }
-
-                following.putExtra("adapterType", "following");
-
-                startActivityForResult(following, Constants.FOLLOWERS_REQUEST);
-            }
-        });
 
         if (userId == SessionUtils.getCurrentUser(this).id) {
 
@@ -190,105 +112,10 @@ public class ProfileActivity extends Activity implements EndlessListView.Endless
                         startActivityForResult(settings, Constants.SETTINGS_REQUEST);
                     }
                 });
-            } else {
-                findFollowButton.setVisibility(View.GONE);
             }
-
-            findFollowButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent suggestedUsers = new Intent(ProfileActivity.this, FollowerActivity.class);
-
-                    if (myLocation != null) {
-                        suggestedUsers.putExtra("myLocation", myLocation);
-                    }
-
-                    startActivityForResult(suggestedUsers, Constants.FOLLOWERS_REQUEST);
-                }
-            });
-        } else {
-            //updateUI
-            findFollowButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    toggleFollow();
-                }
-            });
-        }
-
-        //Don't tap before loading
-        findFollowButton.setEnabled(false);
-        followersButton.setEnabled(false);
-        followingButton.setEnabled(false);
-
-        shoutsListView = (EndlessListView) findViewById(R.id.profile_shouts_list_view);
-        shoutsListView.type = "shouts";
-        activitiesListView = (EndlessListView) findViewById(R.id.profile_activities_list_view);
-        activitiesListView.type = "activity";
-
-        activitiesListViewEmpty = findViewById(R.id.profile_activities_list_view_empty);
-        shoutsListViewEmpty = findViewById(R.id.profile_shouts_list_view_empty);
-
-        shoutsListView.setDivider(null);
-        activitiesListView.setDivider(null);
-
-        if (myProfileOptionsEnabled) {
-            categoryActivityContainer.setVisibility(View.VISIBLE);
-
-            categoryActivityContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setActivitiesAdapter();
-                    updateTitlesUI("activity");
-                }
-            });
-
-            View.OnClickListener displayShoutsListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setExpiredShoutsAdapter();
-                    updateTitlesUI("shouts");
-                }
-            };
-
-            categoryShoutsContainer.setOnClickListener(displayShoutsListener);
-            shoutCountButton.setOnClickListener(displayShoutsListener);
-
-            setActivitiesAdapter();
-            updateTitlesUI("activity");
-        } else {
-            setExpiredShoutsAdapter();
         }
 
         progressDialog = ProgressDialog.show(this, "", getString(R.string.loading), false);
-    }
-
-    private void toggleFollow() {
-        if (following) {
-            ApiUtils.unfollowUser(this, userId, new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-
-                    getUserInfo(userId);
-                }
-            });
-
-            following = !following;
-            updateUI(false);
-        } else {
-            ApiUtils.followUser(this, userId, new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-
-                    getUserInfo(userId);
-                }
-            });
-
-            following = !following;
-            updateUI(false);
-        }
     }
 
     protected void onResume() {
@@ -317,10 +144,6 @@ public class ProfileActivity extends Activity implements EndlessListView.Endless
 
                         rawUser = result.getJSONObject("user");
 
-                        followerCount = Integer.parseInt(result.getString("followers_count"));
-                        followingCount = Integer.parseInt(result.getString("followed_count"));
-                        following = Boolean.parseBoolean(result.getString("is_followed"));
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -339,33 +162,14 @@ public class ProfileActivity extends Activity implements EndlessListView.Endless
     }
 
     private void updateUI(boolean reloadPicture) {
-        followerCountView.setText("" + followerCount);
-        followingCountView.setText("" + followingCount);
         shoutCountView.setText("" + user.shoutCount);
 
-        if (userId == SessionUtils.getCurrentUser(this).id) {
-            findFollowLabel.setText(getString(R.string.find_friends));
-            ImageUtils.setBackground(this, findFollowButton, R.drawable.follow_button);
-        } else {
-            if (following) {
-                findFollowLabel.setText(this.getResources().getString(R.string.following_cap));
-
-                ImageUtils.setBackground(this, findFollowButton, R.drawable.following_button);
-            } else {
-                findFollowLabel.setText(this.getResources().getString(R.string.follow_cap));
-                ImageUtils.setBackground(this, findFollowButton, R.drawable.follow_button);
-            }
-        }
 
         if (reloadPicture) {
             GeneralUtils.getAquery(ProfileActivity.this).id(profilePicture).image(GeneralUtils.getProfileBigPicturePrefix() + user.id, false, false, 0, 0, null, AQuery.FADE_IN);
         }
 
         username.setText("@" + user.username);
-
-        findFollowButton.setEnabled(true);
-        followersButton.setEnabled(true);
-        followingButton.setEnabled(true);
     }
 
     @Override
@@ -403,233 +207,7 @@ public class ProfileActivity extends Activity implements EndlessListView.Endless
         }
     }
 
-    private void showNoConnectionInFeedMessage() {
-        hideFeedProgressBar();
-        findViewById(R.id.profile_feed_progress_bar).setVisibility(View.GONE);
-        findViewById(R.id.no_connection_feed).setVisibility(View.VISIBLE);
-        findViewById(R.id.profile_feed_wrapper).setVisibility(View.GONE);
-    }
 
-    public void showFeedProgressBar() {
-        progressBarWrapper.setVisibility(View.VISIBLE);
-        feedWrapperView.setVisibility(View.GONE);
-    }
 
-    public void hideFeedProgressBar() {
-        progressBarWrapper.setVisibility(View.GONE);
-        feedWrapperView.setVisibility(View.VISIBLE);
-    }
 
-    private void setExpiredShoutsAdapter() {
-        shoutsListView.setVisibility(View.VISIBLE);
-        activitiesListView.setVisibility(View.GONE);
-
-        shoutsListViewEmpty.setVisibility(View.GONE);
-        activitiesListViewEmpty.setVisibility(View.GONE);
-
-        if (expiredShoutsAdapter != null) {
-            shoutsListView.setAdapter(expiredShoutsAdapter);
-
-            if (shoutsListView.getAdapter().getCount() == 0) {
-                shoutsListView.setVisibility(View.GONE);
-                shoutsListViewEmpty.setVisibility(View.VISIBLE);
-            }
-
-            return;
-        }
-
-        showFeedProgressBar();
-
-        ApiUtils.getShouts(this, userId, expiredShoutsPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                super.callback(url, object, status);
-
-                if (status.getError() == null && object != null) {
-                    JSONArray rawShouts = null;
-
-                    try {
-                        JSONObject result = object.getJSONObject("result");
-                        rawShouts = result.getJSONArray("shouts");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (rawShouts != null && rawShouts.length() > 0) {
-                        ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
-                        hideFeedProgressBar();
-                        expiredShoutsPage++;
-                        expiredShoutsAdapter = new ExpiredShoutsAdapter(ProfileActivity.this, shouts);
-                        shoutsListView.setAdapter(expiredShoutsAdapter);
-                        shoutsListView.setLoadingView(R.layout.loading);
-                        shoutsListView.setListener(ProfileActivity.this);
-                    } else {
-                        hideFeedProgressBar();
-                        shoutsListView.setVisibility(View.GONE);
-                        shoutsListViewEmpty.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    showNoConnectionInFeedMessage();
-                }
-            }
-        });
-    }
-
-    private void setActivitiesAdapter() {
-        shoutsListView.setVisibility(View.GONE);
-        activitiesListView.setVisibility(View.VISIBLE);
-
-        shoutsListViewEmpty.setVisibility(View.GONE);
-        activitiesListViewEmpty.setVisibility(View.GONE);
-
-        if (activitiesAdapter != null) {
-            activitiesListView.setAdapter(activitiesAdapter);
-
-            if (activitiesListView.getAdapter().getCount() == 0) {
-                activitiesListView.setVisibility(View.GONE);
-                activitiesListViewEmpty.setVisibility(View.VISIBLE);
-            }
-            return;
-        }
-
-        showFeedProgressBar();
-
-        ApiUtils.getActivities(this, activitiesPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                super.callback(url, object, status);
-
-                if (status.getError() == null && object != null) {
-                    JSONArray rawActivities = null;
-
-                    try {
-                        JSONObject result = object.getJSONObject("result");
-                        rawActivities = result.getJSONArray("activities");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (rawActivities != null && rawActivities.length() > 0) {
-                        ArrayList<UserActivity> userActivities = UserActivity.rawUserActivitiesToInstances(rawActivities);
-                        hideFeedProgressBar();
-                        activitiesPage++;
-                        activitiesAdapter = new ActivitiesAdapter(ProfileActivity.this, userActivities);
-                        activitiesListView.setAdapter(activitiesAdapter);
-                        activitiesListView.setLoadingView(R.layout.loading);
-                        activitiesListView.setListener(ProfileActivity.this);
-                    } else {
-                        hideFeedProgressBar();
-                        activitiesListView.setVisibility(View.GONE);
-                        activitiesListViewEmpty.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    showNoConnectionInFeedMessage();
-                }
-            }
-        });
-
-    }
-
-    private void updateTitlesUI(String type) {
-        if (type.equals("activity")) {
-            categoryActivityContainer.setBackgroundColor(getResources().getColor(R.color.veryLightShoutBlue));
-            categoryActivityMarker.setVisibility(View.VISIBLE);
-
-            categoryShoutsContainer.setBackgroundColor(getResources().getColor(R.color.veryVeryLightGrey));
-            categoryShoutsMarker.setVisibility(View.GONE);
-        } else {
-            categoryShoutsContainer.setBackgroundColor(getResources().getColor(R.color.veryLightShoutBlue));
-            categoryShoutsMarker.setVisibility(View.VISIBLE);
-
-            categoryActivityContainer.setBackgroundColor(getResources().getColor(R.color.veryVeryLightGrey));
-            categoryActivityMarker.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void loadData(String type) {
-        if (type.equals("activity")) {
-            ApiUtils.getActivities(this, activitiesPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-
-                    if (status.getError() == null && object != null) {
-                        JSONArray rawActivities = null;
-
-                        try {
-                            JSONObject result = object.getJSONObject("result");
-                            rawActivities = result.getJSONArray("activities");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (rawActivities != null && rawActivities.length() > 0) {
-                            ArrayList<UserActivity> userActivities = UserActivity.rawUserActivitiesToInstances(rawActivities);
-                            addNewActivities(userActivities);
-                        } else {
-                            activitiesListView.newDataAdded();
-                            activitiesListView.setListener(null);
-                        }
-                    } else {
-                        showNoConnectionInFeedMessage();
-                    }
-                }
-            });
-        } else {
-            ApiUtils.getShouts(this, userId, expiredShoutsPage, ITEM_PER_REQUEST, new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-
-                    if (status.getError() == null && object != null) {
-                        JSONArray rawShouts = null;
-
-                        try {
-                            JSONObject result = object.getJSONObject("result");
-                            rawShouts = result.getJSONArray("shouts");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (rawShouts != null && rawShouts.length() > 0) {
-                            ArrayList<Shout> shouts = Shout.rawShoutsToInstances(rawShouts);
-                            addNewExpiredShouts(shouts);
-                        } else {
-                            shoutsListView.newDataAdded();
-                            shoutsListView.setListener(null);
-                        }
-                    } else {
-                        showNoConnectionInFeedMessage();
-                    }
-                }
-            });
-        }
-    }
-
-    public void addNewExpiredShouts(ArrayList<Shout> newShouts) {
-        shoutsListView.newDataAdded();
-
-        int newShoutsCount = newShouts.size();
-        for (int i = 0; i < newShoutsCount; i++) {
-            expiredShoutsAdapter.items.add(newShouts.get(i));
-        }
-
-        expiredShoutsAdapter.notifyDataSetChanged();
-
-        expiredShoutsPage++;
-    }
-
-    public void addNewActivities(ArrayList<UserActivity> newUserActivities) {
-        activitiesListView.newDataAdded();
-
-        int newActivitiesCount = newUserActivities.size();
-        for (int i = 0; i < newActivitiesCount; i++) {
-            activitiesAdapter.items.add(newUserActivities.get(i));
-        }
-
-        activitiesAdapter.notifyDataSetChanged();
-
-        activitiesPage++;
-    }
 }

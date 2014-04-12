@@ -89,14 +89,6 @@ public class Shout implements Parcelable {
                 shout.commentCount = Integer.parseInt(rawShout.getString("comment_count"));
                 shout.image = shout.image.equals("null") ? "" : "http://" + shout.image;
 
-                if (TimeUtils.shoutExpired(shout.created)) {
-                    if (shout.description.length() == 0) {
-                        shout.description = "(expired)";
-                    } else {
-                        shout.description += " (expired)";
-                    }
-                    shout.expired = true;
-                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -1,29 +1,23 @@
-package com.streetshout.android.activities;
+package com.streetshout.android.Fragments;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.hardware.Camera;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v4.app.Fragment;
 import android.util.Base64;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,13 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.streetshout.android.R;
+import com.streetshout.android.activities.MainActivity;
+import com.streetshout.android.activities.RefineLocationActivity;
 import com.streetshout.android.custom.CameraPreview;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.ApiUtils;
@@ -45,13 +35,11 @@ import com.streetshout.android.utils.AppPreferences;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.ImageUtils;
-import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.StreetShoutApplication;
 import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -60,13 +48,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
- * Created by bastien on 2/24/14.
+ * Created by bastien on 4/11/14.
  */
-public class CameraActivity extends Activity {
+public class CameraFragment extends Fragment {
+
     private Camera mCamera = null;
 
     private CameraPreview mPreview = null;
@@ -85,23 +73,17 @@ public class CameraActivity extends Activity {
 
     private FrameLayout cameraBottomBar = null;
 
-    //Create shout variables
-
     private Location shoutLocation = null;
 
     private boolean shoutLocationRefined = false;
 
     private ProgressDialog createShoutDialog;
 
-    private EditText descriptionView = null;
-
     private ImageView sendButton = null;
 
     private ImageView refineButton = null;
 
     private ImageView anonymousButton = null;
-
-    private TextView descriptionCharCount = null;
 
     private LinearLayout createBottomBar = null;
 
@@ -112,10 +94,6 @@ public class CameraActivity extends Activity {
     private boolean anonymousUser = false;
 
     private Bitmap formattedPicture = null;
-
-    private ViewTreeObserver.OnGlobalLayoutListener layoutListener = null;
-
-    private View root = null;
 
     private boolean creationMode = false;
 
@@ -129,31 +107,27 @@ public class CameraActivity extends Activity {
 
     private TextView localShoutsCount = null;
 
-    /*
-     * Define a request code to send to Google Play services
-     * This code is returned in Activity.onActivityResult
-     */
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.camera);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.camera, container, false);
 
-        exploreButton = (ImageView) findViewById(R.id.camera_explore_button);
-        profileButton = (ImageView) findViewById(R.id.camera_profile_button);
-        cameraBottomBar = (FrameLayout) findViewById(R.id.camera_bottom_bar);
-        createBottomBar = (LinearLayout) findViewById(R.id.create_bottom_bar);
-        cancelButton = (ImageView) findViewById(R.id.create_cancel_button);
-        sendButton = (ImageView) findViewById(R.id.create_send_button);
-        refineButton = (ImageView) findViewById(R.id.create_refine_button);
-        anonymousButton = (ImageView) findViewById(R.id.create_mask_button);
-        shoutImageView = (ImageView) findViewById(R.id.create_shout_image);
-        activitiesUnreadCount = (TextView) findViewById(R.id.camera_unread_count);
-        activitiesUnreadCountContainer = (FrameLayout) findViewById(R.id.camera_unread_count_container);
-        localShoutsCount = (TextView) findViewById(R.id.camera_explore_local_shouts_count);
+        exploreButton = (ImageView) rootView.findViewById(R.id.camera_explore_button);
+        profileButton = (ImageView) rootView.findViewById(R.id.camera_profile_button);
+        cameraBottomBar = (FrameLayout) rootView.findViewById(R.id.camera_bottom_bar);
+        createBottomBar = (LinearLayout) rootView.findViewById(R.id.create_bottom_bar);
+        cancelButton = (ImageView) rootView.findViewById(R.id.create_cancel_button);
+        sendButton = (ImageView) rootView.findViewById(R.id.create_send_button);
+        refineButton = (ImageView) rootView.findViewById(R.id.create_refine_button);
+        anonymousButton = (ImageView) rootView.findViewById(R.id.create_mask_button);
+        shoutImageView = (ImageView) rootView.findViewById(R.id.create_shout_image);
+        activitiesUnreadCount = (TextView) rootView.findViewById(R.id.camera_unread_count);
+        activitiesUnreadCountContainer = (FrameLayout) rootView.findViewById(R.id.camera_unread_count_container);
+        localShoutsCount = (TextView) rootView.findViewById(R.id.camera_explore_local_shouts_count);
 
-        appPrefs = ((StreetShoutApplication) this.getApplicationContext()).getAppPrefs();
+        appPrefs = ((StreetShoutApplication) getActivity().getApplicationContext()).getAppPrefs();
 
         //Front camera button
-        ImageView flipCameraView = (ImageView) findViewById(R.id.camera_flip_button);
+        ImageView flipCameraView = (ImageView) rootView.findViewById(R.id.camera_flip_button);
         if (Camera.getNumberOfCameras() > 1 ) {
             flipCameraView.setVisibility(View.VISIBLE);
 
@@ -174,71 +148,35 @@ public class CameraActivity extends Activity {
         exploreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Redo explore
-
-//                if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
-//                    Intent exploreIntent = new Intent(CameraActivity.this, ExploreActivity.class);
-//                    exploreIntent.putExtra("myLocation", myLocation);
-//                    startActivityForResult(exploreIntent, Constants.EXPLORE_REQUEST);
-//                } else {
-//                    Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.waiting_for_location), Toast.LENGTH_LONG);
-//                    toast.show();
-//                }
+                ((MainActivity) getActivity()).mainViewPager.setCurrentItem(0);
             }
         });
 
-        profileButton = (ImageView) findViewById(R.id.camera_profile_button);
+        profileButton = (ImageView) rootView.findViewById(R.id.camera_profile_button);
 
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Redo profile
-
-//                Intent profile = new Intent(CameraActivity.this, ProfileActivity.class);
-//
-//                if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
-//                    profile.putExtra("myLocation", myLocation);
-//                }
-//
-//                startActivityForResult(profile, Constants.PROFILE_REQUEST);
+                ((MainActivity) getActivity()).mainViewPager.setCurrentItem(2);
             }
         });
 
-        preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview = (FrameLayout) rootView.findViewById(R.id.camera_preview);
 
-        Button captureButton = (Button) findViewById(R.id.capture_button);
+        Button captureButton = (Button) rootView.findViewById(R.id.capture_button);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Redo capture
-
-//                        if (myLocation != null && myLocation.getLongitude() != 0 && myLocation.getLatitude() != 0 && mCamera != null) {
-//                            // get an image from the camera
-//                            mCamera.takePicture(null, null, mPicture);
-//                        } else if (mCamera == null) {
-//                            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_camera), Toast.LENGTH_SHORT);
-//                            toast.show();
-//                        } else {
-//                            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_location), Toast.LENGTH_LONG);
-//                            toast.show();
-//                        }
+                        mCamera.takePicture(null, null, mPicture);
                     }
                 }
         );
 
-        //Hack so that the window doesn't resize when descriptionView is clicked
-        descriptionView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                descriptionView.setVisibility(View.GONE);
-            }
-        });
-
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateShoutInfo();
+                createShout();
             }
         });
 
@@ -263,92 +201,19 @@ public class CameraActivity extends Activity {
 
                 if (anonymousUser) {
                     anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button_pressed));
-                    Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getActivity(), getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
                     anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button));
-                    Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.anonymous_mode_disabled), Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getActivity(), getString(R.string.anonymous_mode_disabled), Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }
         });
 
-        descriptionView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+        setUpCamera(0);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                descriptionView.setError(null);
-                descriptionCharCount.setText(String.format("%d", Constants.MAX_DESCRIPTION_LENGTH - s.length()));
-            }
-        });
-
-        root = findViewById(R.id.camera_activity_frame);
-
-        layoutListener = new ViewTreeObserver.OnGlobalLayoutListener(){
-            public void onGlobalLayout(){
-                Rect r = new Rect();
-                root.getWindowVisibleDisplayFrame(r);
-
-                int windowHeight = root.getRootView().getHeight();
-                int heightDiff = windowHeight - (r.bottom - r.top);
-
-                createBottomBar.setY(windowHeight - heightDiff - createBottomBar.getHeight());
-
-                if (heightDiff > 150) {
-                    descriptionView.setVisibility(View.VISIBLE);
-                }
-            }
-        };
-
-        if (getIntent().hasExtra("notificationShoutId")) {
-            final ProgressDialog progressDialog = ProgressDialog.show(this, "", getString(R.string.loading), false);
-
-            ApiUtils.getShout(GeneralUtils.getAquery(this), getIntent().getIntExtra("notificationShoutId", 0), new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-
-                    if (status.getError() == null && object != null) {
-
-                        Shout shout = null;
-
-                        try {
-                            JSONObject result = object.getJSONObject("result");
-                            JSONObject rawShout = result.getJSONObject("shout");
-                            shout = Shout.rawShoutToInstance(rawShout);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        Intent displayShout = new Intent(CameraActivity.this, DisplayActivity.class);
-                        displayShout.putExtra("shout", shout);
-                        displayShout.putExtra("expiredShout", true);
-
-                        CameraActivity.this.startActivityForResult(displayShout, Constants.DISPLAY_SHOUT_REQUEST);
-                    } else {
-                        Toast toast = Toast.makeText(CameraActivity.this, CameraActivity.this.getString(R.string.failed_to_retrieve_shout), Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-
-                    progressDialog.cancel();
-                }
-            });
-        } else if (getIntent().hasExtra("notificationShout")) {
-            Intent explore = new Intent(this, ExploreActivity.class);
-            explore.putExtra("notificationShout", getIntent().getStringExtra("notificationShout"));
-            startActivityForResult(explore, Constants.EXPLORE_REQUEST);
-        }  else if (getIntent().hasExtra("notificationUser")) {
-            Intent profile = new Intent(this, ProfileActivity.class);
-            profile.putExtra("userId", Integer.parseInt(getIntent().getStringExtra("notificationUser")));
-            startActivityForResult(profile, Constants.PROFILE_REQUEST);
-        }
+        return rootView;
     }
 
     private void setUpCamera(int cameraId) {
@@ -358,7 +223,7 @@ public class CameraActivity extends Activity {
         mCamera = getCameraInstance(cameraId);
 
         if (mCamera == null) {
-            Toast toast = Toast.makeText(this, getString(R.string.no_camera), Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.no_camera), Toast.LENGTH_SHORT);
             toast.show();
 
             return;
@@ -392,7 +257,7 @@ public class CameraActivity extends Activity {
         float previewRatio = ((float) previewWidth)/previewHeight;
 
         //Get size information on window
-        Display display = getWindowManager().getDefaultDisplay();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
 
@@ -401,7 +266,7 @@ public class CameraActivity extends Activity {
         float screenRatio = ((float) screenWidth)/screenHeight;
 
         //Create Preview view
-        mPreview = new CameraPreview(this, mCamera);
+        mPreview = new CameraPreview(getActivity(), mCamera);
         ViewGroup.LayoutParams params = null;
 
         //Set preview size so it doesn't strech (equivalent of a center crop)
@@ -425,7 +290,7 @@ public class CameraActivity extends Activity {
         try {
             c = Camera.open(cameraId); // attempt to get a Camera instance
         } catch (Exception e) {
-            Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.no_camera_avaiable), Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.no_camera_avaiable), Toast.LENGTH_LONG);
             toast.show();
         }
 
@@ -514,7 +379,7 @@ public class CameraActivity extends Activity {
         File f = new File(imagePath);
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
+        getActivity().sendBroadcast(mediaScanIntent);
     }
 
     /** Create a File for saving an image or video */
@@ -546,111 +411,32 @@ public class CameraActivity extends Activity {
         return mediaFile;
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (!creationMode) {
-            releaseCamera();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        displayUnreadActivitiesCount(appPrefs);
-
-        if (!creationMode) {
-            if (frontCamera) {
-                setUpCamera(0);
-            } else {
-                setUpCamera(1);
-            }
-        }
-    }
-
-    private void releaseCamera(){
-        if (mCamera != null){
-            mCamera.release();
-            mCamera = null;
-        }
-    }
-
     private void pictureFailed() {
-        Toast toast = Toast.makeText(CameraActivity.this, getString(R.string.picture_failed), Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getActivity(), getString(R.string.picture_failed), Toast.LENGTH_LONG);
         toast.show();
     }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == Constants.REFINE_LOCATION_ACTIVITY_REQUEST) {
-//            if (resultCode == RESULT_OK) {
-//                shoutLocation = data.getParcelableExtra("accurateShoutLocation");
-//                shoutLocationRefined = true;
-//            }
-//        }
-//
-//        if (requestCode == Constants.PROFILE_REQUEST) {
-//            activitiesUnreadCount.setVisibility(View.GONE);
-//            activitiesUnreadCountContainer.setVisibility(View.GONE);
-//            appPrefs.setLastActivitiesRead();
-//
-//            if (resultCode == RESULT_OK) {
-//                if (data.hasExtra("notificationShout")) {
-//                    Intent redirectToShout = new Intent(CameraActivity.this, ExploreActivity.class);
-//                    redirectToShout.putExtra("newShout", data.getParcelableExtra("notificationShout"));
-//                    if (myLocation != null & myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
-//                        redirectToShout.putExtra("myLocation", myLocation);
-//                    }
-//                    startActivityForResult(redirectToShout, Constants.EXPLORE_REQUEST);
-//                }
-//            }
-//        }
-    }
-
-
-
-    /**
-     *  Creation-related methods
-     */
 
     private void startCreationMode() {
         creationMode = true;
 
         shoutImageView.setImageBitmap(formattedPicture);
+        preview.setVisibility(View.GONE);
         shoutImageView.setVisibility(View.VISIBLE);
-
-        releaseCamera();
 
         exploreButton.setVisibility(View.GONE);
         profileButton.setVisibility(View.GONE);
         cameraBottomBar.setVisibility(View.GONE);
         createBottomBar.setVisibility(View.VISIBLE);
         cancelButton.setVisibility(View.VISIBLE);
-
-        root.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
     }
 
     private void quitCreationMode() {
         creationMode = false;
 
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            root.getViewTreeObserver().removeGlobalOnLayoutListener(layoutListener);
-        } else {
-            root.getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
-        }
-
-        if (frontCamera) {
-            setUpCamera(0);
-        } else {
-            setUpCamera(1);
-        }
-
         shoutImageView.setVisibility(View.GONE);
 
         shoutLocationRefined = false;
         shoutLocation = null;
-        descriptionView.setText(null);
         anonymousUser = false;
 
         anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button));
@@ -660,10 +446,17 @@ public class CameraActivity extends Activity {
         exploreButton.setVisibility(View.VISIBLE);
         profileButton.setVisibility(View.VISIBLE);
         cameraBottomBar.setVisibility(View.VISIBLE);
+        preview.setVisibility(View.VISIBLE);
+
+        if (frontCamera) {
+            setUpCamera(0);
+        } else {
+            setUpCamera(1);
+        }
     }
 
     public void refineShoutLocation() {
-        Intent refineIntent = new Intent(this, RefineLocationActivity.class);
+        Intent refineIntent = new Intent(getActivity(), RefineLocationActivity.class);
 
         if (shoutLocationRefined) {
             refineIntent.putExtra("shoutRefinedLocation", shoutLocation);
@@ -674,36 +467,28 @@ public class CameraActivity extends Activity {
         startActivityForResult(refineIntent, Constants.REFINE_LOCATION_ACTIVITY_REQUEST);
     }
 
-    public void validateShoutInfo() {
-        if (SessionUtils.getCurrentUser(this).isBlackListed) {
-            Toast toast = Toast.makeText(this, getString(R.string.user_blacklisted), Toast.LENGTH_SHORT);
-            toast.show();
-
-            return;
-        }
-
-        boolean errors = false;
-
-        descriptionView.setError(null);
-
-        if (descriptionView.getText().toString().length() > Constants.MAX_DESCRIPTION_LENGTH) {
-            descriptionView.setError(getString(R.string.description_too_long));
-            errors = true;
-        }
-
-        if (!errors) {
-            createShout();
-        }
-    }
-
     public void shoutCreationFailed() {
         createShoutDialog.cancel();
-        Toast toast = Toast.makeText(this, getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getActivity(), getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
         toast.show();
     }
 
     private void createShout() {
-        createShoutDialog = ProgressDialog.show(this, "", getString(R.string.shout_processing), false);
+        //TODO Don't save image more than once
+        if (imagePath != null) {
+            SaveImageToGallery runner = new SaveImageToGallery();
+            runner.execute(imagePath);
+        }
+
+        Location myLocation = ((MainActivity) getActivity()).myLocation;
+
+        if (myLocation == null || myLocation.getLatitude() == 0 || myLocation.getLongitude() == 0) {
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
+        createShoutDialog = ProgressDialog.show(getActivity(), "", getString(R.string.shout_processing), false);
 
         //Convert bitmap to byte array
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -711,50 +496,43 @@ public class CameraActivity extends Activity {
         byte[] bmData = stream.toByteArray();
         String encodedImage = Base64.encodeToString(bmData, Base64.DEFAULT);
 
-//        ApiUtils.createShout(this, GeneralUtils.getAquery(this), shoutLocation.getLatitude(), shoutLocation.getLongitude(), descriptionView.getText().toString(), anonymousUser, encodedImage, new AjaxCallback<JSONObject>() {
-//            @Override
-//            public void callback(String url, JSONObject object, AjaxStatus status) {
-//                super.callback(url, object, status);
-//
-//                if (status.getCode() == 401) {
-//                    SessionUtils.logOut(CameraActivity.this);
-//                    return;
-//                }
-//
-//                if (status.getError() == null && object != null) {
-//                    JSONObject rawShout = null;
-//
-//                    try {
-//                        JSONObject result = object.getJSONObject("result");
-//                        rawShout = result.getJSONObject("shout");
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    Shout newShout = Shout.rawShoutToInstance(rawShout);
-//
-//                    TrackingUtils.trackCreateShout(CameraActivity.this);
-//
-//                    quitCreationMode();
-//
-//                    createShoutDialog.cancel();
-//
-//                    Intent redirectToShout = new Intent(CameraActivity.this, ExploreActivity.class);
-//                    redirectToShout.putExtra("newShout", newShout);
-//                    if (myLocation != null & myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
-//                        redirectToShout.putExtra("myLocation", myLocation);
-//                    }
-//                    startActivityForResult(redirectToShout, Constants.EXPLORE_REQUEST);
-//                } else {
-//                    shoutCreationFailed();
-//                }
-//            }
-//        });
+        ApiUtils.createShout(getActivity(), GeneralUtils.getAquery(getActivity()), myLocation.getLatitude(), myLocation.getLongitude(), "", anonymousUser, encodedImage, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
 
-        if (imagePath != null) {
-            SaveImageToGallery runner = new SaveImageToGallery();
-            runner.execute(imagePath);
-        }
+                if (status.getCode() == 401) {
+                    SessionUtils.logOut(getActivity());
+                    return;
+                }
+
+                if (status.getError() == null && object != null) {
+                    JSONObject rawShout = null;
+
+                    try {
+                        JSONObject result = object.getJSONObject("result");
+                        rawShout = result.getJSONObject("shout");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Shout newShout = Shout.rawShoutToInstance(rawShout);
+
+                    TrackingUtils.trackCreateShout(getActivity());
+
+                    if (createShoutDialog != null) {
+                        createShoutDialog.cancel();
+                    }
+
+                    quitCreationMode();
+
+                    Toast toast = Toast.makeText(getActivity(), getString(R.string.create_shout_success), Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    shoutCreationFailed();
+                }
+            }
+        });
     }
 
     private void displayUnreadActivitiesCount(AppPreferences appPrefs) {
@@ -769,13 +547,13 @@ public class CameraActivity extends Activity {
         }
 
         if (secondsSinceLastRead != 0) {
-            ApiUtils.getUnreadActivitiesCount(this, secondsSinceLastRead, new AjaxCallback<JSONObject>() {
+            ApiUtils.getUnreadActivitiesCount(getActivity(), secondsSinceLastRead, new AjaxCallback<JSONObject>() {
                 @Override
                 public void callback(String url, JSONObject object, AjaxStatus status) {
                     super.callback(url, object, status);
 
                     if (status.getCode() == 401) {
-                        SessionUtils.logOut(CameraActivity.this);
+                        SessionUtils.logOut(getActivity());
                         return;
                     }
 
@@ -809,7 +587,7 @@ public class CameraActivity extends Activity {
     }
 
     private void updateLocalShoutCount() {
-        ApiUtils.getLocalShoutsCount(this, new AjaxCallback<JSONObject>() {
+        ApiUtils.getLocalShoutsCount(getActivity(), new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -830,5 +608,12 @@ public class CameraActivity extends Activity {
                 }
             }
         });
+    }
+
+    private void releaseCamera(){
+        if (mCamera != null){
+            mCamera.release();
+            mCamera = null;
+        }
     }
 }

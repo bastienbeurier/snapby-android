@@ -1,6 +1,5 @@
 package com.streetshout.android.adapters;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -30,4 +29,9 @@ public class ShoutSlidePagerAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return items.size();
     }
+
+//    @Override
+//    public float getPageWidth(int position) {
+//        return 0.3f;
+//    }
 }

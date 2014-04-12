@@ -272,9 +272,9 @@ public class WelcomeActivity extends Activity {
     private void goToNavActivity() {
         TrackingUtils.identify(WelcomeActivity.this, SessionUtils.getCurrentUser(this));
 
-        Intent camera = new Intent(WelcomeActivity.this, CameraActivity.class);
-        camera.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        WelcomeActivity.this.startActivity(camera);
+        Intent main = new Intent(WelcomeActivity.this, MainActivity.class);
+        main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        WelcomeActivity.this.startActivity(main);
 
         finish();
     }
