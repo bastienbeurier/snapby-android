@@ -1,7 +1,6 @@
 package com.streetshout.android.activities;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
@@ -12,18 +11,9 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,8 +27,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.adapters.MapWindowAdapter;
-import com.streetshout.android.adapters.ShoutSlidePagerAdapter;
-import com.streetshout.android.custom.ZoomOutPageTransformer;
+import com.streetshout.android.adapters.ShoutsPagerAdapter;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.R;
 import com.streetshout.android.utils.*;
@@ -313,10 +302,10 @@ public class ExploreActivity extends FragmentActivity {
 
     private void updateUIForDisplayShouts() {
         // Instantiate a ViewPager and a PagerAdapter.                   (
-        shoutPagerAdapter = new ShoutSlidePagerAdapter(ExploreActivity.this.getSupportFragmentManager(), shouts);
+        shoutPagerAdapter = new ShoutsPagerAdapter(ExploreActivity.this.getSupportFragmentManager(), shouts);
         shoutViewPager.setAdapter(shoutPagerAdapter);
         updateSelectedShoutMarker(shouts.get(0));
-        shoutViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+//        shoutViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         shoutViewPager.setVisibility(View.VISIBLE);
         noShoutInFeed.setVisibility(View.GONE);
 
@@ -394,7 +383,7 @@ public class ExploreActivity extends FragmentActivity {
 
         markerOptions.position(new LatLng(shout.lat, shout.lng));
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, false)));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, false)));
 
         markerOptions.title(Integer.toString(shout.id));
 
@@ -418,7 +407,7 @@ public class ExploreActivity extends FragmentActivity {
        if (shoutSelectedOnMap != null) {
            Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
            if (oldSelectedMarker != null) {
-               oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shoutSelectedOnMap, false)));
+               oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shoutSelectedOnMap.anonymous, false)));
            }
        }
 
@@ -426,7 +415,7 @@ public class ExploreActivity extends FragmentActivity {
 
        Marker marker = displayedShoutMarkers.get(shout.id);
 
-       marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(this, shout, true)));
+       marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, true)));
 
        marker.showInfoWindow();
    }

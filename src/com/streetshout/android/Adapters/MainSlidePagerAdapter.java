@@ -3,10 +3,9 @@ package com.streetshout.android.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import com.streetshout.android.Fragments.CameraFragment;
-import com.streetshout.android.Fragments.ExploreFragment;
-import com.streetshout.android.Fragments.ProfileFragment;
-import com.streetshout.android.activities.MainActivity;
+import com.streetshout.android.fragments.CameraFragment;
+import com.streetshout.android.fragments.ExploreFragment;
+import com.streetshout.android.fragments.ProfileFragment;
 
 /**
  * Created by bastien on 4/11/14.

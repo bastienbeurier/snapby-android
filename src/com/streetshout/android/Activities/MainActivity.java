@@ -6,19 +6,34 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.widget.Toast;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.streetshout.android.Fragments.CameraFragment;
-import com.streetshout.android.Fragments.ExploreFragment;
-import com.streetshout.android.Fragments.ProfileFragment;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.streetshout.android.fragments.CameraFragment;
+import com.streetshout.android.fragments.ExploreFragment;
+import com.streetshout.android.fragments.ProfileFragment;
 import com.streetshout.android.R;
 import com.streetshout.android.adapters.MainSlidePagerAdapter;
+import com.streetshout.android.utils.ApiUtils;
+import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.SessionUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.TreeSet;
 
 /**
  * Created by bastien on 4/11/14.
@@ -43,12 +58,20 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
     private ProfileFragment profileFragment = null;
 
-    public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+    public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
+
+    public TreeSet<Integer> myLikes = null;
+
+    private boolean shouldRestoreCamera = false;
+
+    private boolean firstOpen = true;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
+
+        myLikes = new TreeSet<Integer>();
 
         mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
 
@@ -58,7 +81,6 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
         mainPagerAdapter = new MainSlidePagerAdapter(this.getSupportFragmentManager(), exploreFragment, cameraFragment, profileFragment);
         mainViewPager.setAdapter(mainPagerAdapter);
-        mainViewPager.setCurrentItem(1);
         mainViewPager.setOffscreenPageLimit(2);
 
         mainViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -69,9 +91,7 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
             @Override
             public void onPageSelected(int i) {
-                if (i == 0) {
-                    exploreFragment.loadContent(myLocation);
-                } else if (i ==  2) {
+                if (i ==  2) {
                     profileFragment.loadContent();
                 }
             }
@@ -96,29 +116,40 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
         mLocationRequest = LocationUtils.createLocationRequest(LocationRequest.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS);
 
+        getMyLikes();
+
         //TODO: notification redirection
-        //TODO: release camera
+
         //TODO: onActivityResult for refine
-        //TODO: notif implementation do not redirect to Camera
-        //TODO: implement back button on fragments
-        //TODO: redirect create shout!
         //TODO: check that createView is not called everytime
-        //TODO: no location --> update
-        //TODO: increase swipe in explore
-        //TODO: paginate shouts on explore and profile
         //TODO: settings fragment
-        //TODO: like
-        //TODO: move map on select shout for profile
-        //TODO: faster scrolling
-        //TODO Don't save image more than once
-        //TODO: Cleaner loading dialog
+        //TODO: Don't save image more than once
         //TODO: Make selected snap bigger
-        //TODO: Trending mark
+
+        //TODO: refresh explore and profile shouts on CreateShout
+        //TODO: counter and call-to-action on camera (2 heures)
+        //TODO: Display shouts with actions (4 heures)
+        //TODO: implement liked (3 heures)
+        //TODO: faster and larger scrolling (2h)
+        //TODO: zoom controls (1h)
+        //TODO: paginate shouts (2h)
+        //TODO: no location --> update (30mins)
+        //TODO: change logo and remove blue UI
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (!firstOpen) {
+            mainViewPager.setCurrentItem(1, false);
+        }
+
+        if (shouldRestoreCamera) {
+            cameraFragment.setUpCamera();
+            shouldRestoreCamera = false;
+        }
 
         SessionUtils.synchronizeUserInfo(this, myLocation);
         LocationUtils.checkLocationServicesEnabled(this, locationManager);
@@ -189,10 +220,95 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
     @Override
     public void onLocationChanged(Location location) {
         // Report to the UI that the location was updated
-        if (location != null) {
+        if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0) {
+            myLocation = location;
+
+            setExploreMapPerimeterIfNeeded(location);
             myLocation = location;
         }
     }
 
+    public void setExploreMapPerimeterIfNeeded(Location location) {
+        //Change explore map perimeter if never set before or (if there is a significant perimeter change and the explore map is not shown)
+        if (myLocation == null || (mainViewPager.getCurrentItem() != 0 && (Math.abs(location.getLatitude() - myLocation.getLatitude()) + Math.abs(location.getLongitude() - myLocation.getLongitude()) > 0.0005))) {
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), Constants.INITIAL_ZOOM);
+            exploreFragment.exploreMap.moveCamera(update);
+        }
+    }
 
+    private void getMyLikes() {
+        ApiUtils.getMyLikesAndFollowedUsers(this, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                super.callback(url, object, status);
+
+                if (status.getCode() == 401) {
+                    SessionUtils.logOut(MainActivity.this);
+                    return;
+                }
+
+                if (status.getError() == null) {
+                    JSONObject result = null;
+
+                    try {
+                        result = object.getJSONObject("result");
+
+                        JSONArray rawLikes = result.getJSONArray("likes");
+
+                        int likeCount = rawLikes.length();
+
+                        for (int i = 0; i < likeCount; i++) {
+                            myLikes.add(Integer.parseInt(((JSONObject) rawLikes.get(i)).getString("shout_id")));
+                        }
+
+                        reloadExploreShouts();
+                        reloadProfileShouts();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    public void reloadExploreShouts() {
+        exploreFragment.reloadAdapterIfAlreadyLoaded();
+    }
+
+    public void reloadProfileShouts() {
+        profileFragment.reloadAdapterIfAlreadyLoaded();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mainViewPager.getCurrentItem() == 0 || mainViewPager.getCurrentItem() == 2) {
+            mainViewPager.setCurrentItem(1);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        cameraFragment.releaseCamera();
+        shouldRestoreCamera = true;
+
+        super.onPause();
+    }
+
+    public void updateLocalShoutCount() {
+        LatLngBounds bounds = exploreFragment.getExploreMapBounds();
+
+        cameraFragment.updateLocalShoutCount(bounds);
+    }
+
+    @Override
+    public void onWindowFocusChanged (boolean hasFocus) {
+        if (firstOpen) {
+            mainViewPager.setCurrentItem(1, false);
+            firstOpen = false;
+        }
+
+        super.onWindowFocusChanged(hasFocus);
+    }
 }

@@ -32,50 +32,18 @@ public class GeneralUtils {
         return Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static int getShoutMarkerImageResource(Context ctx, Shout shout, boolean selected) {
-        if (SessionUtils.getCurrentUser(ctx).id == shout.userId) {
+    public static int getShoutMarkerImageResource(boolean anonymous, boolean selected) {
+        if (anonymous) {
             if (selected) {
-                if (shout.trending) {
-                    return R.drawable.marker_me_selected_trending;
-                } else {
-                    return R.drawable.marker_me_selected;
-                }
+                return R.drawable.marker_anonymous_selected_2;
             } else {
-                if (shout.trending) {
-                    return R.drawable.marker_me_trending;
-                } else {
-                    return R.drawable.marker_me;
-                }
+                return R.drawable.marker_anonymous_2;
             }
         } else {
-            if (shout.anonymous) {
-                if (selected) {
-                    if (shout.trending) {
-                        return R.drawable.marker_anonymous_selected_trending_2;
-                    } else {
-                        return R.drawable.marker_anonymous_selected_2;
-                    }
-                } else {
-                    if (shout.trending) {
-                        return R.drawable.marker_anonymous_trending_2;
-                    } else {
-                        return R.drawable.marker_anonymous_2;
-                    }
-                }
+            if (selected) {
+                return R.drawable.marker_selected_2;
             } else {
-                if (selected) {
-                    if (shout.trending) {
-                        return R.drawable.marker_selected_trending_2;
-                    } else {
-                        return R.drawable.marker_selected_2;
-                    }
-                } else {
-                    if (shout.trending) {
-                        return R.drawable.marker_trending_2;
-                    } else {
-                        return R.drawable.marker_2;
-                    }
-                }
+                return R.drawable.marker_2;
             }
         }
     }

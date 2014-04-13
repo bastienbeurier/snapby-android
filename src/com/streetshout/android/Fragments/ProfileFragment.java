@@ -1,15 +1,12 @@
-package com.streetshout.android.Fragments;
+package com.streetshout.android.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -29,9 +26,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.streetshout.android.R;
 import com.streetshout.android.activities.SettingsActivity;
-import com.streetshout.android.adapters.ExpiredShoutsAdapter;
 import com.streetshout.android.adapters.MapWindowAdapter;
-import com.streetshout.android.adapters.ShoutSlidePagerAdapter;
+import com.streetshout.android.adapters.ShoutsPagerAdapter;
 import com.streetshout.android.custom.ShoutViewPagerContainer;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.models.User;
@@ -46,7 +42,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeSet;
 
 /**
  * Created by bastien on 4/11/14.
@@ -76,9 +71,13 @@ public class ProfileFragment extends Fragment {
 
     private TextView noConnectionInFeed = null;
 
+    private View userInfoContainer = null;
+
     private Shout shoutSelectedOnMap = null;
 
     private ArrayList<Shout> shouts = null;
+
+    private boolean mapPaddingNotSet = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,6 +89,7 @@ public class ProfileFragment extends Fragment {
         username = (TextView) rootView.findViewById(R.id.profile_username);
         profilePictureContainer = (FrameLayout) rootView.findViewById(R.id.profile_profile_picture_container);
         shoutCountView = (TextView) rootView.findViewById(R.id.profile_shout_count);
+        userInfoContainer = rootView.findViewById(R.id.profile_user_info_container);
 
         profileMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.profile_map)).getMap();
 
@@ -103,6 +103,11 @@ public class ProfileFragment extends Fragment {
             public void onPageSelected(int i) {
                 updateSelectedShoutMarker(shouts.get(i));
 
+                if (mapPaddingNotSet) {
+                    profileMap.setPadding(0, userInfoContainer.getHeight(), 0, viewPagerContainer.getHeight());
+                    mapPaddingNotSet = false;
+                }
+
                 CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(shouts.get(i).lat, shouts.get(i).lng));
                 profileMap.animateCamera(update);
             }
@@ -113,10 +118,9 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+
         noShoutInFeed = (TextView) rootView.findViewById(R.id.profile_shout_no_shout);
         noConnectionInFeed = (TextView) rootView.findViewById(R.id.profile_shout_no_connection);
-
-        setUpMap();
 
         //Admin capability
         if (Constants.ADMIN) {
@@ -153,9 +157,16 @@ public class ProfileFragment extends Fragment {
 
         getMyInfo();
 
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState) {
+        setUpMap();
+
         getMyShouts();
 
-        return rootView;
+        super.onActivityCreated(savedInstanceState);
     }
 
     public void loadContent() {
@@ -243,10 +254,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateUIForDisplayShouts() {
-        // Instantiate a ViewPager and a PagerAdapter.                   (
-        shoutPagerAdapter = new ShoutSlidePagerAdapter(getActivity().getSupportFragmentManager(), shouts);
+        // Instantiate a ViewPager and a PagerAdapter.
+        shoutPagerAdapter = new ShoutsPagerAdapter(getActivity().getSupportFragmentManager(), shouts, "profile");
         shoutViewPager.setAdapter(shoutPagerAdapter);
         updateSelectedShoutMarker(shouts.get(0));
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shouts.get(0).lat, shouts.get(0).lng), Constants.INITIAL_ZOOM);
+        profileMap.animateCamera(update);
         shoutViewPager.setOffscreenPageLimit(4);
         shoutViewPager.setPageMargin(30);
         shoutViewPager.setClipChildren(false);
@@ -312,7 +325,7 @@ public class ProfileFragment extends Fragment {
 
         markerOptions.position(new LatLng(shout.lat, shout.lng));
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(getActivity(), shout, false)));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, false)));
 
         markerOptions.title(Integer.toString(shout.id));
 
@@ -323,7 +336,7 @@ public class ProfileFragment extends Fragment {
         if (shoutSelectedOnMap != null) {
             Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
             if (oldSelectedMarker != null) {
-                oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(getActivity(), shoutSelectedOnMap, false)));
+                oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shoutSelectedOnMap.anonymous, false)));
             }
         }
 
@@ -331,7 +344,7 @@ public class ProfileFragment extends Fragment {
 
         Marker marker = displayedShoutMarkers.get(shout.id);
 
-        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(getActivity(), shout, true)));
+        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, true)));
 
         marker.showInfoWindow();
     }
@@ -357,11 +370,12 @@ public class ProfileFragment extends Fragment {
     private void setUpMap() {
         //Set map settings
         UiSettings settings = profileMap.getUiSettings();
-        settings.setZoomControlsEnabled(false);
+        settings.setZoomControlsEnabled(true);
         settings.setMyLocationButtonEnabled(false);
-        settings.setRotateGesturesEnabled(false);
-        settings.setTiltGesturesEnabled(false);
+        settings.setAllGesturesEnabled(false);
         profileMap.setMyLocationEnabled(true);
+
+        Log.d("BAB", "VIEW HEIGHT: " + userInfoContainer.getHeight());
 
         profileMap.setInfoWindowAdapter(new MapWindowAdapter(getActivity()));
 
@@ -377,4 +391,10 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    public void reloadAdapterIfAlreadyLoaded() {
+        if (shoutPagerAdapter != null) {
+            shoutPagerAdapter = new ShoutsPagerAdapter(getActivity().getSupportFragmentManager(), shouts, "profile");
+            shoutViewPager.setAdapter(shoutPagerAdapter);
+        }
+    }
 }

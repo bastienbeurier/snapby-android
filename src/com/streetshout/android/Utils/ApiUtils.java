@@ -536,17 +536,16 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
     }
 
-    public static void getLocalShoutsCount(Activity activity, AjaxCallback<JSONObject> cb) {
+    public static void getLocalShoutsCount(Activity activity, double neLat, double neLng, double swLat, double swLng, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
 
-        params = enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
+        params.put("neLat", String.valueOf(neLat));
+        params.put("neLng", String.valueOf(neLng));
+        params.put("swLat", String.valueOf(swLat));
+        params.put("swLng", String.valueOf(swLng));
 
         //TODO: Remove token from url param
-        String url = getBasePath() + "/shouts/local_shouts_count.json" + encodeParamsAsUrlParams(params);
+        String url = getBasePath() + "/local_shouts_count.json" + encodeParamsAsUrlParams(params);
 
         GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
     }

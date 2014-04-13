@@ -1,4 +1,4 @@
-package com.streetshout.android.Fragments;
+package com.streetshout.android.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.LatLngCreator;
 import com.streetshout.android.R;
 import com.streetshout.android.activities.MainActivity;
 import com.streetshout.android.activities.RefineLocationActivity;
@@ -67,7 +70,7 @@ public class CameraFragment extends Fragment {
 
     private FrameLayout preview = null;
 
-    private ImageView exploreButton = null;
+    public ImageView exploreButton = null;
 
     private ImageView profileButton = null;
 
@@ -97,15 +100,15 @@ public class CameraFragment extends Fragment {
 
     private boolean creationMode = false;
 
-    private TextView activitiesUnreadCount = null;
+    private TextView localShoutCount = null;
 
-    private FrameLayout activitiesUnreadCountContainer = null;
+    private FrameLayout localShoutCountContainer = null;
 
     private AppPreferences appPrefs = null;
 
     private String imagePath = null;
 
-    private TextView localShoutsCount = null;
+    private boolean firstLocalShoutCount = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -120,9 +123,8 @@ public class CameraFragment extends Fragment {
         refineButton = (ImageView) rootView.findViewById(R.id.create_refine_button);
         anonymousButton = (ImageView) rootView.findViewById(R.id.create_mask_button);
         shoutImageView = (ImageView) rootView.findViewById(R.id.create_shout_image);
-        activitiesUnreadCount = (TextView) rootView.findViewById(R.id.camera_unread_count);
-        activitiesUnreadCountContainer = (FrameLayout) rootView.findViewById(R.id.camera_unread_count_container);
-        localShoutsCount = (TextView) rootView.findViewById(R.id.camera_explore_local_shouts_count);
+        localShoutCount = (TextView) rootView.findViewById(R.id.camera_shout_count);
+        localShoutCountContainer = (FrameLayout) rootView.findViewById(R.id.camera_shout_count_container);
 
         appPrefs = ((StreetShoutApplication) getActivity().getApplicationContext()).getAppPrefs();
 
@@ -136,11 +138,7 @@ public class CameraFragment extends Fragment {
                 public void onClick(View v) {
                     frontCamera = !frontCamera;
 
-                    if (frontCamera) {
-                        setUpCamera(0);
-                    } else {
-                        setUpCamera(1);
-                    }
+                    setUpCamera();
                 }
             });
         }
@@ -211,16 +209,20 @@ public class CameraFragment extends Fragment {
             }
         });
 
-        setUpCamera(0);
+        setUpCamera();
 
         return rootView;
     }
 
-    private void setUpCamera(int cameraId) {
+    public void setUpCamera() {
         releaseCamera();
 
         // Create an instance of Camera
-        mCamera = getCameraInstance(cameraId);
+        if (frontCamera) {
+            mCamera = getCameraInstance(0);
+        } else {
+            mCamera = getCameraInstance(1);
+        }
 
         if (mCamera == null) {
             Toast toast = Toast.makeText(getActivity(), getString(R.string.no_camera), Toast.LENGTH_SHORT);
@@ -428,6 +430,7 @@ public class CameraFragment extends Fragment {
         cameraBottomBar.setVisibility(View.GONE);
         createBottomBar.setVisibility(View.VISIBLE);
         cancelButton.setVisibility(View.VISIBLE);
+        localShoutCountContainer.setVisibility(View.GONE);
     }
 
     private void quitCreationMode() {
@@ -447,12 +450,9 @@ public class CameraFragment extends Fragment {
         profileButton.setVisibility(View.VISIBLE);
         cameraBottomBar.setVisibility(View.VISIBLE);
         preview.setVisibility(View.VISIBLE);
+        localShoutCountContainer.setVisibility(View.VISIBLE);
 
-        if (frontCamera) {
-            setUpCamera(0);
-        } else {
-            setUpCamera(1);
-        }
+        setUpCamera();
     }
 
     public void refineShoutLocation() {
@@ -535,50 +535,6 @@ public class CameraFragment extends Fragment {
         });
     }
 
-    private void displayUnreadActivitiesCount(AppPreferences appPrefs) {
-        long lastReadTime = appPrefs.getLastActivitiesRead();
-        long secondsSinceLastRead = 0;
-
-        if (lastReadTime != 0) {
-            secondsSinceLastRead = (System.currentTimeMillis() - lastReadTime)/1000;
-            //If last read has never been set, set it now
-        } else {
-            appPrefs.setLastActivitiesRead();
-        }
-
-        if (secondsSinceLastRead != 0) {
-            ApiUtils.getUnreadActivitiesCount(getActivity(), secondsSinceLastRead, new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    super.callback(url, object, status);
-
-                    if (status.getCode() == 401) {
-                        SessionUtils.logOut(getActivity());
-                        return;
-                    }
-
-                    if (status.getError() == null && object != null) {
-                        long unreadCount = 0;
-
-                        try {
-                            JSONObject result = object.getJSONObject("result");
-                            unreadCount = result.getLong("unread_activities_count");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (unreadCount != 0) {
-                            activitiesUnreadCount.setText("" + unreadCount);
-                            activitiesUnreadCount.setVisibility(View.VISIBLE);
-                            activitiesUnreadCountContainer.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-            });
-        }
-
-    }
-
     private class SaveImageToGallery extends AsyncTask<String, String, String> {
         protected String doInBackground(String... params) {
             saveImageToGallery(params[0]);
@@ -586,13 +542,14 @@ public class CameraFragment extends Fragment {
         }
     }
 
-    private void updateLocalShoutCount() {
-        ApiUtils.getLocalShoutsCount(getActivity(), new AjaxCallback<JSONObject>() {
+    public void updateLocalShoutCount(LatLngBounds latLngBounds) {
+        ApiUtils.getLocalShoutsCount(getActivity(), latLngBounds.northeast.latitude, latLngBounds.northeast.longitude, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
 
                 if (status.getError() == null && object != null) {
+                    Log.d("BAB", "RESPONSE FROM LOCAL SHOUTS COUNT: " + object);
 
                     Integer shoutCount = 0;
 
@@ -603,17 +560,28 @@ public class CameraFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    localShoutsCount.setText(shoutCount + " shouts");
-                    localShoutsCount.setVisibility(View.GONE);
+                    localShoutCount.setText("" + shoutCount);
+                    localShoutCount.setVisibility(View.VISIBLE);
+                    localShoutCountContainer.setVisibility(View.VISIBLE);
+
+                    if (firstLocalShoutCount) {
+                        firstLocalShoutCount = false;
+
+                        Toast toast = Toast.makeText(getActivity(), "Be the #" + (shoutCount + 1) + " to snapby this area!", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                } else {
+                    Log.d("BAB", "ERROR FROM LOCAL SHOUTS COUNT: " + status.getError());
                 }
             }
         });
     }
 
-    private void releaseCamera(){
+    public void releaseCamera(){
         if (mCamera != null){
             mCamera.release();
             mCamera = null;
         }
     }
+
 }

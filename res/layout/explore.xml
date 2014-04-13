@@ -64,4 +64,17 @@
               android:layout_gravity="center"
               android:visibility="gone"/>
 
+    <FrameLayout android:id="@+id/explore_shout_progress_bar"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center"
+                 android:background="@drawable/rounded_background">
+
+        <ProgressBar android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_margin="10dp"
+                     android:layout_gravity="center"/>
+
+    </FrameLayout>
+
 </FrameLayout>

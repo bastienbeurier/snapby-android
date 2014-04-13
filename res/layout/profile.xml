@@ -6,109 +6,6 @@
               android:layout_height="match_parent"
               android:background="@color/white">
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:gravity="center">
-
-        <LinearLayout android:orientation="vertical"
-                      android:layout_width="100dp"
-                      android:layout_height="wrap_content"
-                      android:layout_marginTop="10dp"
-                      android:layout_marginLeft="10dp">
-
-            <FrameLayout android:id="@+id/profile_profile_picture_container"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:layout_gravity="center">
-
-                <ImageView android:layout_width="70dp"
-                           android:layout_height="70dp"
-                           android:src="@drawable/profile_picture_placeholder"/>
-
-                <com.streetshout.android.custom.CircleImageView android:id="@+id/profile_user_picture"
-                                                                android:layout_width="70dp"
-                                                                android:layout_height="70dp"/>
-
-            </FrameLayout>
-
-            <TextView android:id="@+id/profile_username"
-                      android:layout_height="wrap_content"
-                      android:layout_width="wrap_content"
-                      android:layout_marginBottom="10dp"
-                      android:textColor="@color/shoutBlue"
-                      android:fontFamily="sans-serif"
-                      android:layout_marginTop="5dp"
-                      android:textSize="14dp"
-                      android:gravity="center"
-                      android:layout_gravity="center"/>
-
-        </LinearLayout>
-
-        <LinearLayout android:orientation="vertical"
-                      android:layout_width="match_parent"
-                      android:layout_margin="10dp"
-                      android:layout_height="wrap_content">
-
-            <LinearLayout android:orientation="horizontal"
-                          android:layout_width="match_parent"
-                          android:layout_height="wrap_content">
-
-                <LinearLayout android:id="@+id/profile_shouts_button"
-                              android:layout_width="match_parent"
-                              android:layout_height="wrap_content"
-                              android:layout_weight="1"
-                              android:orientation="vertical"
-                              android:gravity="center">
-
-                    <TextView android:id="@+id/profile_shout_count"
-                              android:layout_height="match_parent"
-                              android:layout_width="wrap_content"
-                              android:textSize="20dp"
-                              android:text="0"
-                              android:textColor="@color/mediumGrey"
-                              android:gravity="center"/>
-
-                    <TextView android:id="@+id/profile_shout_count_label"
-                              android:layout_height="match_parent"
-                              android:layout_width="match_parent"
-                              android:textSize="14dp"
-                              android:text="shouts"
-                              android:textColor="@color/lightGrey"
-                              android:gravity="center"/>
-
-                </LinearLayout>
-
-                <LinearLayout android:layout_width="match_parent"
-                              android:layout_height="wrap_content"
-                              android:layout_weight="1"
-                              android:orientation="vertical"
-                              android:gravity="center">
-
-                    <TextView android:id="@+id/profile_liked_count"
-                              android:layout_height="match_parent"
-                              android:layout_width="wrap_content"
-                              android:text="155"
-                              android:textSize="20dp"
-                              android:textColor="@color/mediumGrey"
-                              android:gravity="center"/>
-
-                    <TextView android:id="@+id/profile_liked_label"
-                              android:layout_height="match_parent"
-                              android:layout_width="match_parent"
-                              android:textSize="14dp"
-                              android:text="liked"
-                              android:textColor="@color/lightGrey"
-                              android:gravity="center"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
     <FrameLayout android:layout_width="match_parent"
                  android:layout_height="match_parent">
 
@@ -117,6 +14,113 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   class="com.google.android.gms.maps.MapFragment" />
+
+        <LinearLayout android:id="@+id/profile_user_info_container"
+                      android:layout_width="match_parent"
+                      android:layout_height="100dp"
+                      android:orientation="horizontal"
+                      android:layout_gravity="top"
+                      android:gravity="center"
+                      android:background="@color/semiTransparentBlackDarker">
+
+            <LinearLayout android:orientation="vertical"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_gravity="center|left">
+
+                <FrameLayout android:id="@+id/profile_profile_picture_container"
+                             android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:layout_margin="10dp"
+                             android:layout_gravity="center">
+
+                    <ImageView android:layout_width="70dp"
+                               android:layout_height="70dp"
+                               android:src="@drawable/profile_picture_placeholder"/>
+
+                    <com.streetshout.android.custom.CircleImageView android:id="@+id/profile_user_picture"
+                                                                    android:layout_width="70dp"
+                                                                    android:layout_height="70dp"/>
+
+                </FrameLayout>
+
+
+
+            </LinearLayout>
+
+            <LinearLayout android:orientation="vertical"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent">
+
+                <TextView android:id="@+id/profile_username"
+                          android:layout_height="wrap_content"
+                          android:layout_width="match_parent"
+                          android:layout_margin="10dp"
+                          android:textColor="@color/white"
+                          android:fontFamily="sans-serif"
+                          android:textSize="18dp"
+                          android:gravity="center"
+                          android:layout_gravity="center"/>
+
+                <LinearLayout android:orientation="horizontal"
+                              android:layout_width="match_parent"
+                              android:layout_height="match_parent"
+                              android:layout_weight="1">
+
+                    <LinearLayout android:id="@+id/profile_shouts_button"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:orientation="vertical"
+                                  android:gravity="center">
+
+                        <TextView android:id="@+id/profile_shout_count"
+                                  android:layout_height="match_parent"
+                                  android:layout_width="wrap_content"
+                                  android:textSize="20dp"
+                                  android:text="0"
+                                  android:textColor="@color/white"
+                                  android:gravity="center"/>
+
+                        <TextView android:id="@+id/profile_shout_count_label"
+                                  android:layout_height="match_parent"
+                                  android:layout_width="match_parent"
+                                  android:textSize="14dp"
+                                  android:text="shouts"
+                                  android:textColor="@color/white"
+                                  android:gravity="center"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:orientation="vertical"
+                                  android:gravity="center">
+
+                        <TextView android:id="@+id/profile_liked_count"
+                                  android:layout_height="match_parent"
+                                  android:layout_width="wrap_content"
+                                  android:text="155"
+                                  android:textSize="20dp"
+                                  android:textColor="@color/white"
+                                  android:gravity="center"/>
+
+                        <TextView android:id="@+id/profile_liked_label"
+                                  android:layout_height="match_parent"
+                                  android:layout_width="match_parent"
+                                  android:textSize="14dp"
+                                  android:text="liked"
+                                  android:textColor="@color/white"
+                                  android:gravity="center"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <com.streetshout.android.custom.ShoutViewPagerContainer android:id="@+id/profile_shout_view_pager_container"
                                                                 android:layout_width="match_parent"

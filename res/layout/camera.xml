@@ -14,54 +14,27 @@
                android:scaleType="centerCrop"
                android:visibility="gone"/>
 
-    <LinearLayout android:layout_width="105dp"
-                  android:layout_height="wrap_content"
-                  android:orientation="vertical"
-                  android:layout_gravity="top|left">
+    <FrameLayout android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="top|left">
 
         <ImageView android:id="@+id/camera_explore_button"
                    android:layout_width="65dp"
                    android:layout_height="65dp"
                    android:padding="10dp"
                    android:layout_margin="10dp"
-                   android:src="@drawable/camera_explore_button_selector"
-                   android:layout_gravity="top|left"/>
+                   android:src="@drawable/camera_explore_button_selector"/>
 
-        <TextView android:id="@+id/camera_explore_local_shouts_count"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_gravity="center"
-                  android:gravity="center"
-                  android:layout_marginTop="10dp"
-                  android:background="@color/shoutBlue"
-                  android:textColor="@color/white"
-                  android:visibility="gone"/>
-
-    </LinearLayout>
-
-
-
-    <FrameLayout android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="top|right">
-
-        <ImageView android:id="@+id/camera_profile_button"
-                   android:layout_width="65dp"
-                   android:layout_height="65dp"
-                   android:padding="10dp"
-                   android:layout_margin="10dp"
-                   android:src="@drawable/camera_profile_button_selector"/>
-
-        <FrameLayout android:id="@+id/camera_unread_count_container"
-                    android:layout_width="25dp"
+        <FrameLayout android:id="@+id/camera_shout_count_container"
+                     android:layout_width="25dp"
                      android:layout_height="25dp"
                      android:layout_marginTop="15dp"
-                     android:layout_marginRight="15dp"
-                     android:layout_gravity="top|right"
-                     android:background="@drawable/unread_count_round_button"
+                     android:layout_marginLeft="15dp"
+                     android:layout_gravity="top|left"
+                     android:background="@drawable/shout_count_round_button"
                      android:visibility="gone">
 
-            <TextView android:id="@+id/camera_unread_count"
+            <TextView android:id="@+id/camera_shout_count"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:textColor="@color/white"
@@ -73,7 +46,13 @@
 
     </FrameLayout>
 
-
+    <ImageView android:id="@+id/camera_profile_button"
+               android:layout_width="65dp"
+               android:layout_height="65dp"
+               android:padding="10dp"
+               android:layout_margin="10dp"
+               android:src="@drawable/camera_profile_button_selector"
+               android:layout_gravity="top|right"/>
 
     <FrameLayout android:id="@+id/camera_bottom_bar"
           android:layout_width="fill_parent"

@@ -9,7 +9,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -31,12 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.streetshout.android.R;
 import com.streetshout.android.custom.CameraPreview;
 import com.streetshout.android.models.Shout;
@@ -45,13 +38,10 @@ import com.streetshout.android.utils.AppPreferences;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.ImageUtils;
-import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.SessionUtils;
 import com.streetshout.android.utils.StreetShoutApplication;
-import com.streetshout.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -60,7 +50,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -127,7 +116,6 @@ public class CameraActivity extends Activity {
 
     private String imagePath = null;
 
-    private TextView localShoutsCount = null;
 
     /*
      * Define a request code to send to Google Play services
@@ -146,9 +134,8 @@ public class CameraActivity extends Activity {
         refineButton = (ImageView) findViewById(R.id.create_refine_button);
         anonymousButton = (ImageView) findViewById(R.id.create_mask_button);
         shoutImageView = (ImageView) findViewById(R.id.create_shout_image);
-        activitiesUnreadCount = (TextView) findViewById(R.id.camera_unread_count);
-        activitiesUnreadCountContainer = (FrameLayout) findViewById(R.id.camera_unread_count_container);
-        localShoutsCount = (TextView) findViewById(R.id.camera_explore_local_shouts_count);
+        activitiesUnreadCount = (TextView) findViewById(R.id.camera_shout_count);
+        activitiesUnreadCountContainer = (FrameLayout) findViewById(R.id.camera_shout_count_container);
 
         appPrefs = ((StreetShoutApplication) this.getApplicationContext()).getAppPrefs();
 
@@ -808,27 +795,27 @@ public class CameraActivity extends Activity {
         }
     }
 
-    private void updateLocalShoutCount() {
-        ApiUtils.getLocalShoutsCount(this, new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                super.callback(url, object, status);
-
-                if (status.getError() == null && object != null) {
-
-                    Integer shoutCount = 0;
-
-                    try {
-                        JSONObject result = object.getJSONObject("result");
-                        shoutCount = Integer.parseInt(result.getString("shouts_count"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    localShoutsCount.setText(shoutCount + " shouts");
-                    localShoutsCount.setVisibility(View.GONE);
-                }
-            }
-        });
-    }
+//    private void updateLocalShoutCount() {
+//        ApiUtils.getLocalShoutsCount(this, new AjaxCallback<JSONObject>() {
+//            @Override
+//            public void callback(String url, JSONObject object, AjaxStatus status) {
+//                super.callback(url, object, status);
+//
+//                if (status.getError() == null && object != null) {
+//
+//                    Integer shoutCount = 0;
+//
+//                    try {
+//                        JSONObject result = object.getJSONObject("result");
+//                        shoutCount = Integer.parseInt(result.getString("shouts_count"));
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+////                    localShoutsCount.setText(shoutCount + " shouts");
+////                    localShoutsCount.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+//    }
 }

@@ -1,4 +1,4 @@
-package com.streetshout.android.Fragments;
+package com.streetshout.android.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -29,29 +29,25 @@ import com.streetshout.android.activities.DisplayActivity;
 import com.streetshout.android.activities.MainActivity;
 import com.streetshout.android.activities.ProfileActivity;
 import com.streetshout.android.adapters.MapWindowAdapter;
-import com.streetshout.android.adapters.ShoutSlidePagerAdapter;
+import com.streetshout.android.adapters.ShoutsPagerAdapter;
 import com.streetshout.android.custom.ShoutViewPagerContainer;
 import com.streetshout.android.models.Shout;
-import com.streetshout.android.utils.ApiUtils;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
 import com.streetshout.android.utils.LocationUtils;
 import com.streetshout.android.utils.MapRequestHandler;
-import com.streetshout.android.utils.SessionUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeSet;
 
 /**
  * Created by bastien on 4/11/14.
  */
 public class ExploreFragment extends Fragment {
-    private GoogleMap mMap = null;
+    public GoogleMap exploreMap = null;
 
     private HashMap<Integer, Shout> displayedShoutModels = null;
 
@@ -77,6 +73,12 @@ public class ExploreFragment extends Fragment {
 
     private ImageView refreshButton = null;
 
+    private View shoutProgressBar = null;
+
+    private boolean mapLoaded = false;
+
+    private boolean mapPaddingNotSet = true;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.explore, container, false);
@@ -86,8 +88,40 @@ public class ExploreFragment extends Fragment {
         shoutViewPager = (ViewPager) rootView.findViewById(R.id.explore_view_pager);
         viewPagerContainer = (ShoutViewPagerContainer) rootView.findViewById(R.id.explore_shout_view_pager_container);
         refreshButton = (ImageView) rootView.findViewById(R.id.explore_refresh_button);
+        shoutProgressBar = rootView.findViewById(R.id.explore_shout_progress_bar);
 
-        mMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
+        exploreMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+        exploreMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                //First time map loads, check if we have a location
+                if (!mapLoaded) {
+                    mapLoaded = true;
+
+                    if (mapPaddingNotSet) {
+                        mapPaddingNotSet = false;
+
+                        exploreMap.setPadding(0, 0, 0, viewPagerContainer.getHeight());
+                    }
+
+                    Location myLocation = ((MainActivity) getActivity()).myLocation;
+
+                    //If we have a location, move the map to there
+                    if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
+                        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.INITIAL_ZOOM);
+                        exploreMap.moveCamera(update);
+                    //Else wait for location
+                    } else {
+                        waitingForLocation();
+                    }
+                //Else pull local shouts
+                } else {
+                    ((MainActivity) getActivity()).updateLocalShoutCount();
+                    loadContent();
+                }
+            }
+        });
 
         shoutViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -109,39 +143,34 @@ public class ExploreFragment extends Fragment {
         noShoutInFeed = (TextView) rootView.findViewById(R.id.explore_shout_no_shout);
         noConnectionInFeed = (TextView) rootView.findViewById(R.id.explore_shout_no_connection);
 
-        setUpMap();
-
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadContent(((MainActivity) getActivity()).myLocation);
+                loadContent();
             }
         });
 
         return rootView;
     }
 
-    public void loadContent(Location myLocation) {
-        if (myLocation == null || myLocation.getLatitude() == 0 || myLocation.getLatitude() == 0) {
-            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.waiting_for_location), false);
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(0, 0), 0);
-            mMap.moveCamera(update);
-        } else {
-            if (progressDialog != null) {
-                progressDialog.cancel();
-            }
+    @Override
+    public void onActivityCreated (Bundle savedInstanceState) {
+        setUpMap();
 
-            progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.loading), false);
-            updateMapBounds(myLocation);
-        }
+        super.onActivityCreated(savedInstanceState);
     }
 
-    public void updateMapBounds(Location myLocation) {
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.INITIAL_ZOOM);
-        mMap.moveCamera(update);
+    private void waitingForLocation() {
+        progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.waiting_for_location), false);
+    }
+
+    private void loadContent() {
+        if (progressDialog != null) {
+            progressDialog.cancel();
+        }
 
         //Add a request to populate the map with shouts
-        LatLngBounds mapBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        LatLngBounds mapBounds = exploreMap.getProjection().getVisibleRegion().latLngBounds;
 
         updateUIForLoadingShouts();
 
@@ -165,10 +194,6 @@ public class ExploreFragment extends Fragment {
 
                         displayShoutsOnMap(shouts);
 
-                        if (progressDialog != null) {
-                            progressDialog.cancel();
-                        }
-
                         noConnectionInFeed.setVisibility(View.GONE);
 
                         if (shouts.size() > 0) {
@@ -188,6 +213,10 @@ public class ExploreFragment extends Fragment {
         mapReqHandler.addMapRequest(GeneralUtils.getAquery(getActivity()), mapBounds);
     }
 
+    public LatLngBounds getExploreMapBounds() {
+        return exploreMap.getProjection().getVisibleRegion().latLngBounds;
+    }
+
     public void displayProfile(int userId) {
         Intent profile = new Intent(getActivity(), ProfileActivity.class);
         profile.putExtra("userId", userId);
@@ -195,8 +224,11 @@ public class ExploreFragment extends Fragment {
     }
 
     private void updateUIForDisplayShouts() {
+        exploreMap.setMyLocationEnabled(true);
+        shoutProgressBar.setVisibility(View.GONE);
+
         // Instantiate a ViewPager and a PagerAdapter.                   (
-        shoutPagerAdapter = new ShoutSlidePagerAdapter(getActivity().getSupportFragmentManager(), shouts);
+        shoutPagerAdapter = new ShoutsPagerAdapter(getActivity().getSupportFragmentManager(), shouts);
         shoutViewPager.setAdapter(shoutPagerAdapter);
         updateSelectedShoutMarker(shouts.get(0));
         shoutViewPager.setOffscreenPageLimit(4);
@@ -211,7 +243,10 @@ public class ExploreFragment extends Fragment {
     }
 
     private void updateUIForLoadingShouts() {
-        mMap.clear();
+        exploreMap.setMyLocationEnabled(false);
+        shoutProgressBar.setVisibility(View.VISIBLE);
+
+        exploreMap.clear();
         shoutSelectedOnMap = null;
         displayedShoutModels = new HashMap<Integer, Shout>();
         displayedShoutMarkers = new HashMap<Integer, Marker>();
@@ -223,12 +258,16 @@ public class ExploreFragment extends Fragment {
     }
 
     private void showNoConnectionInFeedMessage() {
+        exploreMap.setMyLocationEnabled(true);
+        shoutProgressBar.setVisibility(View.GONE);
         shoutViewPager.setVisibility(View.GONE);
         noShoutInFeed.setVisibility(View.GONE);
         noConnectionInFeed.setVisibility(View.VISIBLE);
     }
 
     private void showNoShoutInFeedMessage() {
+        exploreMap.setMyLocationEnabled(true);
+        shoutProgressBar.setVisibility(View.GONE);
         shoutViewPager.setAdapter(null);
         shoutViewPager.setVisibility(View.GONE);
         noShoutInFeed.setVisibility(View.VISIBLE);
@@ -264,18 +303,18 @@ public class ExploreFragment extends Fragment {
 
         markerOptions.position(new LatLng(shout.lat, shout.lng));
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(getActivity(), shout, false)));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, false)));
 
         markerOptions.title(Integer.toString(shout.id));
 
-        return mMap.addMarker(markerOptions);
+        return exploreMap.addMarker(markerOptions);
     }
 
     private void updateSelectedShoutMarker(Shout shout) {
         if (shoutSelectedOnMap != null) {
             Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
             if (oldSelectedMarker != null) {
-                oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(getActivity(), shoutSelectedOnMap, false)));
+                oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shoutSelectedOnMap.anonymous, false)));
             }
         }
 
@@ -283,7 +322,7 @@ public class ExploreFragment extends Fragment {
 
         Marker marker = displayedShoutMarkers.get(shout.id);
 
-        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(getActivity(), shout, true)));
+        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, true)));
 
         marker.showInfoWindow();
     }
@@ -308,15 +347,15 @@ public class ExploreFragment extends Fragment {
 
     private void setUpMap() {
         //Set map settings
-        UiSettings settings = mMap.getUiSettings();
+        UiSettings settings = exploreMap.getUiSettings();
         settings.setZoomControlsEnabled(false);
         settings.setMyLocationButtonEnabled(false);
         settings.setAllGesturesEnabled(false);
-        mMap.setMyLocationEnabled(true);
+        exploreMap.setMyLocationEnabled(true);
 
-        mMap.setInfoWindowAdapter(new MapWindowAdapter(getActivity()));
+        exploreMap.setInfoWindowAdapter(new MapWindowAdapter(getActivity()));
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        exploreMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 onMapShoutSelected(marker);
@@ -333,4 +372,12 @@ public class ExploreFragment extends Fragment {
         displayShout.putExtra("shout", shout);
         startActivityForResult(displayShout, Constants.DISPLAY_SHOUT_REQUEST);
     }
+
+    public void reloadAdapterIfAlreadyLoaded() {
+        if (shoutPagerAdapter != null) {
+            shoutPagerAdapter = new ShoutsPagerAdapter(getActivity().getSupportFragmentManager(), shouts, "profile");
+            shoutViewPager.setAdapter(shoutPagerAdapter);
+        }
+    }
+
 }
