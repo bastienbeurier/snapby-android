@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.common.ConnectionResult;
@@ -20,6 +18,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.streetshout.android.custom.CustomViewPager;
 import com.streetshout.android.fragments.CameraFragment;
 import com.streetshout.android.fragments.ExploreFragment;
 import com.streetshout.android.fragments.ProfileFragment;
@@ -42,7 +41,7 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
     private PagerAdapter mainPagerAdapter;
 
-    public ViewPager mainViewPager;
+    public CustomViewPager mainViewPager;
 
     private LocationClient mLocationClient = null;
 
@@ -73,7 +72,7 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
         myLikes = new TreeSet<Integer>();
 
-        mainViewPager = (ViewPager) findViewById(R.id.main_view_pager);
+        mainViewPager = (CustomViewPager) findViewById(R.id.main_view_pager);
 
         exploreFragment = new ExploreFragment();
         cameraFragment = new CameraFragment();
@@ -125,14 +124,14 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         //TODO: settings fragment
         //TODO: Don't save image more than once
         //TODO: Make selected snap bigger
+        //TODO: Show anonymous shouts in profile
+        //TODO: notifications for snapby: comments, likes, snaps in area
+        //TODO: velocity scrolling
+        //TODO: implement liked (3 heures)
+        //TODO: paginate shouts (2h)
 
         //TODO: refresh explore and profile shouts on CreateShout
-        //TODO: counter and call-to-action on camera (2 heures)
         //TODO: Display shouts with actions (4 heures)
-        //TODO: implement liked (3 heures)
-        //TODO: faster and larger scrolling (2h)
-        //TODO: zoom controls (1h)
-        //TODO: paginate shouts (2h)
         //TODO: no location --> update (30mins)
         //TODO: change logo and remove blue UI
     }
@@ -231,7 +230,7 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
     public void setExploreMapPerimeterIfNeeded(Location location) {
         //Change explore map perimeter if never set before or (if there is a significant perimeter change and the explore map is not shown)
         if (myLocation == null || (mainViewPager.getCurrentItem() != 0 && (Math.abs(location.getLatitude() - myLocation.getLatitude()) + Math.abs(location.getLongitude() - myLocation.getLongitude()) > 0.0005))) {
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), Constants.INITIAL_ZOOM);
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), Constants.EXPLORE_ZOOM);
             exploreFragment.exploreMap.moveCamera(update);
         }
     }

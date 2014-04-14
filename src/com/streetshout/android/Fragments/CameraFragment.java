@@ -528,6 +528,9 @@ public class CameraFragment extends Fragment {
 
                     Toast toast = Toast.makeText(getActivity(), getString(R.string.create_shout_success), Toast.LENGTH_SHORT);
                     toast.show();
+
+                    ((MainActivity) getActivity()).reloadExploreShouts();
+                    ((MainActivity) getActivity()).reloadProfileShouts();
                 } else {
                     shoutCreationFailed();
                 }
@@ -549,8 +552,6 @@ public class CameraFragment extends Fragment {
                 super.callback(url, object, status);
 
                 if (status.getError() == null && object != null) {
-                    Log.d("BAB", "RESPONSE FROM LOCAL SHOUTS COUNT: " + object);
-
                     Integer shoutCount = 0;
 
                     try {
@@ -567,7 +568,7 @@ public class CameraFragment extends Fragment {
                     if (firstLocalShoutCount) {
                         firstLocalShoutCount = false;
 
-                        Toast toast = Toast.makeText(getActivity(), "Be the #" + (shoutCount + 1) + " to snapby this area!", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getActivity(), "Be #" + (shoutCount + 1) + " to snapby this area!", Toast.LENGTH_LONG);
                         toast.show();
                     }
                 } else {

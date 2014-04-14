@@ -258,7 +258,7 @@ public class ProfileFragment extends Fragment {
         shoutPagerAdapter = new ShoutsPagerAdapter(getActivity().getSupportFragmentManager(), shouts, "profile");
         shoutViewPager.setAdapter(shoutPagerAdapter);
         updateSelectedShoutMarker(shouts.get(0));
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shouts.get(0).lat, shouts.get(0).lng), Constants.INITIAL_ZOOM);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(shouts.get(0).lat, shouts.get(0).lng), Constants.INITIAL_PROFILE_ZOOM);
         profileMap.animateCamera(update);
         shoutViewPager.setOffscreenPageLimit(4);
         shoutViewPager.setPageMargin(30);
@@ -374,8 +374,6 @@ public class ProfileFragment extends Fragment {
         settings.setMyLocationButtonEnabled(false);
         settings.setAllGesturesEnabled(false);
         profileMap.setMyLocationEnabled(true);
-
-        Log.d("BAB", "VIEW HEIGHT: " + userInfoContainer.getHeight());
 
         profileMap.setInfoWindowAdapter(new MapWindowAdapter(getActivity()));
 

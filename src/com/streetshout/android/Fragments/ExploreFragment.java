@@ -1,13 +1,17 @@
 package com.streetshout.android.fragments;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,6 +35,7 @@ import com.streetshout.android.activities.ProfileActivity;
 import com.streetshout.android.adapters.MapWindowAdapter;
 import com.streetshout.android.adapters.ShoutsPagerAdapter;
 import com.streetshout.android.custom.ShoutViewPagerContainer;
+import com.streetshout.android.custom.VelocityViewPager;
 import com.streetshout.android.models.Shout;
 import com.streetshout.android.utils.Constants;
 import com.streetshout.android.utils.GeneralUtils;
@@ -109,7 +114,7 @@ public class ExploreFragment extends Fragment {
 
                     //If we have a location, move the map to there
                     if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
-                        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.INITIAL_ZOOM);
+                        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.EXPLORE_ZOOM);
                         exploreMap.moveCamera(update);
                     //Else wait for location
                     } else {
@@ -117,7 +122,6 @@ public class ExploreFragment extends Fragment {
                     }
                 //Else pull local shouts
                 } else {
-                    ((MainActivity) getActivity()).updateLocalShoutCount();
                     loadContent();
                 }
             }
@@ -165,6 +169,8 @@ public class ExploreFragment extends Fragment {
     }
 
     private void loadContent() {
+        ((MainActivity) getActivity()).updateLocalShoutCount();
+
         if (progressDialog != null) {
             progressDialog.cancel();
         }

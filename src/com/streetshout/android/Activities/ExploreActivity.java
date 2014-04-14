@@ -538,7 +538,7 @@ public class ExploreActivity extends FragmentActivity {
     }
 
     private void initializeCameraWithLocation(Location location) {
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(location), Constants.INITIAL_ZOOM);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(location), Constants.EXPLORE_ZOOM);
         mMap.moveCamera(update);
     }
 

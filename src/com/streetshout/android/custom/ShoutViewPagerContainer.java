@@ -1,8 +1,10 @@
 package com.streetshout.android.custom;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
@@ -29,8 +31,30 @@ public class ShoutViewPagerContainer extends FrameLayout {
         mPager = (ViewPager) getChildAt(0);
     }
 
+    private Point mCenter = new Point();
+    private Point mInitialTouch = new Point();
+
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        Log.d("BAB", "W H :" + w + " - " + h);
+        mCenter.x = w / 2;
+        mCenter.y = h / 2;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        Log.d("BAB", "TOUCH EVENT");
+
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mInitialTouch.x = (int)ev.getX();
+                mInitialTouch.y = (int)ev.getY();
+            default:
+                ev.offsetLocation(mCenter.x - mInitialTouch.x, mCenter.y - mInitialTouch.y);
+                break;
+        }
+
         return mPager.dispatchTouchEvent(ev);
     }
 }
