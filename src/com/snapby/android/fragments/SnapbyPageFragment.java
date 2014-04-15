@@ -17,12 +17,10 @@ import com.snapby.android.R;
 import com.snapby.android.activities.CommentsActivity;
 import com.snapby.android.activities.DisplayActivity;
 import com.snapby.android.activities.MainActivity;
-import com.snapby.android.activities.ProfileActivity;
 import com.snapby.android.models.Shout;
 import com.snapby.android.utils.ApiUtils;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
-import com.snapby.android.utils.TimeUtils;
 import org.json.JSONObject;
 
 /**

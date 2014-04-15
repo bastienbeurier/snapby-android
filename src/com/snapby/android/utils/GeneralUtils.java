@@ -35,15 +35,15 @@ public class GeneralUtils {
     public static int getShoutMarkerImageResource(boolean anonymous, boolean selected) {
         if (anonymous) {
             if (selected) {
-                return R.drawable.marker_anonymous_selected_2;
+                return R.drawable.anonymous_marker_selected;
             } else {
-                return R.drawable.marker_anonymous_2;
+                return R.drawable.anonymous_marker;
             }
         } else {
             if (selected) {
-                return R.drawable.marker_selected_2;
+                return R.drawable.marker_selected;
             } else {
-                return R.drawable.marker_2;
+                return R.drawable.marker;
             }
         }
     }

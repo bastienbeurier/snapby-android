@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.snapby.android.R;
-import com.snapby.android.activities.ProfileActivity;
 import com.snapby.android.models.Comment;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
@@ -75,9 +74,9 @@ public class CommentsAdapter extends BaseAdapter{
             commentView.findViewById(R.id.comment_feed_user_container).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent profile = new Intent(activity, ProfileActivity.class);
-                    profile.putExtra("userId", comment.commenterId);
-                    activity.startActivityForResult(profile, Constants.PROFILE_REQUEST);
+//                    Intent profile = new Intent(activity, ProfileActivity.class);
+//                    profile.putExtra("userId", comment.commenterId);
+//                    activity.startActivityForResult(profile, Constants.PROFILE_REQUEST);
                 }
             });
         }

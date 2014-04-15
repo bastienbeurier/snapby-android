@@ -19,7 +19,7 @@
                android:layout_gravity="top|left"/>
 
 
-    <com.streetshout.android.custom.ShoutViewPagerContainer android:id="@+id/explore_shout_view_pager_container"
+    <com.snapby.android.custom.ShoutViewPagerContainer android:id="@+id/explore_shout_view_pager_container"
                                                             android:layout_width="match_parent"
                                                             android:layout_height="220dp"
                                                             android:layout_gravity="bottom"
@@ -32,7 +32,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"/>
 
-    </com.streetshout.android.custom.ShoutViewPagerContainer>
+    </com.snapby.android.custom.ShoutViewPagerContainer>
 
     <TextView android:id="@+id/explore_shout_no_connection"
               android:text="@string/no_connection_feed"

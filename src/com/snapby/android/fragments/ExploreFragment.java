@@ -31,11 +31,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.snapby.android.R;
 import com.snapby.android.activities.DisplayActivity;
 import com.snapby.android.activities.MainActivity;
-import com.snapby.android.activities.ProfileActivity;
 import com.snapby.android.adapters.MapWindowAdapter;
 import com.snapby.android.adapters.ShoutsPagerAdapter;
 import com.snapby.android.custom.ShoutViewPagerContainer;
-import com.snapby.android.custom.VelocityViewPager;
 import com.snapby.android.models.Shout;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
@@ -116,6 +114,7 @@ public class ExploreFragment extends Fragment {
                     if (myLocation != null && myLocation.getLatitude() != 0 && myLocation.getLongitude() != 0) {
                         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.EXPLORE_ZOOM);
                         exploreMap.moveCamera(update);
+
                     //Else wait for location
                     } else {
                         waitingForLocation();
@@ -224,9 +223,9 @@ public class ExploreFragment extends Fragment {
     }
 
     public void displayProfile(int userId) {
-        Intent profile = new Intent(getActivity(), ProfileActivity.class);
-        profile.putExtra("userId", userId);
-        startActivityForResult(profile, Constants.PROFILE_REQUEST);
+//        Intent profile = new Intent(getActivity(), ProfileActivity.class);
+//        profile.putExtra("userId", userId);
+//        startActivityForResult(profile, Constants.PROFILE_REQUEST);
     }
 
     private void updateUIForDisplayShouts() {
@@ -313,6 +312,8 @@ public class ExploreFragment extends Fragment {
 
         markerOptions.title(Integer.toString(shout.id));
 
+        markerOptions.anchor(0.35f, 0.9f);
+
         return exploreMap.addMarker(markerOptions);
     }
 
@@ -321,6 +322,7 @@ public class ExploreFragment extends Fragment {
             Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
             if (oldSelectedMarker != null) {
                 oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shoutSelectedOnMap.anonymous, false)));
+                oldSelectedMarker.setAnchor(0.35f, 0.9f);
             }
         }
 
@@ -329,6 +331,8 @@ public class ExploreFragment extends Fragment {
         Marker marker = displayedShoutMarkers.get(shout.id);
 
         marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, true)));
+
+        marker.setAnchor(0.5f, 0.8f);
 
         marker.showInfoWindow();
     }

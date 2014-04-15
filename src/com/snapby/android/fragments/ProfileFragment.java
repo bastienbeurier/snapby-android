@@ -339,6 +339,8 @@ public class ProfileFragment extends Fragment {
 
         markerOptions.title(Integer.toString(shout.id));
 
+        markerOptions.anchor(0.35f, 0.9f);
+
         return profileMap.addMarker(markerOptions);
     }
 
@@ -347,6 +349,7 @@ public class ProfileFragment extends Fragment {
             Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
             if (oldSelectedMarker != null) {
                 oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shoutSelectedOnMap.anonymous, false)));
+                oldSelectedMarker.setAnchor(0.35f, 0.9f);
             }
         }
 
@@ -355,6 +358,8 @@ public class ProfileFragment extends Fragment {
         Marker marker = displayedShoutMarkers.get(shout.id);
 
         marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, true)));
+
+        marker.setAnchor(0.5f, 0.8f);
 
         marker.showInfoWindow();
     }

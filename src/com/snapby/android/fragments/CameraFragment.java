@@ -393,7 +393,7 @@ public class CameraFragment extends Fragment {
         }
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "Shout");
+                Environment.DIRECTORY_PICTURES), "Snapby");
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()){

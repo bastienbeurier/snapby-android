@@ -145,11 +145,7 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         //TODO: Display profile
         //TODO: handle no location
 
-        //TODO: design
-        //Markers
-
-
-        //TODO: erase unused stuff
+        //TODO: marker offset
     }
 
 
