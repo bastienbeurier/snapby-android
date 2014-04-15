@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -48,6 +48,7 @@ import java.util.List;
  */
 public class ProfileFragment extends Fragment {
 
+    private int userId = 0;
     private User user = null;
     private ImageView profilePicture = null;
     private TextView username = null;
@@ -79,6 +80,8 @@ public class ProfileFragment extends Fragment {
 
     private boolean mapPaddingNotSet = true;
 
+    public boolean mapLoaded = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.profile, container, false);
@@ -92,6 +95,16 @@ public class ProfileFragment extends Fragment {
         userInfoContainer = rootView.findViewById(R.id.profile_user_info_container);
 
         profileMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.profile_map)).getMap();
+
+        profileMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                //First time map loads, check if we have a location
+                if (!mapLoaded) {
+                    mapLoaded = true;
+                }
+            }
+        });
 
         shoutViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -125,9 +138,9 @@ public class ProfileFragment extends Fragment {
         //Admin capability
         if (Constants.ADMIN) {
             if (Constants.PRODUCTION) {
-                shoutCountView.setTextColor(getResources().getColor(R.color.shoutBlue));
+                shoutCountView.setTextColor(getResources().getColor(R.color.snapbyPink));
             } else {
-                shoutCountView.setTextColor(getResources().getColor(R.color.shoutPink));
+                shoutCountView.setTextColor(getResources().getColor(R.color.snapbyPink));
             }
 
             shoutCountView.setOnClickListener(new View.OnClickListener() {
@@ -136,9 +149,9 @@ public class ProfileFragment extends Fragment {
                     Constants.PRODUCTION = !Constants.PRODUCTION;
 
                     if (Constants.PRODUCTION) {
-                        shoutCountView.setTextColor(getResources().getColor(R.color.shoutBlue));
+                        shoutCountView.setTextColor(getResources().getColor(R.color.snapbyPink));
                     } else {
-                        shoutCountView.setTextColor(getResources().getColor(R.color.shoutPink));
+                        shoutCountView.setTextColor(getResources().getColor(R.color.snapbyPink));
                     }
 
                     SessionUtils.logOut(getActivity());
@@ -155,7 +168,9 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        getMyInfo();
+        userId = SessionUtils.getCurrentUser(getActivity()).id;
+
+        getUserInfo();
 
         return rootView;
     }
@@ -164,18 +179,13 @@ public class ProfileFragment extends Fragment {
     public void onActivityCreated (Bundle savedInstanceState) {
         setUpMap();
 
-        getMyShouts();
+        getUserShouts();
 
         super.onActivityCreated(savedInstanceState);
     }
 
-    public void loadContent() {
-        getMyInfo();
-    }
-
-    private void getMyInfo() {
-
-        ApiUtils.getUserInfo(getActivity(), SessionUtils.getCurrentUser(getActivity()).id, new AjaxCallback<JSONObject>() {
+    public void getUserInfo() {
+        ApiUtils.getUserInfo(getActivity(), userId, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -206,10 +216,10 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void getMyShouts() {
+    public void getUserShouts() {
         updateUIForLoadingShouts();
 
-        ApiUtils.getShouts(getActivity(), SessionUtils.getCurrentUser(getActivity()).id, 1, 100, new AjaxCallback<JSONObject>() {
+        ApiUtils.getShouts(getActivity(), userId, 1, 100, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);

@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,6 @@ import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.LatLngCreator;
 import com.streetshout.android.R;
 import com.streetshout.android.activities.MainActivity;
 import com.streetshout.android.activities.RefineLocationActivity;
@@ -529,6 +527,8 @@ public class CameraFragment extends Fragment {
                     Toast toast = Toast.makeText(getActivity(), getString(R.string.create_shout_success), Toast.LENGTH_SHORT);
                     toast.show();
 
+                    ((MainActivity) getActivity()).reloadSnapbys();
+
                     ((MainActivity) getActivity()).reloadExploreShouts();
                     ((MainActivity) getActivity()).reloadProfileShouts();
                 } else {
@@ -571,8 +571,6 @@ public class CameraFragment extends Fragment {
                         Toast toast = Toast.makeText(getActivity(), "Be #" + (shoutCount + 1) + " to snapby this area!", Toast.LENGTH_LONG);
                         toast.show();
                     }
-                } else {
-                    Log.d("BAB", "ERROR FROM LOCAL SHOUTS COUNT: " + status.getError());
                 }
             }
         });

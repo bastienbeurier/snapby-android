@@ -15,7 +15,7 @@
             android:layout_marginRight="10dp"
             android:fontFamily="sans-serif"
             android:textStyle="bold"
-            android:textColor="@color/shoutBlue"
+            android:textColor="@color/snapbyPink"
             android:textSize="18dp"
             android:hint="@string/your_username"/>
     <EditText

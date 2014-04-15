@@ -86,7 +86,7 @@
                                   android:layout_height="match_parent"
                                   android:layout_width="match_parent"
                                   android:textSize="14dp"
-                                  android:text="shouts"
+                                  android:text="snapbys"
                                   android:textColor="@color/white"
                                   android:gravity="center"/>
 

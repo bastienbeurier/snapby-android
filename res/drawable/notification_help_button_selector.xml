@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@color/shoutBlue">
+    <item android:state_pressed="true" android:drawable="@color/snapbyPink">
         <layer-list>
             <item>
                 <shape xmlns:android="http://schemas.android.com/apk/res/android"
@@ -18,7 +18,7 @@
             <item>
                 <shape xmlns:android="http://schemas.android.com/apk/res/android"
                        android:shape="oval">
-                    <solid android:color="@color/shoutBlue"/>
+                    <solid android:color="@color/snapbyPink"/>
                     <stroke android:width="1sp" android:color="@android:color/white" />
                 </shape>
             </item>

@@ -61,7 +61,8 @@
 
         <Button android:id="@+id/capture_button"
                 android:layout_width="100dp"
-                android:layout_height="79dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/camera_shout_button_selector"
                 android:layout_gravity="center"/>
 

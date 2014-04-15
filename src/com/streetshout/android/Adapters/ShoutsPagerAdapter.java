@@ -3,7 +3,7 @@ package com.streetshout.android.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import com.streetshout.android.fragments.ShoutPageFragment;
+import com.streetshout.android.fragments.SnapbyPageFragment;
 import com.streetshout.android.models.Shout;
 
 import java.util.ArrayList;
@@ -33,9 +33,9 @@ public class ShoutsPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (type != null && type.equals("profile")) {
-            return ShoutPageFragment.newInstance(items.get(position), type);
+            return SnapbyPageFragment.newInstance(items.get(position), type);
         } else {
-            return ShoutPageFragment.newInstance(items.get(position));
+            return SnapbyPageFragment.newInstance(items.get(position));
         }
     }
 

@@ -80,7 +80,7 @@ public class ExploreFragment extends Fragment {
 
     private View shoutProgressBar = null;
 
-    private boolean mapLoaded = false;
+    public boolean mapLoaded = false;
 
     private boolean mapPaddingNotSet = true;
 
@@ -168,7 +168,7 @@ public class ExploreFragment extends Fragment {
         progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.waiting_for_location), false);
     }
 
-    private void loadContent() {
+    public void loadContent() {
         ((MainActivity) getActivity()).updateLocalShoutCount();
 
         if (progressDialog != null) {

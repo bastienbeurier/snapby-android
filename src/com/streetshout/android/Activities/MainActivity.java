@@ -1,11 +1,13 @@
 package com.streetshout.android.activities;
 
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.common.ConnectionResult;
@@ -65,6 +67,10 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
     private boolean firstOpen = true;
 
+    private boolean preventRedirectToCamera = false;
+
+    private int pagePreviouslySelected = 1;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -90,9 +96,15 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
             @Override
             public void onPageSelected(int i) {
-                if (i ==  2) {
-                    profileFragment.loadContent();
+                if (i == 1) {
+                    if (pagePreviouslySelected == 0) {
+                        reloadExploreSnapbys();
+                    } else if (pagePreviouslySelected == 2) {
+                        reloadProfileSnapbys();
+                    }
                 }
+
+                pagePreviouslySelected = i;
             }
 
             @Override
@@ -119,21 +131,25 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
         //TODO: notification redirection
 
-        //TODO: onActivityResult for refine
-        //TODO: check that createView is not called everytime
-        //TODO: settings fragment
-        //TODO: Don't save image more than once
-        //TODO: Make selected snap bigger
-        //TODO: Show anonymous shouts in profile
-        //TODO: notifications for snapby: comments, likes, snaps in area
-        //TODO: velocity scrolling
+        //TODO: onActivityResult for refine (1h)
+        //TODO: settings fragment (1h)
+        //TODO: Don't save image more than once (1h)
+        //TODO: Show anonymous shouts in profile (1h)
+        //TODO: notifications for snapby: comments, likes, snaps in area (Baptiste)
         //TODO: implement liked (3 heures)
         //TODO: paginate shouts (2h)
+        //TODO: like-comment-share icons on display (2h)
+        //TODO: update comment count on comment (2h)
+        //TODO: shout age in explore (1h)
 
-        //TODO: refresh explore and profile shouts on CreateShout
-        //TODO: Display shouts with actions (4 heures)
-        //TODO: no location --> update (30mins)
-        //TODO: change logo and remove blue UI
+        //TODO: Display profile
+        //TODO: handle no location
+
+        //TODO: design
+        //Markers
+
+
+        //TODO: erase unused stuff
     }
 
 
@@ -141,7 +157,8 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
     protected void onResume() {
         super.onResume();
 
-        if (!firstOpen) {
+        if (!firstOpen && !preventRedirectToCamera) {
+            preventRedirectToCamera = false;
             mainViewPager.setCurrentItem(1, false);
         }
 
@@ -309,5 +326,29 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         }
 
         super.onWindowFocusChanged(hasFocus);
+    }
+
+    public void reloadSnapbys() {
+        reloadExploreSnapbys();
+        reloadProfileSnapbys();
+    }
+
+    private void reloadExploreSnapbys() {
+        if (exploreFragment.mapLoaded) {
+            exploreFragment.loadContent();
+        }
+    }
+
+    private void reloadProfileSnapbys() {
+        if (profileFragment.mapLoaded) {
+            profileFragment.getUserShouts();
+            profileFragment.getUserInfo();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("BAB", "PREVENT REDIRECT TO CAMERA");
+        preventRedirectToCamera = true;
     }
 }

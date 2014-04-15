@@ -105,22 +105,12 @@ public class DisplayActivity extends Activity {
 
         User currentUser = SessionUtils.getCurrentUser(this);
 
-        if (expiredShout) {
-            if (currentUser.id < 3) {
-                inflater.inflate(R.menu.display_expired_shout_more_menu_admin, menu);
-            } else if (currentUser.id == shout.userId) {
-                inflater.inflate(R.menu.display_expired_shout_more_menu_my_shout, menu);
-            } else {
-                inflater.inflate(R.menu.display_expired_shout_more_menu, menu);
-            }
+        if (currentUser.id < 3) {
+            inflater.inflate(R.menu.display_shout_more_menu_admin, menu);
+        } else if (currentUser.id == shout.userId) {
+            inflater.inflate(R.menu.display_shout_more_menu_my_shout, menu);
         } else {
-            if (currentUser.id < 3) {
-                inflater.inflate(R.menu.display_shout_more_menu_admin, menu);
-            } else if (currentUser.id == shout.userId) {
-                inflater.inflate(R.menu.display_shout_more_menu_my_shout, menu);
-            } else {
-                inflater.inflate(R.menu.display_shout_more_menu, menu);
-            }
+            inflater.inflate(R.menu.display_shout_more_menu, menu);
         }
 
         return true;
@@ -173,27 +163,6 @@ public class DisplayActivity extends Activity {
                         Intent returnIntent = new Intent();
                         returnIntent.putExtra("delete", "whatever");
                         setResult(RESULT_OK, returnIntent);
-                        finish();
-                    }
-                });
-
-                return true;
-            case R.id.trending_item:
-                ApiUtils.makeTrendingShout(DisplayActivity.this, shout.id, new AjaxCallback<JSONObject>() {
-                    @Override
-                    public void callback(String url, JSONObject object, AjaxStatus status) {
-                        super.callback(url, object, status);
-
-                        Toast toast = null;
-
-                        if (status.getError() != null) {
-                            toast = Toast.makeText(DisplayActivity.this, getString(R.string.failed_trending_shout), Toast.LENGTH_SHORT);
-                        } else {
-                            toast = Toast.makeText(DisplayActivity.this, getString(R.string.successful_trending_shout), Toast.LENGTH_SHORT);
-                        }
-
-                        toast.show();
-
                         finish();
                     }
                 });

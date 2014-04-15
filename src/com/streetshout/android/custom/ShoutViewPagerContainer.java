@@ -37,15 +37,12 @@ public class ShoutViewPagerContainer extends FrameLayout {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        Log.d("BAB", "W H :" + w + " - " + h);
         mCenter.x = w / 2;
         mCenter.y = h / 2;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.d("BAB", "TOUCH EVENT");
-
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mInitialTouch.x = (int)ev.getX();

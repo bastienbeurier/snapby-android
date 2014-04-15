@@ -88,7 +88,7 @@
                        android:padding="10dp"
                        android:layout_height="match_parent"
                        android:src="@drawable/create_send_button_selector"
-                       android:background="@color/shoutBlue"/>
+                       android:background="@color/snapbyPink"/>
 
         </LinearLayout>
 

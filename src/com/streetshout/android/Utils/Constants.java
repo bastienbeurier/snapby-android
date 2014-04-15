@@ -35,7 +35,7 @@ public class Constants {
     public static final int RESET_PASSWORD_REQUEST = 64783;
     public static final int DISPLAY_SHOUT_REQUEST = 48392;
     public static final int CHOOSE_PROFILE_PICTURE_REQUEST = 37489;
-    public static final int FOLLOWERS_REQUEST = 323489;
+    public static final int COMMENTS_REQUEST = 323489;
 
     /** AWS S3 **/
     public static final String SMALL_SHOUT_IMAGE_URL_PREFIX_DEV = "http://s3.amazonaws.com/shout_development/small/image_";

@@ -9,7 +9,7 @@
 
         <FrameLayout android:layout_width="match_parent"
                      android:layout_height="match_parent"
-                     android:background="@color/lightShoutBlue">
+                     android:background="@color/lightSnapbyPink">
 
             <ImageView android:layout_width="60dp"
                        android:layout_height="60dp"
@@ -60,42 +60,68 @@
 
             </LinearLayout>
 
-            <LinearLayout android:id="@+id/explore_shout_like_container"
+            <LinearLayout android:id="@+id/explore_shout_info_container"
                           android:layout_width="match_parent"
                           android:layout_height="40dp"
                           android:orientation="horizontal"
                           android:layout_gravity="bottom"
                           android:background="@color/semiTransparentBlackDarker">
 
-                <ImageView android:id="@+id/explore_shout_like_button"
-                           android:layout_width="18dp"
-                           android:layout_height="18dp"
-                           android:layout_margin="5dp"
-                           android:layout_gravity="center"
-                           android:src="@drawable/explore_shout_like_button"/>
+                <LinearLayout android:id="@+id/explore_shout_like_container"
+                              android:layout_width="match_parent"
+                              android:layout_height="match_parent"
+                              android:orientation="horizontal"
+                              android:layout_weight="1">
+
+                    <ImageView android:id="@+id/explore_shout_like_button"
+                               android:layout_width="18dp"
+                               android:layout_height="18dp"
+                               android:layout_margin="5dp"
+                               android:layout_gravity="center"
+                               android:src="@drawable/explore_shout_like_button"/>
 
 
-                <TextView android:id="@+id/explore_shout_like_count"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="9"
-                          android:textSize="16dp"
-                          android:layout_gravity="center"
-                          android:textColor="@color/white"/>
+                    <TextView android:id="@+id/explore_shout_like_count"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="0"
+                              android:textSize="16dp"
+                              android:layout_gravity="center"
+                              android:textColor="@color/white"/>
 
-                <View android:layout_height="match_parent"
-                      android:layout_width="match_parent"
-                      android:layout_weight="1"/>
+                </LinearLayout>
 
+                <!--<TextView android:id="@+id/explore_shout_age"-->
+                          <!--android:layout_width="wrap_content"-->
+                          <!--android:layout_height="wrap_content"-->
+                          <!--android:layout_gravity="center"-->
+                          <!--android:textSize="16dp"-->
+                          <!--android:text="0min"-->
+                          <!--android:textColor="@color/white"/>-->
 
-                <TextView android:id="@+id/explore_shout_age"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_marginRight="5dp"
-                          android:layout_gravity="center"
-                          android:textSize="16dp"
-                          android:text="9min"
-                          android:textColor="@color/white"/>
+                <LinearLayout android:id="@+id/explore_shout_comment_container"
+                              android:layout_width="match_parent"
+                              android:layout_height="match_parent"
+                              android:gravity="right"
+                              android:orientation="horizontal"
+                              android:layout_weight="1">
+
+                    <TextView android:id="@+id/explore_shout_comment_count"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="0"
+                              android:textSize="16dp"
+                              android:layout_gravity="center"
+                              android:textColor="@color/white"/>
+
+                    <ImageView android:id="@+id/explore_shout_comment_button"
+                               android:layout_width="18dp"
+                               android:layout_height="18dp"
+                               android:layout_margin="5dp"
+                               android:layout_gravity="center"
+                               android:src="@drawable/explore_shout_comment_button"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
