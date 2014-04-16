@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.common.ConnectionResult;
@@ -129,23 +128,21 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
         getMyLikes();
 
-        //TODO: notification redirection
+        //TODO: left Fragment click bug
 
-        //TODO: onActivityResult for refine (1h)
-        //TODO: settings fragment (1h)
-        //TODO: Don't save image more than once (1h)
-        //TODO: Show anonymous shouts in profile (1h)
-        //TODO: notifications for snapby: comments, likes, snaps in area (Baptiste)
-        //TODO: implement liked (3 heures)
-        //TODO: paginate shouts (2h)
-        //TODO: like-comment-share icons on display (2h)
-        //TODO: update comment count on comment (2h)
-        //TODO: shout age in explore (1h)
-
-        //TODO: Display profile
-        //TODO: handle no location
-
-        //TODO: marker offset
+        //TODO: 1. Change server
+        //TODO: 2. Shout order
+        //TODO: 3. implement liked (3 heures)
+        //TODO: 5. shout age somewhere (1h)
+        //TODO: 6. paginate shouts (2h)
+        //TODO: 7. settings fragment (1h)
+        //TODO: 8. change share
+        //TODO: 9. server notifications and notification redirection
+        //TODO: 10. update comment count on comment (2h)
+        //TODO: 11. Show anonymous shouts in profile (1h)
+        //TODO: 12. Don't save image more than once (1h)
+        //TODO: 13. onActivityResult for refine
+        //TODO: 4. Display profile
     }
 
 
@@ -235,8 +232,9 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         if (location != null && location.getLatitude() != 0 && location.getLongitude() != 0) {
             myLocation = location;
 
-            setExploreMapPerimeterIfNeeded(location);
-            myLocation = location;
+            if (exploreFragment.waitingForLocation) {
+                reloadExploreSnapbys();
+            }
         }
     }
 
@@ -330,7 +328,10 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
     }
 
     private void reloadExploreSnapbys() {
-        if (exploreFragment.mapLoaded) {
+        if (exploreFragment.mapLoaded && myLocation != null) {
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.EXPLORE_ZOOM);
+            exploreFragment.exploreMap.moveCamera(update);
+
             exploreFragment.loadContent();
         }
     }
@@ -344,7 +345,6 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("BAB", "PREVENT REDIRECT TO CAMERA");
         preventRedirectToCamera = true;
     }
 }

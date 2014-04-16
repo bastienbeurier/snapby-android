@@ -1,17 +1,12 @@
 package com.snapby.android.fragments;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -72,8 +67,6 @@ public class ExploreFragment extends Fragment {
 
     private MapRequestHandler mapReqHandler = null;
 
-    private ProgressDialog progressDialog = null;
-
     private ImageView refreshButton = null;
 
     private View shoutProgressBar = null;
@@ -81,6 +74,10 @@ public class ExploreFragment extends Fragment {
     public boolean mapLoaded = false;
 
     private boolean mapPaddingNotSet = true;
+
+    private View noLocationDialog = null;
+
+    public boolean waitingForLocation = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,6 +89,7 @@ public class ExploreFragment extends Fragment {
         viewPagerContainer = (ShoutViewPagerContainer) rootView.findViewById(R.id.explore_shout_view_pager_container);
         refreshButton = (ImageView) rootView.findViewById(R.id.explore_refresh_button);
         shoutProgressBar = rootView.findViewById(R.id.explore_shout_progress_bar);
+        noLocationDialog = rootView.findViewById(R.id.explore_shout_no_location);
 
         exploreMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
 
@@ -149,6 +147,12 @@ public class ExploreFragment extends Fragment {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Location myLocation = ((MainActivity) getActivity()).myLocation;
+                if (myLocation != null && (myLocation.getLongitude() == 0 || myLocation.getLatitude() == 0)) {
+                    CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.EXPLORE_ZOOM);
+                    exploreMap.moveCamera(update);
+                }
+
                 loadContent();
             }
         });
@@ -164,15 +168,32 @@ public class ExploreFragment extends Fragment {
     }
 
     private void waitingForLocation() {
-        progressDialog = ProgressDialog.show(getActivity(), "", getString(R.string.waiting_for_location), false);
+        waitingForLocation = true;
+        noLocationDialog.setVisibility(View.VISIBLE);
+        refreshButton.setEnabled(false);
+        shoutProgressBar.setVisibility(View.GONE);
+    }
+
+    private void dismissWaitingForLocation() {
+        waitingForLocation = false;
+        noLocationDialog.setVisibility(View.GONE);
+        refreshButton.setEnabled(true);
     }
 
     public void loadContent() {
+        Location myLocation = ((MainActivity) getActivity()).myLocation;
+        if (myLocation == null || (myLocation.getLongitude() == 0 && myLocation.getLatitude() == 0)) {
+            waitingForLocation();
+            return;
+        }
+
+        if (exploreMap.getCameraPosition().zoom < Constants.EXPLORE_ZOOM - 1) {
+            return;
+        }
+
         ((MainActivity) getActivity()).updateLocalShoutCount();
 
-        if (progressDialog != null) {
-            progressDialog.cancel();
-        }
+        dismissWaitingForLocation();
 
         //Add a request to populate the map with shouts
         LatLngBounds mapBounds = exploreMap.getProjection().getVisibleRegion().latLngBounds;

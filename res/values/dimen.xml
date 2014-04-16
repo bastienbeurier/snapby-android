@@ -18,5 +18,5 @@
     <!--shout_fragment_numeric_info_layout_width equals shout_fragment_button_size + 2 * shout_fragment_button_margin-->
     <dimen name="shout_fragment_numeric_info_layout_width">93dp</dimen>
     <dimen name="camera_top_bar">48dp</dimen>
-    <dimen name="camera_bottom_bar">110dp</dimen>
+    <dimen name="camera_bottom_bar">120dp</dimen>
 </resources>

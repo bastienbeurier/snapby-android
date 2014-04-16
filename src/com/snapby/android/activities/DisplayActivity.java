@@ -47,7 +47,6 @@ public class DisplayActivity extends Activity {
             expiredShout = true;
         }
 
-        final TextView descriptionView = (TextView) findViewById(R.id.display_description_text);
         final ImageView dismissButton = (ImageView) findViewById(R.id.display_dismiss_button);
         final ImageView moreButton = (ImageView) findViewById(R.id.display_more_button);
 
@@ -58,24 +57,15 @@ public class DisplayActivity extends Activity {
         Bitmap preset = GeneralUtils.getAquery(this).getCachedImage(GeneralUtils.getShoutSmallPicturePrefix() + shout.id + "--400");
         GeneralUtils.getAquery(this).id(imageView).image(GeneralUtils.getShoutBigPicturePrefix() + shout.id + "--400", true, false, 0, 0, preset, AQuery.FADE_IN);
 
-        //Don't see TextView if no text in Shout
-        if (shout.description.length() == 0) {
-            descriptionView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        } else {
-            descriptionView.setText(shout.description);
-        }
-
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (imageFullScreen) {
-                    descriptionView.setVisibility(View.VISIBLE);
                     dismissButton.setVisibility(View.VISIBLE);
                     moreButton.setVisibility(View.VISIBLE);
 
                     imageFullScreen = false;
                 } else {
-                    descriptionView.setVisibility(View.INVISIBLE);
                     dismissButton.setVisibility(View.INVISIBLE);
                     moreButton.setVisibility(View.INVISIBLE);
 

@@ -20,11 +20,11 @@ import java.util.Map;
 public class ApiUtils {
 
     public static String getSiteUrl() {
-        return Constants.PRODUCTION ? "http://street-shout.herokuapp.com" : "http://dev-street-shout.herokuapp.com";
+        return Constants.PRODUCTION ? "http://snapby-web.herokuapp.com" : "http://dev-snapby-web.herokuapp.com";
     }
 
     public static String getUserSiteUrl() {
-        return Constants.PRODUCTION ? "http://www.shouthereandnow.com" : "http://dev-street-shout.herokuapp.com";
+        return Constants.PRODUCTION ? "http://www.snapby.co" : "http://dev-snapby-web.herokuapp.com";
     }
 
     private static String getBasePath() {

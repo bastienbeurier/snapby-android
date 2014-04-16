@@ -96,7 +96,7 @@ public class CameraFragment extends Fragment {
 
     private Bitmap formattedPicture = null;
 
-    private boolean creationMode = false;
+    private View exploreButtonContainer = null;
 
     private TextView localShoutCount = null;
 
@@ -123,6 +123,7 @@ public class CameraFragment extends Fragment {
         shoutImageView = (ImageView) rootView.findViewById(R.id.create_shout_image);
         localShoutCount = (TextView) rootView.findViewById(R.id.camera_shout_count);
         localShoutCountContainer = (FrameLayout) rootView.findViewById(R.id.camera_shout_count_container);
+        exploreButtonContainer = rootView.findViewById(R.id.camera_explore_button_container);
 
         appPrefs = ((StreetShoutApplication) getActivity().getApplicationContext()).getAppPrefs();
 
@@ -417,23 +418,18 @@ public class CameraFragment extends Fragment {
     }
 
     private void startCreationMode() {
-        creationMode = true;
-
         shoutImageView.setImageBitmap(formattedPicture);
         preview.setVisibility(View.GONE);
         shoutImageView.setVisibility(View.VISIBLE);
 
-        exploreButton.setVisibility(View.GONE);
+        exploreButtonContainer.setVisibility(View.GONE);
         profileButton.setVisibility(View.GONE);
         cameraBottomBar.setVisibility(View.GONE);
         createBottomBar.setVisibility(View.VISIBLE);
         cancelButton.setVisibility(View.VISIBLE);
-        localShoutCountContainer.setVisibility(View.GONE);
     }
 
     private void quitCreationMode() {
-        creationMode = false;
-
         shoutImageView.setVisibility(View.GONE);
 
         shoutLocationRefined = false;
@@ -444,11 +440,10 @@ public class CameraFragment extends Fragment {
 
         createBottomBar.setVisibility(View.GONE);
         cancelButton.setVisibility(View.GONE);
-        exploreButton.setVisibility(View.VISIBLE);
+        exploreButtonContainer.setVisibility(View.VISIBLE);
         profileButton.setVisibility(View.VISIBLE);
         cameraBottomBar.setVisibility(View.VISIBLE);
         preview.setVisibility(View.VISIBLE);
-        localShoutCountContainer.setVisibility(View.VISIBLE);
 
         setUpCamera();
     }
@@ -481,7 +476,7 @@ public class CameraFragment extends Fragment {
         Location myLocation = ((MainActivity) getActivity()).myLocation;
 
         if (myLocation == null || myLocation.getLatitude() == 0 || myLocation.getLongitude() == 0) {
-            Toast toast = Toast.makeText(getActivity(), getString(R.string.anonymous_mode_enabled), Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.no_location), Toast.LENGTH_SHORT);
             toast.show();
             return;
         }
