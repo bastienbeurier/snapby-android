@@ -6,7 +6,7 @@ import com.androidquery.AQuery;
 import com.androidquery.util.AQUtility;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-public class StreetShoutApplication extends Application {
+public class SnapbyApplication extends Application {
 
     private AppPreferences appPrefs = null;
 

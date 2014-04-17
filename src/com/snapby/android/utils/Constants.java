@@ -19,7 +19,7 @@ public class Constants {
     public static final int EXPLORE_ZOOM = 15;
     public static final int INITIAL_PROFILE_ZOOM = 13;
 
-    /** Minimum radius around the user's location where he can create shout **/
+    /** Minimum radius around the user's location where he can create snapby **/
     public static final int SHOUT_RADIUS = 300;
 
     /** StartActivityForResult codes **/
@@ -40,11 +40,11 @@ public class Constants {
     public static final String BIG_PROFILE_PICS_URL_PREFIX_PROD = "http://s3.amazonaws.com/snapby_profile_pics/original/profile_";
     public static final String BIG_PROFILE_PICS_URL_PREFIX_DEV = "http://s3.amazonaws.com/snapby_profile_pics_dev/original/profile_";
 
-    /** Shout image res **/
+    /** Snapby image res **/
     public static final int SHOUT_BIG_RES = 800;
     public static final int PROFILE_PICTURE_RES = 300;
 
     /** Mixpanel tokens **/
-    public static final String PROD_MIXPANEL_TOKEN = "24dc482a232028564063bd3dd7e84e93";
-    public static final String DEV_MIXPANEL_TOKEN = "468e53159f354365149b1a46a7ecdec3";
+    public static final String PROD_MIXPANEL_TOKEN = "781f8a3090780f2afbb8a260a58911c4";
+    public static final String DEV_MIXPANEL_TOKEN = "293023eb15e4681ca1aa4c81d3a6ce19";
 }

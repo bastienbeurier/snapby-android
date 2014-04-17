@@ -6,7 +6,7 @@ import android.content.Context;
 import android.location.Location;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
-import com.snapby.android.models.Shout;
+import com.snapby.android.models.Snapby;
 import com.snapby.android.models.User;
 import org.json.JSONObject;
 
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Tools relative to API calls to street-shout-web.
+ * Tools relative to API calls to snapby-web.
  */
 public class ApiUtils {
 
@@ -63,9 +63,9 @@ public class ApiUtils {
         }
     }
 
-    /** API call to create a new shout */
-    public static void createShout(Activity activity, AQuery aq, double lat, double lng, String description, boolean anonymousUser, String image, AjaxCallback<JSONObject> cb) {
-        String url = getBasePath() + "/shouts.json";
+    /** API call to create a new snapby */
+    public static void createSnapby(Activity activity, AQuery aq, double lat, double lng, String description, boolean anonymousUser, String image, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/snapbies.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", SessionUtils.getCurrentUser(activity).username);
@@ -86,22 +86,22 @@ public class ApiUtils {
         aq.ajax(url, params, JSONObject.class, cb);
     }
 
-    /** API call to retrieve shouts in a zone of the map */
-    public static void pullShoutsInZone(AQuery aq, double neLat, double neLng, double swLat, double swLng, AjaxCallback<JSONObject> cb) {
+    /** API call to retrieve snapbies in a zone of the map */
+    public static void pullSnapbiesInZone(AQuery aq, double neLat, double neLng, double swLat, double swLng, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("neLat", String.valueOf(neLat));
         params.put("neLng", String.valueOf(neLng));
         params.put("swLat", String.valueOf(swLat));
         params.put("swLng", String.valueOf(swLng));
 
-        String url = getBasePath() + "/bound_box_shouts.json" + encodeParamsAsUrlParams(params);
+        String url = getBasePath() + "/bound_box_snapbies.json" + encodeParamsAsUrlParams(params);
 
         cb.timeout(15000);
 
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void pullLocalShouts(AQuery aq, double neLat, double neLng, double swLat, double swLng, int page, AjaxCallback<JSONObject> cb) {
+    public static void pullLocalSnapbies(AQuery aq, double neLat, double neLng, double swLat, double swLng, int page, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("neLat", String.valueOf(neLat));
         params.put("neLng", String.valueOf(neLng));
@@ -109,7 +109,7 @@ public class ApiUtils {
         params.put("swLng", String.valueOf(swLng));
         params.put("page", page);
 
-        String url = getBasePath() + "/shouts/local_shouts.json" + encodeParamsAsUrlParams(params);
+        String url = getBasePath() + "/snapbies/local_snapbies.json" + encodeParamsAsUrlParams(params);
 
         cb.timeout(15000);
 
@@ -219,9 +219,9 @@ public class ApiUtils {
         aq.ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void getComments(Activity activity, Shout shout, AjaxCallback<JSONObject> cb) {
+    public static void getComments(Activity activity, Snapby snapby, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shout.id);
+        params.put("snapby_id", snapby.id);
         params = enrichParametersWithToken(activity, params);
 
         if (params == null) {
@@ -234,26 +234,11 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
     }
 
-    public static void getLikes(Activity activity, Shout shout, AjaxCallback<JSONObject> cb) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shout.id);
-        params = enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        //TODO: Remove token from url param
-        String url = getBasePath() + "/likes.json" + encodeParamsAsUrlParams(params);
-
-        GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
-    }
-
-    public static void reportShout(Activity activity, int shoutId, String motive, AjaxCallback<JSONObject> cb) {
+    public static void reportSnapby(Activity activity, int snapbyId, String motive, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/flags.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shoutId);
+        params.put("snapby_id", snapbyId);
         params.put("motive", motive);
         params.put("flagger_id", SessionUtils.getCurrentUser(activity).id);
 
@@ -265,11 +250,11 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void createLike(Activity activity, Shout shout, double lat, double lng, AjaxCallback<JSONObject> cb) {
+    public static void createLike(Activity activity, Snapby snapby, double lat, double lng, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/likes.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shout.id);
+        params.put("snapby_id", snapby.id);
 
         if (lat != 0 && lng != 0) {
             params.put("lat", lat);
@@ -284,12 +269,12 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void createComment(Activity activity, String description, Shout shout, double lat, double lng, AjaxCallback<JSONObject> cb) {
+    public static void createComment(Activity activity, String description, Snapby snapby, double lat, double lng, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/comments.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shout.id);
-        params.put("shouter_id", shout.userId);
+        params.put("snapby_id", snapby.id);
+        params.put("snapbyer_id", snapby.userId);
         params.put("description", description);
 
         if (lat != 0 && lng != 0) {
@@ -305,11 +290,11 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void removeShout(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
-        String url = getBasePath() + "/shouts/remove.json";
+    public static void removeSnapby(Activity activity, int snapbyId, AjaxCallback<JSONObject> cb) {
+        String url = getBasePath() + "/snapbies/remove.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shoutId);
+        params.put("snapby_id", snapbyId);
 
         params = enrichParametersWithToken(activity, params);
         if (params == null) {
@@ -321,34 +306,17 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void removeLike(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
+    public static void removeLike(Activity activity, int snapbyId, AjaxCallback<JSONObject> cb) {
         String url = getBasePath() + "/likes/delete.json";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shoutId);
+        params.put("snapby_id", snapbyId);
 
         params = enrichParametersWithToken(activity, params);
 
         if (params == null) {
             return;
         }
-
-        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void makeTrendingShout(Activity activity, int shoutId, AjaxCallback<JSONObject> cb) {
-        String url = getBasePath() + "/shouts/trending.json";
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("shout_id", shoutId);
-
-        params = enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        cb.method(AQuery.METHOD_PUT);
 
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
@@ -369,7 +337,7 @@ public class ApiUtils {
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void getSuggestedFriends(Activity activity, AjaxCallback<JSONObject> cb) {
+    public static void getMyLikes(Activity activity, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
 
         enrichParametersWithToken(activity, params);
@@ -378,147 +346,14 @@ public class ApiUtils {
             return;
         }
 
-        String url = getBasePath() + "/users/suggested_friends.json";
+        String url = getBasePath() + "/users/my_likes.json";
 
         //Must be a POST request to avoid putting token in url
         GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
     }
 
-    public static void getFollowers(Activity activity, int userId, AjaxCallback<JSONObject> cb) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("user_id", userId);
 
-        enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        String url = getBasePath() + "/users/followers.json";
-
-        //Must be a POST request to avoid putting token in url
-        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void getFollowingUsers(Activity activity, int userId, AjaxCallback<JSONObject> cb) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("user_id", userId);
-
-        enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        String url = getBasePath() + "/users/followed_users.json";
-
-        //Must be a POST request to avoid putting token in url
-        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void followUser(Activity activity, int followedId, AjaxCallback<JSONObject> cb) {
-        String url = getBasePath() + "/relationships.json";
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("followed_id", followedId);
-
-        params = enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void unfollowUser(Activity activity, int followedId, AjaxCallback<JSONObject> cb) {
-        String url = getBasePath() + "/relationships/delete.json";
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("followed_id", followedId);
-
-        params = enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void getMyLikesAndFollowedUsers(Activity activity, AjaxCallback<JSONObject> cb) {
-        Map<String, Object> params = new HashMap<String, Object>();
-
-        enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        String url = getBasePath() + "/users/my_likes_and_followed_users.json";
-
-        //Must be a POST request to avoid putting token in url
-        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void autofollowFacebookFriends(Activity activity, List<Long> friends) {
-        Map<String, Object> params = new HashMap<String, Object>();
-
-        params.put("friend_ids", friends);
-
-        enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        String url = getBasePath() + "/users/autofollow.json";
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-
-        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void getActivities(Activity activity, int page, int pageSize, AjaxCallback<JSONObject> cb) {
-        Map<String, Object> params = new HashMap<String, Object>();
-
-        params = enrichParametersWithToken(activity, params);
-        params.put("page", page);
-        params.put("page_size", pageSize);
-
-        if (params == null) {
-            return;
-        }
-
-        //TODO: Remove token from url param
-        String url = getBasePath() + "/activities.json" + encodeParamsAsUrlParams(params);
-
-        GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
-    }
-
-    public static void getShout(AQuery aq, int shoutId, AjaxCallback<JSONObject> cb) {
-        String url = getBasePath() + "/shouts/" + shoutId;
-
-        aq.ajax(url, JSONObject.class, cb);
-    }
-
-    public static void getUnreadActivitiesCount(Activity activity, long lastRead, AjaxCallback<JSONObject> cb) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("last_read", lastRead);
-
-        enrichParametersWithToken(activity, params);
-
-        if (params == null) {
-            return;
-        }
-
-        String url = getBasePath() + "/activities/unread_activities_count.json";
-
-        //Must be a POST request to avoid putting token in url
-        GeneralUtils.getAquery(activity).ajax(url, params, JSONObject.class, cb);
-    }
-
-    public static void getShouts(Activity activity, int userId, int page, int pageSize, AjaxCallback<JSONObject> cb) {
+    public static void getSnapbies(Activity activity, int userId, int page, int pageSize, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("user_id", userId);
         params.put("page", page);
@@ -531,12 +366,12 @@ public class ApiUtils {
         }
 
         //TODO: Remove token from url param
-        String url = getBasePath() + "/shouts.json" + encodeParamsAsUrlParams(params);
+        String url = getBasePath() + "/snapbies.json" + encodeParamsAsUrlParams(params);
 
         GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
     }
 
-    public static void getLocalShoutsCount(Activity activity, double neLat, double neLng, double swLat, double swLng, AjaxCallback<JSONObject> cb) {
+    public static void getLocalSnapbiesCount(Activity activity, double neLat, double neLng, double swLat, double swLng, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("neLat", String.valueOf(neLat));
@@ -545,7 +380,7 @@ public class ApiUtils {
         params.put("swLng", String.valueOf(swLng));
 
         //TODO: Remove token from url param
-        String url = getBasePath() + "/local_shouts_count.json" + encodeParamsAsUrlParams(params);
+        String url = getBasePath() + "/local_snapbies_count.json" + encodeParamsAsUrlParams(params);
 
         GeneralUtils.getAquery(activity).ajax(url, JSONObject.class, cb);
     }

@@ -85,7 +85,7 @@
                       android:fontFamily="sans-serif"
                       android:textStyle="bold"
                       android:gravity="left|center_vertical"
-                      android:text="@string/shout_settings"
+                      android:text="@string/snapby_settings"
                       android:layout_marginBottom="5dp"
                       android:layout_marginTop="10dp"/>
 
@@ -151,7 +151,7 @@
             <Button android:id="@+id/logout_button"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:textColor="@color/shoutLightRed"
+                    android:textColor="@color/snapbyLightRed"
                     android:fontFamily="sans-serif"
                     android:textStyle="bold"
                     style="@style/PreferenceButton"

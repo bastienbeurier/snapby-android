@@ -162,7 +162,7 @@ public class SettingsActivity extends Activity implements AdapterView.OnItemSele
                 Intent feedbackIntent = new Intent(Intent.ACTION_SEND);
                 feedbackIntent.setType("plain/text");
 
-                feedbackIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "info@shouthereandnow.com" });
+                feedbackIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "info@snapbyhereandnow.com" });
                 feedbackIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feed_back_mail_title, GeneralUtils.getAppVersion(SettingsActivity.this)));
                 startActivity(Intent.createChooser(feedbackIntent, ""));
             }

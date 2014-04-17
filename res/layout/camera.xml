@@ -8,7 +8,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-    <ImageView android:id="@+id/create_shout_image"
+    <ImageView android:id="@+id/create_snapby_image"
                android:layout_height="match_parent"
                android:layout_width="match_parent"
                android:scaleType="centerCrop"
@@ -26,16 +26,16 @@
                    android:layout_margin="10dp"
                    android:src="@drawable/camera_explore_button_selector"/>
 
-        <FrameLayout android:id="@+id/camera_shout_count_container"
+        <FrameLayout android:id="@+id/camera_snapby_count_container"
                      android:layout_width="25dp"
                      android:layout_height="25dp"
                      android:layout_marginTop="15dp"
                      android:layout_marginLeft="15dp"
                      android:layout_gravity="top|left"
-                     android:background="@drawable/shout_count_round_button"
+                     android:background="@drawable/snapby_count_round_button"
                      android:visibility="gone">
 
-            <TextView android:id="@+id/camera_shout_count"
+            <TextView android:id="@+id/camera_snapby_count"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:textColor="@color/white"
@@ -64,7 +64,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/camera_shout_button_selector"
+                android:background="@drawable/camera_snapby_button_selector"
                 android:layout_gravity="center"/>
 
         <ImageView android:id="@+id/camera_flip_button"

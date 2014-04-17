@@ -139,27 +139,6 @@ public class LocationUtils {
         return result;
     }
 
-    public static Address geocodeAddress(Geocoder geocoder, String address, LatLngBounds latLngBounds) {
-        Address result = null;
-
-        try {
-            List<Address> addressList = null;
-            if (latLngBounds != null) {
-                addressList = geocoder.getFromLocationName(address, 1, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude);
-            } else {
-                addressList = geocoder.getFromLocationName(address, 1);
-            }
-
-            if (addressList != null && addressList.size() > 0 && addressList.get(0) != null) {
-                result = addressList.get(0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
     public static void checkLocationServicesEnabled(final Context ctx, LocationManager locationManager) {
         boolean gps_enabled = false;
         boolean network_enabled = false;

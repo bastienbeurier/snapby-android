@@ -31,7 +31,9 @@ public class User implements Parcelable {
     /** User longitude */
     public double lng = 0;
 
-    public int shoutCount = 0;
+    public int snapbyCount = 0;
+
+    public int likedSnapbies = 0;
 
     public static ArrayList<User> rawUsersToInstances(JSONArray rawUsers) {
         ArrayList<User> users = new ArrayList<User>();
@@ -73,7 +75,8 @@ public class User implements Parcelable {
                 user.lng = Double.parseDouble(rawLng);
             }
 
-            user.shoutCount = Integer.parseInt(rawUser.getString("shout_count"));
+            user.snapbyCount = Integer.parseInt(rawUser.getString("snapby_count"));
+            user.likedSnapbies = Integer.parseInt(rawUser.getString("liked_snapbies"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -124,7 +127,8 @@ public class User implements Parcelable {
         out.writeByte((byte) (isBlackListed ? 1 : 0));
         out.writeDouble(lat);
         out.writeDouble(lng);
-        out.writeInt(shoutCount);
+        out.writeInt(snapbyCount);
+        out.writeInt(likedSnapbies);
     }
 
     /**
@@ -137,6 +141,7 @@ public class User implements Parcelable {
         isBlackListed = in.readByte() != 0;
         lat = in.readDouble();
         lng = in.readDouble();
-        shoutCount = in.readInt();
+        snapbyCount = in.readInt();
+        likedSnapbies = in.readInt();
     }
 }

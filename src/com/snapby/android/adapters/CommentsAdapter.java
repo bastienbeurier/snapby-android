@@ -28,12 +28,12 @@ public class CommentsAdapter extends BaseAdapter{
 
     private ArrayList<Comment> items = null;
 
-    private Location shoutLocation = null;
+    private Location snapbyLocation = null;
 
-    public CommentsAdapter(Activity activity, ArrayList<Comment> comments, Location shoutLocation) {
+    public CommentsAdapter(Activity activity, ArrayList<Comment> comments, Location snapbyLocation) {
         this.activity = activity;
         this.items = comments;
-        this.shoutLocation = shoutLocation;
+        this.snapbyLocation = snapbyLocation;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CommentsAdapter extends BaseAdapter{
 
             ((TextView) commentView.findViewById(R.id.comment_feed_description_textView)).setText(comment.description);
 
-            String[] ageStrings = TimeUtils.shoutAgeToShortStrings(TimeUtils.getShoutAge(comment.created));
+            String[] ageStrings = TimeUtils.snapbyAgeToShortStrings(TimeUtils.getSnapbyAge(comment.created));
 
             String stamp = ageStrings[0] + ageStrings[1];
 
@@ -65,7 +65,7 @@ public class CommentsAdapter extends BaseAdapter{
                 commentLocation.setLatitude(comment.lat);
                 commentLocation.setLongitude(comment.lng);
 
-                String[] distanceStrings = LocationUtils.formattedDistanceStrings(activity, commentLocation, shoutLocation);
+                String[] distanceStrings = LocationUtils.formattedDistanceStrings(activity, commentLocation, snapbyLocation);
                 stamp += " | " + distanceStrings[0] + distanceStrings[1];
             }
 

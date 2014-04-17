@@ -2,11 +2,11 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/share_item"
-          android:title="@string/share_shout"/>
+          android:title="@string/share_snapby"/>
     <item android:id="@+id/directions_item"
-          android:title="@string/directions_to_shout"/>
+          android:title="@string/directions_to_snapby"/>
     <item android:id="@+id/report_item"
-          android:title="@string/report_shout"/>
+          android:title="@string/report_snapby"/>
     <item android:id="@+id/delete_item"
-          android:title="@string/delete_shout"/>
+          android:title="@string/delete_snapby"/>
 </menu>

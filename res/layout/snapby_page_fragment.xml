@@ -13,21 +13,21 @@
 
             <ImageView android:layout_width="60dp"
                        android:layout_height="60dp"
-                       android:src="@drawable/shout_image_place_holder"
+                       android:src="@drawable/snapby_image_place_holder"
                        android:layout_gravity="center"/>
 
-            <ImageView android:id="@+id/explore_shout_image"
+            <ImageView android:id="@+id/explore_snapby_image"
                        android:scaleType="centerCrop"
                        android:layout_height="match_parent"
                        android:layout_width="match_parent"/>
 
-            <LinearLayout android:id="@+id/explore_shout_user_container"
+            <LinearLayout android:id="@+id/explore_snapby_user_container"
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:background="@color/semiTransparentBlackDarker"
                           android:layout_gravity="top">
 
-                <FrameLayout android:id="@+id/shout_image_view_container"
+                <FrameLayout android:id="@+id/snapby_image_view_container"
                             android:layout_height="30dp"
                              android:layout_width="30dp"
                              android:layout_marginLeft="5dp"
@@ -39,49 +39,65 @@
                                android:layout_height="match_parent"
                                android:src="@drawable/profile_picture_placeholder"/>
 
-                    <com.snapby.android.custom.CircleImageView android:id="@+id/explore_shout_user_picture"
+                    <com.snapby.android.custom.CircleImageView android:id="@+id/explore_snapby_user_picture"
                                                                     android:layout_height="match_parent"
                                                                     android:layout_width="match_parent"/>
 
                 </FrameLayout>
 
-                <TextView android:id="@+id/explore_shout_username"
-                          android:layout_width="match_parent"
-                          android:layout_marginLeft="5dp"
-                          android:layout_weight="1"
-                          android:layout_height="wrap_content"
-                          android:textColor="@color/white"
-                          android:textStyle="bold"
-                          android:textSize="12dp"
-                          android:fontFamily="sans-serif"
-                          android:layout_gravity="center"
-                          android:text="Username"
-                          android:gravity="center|left"/>
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:orientation="vertical"
+                              android:layout_gravity="center">
+
+                    <TextView android:id="@+id/explore_snapby_username"
+                              android:layout_width="match_parent"
+                              android:layout_marginLeft="5dp"
+                              android:layout_height="wrap_content"
+                              android:textColor="@color/white"
+                              android:textStyle="bold"
+                              android:textSize="12dp"
+                              android:fontFamily="sans-serif"
+                              android:text=""
+                              android:gravity="center|left"/>
+
+                    <TextView android:id="@+id/explore_snapby_liked_count"
+                              android:layout_width="match_parent"
+                              android:layout_marginLeft="5dp"
+                              android:layout_height="wrap_content"
+                              android:textColor="@color/darkGrey"
+                              android:textSize="12dp"
+                              android:text="(0)"
+                              android:gravity="center|left"
+                              android:visibility="gone"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout android:id="@+id/explore_shout_info_container"
+            <LinearLayout android:id="@+id/explore_snapby_info_container"
                           android:layout_width="match_parent"
                           android:layout_height="40dp"
                           android:orientation="horizontal"
                           android:layout_gravity="bottom"
                           android:background="@color/semiTransparentBlackDarker">
 
-                <LinearLayout android:id="@+id/explore_shout_like_container"
+                <LinearLayout android:id="@+id/explore_snapby_like_container"
                               android:layout_width="match_parent"
                               android:layout_height="match_parent"
                               android:orientation="horizontal"
                               android:layout_weight="1">
 
-                    <ImageView android:id="@+id/explore_shout_like_button"
+                    <ImageView android:id="@+id/explore_snapby_like_button"
                                android:layout_width="18dp"
                                android:layout_height="18dp"
                                android:layout_margin="5dp"
                                android:layout_gravity="center"
-                               android:src="@drawable/explore_shout_like_button"/>
+                               android:src="@drawable/explore_snapby_like_button"/>
 
 
-                    <TextView android:id="@+id/explore_shout_like_count"
+                    <TextView android:id="@+id/explore_snapby_like_count"
                               android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
                               android:text="0"
@@ -91,7 +107,7 @@
 
                 </LinearLayout>
 
-                <!--<TextView android:id="@+id/explore_shout_age"-->
+                <!--<TextView android:id="@+id/explore_snapby_age"-->
                           <!--android:layout_width="wrap_content"-->
                           <!--android:layout_height="wrap_content"-->
                           <!--android:layout_gravity="center"-->
@@ -99,14 +115,14 @@
                           <!--android:text="0min"-->
                           <!--android:textColor="@color/white"/>-->
 
-                <LinearLayout android:id="@+id/explore_shout_comment_container"
+                <LinearLayout android:id="@+id/explore_snapby_comment_container"
                               android:layout_width="match_parent"
                               android:layout_height="match_parent"
                               android:gravity="right"
                               android:orientation="horizontal"
                               android:layout_weight="1">
 
-                    <TextView android:id="@+id/explore_shout_comment_count"
+                    <TextView android:id="@+id/explore_snapby_comment_count"
                               android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
                               android:text="0"
@@ -114,12 +130,12 @@
                               android:layout_gravity="center"
                               android:textColor="@color/white"/>
 
-                    <ImageView android:id="@+id/explore_shout_comment_button"
+                    <ImageView android:id="@+id/explore_snapby_comment_button"
                                android:layout_width="18dp"
                                android:layout_height="18dp"
                                android:layout_margin="5dp"
                                android:layout_gravity="center"
-                               android:src="@drawable/explore_shout_comment_button"/>
+                               android:src="@drawable/explore_snapby_comment_button"/>
 
                 </LinearLayout>
 

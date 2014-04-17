@@ -61,7 +61,7 @@ public class SessionUtils {
     }
 
     public static void updateCurrentUserInfoInPhone(Context ctx, User user) {
-        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+        AppPreferences appPrefs = ((SnapbyApplication) ctx.getApplicationContext()).getAppPrefs();
 
         appPrefs.setCurrentUserIdPref(user.id);
         appPrefs.setCurrentUserEmailPref(user.email);
@@ -70,7 +70,7 @@ public class SessionUtils {
     }
 
     public static void removeCurrentUserInfoInPhone(Context ctx) {
-        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+        AppPreferences appPrefs = ((SnapbyApplication) ctx.getApplicationContext()).getAppPrefs();
 
         appPrefs.setCurrentUserIdPref(0);
         appPrefs.setCurrentUserEmailPref(null);
@@ -79,7 +79,7 @@ public class SessionUtils {
     }
 
     public static User getCurrentUser(Context ctx) {
-        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+        AppPreferences appPrefs = ((SnapbyApplication) ctx.getApplicationContext()).getAppPrefs();
 
         User currentUser = new User();
 
@@ -97,13 +97,13 @@ public class SessionUtils {
     }
 
     public static void saveCurrentUserToken(Context ctx, String authToken) {
-        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+        AppPreferences appPrefs = ((SnapbyApplication) ctx.getApplicationContext()).getAppPrefs();
 
         appPrefs.setCurrentUserTokenPref(authToken);
     }
 
     public static String getCurrentUserToken(Context ctx) {
-        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+        AppPreferences appPrefs = ((SnapbyApplication) ctx.getApplicationContext()).getAppPrefs();
 
         String token = appPrefs.getCurrentUserToken();
 
@@ -126,7 +126,7 @@ public class SessionUtils {
             session.closeAndClearTokenInformation();
         }
 
-        AppPreferences appPrefs = ((StreetShoutApplication) ctx.getApplicationContext()).getAppPrefs();
+        AppPreferences appPrefs = ((SnapbyApplication) ctx.getApplicationContext()).getAppPrefs();
 
         appPrefs.setCurrentUserTokenPref(null);
         removeCurrentUserInfoInPhone(ctx);
@@ -141,30 +141,4 @@ public class SessionUtils {
         activity.finish();
     }
 
-    public static void autofollowFacebookFriends(final Activity activity) {
-        Session session = Session.getActiveSession();
-
-        if (session != null && !session.isClosed()) {
-            Request request = Request.newMyFriendsRequest(session, new Request.GraphUserListCallback() {
-
-                // callback after Graph API response with user object
-                @Override
-                public void onCompleted(List<GraphUser> users, Response response) {
-                    if (users != null) {
-                        ArrayList<Long> friendIds = new ArrayList<Long>();
-
-                        int count = users.size();
-
-                        for (int i = 0; i < count; i++) {
-                            friendIds.add(Long.parseLong(users.get(i).getId()));
-                        }
-
-                        ApiUtils.autofollowFacebookFriends(activity, friendIds);
-                    }
-                }
-            });
-
-            Request.executeBatchAsync(request);
-        }
-    }
 }

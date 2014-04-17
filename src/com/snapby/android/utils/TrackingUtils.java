@@ -2,7 +2,7 @@ package com.snapby.android.utils;
 
 import android.content.Context;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.snapby.android.models.Shout;
+import com.snapby.android.models.Snapby;
 import com.snapby.android.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +13,7 @@ import org.json.JSONObject;
 public class TrackingUtils {
 
     public static MixpanelAPI getMixpanel(Context ctx) {
-        return ((StreetShoutApplication) ctx.getApplicationContext()).getMixpanel();
+        return ((SnapbyApplication) ctx.getApplicationContext()).getMixpanel();
     }
 
     public static void identify(Context ctx, User user) {
@@ -25,12 +25,12 @@ public class TrackingUtils {
         people.set("Email", user.email);
     }
 
-    public static void trackCreateShout(Context ctx) {
+    public static void trackCreateSnapby(Context ctx) {
         JSONObject properties = new JSONObject();
 
-        getMixpanel(ctx).track("Create shout", properties);
+        getMixpanel(ctx).track("Create snapby", properties);
 
-        getMixpanel(ctx).getPeople().increment("Create shout count", 1);
+        getMixpanel(ctx).getPeople().increment("Create snapby count", 1);
     }
 
     public static void trackAppOpened(Context ctx) {

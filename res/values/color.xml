@@ -4,14 +4,14 @@
     <color name="white">#ffffff</color>
     <color name="blackLighter">#343434</color>
     <color name="darkGrey">#CC343434</color>
-    <!-- Real shout blue is #8AB0DD but android displays it differently-->
+    <!-- Real snapby blue is #8AB0DD but android displays it differently-->
     <color name="snapbyPink">#F392B3</color>
     <color name="veryLightSnapbyPink">#22F392B3</color>
     <color name="lightSnapbyPink">#44F392B3</color>
     <color name="transparentSnapbyPink">#66F392B3</color>
     <color name="lessTransparentSnapbyPink">#AAF392B3</color>
-    <color name="shoutLightPink">#FFC2CE</color>
-    <color name="shoutRed">#A2122F</color>
+    <color name="snapbyLightPink">#FFC2CE</color>
+    <color name="snapbyRed">#A2122F</color>
     <color name="mediumGrey">#333333</color>
     <color name="semiTransparentWhite">#AAffffff</color>
     <color name="semiTransparentBlack">#33000000</color>
@@ -19,11 +19,11 @@
     <color name="lightGrey">#999999</color>
     <color name="veryLightGrey">#D8D8D8</color>
     <color name="veryVeryLightGrey">#F2F2F2</color>
-    <color name="shoutLightRed">#ED4723</color>
+    <color name="snapbyLightRed">#ED4723</color>
     <color name="facebookBlue">#3b5999</color>
     <color name="publicPink1">#ec6586</color>
     <color name="anonymousGrey1">#777777</color>
     <color name="anonymousGrey">#AAAAAA</color>
-    <color name="myShoutPurple">#913f91</color>
+    <color name="mySnapbyPurple">#913f91</color>
     <color name="friendGreen">#99bc46</color>
 </resources>

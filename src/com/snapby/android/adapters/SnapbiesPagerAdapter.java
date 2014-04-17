@@ -4,28 +4,28 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import com.snapby.android.fragments.SnapbyPageFragment;
-import com.snapby.android.models.Shout;
+import com.snapby.android.models.Snapby;
 
 import java.util.ArrayList;
 
 /**
  * Created by bastien on 3/3/14.
  */
-public class ShoutsPagerAdapter extends FragmentStatePagerAdapter {
-    private ArrayList<Shout> items = null;
+public class SnapbiesPagerAdapter extends FragmentStatePagerAdapter {
+    private ArrayList<Snapby> items = null;
 
     private String type = null;
 
-    public ShoutsPagerAdapter(FragmentManager fm, ArrayList<Shout> shouts) {
+    public SnapbiesPagerAdapter(FragmentManager fm, ArrayList<Snapby> snapbies) {
         super(fm);
 
-        this.items = shouts;
+        this.items = snapbies;
     }
 
-    public ShoutsPagerAdapter(FragmentManager fm, ArrayList<Shout> shouts, String type) {
+    public SnapbiesPagerAdapter(FragmentManager fm, ArrayList<Snapby> snapbies, String type) {
         super(fm);
 
-        this.items = shouts;
+        this.items = snapbies;
 
         this.type = type;
     }

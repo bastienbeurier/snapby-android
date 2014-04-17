@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +29,9 @@ import com.snapby.android.R;
 import com.snapby.android.activities.DisplayActivity;
 import com.snapby.android.activities.MainActivity;
 import com.snapby.android.adapters.MapWindowAdapter;
-import com.snapby.android.adapters.ShoutsPagerAdapter;
-import com.snapby.android.custom.ShoutViewPagerContainer;
-import com.snapby.android.models.Shout;
+import com.snapby.android.adapters.SnapbiesPagerAdapter;
+import com.snapby.android.custom.SnapbyViewPagerContainer;
+import com.snapby.android.models.Snapby;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
 import com.snapby.android.utils.LocationUtils;
@@ -47,33 +49,31 @@ import java.util.List;
 public class ExploreFragment extends Fragment {
     public GoogleMap exploreMap = null;
 
-    private HashMap<Integer, Shout> displayedShoutModels = null;
+    private HashMap<Integer, Snapby> displayedSnapbyModels = null;
 
-    private HashMap<Integer, Marker>  displayedShoutMarkers = null;
+    private HashMap<Integer, Marker>  displayedSnapbyMarkers = null;
 
-    private ViewPager shoutViewPager;
+    private ViewPager snapbyViewPager;
 
-    private PagerAdapter shoutPagerAdapter;
+    private PagerAdapter snapbyPagerAdapter;
 
-    private ShoutViewPagerContainer viewPagerContainer = null;
+    private SnapbyViewPagerContainer viewPagerContainer = null;
 
-    private TextView noShoutInFeed = null;
+    private TextView noSnapbyInFeed = null;
 
     private TextView noConnectionInFeed = null;
 
-    private Shout shoutSelectedOnMap = null;
+    private Snapby snapbySelectedOnMap = null;
 
-    private ArrayList<Shout> shouts = null;
+    private ArrayList<Snapby> snapbies = null;
 
     private MapRequestHandler mapReqHandler = null;
 
     private ImageView refreshButton = null;
 
-    private View shoutProgressBar = null;
+    private View snapbyProgressBar = null;
 
     public boolean mapLoaded = false;
-
-    private boolean mapPaddingNotSet = true;
 
     private View noLocationDialog = null;
 
@@ -85,13 +85,18 @@ public class ExploreFragment extends Fragment {
 
         mapReqHandler = new MapRequestHandler();
 
-        shoutViewPager = (ViewPager) rootView.findViewById(R.id.explore_view_pager);
-        viewPagerContainer = (ShoutViewPagerContainer) rootView.findViewById(R.id.explore_shout_view_pager_container);
+        snapbyViewPager = (ViewPager) rootView.findViewById(R.id.explore_view_pager);
+        viewPagerContainer = (SnapbyViewPagerContainer) rootView.findViewById(R.id.explore_snapby_view_pager_container);
         refreshButton = (ImageView) rootView.findViewById(R.id.explore_refresh_button);
-        shoutProgressBar = rootView.findViewById(R.id.explore_shout_progress_bar);
-        noLocationDialog = rootView.findViewById(R.id.explore_shout_no_location);
+        snapbyProgressBar = rootView.findViewById(R.id.explore_snapby_progress_bar);
+        noLocationDialog = rootView.findViewById(R.id.explore_snapby_no_location);
 
         exploreMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+        DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
+        float offset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 220 + 10, metrics);
+
+        exploreMap.setPadding(0, 0, 0, (int) offset);
 
         exploreMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
@@ -99,12 +104,6 @@ public class ExploreFragment extends Fragment {
                 //First time map loads, check if we have a location
                 if (!mapLoaded) {
                     mapLoaded = true;
-
-                    if (mapPaddingNotSet) {
-                        mapPaddingNotSet = false;
-
-                        exploreMap.setPadding(0, 0, 0, viewPagerContainer.getHeight());
-                    }
 
                     Location myLocation = ((MainActivity) getActivity()).myLocation;
 
@@ -117,14 +116,14 @@ public class ExploreFragment extends Fragment {
                     } else {
                         waitingForLocation();
                     }
-                //Else pull local shouts
+                //Else pull local snapbies
                 } else {
                     loadContent();
                 }
             }
         });
 
-        shoutViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        snapbyViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
 
@@ -132,7 +131,7 @@ public class ExploreFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
-                updateSelectedShoutMarker(shouts.get(i));
+                updateSelectedSnapbyMarker(snapbies.get(i));
             }
 
             @Override
@@ -141,8 +140,8 @@ public class ExploreFragment extends Fragment {
             }
         });
 
-        noShoutInFeed = (TextView) rootView.findViewById(R.id.explore_shout_no_shout);
-        noConnectionInFeed = (TextView) rootView.findViewById(R.id.explore_shout_no_connection);
+        noSnapbyInFeed = (TextView) rootView.findViewById(R.id.explore_snapby_no_snapby);
+        noConnectionInFeed = (TextView) rootView.findViewById(R.id.explore_snapby_no_connection);
 
         refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +155,12 @@ public class ExploreFragment extends Fragment {
                 loadContent();
             }
         });
+
+        viewPagerContainer.setClipChildren(false);
+        viewPagerContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        snapbyViewPager.setOffscreenPageLimit(4);
+        snapbyViewPager.setPageMargin(30);
 
         return rootView;
     }
@@ -171,7 +176,7 @@ public class ExploreFragment extends Fragment {
         waitingForLocation = true;
         noLocationDialog.setVisibility(View.VISIBLE);
         refreshButton.setEnabled(false);
-        shoutProgressBar.setVisibility(View.GONE);
+        snapbyProgressBar.setVisibility(View.GONE);
     }
 
     private void dismissWaitingForLocation() {
@@ -191,41 +196,41 @@ public class ExploreFragment extends Fragment {
             return;
         }
 
-        ((MainActivity) getActivity()).updateLocalShoutCount();
+        ((MainActivity) getActivity()).updateLocalSnapbyCount();
 
         dismissWaitingForLocation();
 
-        //Add a request to populate the map with shouts
+        //Add a request to populate the map with snapbies
         LatLngBounds mapBounds = exploreMap.getProjection().getVisibleRegion().latLngBounds;
 
-        updateUIForLoadingShouts();
+        updateUIForLoadingSnapbies();
 
         //Set listener to catch API response from the MapRequestHandler
         mapReqHandler.setRequestResponseListener(new MapRequestHandler.RequestResponseListener() {
             @Override
             public void responseReceived(String url, JSONObject object, AjaxStatus status) {
                 if (status.getError() == null) {
-                    JSONArray rawShouts;
+                    JSONArray rawSnapbies;
                     try {
 
                         if (object != null) {
                             JSONObject rawResult = object.getJSONObject("result");
-                            rawShouts = rawResult.getJSONArray("shouts");
+                            rawSnapbies = rawResult.getJSONArray("snapbies");
                         } else {
                             showNoConnectionInFeedMessage();
                             return;
                         }
 
-                        shouts = Shout.rawShoutsToInstances(rawShouts);
+                        snapbies = Snapby.rawSnapbiesToInstances(rawSnapbies);
 
-                        displayShoutsOnMap(shouts);
+                        displaySnapbiesOnMap(snapbies);
 
                         noConnectionInFeed.setVisibility(View.GONE);
 
-                        if (shouts.size() > 0) {
-                            updateUIForDisplayShouts();
+                        if (snapbies.size() > 0) {
+                            updateUIForDisplaySnapbies();
                         } else {
-                            showNoShoutInFeedMessage();
+                            showNoSnapbyInFeedMessage();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -243,130 +248,118 @@ public class ExploreFragment extends Fragment {
         return exploreMap.getProjection().getVisibleRegion().latLngBounds;
     }
 
-    public void displayProfile(int userId) {
-//        Intent profile = new Intent(getActivity(), ProfileActivity.class);
-//        profile.putExtra("userId", userId);
-//        startActivityForResult(profile, Constants.PROFILE_REQUEST);
-    }
-
-    private void updateUIForDisplayShouts() {
+    private void updateUIForDisplaySnapbies() {
         exploreMap.setMyLocationEnabled(true);
-        shoutProgressBar.setVisibility(View.GONE);
+        snapbyProgressBar.setVisibility(View.GONE);
+        viewPagerContainer.setVisibility(View.VISIBLE);
 
         // Instantiate a ViewPager and a PagerAdapter.                   (
-        shoutPagerAdapter = new ShoutsPagerAdapter(getActivity().getSupportFragmentManager(), shouts);
-        shoutViewPager.setAdapter(shoutPagerAdapter);
-        updateSelectedShoutMarker(shouts.get(0));
-        shoutViewPager.setOffscreenPageLimit(4);
-        shoutViewPager.setPageMargin(30);
-        shoutViewPager.setClipChildren(false);
-        shoutViewPager.setVisibility(View.VISIBLE);
+        snapbyPagerAdapter = new SnapbiesPagerAdapter(getActivity().getSupportFragmentManager(), snapbies);
+        snapbyViewPager.setAdapter(snapbyPagerAdapter);
+        updateSelectedSnapbyMarker(snapbies.get(0));
 
-        noShoutInFeed.setVisibility(View.GONE);
-
-        viewPagerContainer.setClipChildren(false);
-        viewPagerContainer.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        noSnapbyInFeed.setVisibility(View.GONE);
     }
 
-    private void updateUIForLoadingShouts() {
+    private void updateUIForLoadingSnapbies() {
         exploreMap.setMyLocationEnabled(false);
-        shoutProgressBar.setVisibility(View.VISIBLE);
+        snapbyProgressBar.setVisibility(View.VISIBLE);
 
         exploreMap.clear();
-        shoutSelectedOnMap = null;
-        displayedShoutModels = new HashMap<Integer, Shout>();
-        displayedShoutMarkers = new HashMap<Integer, Marker>();
-        shouts = null;
+        snapbySelectedOnMap = null;
+        displayedSnapbyModels = new HashMap<Integer, Snapby>();
+        displayedSnapbyMarkers = new HashMap<Integer, Marker>();
+        snapbies = null;
 
-        shoutViewPager.setVisibility(View.GONE);
         noConnectionInFeed.setVisibility(View.GONE);
-        noShoutInFeed.setVisibility(View.GONE);
+        noSnapbyInFeed.setVisibility(View.GONE);
+        viewPagerContainer.setVisibility(View.GONE);
     }
 
     private void showNoConnectionInFeedMessage() {
         exploreMap.setMyLocationEnabled(true);
-        shoutProgressBar.setVisibility(View.GONE);
-        shoutViewPager.setVisibility(View.GONE);
-        noShoutInFeed.setVisibility(View.GONE);
+        snapbyProgressBar.setVisibility(View.GONE);
+        noSnapbyInFeed.setVisibility(View.GONE);
         noConnectionInFeed.setVisibility(View.VISIBLE);
+        viewPagerContainer.setVisibility(View.GONE);
     }
 
-    private void showNoShoutInFeedMessage() {
+    private void showNoSnapbyInFeedMessage() {
         exploreMap.setMyLocationEnabled(true);
-        shoutProgressBar.setVisibility(View.GONE);
-        shoutViewPager.setAdapter(null);
-        shoutViewPager.setVisibility(View.GONE);
-        noShoutInFeed.setVisibility(View.VISIBLE);
+        snapbyProgressBar.setVisibility(View.GONE);
+        snapbyViewPager.setAdapter(null);
+        noSnapbyInFeed.setVisibility(View.VISIBLE);
+        snapbyViewPager.setVisibility(View.GONE);
     }
 
-    private void displayShoutsOnMap(List<Shout> shouts) {
-        displayedShoutModels.clear();
-        HashMap<Integer, Marker> newDisplayedShoutMarkers = new HashMap<Integer, Marker>();
+    private void displaySnapbiesOnMap(List<Snapby> snapbies) {
+        displayedSnapbyModels.clear();
+        HashMap<Integer, Marker> newDisplayedSnapbyMarkers = new HashMap<Integer, Marker>();
 
-        for (Shout shout: shouts) {
-            displayedShoutModels.put(shout.id, shout);
+        for (Snapby snapby: snapbies) {
+            displayedSnapbyModels.put(snapby.id, snapby);
 
-            //Check that the shout is not already marked on the map
-            if (!displayedShoutMarkers.containsKey(shout.id)) {
-                Marker shoutMarker = displayShoutOnMap(shout);
-                newDisplayedShoutMarkers.put(shout.id, shoutMarker);
+            //Check that the snapby is not already marked on the map
+            if (!displayedSnapbyMarkers.containsKey(snapby.id)) {
+                Marker snapbyMarker = displaySnapbyOnMap(snapby);
+                newDisplayedSnapbyMarkers.put(snapby.id, snapbyMarker);
                 //If he is, re-use the marker
             } else {
-                newDisplayedShoutMarkers.put(shout.id, displayedShoutMarkers.get(shout.id));
-                displayedShoutMarkers.remove(shout.id);
+                newDisplayedSnapbyMarkers.put(snapby.id, displayedSnapbyMarkers.get(snapby.id));
+                displayedSnapbyMarkers.remove(snapby.id);
             }
         }
 
-        for (HashMap.Entry<Integer, Marker> entry: displayedShoutMarkers.entrySet()) {
+        for (HashMap.Entry<Integer, Marker> entry: displayedSnapbyMarkers.entrySet()) {
             entry.getValue().remove();
         }
 
-        displayedShoutMarkers = newDisplayedShoutMarkers;
+        displayedSnapbyMarkers = newDisplayedSnapbyMarkers;
     }
 
-    private Marker displayShoutOnMap(Shout shout) {
+    private Marker displaySnapbyOnMap(Snapby snapby) {
         MarkerOptions markerOptions = new MarkerOptions();
 
-        markerOptions.position(new LatLng(shout.lat, shout.lng));
+        markerOptions.position(new LatLng(snapby.lat, snapby.lng));
 
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, false)));
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(GeneralUtils.getSnapbyMarkerImageResource(snapby.anonymous, false)));
 
-        markerOptions.title(Integer.toString(shout.id));
+        markerOptions.title(Integer.toString(snapby.id));
 
         markerOptions.anchor(0.35f, 0.9f);
 
         return exploreMap.addMarker(markerOptions);
     }
 
-    private void updateSelectedShoutMarker(Shout shout) {
-        if (shoutSelectedOnMap != null) {
-            Marker oldSelectedMarker = displayedShoutMarkers.get(shoutSelectedOnMap.id);
+    private void updateSelectedSnapbyMarker(Snapby snapby) {
+        if (snapbySelectedOnMap != null) {
+            Marker oldSelectedMarker = displayedSnapbyMarkers.get(snapbySelectedOnMap.id);
             if (oldSelectedMarker != null) {
-                oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shoutSelectedOnMap.anonymous, false)));
+                oldSelectedMarker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getSnapbyMarkerImageResource(snapbySelectedOnMap.anonymous, false)));
                 oldSelectedMarker.setAnchor(0.35f, 0.9f);
             }
         }
 
-        shoutSelectedOnMap = shout;
+        snapbySelectedOnMap = snapby;
 
-        Marker marker = displayedShoutMarkers.get(shout.id);
+        Marker marker = displayedSnapbyMarkers.get(snapby.id);
 
-        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getShoutMarkerImageResource(shout.anonymous, true)));
+        marker.setIcon(BitmapDescriptorFactory.fromResource(GeneralUtils.getSnapbyMarkerImageResource(snapby.anonymous, true)));
 
         marker.setAnchor(0.5f, 0.8f);
 
         marker.showInfoWindow();
     }
 
-    private void onMapShoutSelected(Marker marker) {
-        Shout selectedShout = displayedShoutModels.get(Integer.parseInt(marker.getTitle()));
+    private void onMapSnapbySelected(Marker marker) {
+        Snapby selectedSnapby = displayedSnapbyModels.get(Integer.parseInt(marker.getTitle()));
 
-        int count = shouts.size();
+        int count = snapbies.size();
 
         for (int i = 0; i < count; i++) {
-            if (shouts.get(i).id == selectedShout.id) {
-                //Creates a fragment that calls onFeedShoutSelected
-                shoutViewPager.setCurrentItem(i);
+            if (snapbies.get(i).id == selectedSnapby.id) {
+                //Creates a fragment that calls onFeedSnapbySelected
+                snapbyViewPager.setCurrentItem(i);
                 break;
             }
         }
@@ -389,7 +382,7 @@ public class ExploreFragment extends Fragment {
         exploreMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                onMapShoutSelected(marker);
+                onMapSnapbySelected(marker);
 
                 marker.showInfoWindow();
 
@@ -398,16 +391,10 @@ public class ExploreFragment extends Fragment {
         });
     }
 
-    public void startDisplayActivity(Shout shout) {
-        Intent displayShout = new Intent(getActivity(), DisplayActivity.class);
-        displayShout.putExtra("shout", shout);
-        startActivityForResult(displayShout, Constants.DISPLAY_SHOUT_REQUEST);
-    }
-
     public void reloadAdapterIfAlreadyLoaded() {
-        if (shoutPagerAdapter != null) {
-            shoutPagerAdapter = new ShoutsPagerAdapter(getActivity().getSupportFragmentManager(), shouts, "profile");
-            shoutViewPager.setAdapter(shoutPagerAdapter);
+        if (snapbyPagerAdapter != null) {
+            snapbyPagerAdapter = new SnapbiesPagerAdapter(getActivity().getSupportFragmentManager(), snapbies, "profile");
+            snapbyViewPager.setAdapter(snapbyPagerAdapter);
         }
     }
 

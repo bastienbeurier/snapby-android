@@ -19,7 +19,7 @@
                android:layout_gravity="top|left"/>
 
 
-    <com.snapby.android.custom.ShoutViewPagerContainer android:id="@+id/explore_shout_view_pager_container"
+    <com.snapby.android.custom.SnapbyViewPagerContainer android:id="@+id/explore_snapby_view_pager_container"
                                                             android:layout_width="match_parent"
                                                             android:layout_height="220dp"
                                                             android:layout_gravity="bottom"
@@ -32,9 +32,9 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"/>
 
-    </com.snapby.android.custom.ShoutViewPagerContainer>
+    </com.snapby.android.custom.SnapbyViewPagerContainer>
 
-    <TextView android:id="@+id/explore_shout_no_connection"
+    <TextView android:id="@+id/explore_snapby_no_connection"
               android:text="@string/no_connection_feed"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
               android:layout_gravity="center"
               android:visibility="gone"/>
 
-    <TextView android:id="@+id/explore_shout_no_shout"
+    <TextView android:id="@+id/explore_snapby_no_snapby"
               android:text="@string/empty_feed"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
               android:layout_gravity="center"
               android:visibility="gone"/>
 
-    <FrameLayout android:id="@+id/explore_shout_progress_bar"
+    <FrameLayout android:id="@+id/explore_snapby_progress_bar"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:layout_gravity="center"
@@ -77,7 +77,7 @@
 
     </FrameLayout>
 
-    <FrameLayout android:id="@+id/explore_shout_no_location"
+    <FrameLayout android:id="@+id/explore_snapby_no_location"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:layout_gravity="center"

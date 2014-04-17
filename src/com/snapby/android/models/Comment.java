@@ -10,9 +10,9 @@ import java.util.ArrayList;
  * Created by bastien on 1/29/14.
  */
 public class Comment {
-    public int shoutId = 0;
+    public int snapbyId = 0;
 
-    public int shouterId = 0;
+    public int snapbyerId = 0;
 
     public int commenterId = 0;
 
@@ -50,8 +50,8 @@ public class Comment {
 
         try {
             if (rawComment != null) {
-                comment.shoutId = Integer.parseInt(rawComment.getString("shout_id"));
-                comment.shouterId = Integer.parseInt(rawComment.getString("shouter_id"));
+                comment.snapbyId = Integer.parseInt(rawComment.getString("snapby_id"));
+                comment.snapbyerId = Integer.parseInt(rawComment.getString("snapbyer_id"));
                 comment.commenterId = Integer.parseInt(rawComment.getString("commenter_id"));
                 comment.created = rawComment.getString("created_at");
                 comment.commenterUsername = rawComment.getString("commenter_username");

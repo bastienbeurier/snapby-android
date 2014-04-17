@@ -11,7 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Handles the requests made to populate the map with shouts as the user scrolls
+ * Handles the requests made to populate the map with snapbies as the user scrolls
  */
 public class MapRequestHandler {
     /** Listener for the MapRequestHandler */
@@ -26,7 +26,7 @@ public class MapRequestHandler {
         public void responseReceived(String url, JSONObject object, AjaxStatus status);
     }
 
-    /** Add a request to populate a zone of the map with shout, we're going to handle that */
+    /** Add a request to populate a zone of the map with snapby, we're going to handle that */
     public void addMapRequest(final AQuery aq, final LatLngBounds latLngBounds) {
         if (timer != null) {
             timer.cancel();
@@ -41,8 +41,8 @@ public class MapRequestHandler {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                //API call to retrieve shouts in the screen
-                ApiUtils.pullShoutsInZone(aq, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, new AjaxCallback<JSONObject>() {
+                //API call to retrieve snapbies in the screen
+                ApiUtils.pullSnapbiesInZone(aq, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject object, AjaxStatus status) {
                         super.callback(url, object, status);

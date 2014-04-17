@@ -10,7 +10,7 @@ import android.os.Build;
 import android.provider.Settings;
 import com.androidquery.AQuery;
 import com.snapby.android.R;
-import com.snapby.android.models.Shout;
+import com.snapby.android.models.Snapby;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -32,7 +32,7 @@ public class GeneralUtils {
         return Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static int getShoutMarkerImageResource(boolean anonymous, boolean selected) {
+    public static int getSnapbyMarkerImageResource(boolean anonymous, boolean selected) {
         if (anonymous) {
             if (selected) {
                 return R.drawable.anonymous_marker_selected;
@@ -48,12 +48,12 @@ public class GeneralUtils {
         }
     }
 
-    public static int getShoutAgeCode(Context ctx, Shout shout) {
-        long shoutAge = TimeUtils.getShoutAge(shout.created);
+    public static int getSnapbyAgeCode(Context ctx, Snapby snapby) {
+        long snapbyAge = TimeUtils.getSnapbyAge(snapby.created);
 
-        if (shoutAge < Constants.SHOUT_DURATION / 4) {
+        if (snapbyAge < Constants.SHOUT_DURATION / 4) {
             return 1;
-        } else if (shoutAge < 3 * (Constants.SHOUT_DURATION / 4)) {
+        } else if (snapbyAge < 3 * (Constants.SHOUT_DURATION / 4)) {
             return 2;
         } else {
             return 3;
@@ -93,7 +93,7 @@ public class GeneralUtils {
     }
 
     public static AQuery getAquery(Context ctx) {
-        return ((StreetShoutApplication) ctx.getApplicationContext()).getAQuery();
+        return ((SnapbyApplication) ctx.getApplicationContext()).getAQuery();
     }
 
     public static Map<String, Object> enrichParamsWithWithGeneralUserAndDeviceInfo(Context ctx, Map<String, Object> parameters) {
@@ -107,12 +107,12 @@ public class GeneralUtils {
         return parameters;
     }
 
-    public static void shareShout(Activity activity, Shout shout) {
-        String url = ApiUtils.getUserSiteUrl() + "/shouts/" + shout.id;
+    public static void shareSnapby(Activity activity, Snapby snapby) {
+        String url = ApiUtils.getUserSiteUrl() + "/snapbies/" + snapby.id;
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, activity.getString(R.string.share_shout_text, url));
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_shout_subject));
+        sendIntent.putExtra(Intent.EXTRA_TEXT, activity.getString(R.string.share_snapby_text, url));
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.share_snapby_subject));
         sendIntent.setType("text/plain");
 
         activity.startActivity(sendIntent);
@@ -126,11 +126,11 @@ public class GeneralUtils {
         return Constants.PRODUCTION ? Constants.BIG_PROFILE_PICS_URL_PREFIX_PROD : Constants.BIG_PROFILE_PICS_URL_PREFIX_DEV;
     }
 
-    public static String getShoutSmallPicturePrefix() {
+    public static String getSnapbySmallPicturePrefix() {
         return Constants.PRODUCTION ? Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_PROD : Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_DEV;
     }
 
-    public static String getShoutBigPicturePrefix() {
+    public static String getSnapbyBigPicturePrefix() {
         return Constants.PRODUCTION ? Constants.BIG_SHOUT_IMAGE_URL_PREFIX_PROD : Constants.BIG_SHOUT_IMAGE_URL_PREFIX_DEV;
     }
 }

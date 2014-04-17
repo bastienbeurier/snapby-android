@@ -4,25 +4,24 @@ import android.content.Context;
 import android.graphics.Point;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
 /**
  * Created by bastien on 4/11/14.
  */
-public class ShoutViewPagerContainer extends FrameLayout {
+public class SnapbyViewPagerContainer extends FrameLayout {
     private ViewPager mPager;
 
-    public ShoutViewPagerContainer(Context context) {
+    public SnapbyViewPagerContainer(Context context) {
         super(context);
     }
 
-    public ShoutViewPagerContainer(Context context, AttributeSet attrs) {
+    public SnapbyViewPagerContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ShoutViewPagerContainer(Context context, AttributeSet attrs, int defStyle) {
+    public SnapbyViewPagerContainer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

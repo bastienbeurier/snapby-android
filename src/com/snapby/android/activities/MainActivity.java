@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.common.ConnectionResult;
@@ -95,12 +96,10 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
             @Override
             public void onPageSelected(int i) {
-                if (i == 1) {
-                    if (pagePreviouslySelected == 0) {
-                        reloadExploreSnapbys();
-                    } else if (pagePreviouslySelected == 2) {
-                        reloadProfileSnapbys();
-                    }
+                if (i == 0) {
+                    repullProfileSnapbies();
+                } else if (i == 2) {
+                    repullExploreSnapbies();
                 }
 
                 pagePreviouslySelected = i;
@@ -130,19 +129,28 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
         //TODO: left Fragment click bug
 
-        //TODO: 1. Change server
-        //TODO: 2. Shout order
+        //TODO: 2. Snapby order
         //TODO: 3. implement liked (3 heures)
-        //TODO: 5. shout age somewhere (1h)
-        //TODO: 6. paginate shouts (2h)
+        //TODO: 5. snapby age somewhere (1h)
+        //TODO: 6. paginate snapbies (2h)
         //TODO: 7. settings fragment (1h)
-        //TODO: 8. change share
-        //TODO: 9. server notifications and notification redirection
         //TODO: 10. update comment count on comment (2h)
-        //TODO: 11. Show anonymous shouts in profile (1h)
         //TODO: 12. Don't save image more than once (1h)
         //TODO: 13. onActivityResult for refine
-        //TODO: 4. Display profile
+        //TODO: show liked score
+        //TODO: refresh like and snapby count
+        //TODO: can't snapby twice when failure
+        //TODO: tap on display photo to dismiss
+
+        //TODO: profile update after settings changes
+
+        //BAS LES COUILLES
+        //TODO: remove viewpager when no shouts or no connection to be able to swipe
+        //TODO: 8. change share
+
+
+        //Ideas: See the snaps you have participated in / Favorite some snapbyers
+
     }
 
 
@@ -165,7 +173,7 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
     }
 
     /**
-     *  Location-related methods
+     * Location-related methods
      */
     @Override
     protected void onStart() {
@@ -233,21 +241,13 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
             myLocation = location;
 
             if (exploreFragment.waitingForLocation) {
-                reloadExploreSnapbys();
+                repullExploreSnapbies();
             }
         }
     }
 
-    public void setExploreMapPerimeterIfNeeded(Location location) {
-        //Change explore map perimeter if never set before or (if there is a significant perimeter change and the explore map is not shown)
-        if (myLocation == null || (mainViewPager.getCurrentItem() != 0 && (Math.abs(location.getLatitude() - myLocation.getLatitude()) + Math.abs(location.getLongitude() - myLocation.getLongitude()) > 0.0005))) {
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), Constants.EXPLORE_ZOOM);
-            exploreFragment.exploreMap.moveCamera(update);
-        }
-    }
-
     private void getMyLikes() {
-        ApiUtils.getMyLikesAndFollowedUsers(this, new AjaxCallback<JSONObject>() {
+        ApiUtils.getMyLikes(this, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -268,11 +268,11 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
                         int likeCount = rawLikes.length();
 
                         for (int i = 0; i < likeCount; i++) {
-                            myLikes.add(Integer.parseInt(((JSONObject) rawLikes.get(i)).getString("shout_id")));
+                            myLikes.add(Integer.parseInt(((JSONObject) rawLikes.get(i)).getString("snapby_id")));
                         }
 
-                        reloadExploreShouts();
-                        reloadProfileShouts();
+                        reloadExploreSnapbies();
+                        reloadProfileSnapbies();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -281,11 +281,11 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         });
     }
 
-    public void reloadExploreShouts() {
+    public void reloadExploreSnapbies() {
         exploreFragment.reloadAdapterIfAlreadyLoaded();
     }
 
-    public void reloadProfileShouts() {
+    public void reloadProfileSnapbies() {
         profileFragment.reloadAdapterIfAlreadyLoaded();
     }
 
@@ -306,14 +306,14 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         super.onPause();
     }
 
-    public void updateLocalShoutCount() {
+    public void updateLocalSnapbyCount() {
         LatLngBounds bounds = exploreFragment.getExploreMapBounds();
 
-        cameraFragment.updateLocalShoutCount(bounds);
+        cameraFragment.updateLocalSnapbyCount(bounds);
     }
 
     @Override
-    public void onWindowFocusChanged (boolean hasFocus) {
+    public void onWindowFocusChanged(boolean hasFocus) {
         if (firstOpen) {
             mainViewPager.setCurrentItem(1, false);
             firstOpen = false;
@@ -322,12 +322,12 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         super.onWindowFocusChanged(hasFocus);
     }
 
-    public void reloadSnapbys() {
-        reloadExploreSnapbys();
-        reloadProfileSnapbys();
+    public void repullSnapbies() {
+        repullExploreSnapbies();
+        repullProfileSnapbies();
     }
 
-    private void reloadExploreSnapbys() {
+    private void repullExploreSnapbies() {
         if (exploreFragment.mapLoaded && myLocation != null) {
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(LocationUtils.toLatLng(myLocation), Constants.EXPLORE_ZOOM);
             exploreFragment.exploreMap.moveCamera(update);
@@ -336,15 +336,20 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         }
     }
 
-    private void reloadProfileSnapbys() {
+    private void repullProfileSnapbies() {
         if (profileFragment.mapLoaded) {
-            profileFragment.getUserShouts();
+            profileFragment.getUserSnapbies();
             profileFragment.getUserInfo();
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.DISPLAY_SHOUT_REQUEST && data != null && data.hasExtra("delete")) {
+            repullSnapbies();
+        }
+
         preventRedirectToCamera = true;
     }
+
 }

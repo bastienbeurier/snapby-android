@@ -14,7 +14,7 @@
                       android:layout_width="match_parent"
                       android:orientation="vertical">
 
-            <TextView android:text="@string/create_shout_map_instruction"
+            <TextView android:text="@string/create_snapby_map_instruction"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
                       android:layout_marginLeft="30dp"
@@ -31,13 +31,13 @@
                                                         android:layout_gravity="center">
 
                 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                          android:id="@+id/shout_map"
+                          android:id="@+id/snapby_map"
                           android:layout_width="match_parent"
                           android:layout_height="match_parent"
                           class="com.google.android.gms.maps.MapFragment" />
 
                 <ImageView
-                        android:id="@+id/refresh_shout_perimeter"
+                        android:id="@+id/refresh_snapby_perimeter"
                         android:layout_width="@dimen/map_button_size"
                         android:layout_height="@dimen/map_button_size"
                         android:layout_alignParentRight="true"

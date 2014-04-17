@@ -37,9 +37,9 @@ public class PushNotifications {
                 Notification notification = super.buildNotification(alert,
                         extras);
                 // The icon displayed in the status bar
-                notification.icon = R.drawable.ic_stat_notify_shout;
+                notification.icon = R.drawable.ic_stat_notify_snapby;
                 // The icon displayed within the notification content
-                notification.contentView.setImageViewResource(android.R.id.icon, R.drawable.ic_stat_notify_shout);
+                notification.contentView.setImageViewResource(android.R.id.icon, R.drawable.ic_stat_notify_snapby);
 
                 //Send recent location when user receives a notification
                 LocationManager locationManager = (LocationManager) appCtx.getSystemService(appCtx.LOCATION_SERVICE);

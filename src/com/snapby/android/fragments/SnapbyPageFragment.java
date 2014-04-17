@@ -17,7 +17,7 @@ import com.snapby.android.R;
 import com.snapby.android.activities.CommentsActivity;
 import com.snapby.android.activities.DisplayActivity;
 import com.snapby.android.activities.MainActivity;
-import com.snapby.android.models.Shout;
+import com.snapby.android.models.Snapby;
 import com.snapby.android.utils.ApiUtils;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
@@ -28,7 +28,7 @@ import org.json.JSONObject;
  */
 public class SnapbyPageFragment extends Fragment {
 
-    private Shout shout = null;
+    private Snapby snapby = null;
 
     private AQuery aq = null;
 
@@ -48,6 +48,8 @@ public class SnapbyPageFragment extends Fragment {
 
     private TextView likeCount = null;
 
+    private TextView userlikedCount = null;
+
     private View commentContainer = null;
 
     private ImageView commentIcon = null;
@@ -62,21 +64,21 @@ public class SnapbyPageFragment extends Fragment {
 
     private String type = null;
 
-    public static SnapbyPageFragment newInstance(Shout shout) {
+    public static SnapbyPageFragment newInstance(Snapby snapby) {
         SnapbyPageFragment snapbyPageFragment = new SnapbyPageFragment();
 
         Bundle args = new Bundle();
-        args.putParcelable("shout", shout);
+        args.putParcelable("snapby", snapby);
         snapbyPageFragment.setArguments(args);
 
         return snapbyPageFragment;
     }
 
-    public static SnapbyPageFragment newInstance(Shout shout, String type) {
+    public static SnapbyPageFragment newInstance(Snapby snapby, String type) {
         SnapbyPageFragment snapbyPageFragment = new SnapbyPageFragment();
 
         Bundle args = new Bundle();
-        args.putParcelable("shout", shout);
+        args.putParcelable("snapby", snapby);
         args.putString("type", type);
         snapbyPageFragment.setArguments(args);
 
@@ -94,34 +96,35 @@ public class SnapbyPageFragment extends Fragment {
             type = "explore";
         }
 
-        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.shout_page_fragment, container, false);
-        shout = getArguments().getParcelable("shout");
+        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.snapby_page_fragment, container, false);
+        snapby = getArguments().getParcelable("snapby");
 
-        imageView = (ImageView) rootView.findViewById(R.id.explore_shout_image);
-        usernameView = (TextView) rootView.findViewById(R.id.explore_shout_username);
-        userProfilePic = (ImageView) rootView.findViewById(R.id.explore_shout_user_picture);
-        userContainer = (LinearLayout) rootView.findViewById(R.id.explore_shout_user_container);
-        imageContainer = rootView.findViewById(R.id.shout_image_view_container);
-        snapbyInfoContainer = rootView.findViewById(R.id.explore_shout_info_container);
-        likeContainer = rootView.findViewById(R.id.explore_shout_like_container);
-        likeIcon = (ImageView) rootView.findViewById(R.id.explore_shout_like_button);
-        likeCount = (TextView) rootView.findViewById(R.id.explore_shout_like_count);
-        commentContainer = rootView.findViewById(R.id.explore_shout_comment_container);
-        commentIcon = (ImageView) rootView.findViewById(R.id.explore_shout_comment_button);
-        commentCount = (TextView) rootView.findViewById(R.id.explore_shout_comment_count);
+        imageView = (ImageView) rootView.findViewById(R.id.explore_snapby_image);
+        usernameView = (TextView) rootView.findViewById(R.id.explore_snapby_username);
+        userProfilePic = (ImageView) rootView.findViewById(R.id.explore_snapby_user_picture);
+        userContainer = (LinearLayout) rootView.findViewById(R.id.explore_snapby_user_container);
+        imageContainer = rootView.findViewById(R.id.snapby_image_view_container);
+        snapbyInfoContainer = rootView.findViewById(R.id.explore_snapby_info_container);
+        likeContainer = rootView.findViewById(R.id.explore_snapby_like_container);
+        likeIcon = (ImageView) rootView.findViewById(R.id.explore_snapby_like_button);
+        likeCount = (TextView) rootView.findViewById(R.id.explore_snapby_like_count);
+        commentContainer = rootView.findViewById(R.id.explore_snapby_comment_container);
+        commentIcon = (ImageView) rootView.findViewById(R.id.explore_snapby_comment_button);
+        commentCount = (TextView) rootView.findViewById(R.id.explore_snapby_comment_count);
+        userlikedCount = (TextView) rootView.findViewById(R.id.explore_snapby_liked_count);
 
         if (Constants.PRODUCTION) {
-            aq.id(imageView).image(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_PROD + shout.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
+            aq.id(imageView).image(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_PROD + snapby.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
         } else {
-            aq.id(imageView).image(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_DEV + shout.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
+            aq.id(imageView).image(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_DEV + snapby.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
         }
 
-        if (shout.anonymous || type.equals("profile")) {
+        if (snapby.anonymous || type.equals("profile")) {
             userContainer.setVisibility(View.GONE);
         } else {
             userContainer.setVisibility(View.VISIBLE);
             imageContainer.setVisibility(View.VISIBLE);
-            aq.id(userProfilePic).image(GeneralUtils.getProfileThumbPicturePrefix() + shout.userId, true, false, 0, 0, null, AQuery.FADE_IN);
+            aq.id(userProfilePic).image(GeneralUtils.getProfileThumbPicturePrefix() + snapby.userId, true, false, 0, 0, null, AQuery.FADE_IN);
 
             userContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -132,22 +135,24 @@ public class SnapbyPageFragment extends Fragment {
             });
         }
 
-        if (shout.anonymous) {
+        if (snapby.anonymous) {
             usernameView.setText(getResources().getString(R.string.anonymous_name));
             usernameView.setTextColor(getResources().getColor(R.color.anonymousGrey));
+            userlikedCount.setVisibility(View.GONE);
         } else {
-            usernameView.setText("@" + shout.username);
+            usernameView.setText("@" + snapby.username);
+            //TODO Pull score and name
         }
 
-        setLikeCountUI(shout.likeCount);
-        setCommentCountUI(shout.commentCount);
+        setLikeCountUI(snapby.likeCount);
+        setCommentCountUI(snapby.commentCount);
 
-        if (mainActivity.myLikes.contains(shout.id)) {
+        if (mainActivity.myLikes.contains(snapby.id)) {
             liked = true;
-            likeIcon.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button_liked));
+            likeIcon.setImageDrawable(getResources().getDrawable(R.drawable.explore_snapby_like_button_liked));
         } else {
             liked = false;
-            likeIcon.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button));
+            likeIcon.setImageDrawable(getResources().getDrawable(R.drawable.explore_snapby_like_button));
         }
 
         likeContainer.setOnClickListener(new View.OnClickListener() {
@@ -156,9 +161,9 @@ public class SnapbyPageFragment extends Fragment {
                 snapbyInfoContainer.setEnabled(false);
 
                 if (liked) {
-                    unlikeShout();
+                    unlikeSnapby();
 
-                    ApiUtils.removeLike(mainActivity, shout.id, new AjaxCallback<JSONObject>() {
+                    ApiUtils.removeLike(mainActivity, snapby.id, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject object, AjaxStatus status) {
                             super.callback(url, object, status);
@@ -166,17 +171,17 @@ public class SnapbyPageFragment extends Fragment {
                             snapbyInfoContainer.setEnabled(true);
 
                             if (status.getError() != null) {
-                                Toast toast = Toast.makeText(mainActivity, getString(R.string.shout_unlike_failed), Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(mainActivity, getString(R.string.snapby_unlike_failed), Toast.LENGTH_SHORT);
                                 toast.show();
 
-                                likeShout();
+                                likeSnapby();
                             }
                         }
                     });
                 } else {
-                    likeShout();
+                    likeSnapby();
 
-                    ApiUtils.createLike(mainActivity, shout, 0, 0, new AjaxCallback<JSONObject>() {
+                    ApiUtils.createLike(mainActivity, snapby, 0, 0, new AjaxCallback<JSONObject>() {
                         @Override
                         public void callback(String url, JSONObject object, AjaxStatus status) {
                             super.callback(url, object, status);
@@ -184,10 +189,10 @@ public class SnapbyPageFragment extends Fragment {
                             snapbyInfoContainer.setEnabled(true);
 
                             if (status.getError() != null) {
-                                Toast toast = Toast.makeText(mainActivity, getString(R.string.shout_like_failed), Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(mainActivity, getString(R.string.snapby_like_failed), Toast.LENGTH_SHORT);
                                 toast.show();
 
-                                unlikeShout();
+                                unlikeSnapby();
                             }
                         }
                     });
@@ -199,7 +204,7 @@ public class SnapbyPageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent comments = new Intent(getActivity(), CommentsActivity.class);
-                comments.putExtra("shout", shout);
+                comments.putExtra("snapby", snapby);
 
                 startActivityForResult(comments, Constants.COMMENTS_REQUEST);
             }
@@ -208,44 +213,44 @@ public class SnapbyPageFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               Intent displayShout = new Intent(getActivity(), DisplayActivity.class);
-                displayShout.putExtra("shout", shout);
+               Intent displaySnapby = new Intent(getActivity(), DisplayActivity.class);
+                displaySnapby.putExtra("snapby", snapby);
 
-                startActivityForResult(displayShout, Constants.DISPLAY_SHOUT_REQUEST);
+                startActivityForResult(displaySnapby, Constants.DISPLAY_SHOUT_REQUEST);
             }
         });
 
         return rootView;
     }
 
-    private void likeShout() {
+    private void likeSnapby() {
         liked = true;
-        likeIcon.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button_liked));
-        mainActivity.myLikes.add(shout.id);
+        likeIcon.setImageDrawable(getResources().getDrawable(R.drawable.explore_snapby_like_button_liked));
+        mainActivity.myLikes.add(snapby.id);
 
         if (type.equals("profile")) {
-            mainActivity.reloadExploreShouts();
+            mainActivity.reloadExploreSnapbies();
         } else {
-            mainActivity.reloadProfileShouts();
+            mainActivity.reloadProfileSnapbies();
         }
 
-        shout.likeCount++;
-        setLikeCountUI(shout.likeCount);
+        snapby.likeCount++;
+        setLikeCountUI(snapby.likeCount);
     }
 
-    private void unlikeShout() {
+    private void unlikeSnapby() {
         liked = false;
-        likeIcon.setImageDrawable(getResources().getDrawable(R.drawable.explore_shout_like_button));
-        mainActivity.myLikes.remove(shout.id);
+        likeIcon.setImageDrawable(getResources().getDrawable(R.drawable.explore_snapby_like_button));
+        mainActivity.myLikes.remove(snapby.id);
 
         if (type.equals("profile")) {
-            mainActivity.reloadExploreShouts();
+            mainActivity.reloadExploreSnapbies();
         } else {
-            mainActivity.reloadProfileShouts();
+            mainActivity.reloadProfileSnapbies();
         }
 
-        shout.likeCount--;
-        setLikeCountUI(shout.likeCount);
+        snapby.likeCount--;
+        setLikeCountUI(snapby.likeCount);
     }
 
     private void setLikeCountUI(int count) {

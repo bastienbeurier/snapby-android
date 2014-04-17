@@ -26,17 +26,17 @@ public class RefineLocationActivity extends Activity implements GoogleMap.OnMyLo
 
     private Location myLocation = null;
 
-    private Location shoutLocation = null;
+    private Location snapbyLocation = null;
 
     private GoogleMap mMap = null;
 
-    private Marker shoutLocationArrow = null;
+    private Marker snapbyLocationArrow = null;
 
     private LocationManager locationManager = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_shout_location);
+        setContentView(R.layout.refine);
 
         getActionBar().setDisplayHomeAsUpEnabled(false);
         getActionBar().setDisplayShowHomeEnabled(false);
@@ -45,12 +45,12 @@ public class RefineLocationActivity extends Activity implements GoogleMap.OnMyLo
 
         setUpMap();
         mapLoaded();
-        letUserRefineShoutPosition();
+        letUserRefineSnapbyPosition();
 
-        findViewById(R.id.refresh_shout_perimeter).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.refresh_snapby_perimeter).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setMapCameraPositionAndShoutPositionOnUserLocation();
+                setMapCameraPositionAndSnapbyPositionOnUserLocation();
             }
         });
     }
@@ -61,7 +61,7 @@ public class RefineLocationActivity extends Activity implements GoogleMap.OnMyLo
     }
 
     private void setUpMap() {
-        mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.shout_map)).getMap();
+        mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.snapby_map)).getMap();
 
         //Set map settings
         UiSettings settings = mMap.getUiSettings();
@@ -100,36 +100,36 @@ public class RefineLocationActivity extends Activity implements GoogleMap.OnMyLo
             public void onCameraChange(CameraPosition arg0) {
                 mMap.setOnCameraChangeListener(null);
 
-                //User has already refined his shout location and is doing it again
-                if (getIntent().hasExtra("shoutRefinedLocation")) {
-                    shoutLocation = getIntent().getParcelableExtra("shoutRefinedLocation");
-                    setMapCameraPositionOnShoutLocation();
-                    updateShoutAccuratePosition(shoutLocation.getLatitude(), shoutLocation.getLongitude());
-                //First time user refines his shout location
+                //User has already refined his snapby location and is doing it again
+                if (getIntent().hasExtra("snapbyRefinedLocation")) {
+                    snapbyLocation = getIntent().getParcelableExtra("snapbyRefinedLocation");
+                    setMapCameraPositionOnSnapbyLocation();
+                    updateSnapbyAccuratePosition(snapbyLocation.getLatitude(), snapbyLocation.getLongitude());
+                //First time user refines his snapby location
                 } else {
-                    //Update shout position to most recent user position if available
-                    boolean myLocationAvailable = setMapCameraPositionAndShoutPositionOnUserLocation();
+                    //Update snapby position to most recent user position if available
+                    boolean myLocationAvailable = setMapCameraPositionAndSnapbyPositionOnUserLocation();
 
                     //Otherwise use position given by CreateActivity
                     if (!myLocationAvailable) {
-                        shoutLocation = getIntent().getParcelableExtra("shoutInitialLocation");
-                        setMapCameraPositionOnShoutLocation();
-                        updateShoutAccuratePosition(shoutLocation.getLatitude(), shoutLocation.getLongitude());
+                        snapbyLocation = getIntent().getParcelableExtra("snapbyInitialLocation");
+                        setMapCameraPositionOnSnapbyLocation();
+                        updateSnapbyAccuratePosition(snapbyLocation.getLatitude(), snapbyLocation.getLongitude());
                     }
                 }
             }
         });
     }
 
-    private void setMapCameraPositionOnShoutLocation() {
+    private void setMapCameraPositionOnSnapbyLocation() {
         //Compute bounds of this perimeter
-        LatLng[] boundsResult = LocationUtils.getLatLngBounds(Constants.SHOUT_RADIUS, shoutLocation);
+        LatLng[] boundsResult = LocationUtils.getLatLngBounds(Constants.SHOUT_RADIUS, snapbyLocation);
         final LatLngBounds bounds = new LatLngBounds(boundsResult[0], boundsResult[1]);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
     }
 
-    private boolean setMapCameraPositionAndShoutPositionOnUserLocation() {
+    private boolean setMapCameraPositionAndSnapbyPositionOnUserLocation() {
         Location myMapLocation = mMap.getMyLocation();
 
         if (myMapLocation != null) {
@@ -150,23 +150,23 @@ public class RefineLocationActivity extends Activity implements GoogleMap.OnMyLo
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, Constants.SHOUT_RADIUS / 15));
 
-        shoutLocation = myLocation;
-        updateShoutAccuratePosition(myLocation.getLatitude(), myLocation.getLongitude());
+        snapbyLocation = myLocation;
+        updateSnapbyAccuratePosition(myLocation.getLatitude(), myLocation.getLongitude());
 
         return true;
     }
 
-    private void letUserRefineShoutPosition() {
+    private void letUserRefineSnapbyPosition() {
         //Let user tap to indicate his accurate position
-        GoogleMap.OnMapClickListener updateShoutLocOnClick = new GoogleMap.OnMapClickListener() {
+        GoogleMap.OnMapClickListener updateSnapbyLocOnClick = new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                updateShoutAccuratePosition(latLng.latitude, latLng.longitude);
+                updateSnapbyAccuratePosition(latLng.latitude, latLng.longitude);
             }
         };
 
         //Let user also drag the location arrow to indicate his accurate position
-        GoogleMap.OnMarkerDragListener updateShoutLocOnDrag = new GoogleMap.OnMarkerDragListener() {
+        GoogleMap.OnMarkerDragListener updateSnapbyLocOnDrag = new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {}
 
@@ -175,42 +175,42 @@ public class RefineLocationActivity extends Activity implements GoogleMap.OnMyLo
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                updateShoutAccuratePosition(marker.getPosition().latitude, marker.getPosition().longitude);
+                updateSnapbyAccuratePosition(marker.getPosition().latitude, marker.getPosition().longitude);
             }
         };
 
-        GoogleMap.OnMapLongClickListener updateShoutLocOnLongClick = new GoogleMap.OnMapLongClickListener() {
+        GoogleMap.OnMapLongClickListener updateSnapbyLocOnLongClick = new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                updateShoutAccuratePosition(latLng.latitude, latLng.longitude);
+                updateSnapbyAccuratePosition(latLng.latitude, latLng.longitude);
             }
         };
 
-        mMap.setOnMapClickListener(updateShoutLocOnClick);
-        mMap.setOnMarkerDragListener(updateShoutLocOnDrag);
-        mMap.setOnMapLongClickListener(updateShoutLocOnLongClick);
+        mMap.setOnMapClickListener(updateSnapbyLocOnClick);
+        mMap.setOnMarkerDragListener(updateSnapbyLocOnDrag);
+        mMap.setOnMapLongClickListener(updateSnapbyLocOnLongClick);
     }
 
-    private void updateShoutAccuratePosition(double lat, double lng) {
-        shoutLocation = new Location("");
-        shoutLocation.setLatitude(lat);
-        shoutLocation.setLongitude(lng);
+    private void updateSnapbyAccuratePosition(double lat, double lng) {
+        snapbyLocation = new Location("");
+        snapbyLocation.setLatitude(lat);
+        snapbyLocation.setLongitude(lng);
 
-        if (shoutLocationArrow != null) {
-            shoutLocationArrow.remove();
-            shoutLocationArrow = null;
+        if (snapbyLocationArrow != null) {
+            snapbyLocationArrow.remove();
+            snapbyLocationArrow = null;
         }
 
         //Display marker the user is going to drag to specify his accurate position
         MarkerOptions marker = new MarkerOptions();
-        marker.position(new LatLng(shoutLocation.getLatitude(), shoutLocation.getLongitude()));
+        marker.position(new LatLng(snapbyLocation.getLatitude(), snapbyLocation.getLongitude()));
         marker.draggable(true);
-        shoutLocationArrow = mMap.addMarker(marker);
+        snapbyLocationArrow = mMap.addMarker(marker);
     }
 
-    public void endShoutLocationRefining() {
+    public void endSnapbyLocationRefining() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("accurateShoutLocation", shoutLocation);
+        returnIntent.putExtra("accurateSnapbyLocation", snapbyLocation);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
@@ -227,7 +227,7 @@ public class RefineLocationActivity extends Activity implements GoogleMap.OnMyLo
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.done_action) {
-            endShoutLocationRefining();
+            endSnapbyLocationRefining();
             return false;
         } else {
             Intent returnIntent = new Intent();

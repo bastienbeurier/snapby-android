@@ -67,14 +67,14 @@
                               android:layout_height="match_parent"
                               android:layout_weight="1">
 
-                    <LinearLayout android:id="@+id/profile_shouts_button"
+                    <LinearLayout android:id="@+id/profile_snapbies_button"
                                   android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
                                   android:layout_weight="1"
                                   android:orientation="vertical"
                                   android:gravity="center">
 
-                        <TextView android:id="@+id/profile_shout_count"
+                        <TextView android:id="@+id/profile_snapby_count"
                                   android:layout_height="match_parent"
                                   android:layout_width="wrap_content"
                                   android:textSize="20dp"
@@ -82,11 +82,11 @@
                                   android:textColor="@color/white"
                                   android:gravity="center"/>
 
-                        <TextView android:id="@+id/profile_shout_count_label"
+                        <TextView android:id="@+id/profile_snapby_count_label"
                                   android:layout_height="match_parent"
                                   android:layout_width="match_parent"
                                   android:textSize="14dp"
-                                  android:text="snapbys"
+                                  android:text="snapbies"
                                   android:textColor="@color/white"
                                   android:gravity="center"/>
 
@@ -101,7 +101,7 @@
                         <TextView android:id="@+id/profile_liked_count"
                                   android:layout_height="match_parent"
                                   android:layout_width="wrap_content"
-                                  android:text="155"
+                                  android:text="0"
                                   android:textSize="20dp"
                                   android:textColor="@color/white"
                                   android:gravity="center"/>
@@ -122,7 +122,7 @@
 
         </LinearLayout>
 
-        <com.snapby.android.custom.ShoutViewPagerContainer android:id="@+id/profile_shout_view_pager_container"
+        <com.snapby.android.custom.SnapbyViewPagerContainer android:id="@+id/profile_snapby_view_pager_container"
                                                                 android:layout_width="match_parent"
                                                                 android:layout_height="220dp"
                                                                 android:layout_gravity="bottom"
@@ -135,9 +135,9 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"/>
 
-        </com.snapby.android.custom.ShoutViewPagerContainer>
+        </com.snapby.android.custom.SnapbyViewPagerContainer>
 
-        <TextView android:id="@+id/profile_shout_no_connection"
+        <TextView android:id="@+id/profile_snapby_no_connection"
                   android:text="@string/no_connection_feed"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
                   android:layout_gravity="center"
                   android:visibility="gone"/>
 
-        <TextView android:id="@+id/profile_shout_no_shout"
+        <TextView android:id="@+id/profile_snapby_no_snapby"
                   android:text="@string/empty_profile_feed"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"

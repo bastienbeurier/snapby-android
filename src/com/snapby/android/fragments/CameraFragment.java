@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,14 +31,14 @@ import com.snapby.android.R;
 import com.snapby.android.activities.MainActivity;
 import com.snapby.android.activities.RefineLocationActivity;
 import com.snapby.android.custom.CameraPreview;
-import com.snapby.android.models.Shout;
+import com.snapby.android.models.Snapby;
 import com.snapby.android.utils.ApiUtils;
 import com.snapby.android.utils.AppPreferences;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
 import com.snapby.android.utils.ImageUtils;
 import com.snapby.android.utils.SessionUtils;
-import com.snapby.android.utils.StreetShoutApplication;
+import com.snapby.android.utils.SnapbyApplication;
 import com.snapby.android.utils.TrackingUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,11 +75,11 @@ public class CameraFragment extends Fragment {
 
     private FrameLayout cameraBottomBar = null;
 
-    private Location shoutLocation = null;
+    private Location snapbyLocation = null;
 
-    private boolean shoutLocationRefined = false;
+    private boolean snapbyLocationRefined = false;
 
-    private ProgressDialog createShoutDialog;
+    private ProgressDialog createSnapbyDialog;
 
     private ImageView sendButton = null;
 
@@ -90,7 +91,7 @@ public class CameraFragment extends Fragment {
 
     private ImageView cancelButton = null;
 
-    private ImageView shoutImageView = null;
+    private ImageView snapbyImageView = null;
 
     private boolean anonymousUser = false;
 
@@ -98,15 +99,15 @@ public class CameraFragment extends Fragment {
 
     private View exploreButtonContainer = null;
 
-    private TextView localShoutCount = null;
+    private TextView localSnapbyCount = null;
 
-    private FrameLayout localShoutCountContainer = null;
+    private FrameLayout localSnapbyCountContainer = null;
 
     private AppPreferences appPrefs = null;
 
     private String imagePath = null;
 
-    private boolean firstLocalShoutCount = true;
+    private boolean firstLocalSnapbyCount = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -120,12 +121,12 @@ public class CameraFragment extends Fragment {
         sendButton = (ImageView) rootView.findViewById(R.id.create_send_button);
         refineButton = (ImageView) rootView.findViewById(R.id.create_refine_button);
         anonymousButton = (ImageView) rootView.findViewById(R.id.create_mask_button);
-        shoutImageView = (ImageView) rootView.findViewById(R.id.create_shout_image);
-        localShoutCount = (TextView) rootView.findViewById(R.id.camera_shout_count);
-        localShoutCountContainer = (FrameLayout) rootView.findViewById(R.id.camera_shout_count_container);
+        snapbyImageView = (ImageView) rootView.findViewById(R.id.create_snapby_image);
+        localSnapbyCount = (TextView) rootView.findViewById(R.id.camera_snapby_count);
+        localSnapbyCountContainer = (FrameLayout) rootView.findViewById(R.id.camera_snapby_count_container);
         exploreButtonContainer = rootView.findViewById(R.id.camera_explore_button_container);
 
-        appPrefs = ((StreetShoutApplication) getActivity().getApplicationContext()).getAppPrefs();
+        appPrefs = ((SnapbyApplication) getActivity().getApplicationContext()).getAppPrefs();
 
         //Front camera button
         ImageView flipCameraView = (ImageView) rootView.findViewById(R.id.camera_flip_button);
@@ -173,7 +174,7 @@ public class CameraFragment extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createShout();
+                createSnapby();
             }
         });
 
@@ -187,7 +188,7 @@ public class CameraFragment extends Fragment {
         refineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refineShoutLocation();
+                refineSnapbyLocation();
             }
         });
 
@@ -325,7 +326,13 @@ public class CameraFragment extends Fragment {
 
             imagePath = pictureFile.getAbsolutePath().toString();
 
-            formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath, Constants.SHOUT_BIG_RES);
+            Log.d("BAB", "IMAGE PATH: " + imagePath);
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            formattedPicture = BitmapFactory.decodeFile(imagePath, options);
+
+//            formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath, Constants.SHOUT_BIG_RES);
 
             if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
                 if (frontCamera) {
@@ -346,13 +353,6 @@ public class CameraFragment extends Fragment {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
-
-        if (imageCamera == 0) {
-            bitmap = ImageUtils.rotateImage(bitmap);
-        } else {
-            bitmap = ImageUtils.reverseRotateImage(bitmap);
-            bitmap = ImageUtils.mirrorBitmap(bitmap);
-        }
 
         FileOutputStream fOut = null;
         try {
@@ -418,9 +418,9 @@ public class CameraFragment extends Fragment {
     }
 
     private void startCreationMode() {
-        shoutImageView.setImageBitmap(formattedPicture);
+        snapbyImageView.setImageBitmap(formattedPicture);
         preview.setVisibility(View.GONE);
-        shoutImageView.setVisibility(View.VISIBLE);
+        snapbyImageView.setVisibility(View.VISIBLE);
 
         exploreButtonContainer.setVisibility(View.GONE);
         profileButton.setVisibility(View.GONE);
@@ -430,10 +430,10 @@ public class CameraFragment extends Fragment {
     }
 
     private void quitCreationMode() {
-        shoutImageView.setVisibility(View.GONE);
+        snapbyImageView.setVisibility(View.GONE);
 
-        shoutLocationRefined = false;
-        shoutLocation = null;
+        snapbyLocationRefined = false;
+        snapbyLocation = null;
         anonymousUser = false;
 
         anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button));
@@ -448,31 +448,26 @@ public class CameraFragment extends Fragment {
         setUpCamera();
     }
 
-    public void refineShoutLocation() {
+    public void refineSnapbyLocation() {
         Intent refineIntent = new Intent(getActivity(), RefineLocationActivity.class);
 
-        if (shoutLocationRefined) {
-            refineIntent.putExtra("shoutRefinedLocation", shoutLocation);
+        if (snapbyLocationRefined) {
+            refineIntent.putExtra("snapbyRefinedLocation", snapbyLocation);
         } else {
-            refineIntent.putExtra("shoutRefinedLocation", shoutLocation);
+            refineIntent.putExtra("snapbyRefinedLocation", snapbyLocation);
         }
 
         startActivityForResult(refineIntent, Constants.REFINE_LOCATION_ACTIVITY_REQUEST);
     }
 
-    public void shoutCreationFailed() {
-        createShoutDialog.cancel();
-        Toast toast = Toast.makeText(getActivity(), getString(R.string.create_shout_failure), Toast.LENGTH_LONG);
+    public void snapbyCreationFailed() {
+        createSnapbyDialog.cancel();
+        Toast toast = Toast.makeText(getActivity(), getString(R.string.create_snapby_failure), Toast.LENGTH_LONG);
         toast.show();
     }
 
-    private void createShout() {
+    private void createSnapby() {
         //TODO Don't save image more than once
-        if (imagePath != null) {
-            SaveImageToGallery runner = new SaveImageToGallery();
-            runner.execute(imagePath);
-        }
-
         Location myLocation = ((MainActivity) getActivity()).myLocation;
 
         if (myLocation == null || myLocation.getLatitude() == 0 || myLocation.getLongitude() == 0) {
@@ -481,7 +476,9 @@ public class CameraFragment extends Fragment {
             return;
         }
 
-        createShoutDialog = ProgressDialog.show(getActivity(), "", getString(R.string.shout_processing), false);
+        createSnapbyDialog = ProgressDialog.show(getActivity(), "", getString(R.string.snapby_processing), false);
+
+        formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath, Constants.SHOUT_BIG_RES);
 
         //Convert bitmap to byte array
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -489,7 +486,12 @@ public class CameraFragment extends Fragment {
         byte[] bmData = stream.toByteArray();
         String encodedImage = Base64.encodeToString(bmData, Base64.DEFAULT);
 
-        ApiUtils.createShout(getActivity(), GeneralUtils.getAquery(getActivity()), myLocation.getLatitude(), myLocation.getLongitude(), "", anonymousUser, encodedImage, new AjaxCallback<JSONObject>() {
+        if (imagePath != null) {
+            SaveImageToGallery runner = new SaveImageToGallery();
+            runner.execute(imagePath);
+        }
+
+        ApiUtils.createSnapby(getActivity(), GeneralUtils.getAquery(getActivity()), myLocation.getLatitude(), myLocation.getLongitude(), "", anonymousUser, encodedImage, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -500,34 +502,31 @@ public class CameraFragment extends Fragment {
                 }
 
                 if (status.getError() == null && object != null) {
-                    JSONObject rawShout = null;
+                    JSONObject rawSnapby = null;
 
                     try {
                         JSONObject result = object.getJSONObject("result");
-                        rawShout = result.getJSONObject("shout");
+                        rawSnapby = result.getJSONObject("snapby");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    Shout newShout = Shout.rawShoutToInstance(rawShout);
+                    Snapby newSnapby = Snapby.rawSnapbyToInstance(rawSnapby);
 
-                    TrackingUtils.trackCreateShout(getActivity());
+                    TrackingUtils.trackCreateSnapby(getActivity());
 
-                    if (createShoutDialog != null) {
-                        createShoutDialog.cancel();
+                    if (createSnapbyDialog != null) {
+                        createSnapbyDialog.cancel();
                     }
 
                     quitCreationMode();
 
-                    Toast toast = Toast.makeText(getActivity(), getString(R.string.create_shout_success), Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getActivity(), getString(R.string.create_snapby_success), Toast.LENGTH_SHORT);
                     toast.show();
 
-                    ((MainActivity) getActivity()).reloadSnapbys();
-
-                    ((MainActivity) getActivity()).reloadExploreShouts();
-                    ((MainActivity) getActivity()).reloadProfileShouts();
+                    ((MainActivity) getActivity()).repullSnapbies();
                 } else {
-                    shoutCreationFailed();
+                    snapbyCreationFailed();
                 }
             }
         });
@@ -540,30 +539,30 @@ public class CameraFragment extends Fragment {
         }
     }
 
-    public void updateLocalShoutCount(LatLngBounds latLngBounds) {
-        ApiUtils.getLocalShoutsCount(getActivity(), latLngBounds.northeast.latitude, latLngBounds.northeast.longitude, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, new AjaxCallback<JSONObject>() {
+    public void updateLocalSnapbyCount(LatLngBounds latLngBounds) {
+        ApiUtils.getLocalSnapbiesCount(getActivity(), latLngBounds.northeast.latitude, latLngBounds.northeast.longitude, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
 
                 if (status.getError() == null && object != null) {
-                    Integer shoutCount = 0;
+                    Integer snapbyCount = 0;
 
                     try {
                         JSONObject result = object.getJSONObject("result");
-                        shoutCount = Integer.parseInt(result.getString("shouts_count"));
+                        snapbyCount = Integer.parseInt(result.getString("snapbies_count"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    localShoutCount.setText("" + shoutCount);
-                    localShoutCount.setVisibility(View.VISIBLE);
-                    localShoutCountContainer.setVisibility(View.VISIBLE);
+                    localSnapbyCount.setText("" + snapbyCount);
+                    localSnapbyCount.setVisibility(View.VISIBLE);
+                    localSnapbyCountContainer.setVisibility(View.VISIBLE);
 
-                    if (firstLocalShoutCount) {
-                        firstLocalShoutCount = false;
+                    if (firstLocalSnapbyCount) {
+                        firstLocalSnapbyCount = false;
 
-                        Toast toast = Toast.makeText(getActivity(), "Be #" + (shoutCount + 1) + " to snapby this area!", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getActivity(), "Be #" + (snapbyCount + 1) + " to snapby this area!", Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }

@@ -20,7 +20,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.snapby.android.R;
 import com.snapby.android.adapters.CommentsAdapter;
 import com.snapby.android.models.Comment;
-import com.snapby.android.models.Shout;
+import com.snapby.android.models.Snapby;
 import com.snapby.android.utils.ApiUtils;
 import com.snapby.android.utils.SessionUtils;
 import org.json.JSONArray;
@@ -46,9 +46,9 @@ public class CommentsActivity extends ListActivity {
 
     private View createCommentContainer = null;
 
-    private Shout shout = null;
+    private Snapby snapby = null;
 
-    private Location shoutLocation = null;
+    private Location snapbyLocation = null;
 
     private String sentComment = null;
 
@@ -98,18 +98,18 @@ public class CommentsActivity extends ListActivity {
 
         Intent intent = getIntent();
 
-        shout = intent.getParcelableExtra("shout");
+        snapby = intent.getParcelableExtra("snapby");
         if (intent.hasExtra("myLocation")) {
             myLocation = getIntent().getParcelableExtra("myLocation");
         }
 
-        shoutLocation = new Location("");
-        shoutLocation.setLatitude(shout.lat);
-        shoutLocation.setLongitude(shout.lng);
+        snapbyLocation = new Location("");
+        snapbyLocation.setLatitude(snapby.lat);
+        snapbyLocation.setLongitude(snapby.lng);
 
         showFeedProgressBar();
 
-        ApiUtils.getComments(this, shout, new AjaxCallback<JSONObject>() {
+        ApiUtils.getComments(this, snapby, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -127,7 +127,7 @@ public class CommentsActivity extends ListActivity {
                     if (rawComments != null) {
                         ArrayList<Comment> comments = Comment.rawCommentsToInstances(rawComments);
                         hideFeedProgressBar();
-                        setAdapter(CommentsActivity.this, comments, shoutLocation);
+                        setAdapter(CommentsActivity.this, comments, snapbyLocation);
                     }
                 } else {
                     showNoConnectionInFeedMessage();
@@ -161,7 +161,7 @@ public class CommentsActivity extends ListActivity {
             lng = myLocation.getLongitude();
         }
 
-        ApiUtils.createComment(CommentsActivity.this, sentComment, shout, lat, lng, new AjaxCallback<JSONObject>() {
+        ApiUtils.createComment(CommentsActivity.this, sentComment, snapby, lat, lng, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);
@@ -180,7 +180,7 @@ public class CommentsActivity extends ListActivity {
 
                     if (rawComments != null) {
                         ArrayList<Comment> comments = Comment.rawCommentsToInstances(rawComments);
-                        setAdapter(CommentsActivity.this, comments, shoutLocation);
+                        setAdapter(CommentsActivity.this, comments, snapbyLocation);
                     }
                 } else {
                     if (sentComment != null) {
@@ -213,8 +213,8 @@ public class CommentsActivity extends ListActivity {
         feedWrapperView.setVisibility(View.VISIBLE);
     }
 
-    public void setAdapter(Activity activity, ArrayList<Comment> comments, Location shoutLocation) {
-        setListAdapter(new CommentsAdapter(activity, comments, shoutLocation));
+    public void setAdapter(Activity activity, ArrayList<Comment> comments, Location snapbyLocation) {
+        setListAdapter(new CommentsAdapter(activity, comments, snapbyLocation));
     }
 
     @Override

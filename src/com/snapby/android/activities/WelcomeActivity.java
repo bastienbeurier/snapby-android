@@ -236,7 +236,6 @@ public class WelcomeActivity extends Activity {
 
                                                 if (isSigningUp != null && isSigningUp) {
                                                     TrackingUtils.trackSignup(WelcomeActivity.this, "Facebook");
-                                                    SessionUtils.autofollowFacebookFriends(WelcomeActivity.this);
                                                 }
 
                                                 if (connectFBDialog != null) {
