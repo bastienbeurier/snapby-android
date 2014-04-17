@@ -354,6 +354,7 @@ public class CameraFragment extends Fragment {
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
 
+
         FileOutputStream fOut = null;
         try {
             fOut = new FileOutputStream(imagePath);
@@ -478,13 +479,15 @@ public class CameraFragment extends Fragment {
 
         createSnapbyDialog = ProgressDialog.show(getActivity(), "", getString(R.string.snapby_processing), false);
 
-        formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath, Constants.SHOUT_BIG_RES);
+        formattedPicture = ImageUtils.getResizedBitmap(formattedPicture, Constants.SHOUT_BIG_RES);
 
         //Convert bitmap to byte array
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         formattedPicture.compress(Bitmap.CompressFormat.JPEG, 85, stream);
         byte[] bmData = stream.toByteArray();
         String encodedImage = Base64.encodeToString(bmData, Base64.DEFAULT);
+
+        ImageUtils.storeBitmapInFile(imagePath, formattedPicture);
 
         if (imagePath != null) {
             SaveImageToGallery runner = new SaveImageToGallery();
@@ -502,17 +505,6 @@ public class CameraFragment extends Fragment {
                 }
 
                 if (status.getError() == null && object != null) {
-                    JSONObject rawSnapby = null;
-
-                    try {
-                        JSONObject result = object.getJSONObject("result");
-                        rawSnapby = result.getJSONObject("snapby");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    Snapby newSnapby = Snapby.rawSnapbyToInstance(rawSnapby);
-
                     TrackingUtils.trackCreateSnapby(getActivity());
 
                     if (createSnapbyDialog != null) {
