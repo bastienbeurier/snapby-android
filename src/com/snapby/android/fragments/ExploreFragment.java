@@ -1,13 +1,10 @@
 package com.snapby.android.fragments;
 
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -138,8 +135,6 @@ public class ExploreFragment extends Fragment {
                 updateSelectedSnapbyMarker(snapbies.get(i));
 
                 if (i == snapbies.size() - 1) {
-                    Log.d("BAB", "LOADING MORE SNAPBIES");
-
                     LatLngBounds mapBounds = exploreMap.getProjection().getVisibleRegion().latLngBounds;
                     mapReqHandler.addMapRequest(GeneralUtils.getAquery(getActivity()), mapBounds, page + 1, PAGE_SIZE);
                 }

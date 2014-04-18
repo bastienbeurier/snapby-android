@@ -49,7 +49,7 @@ public class GeneralUtils {
     }
 
     public static int getSnapbyAgeCode(Context ctx, Snapby snapby) {
-        long snapbyAge = TimeUtils.getSnapbyAge(snapby.created);
+        long snapbyAge = TimeUtils.getAge(snapby.created);
 
         if (snapbyAge < Constants.SHOUT_DURATION / 4) {
             return 1;

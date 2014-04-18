@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -20,6 +21,7 @@ import com.snapby.android.models.User;
 import com.snapby.android.utils.ApiUtils;
 import com.snapby.android.utils.GeneralUtils;
 import com.snapby.android.utils.SessionUtils;
+import com.snapby.android.utils.TimeUtils;
 import org.json.JSONObject;
 
 
@@ -32,56 +34,50 @@ public class DisplayActivity extends Activity {
 
     private ImageView imageView = null;
 
-    private boolean imageFullScreen = false;
+    private TextView username = null;
 
-    private boolean expiredSnapby = false;
+    private TextView lastActive = null;
+
+    private TextView created = null;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.display);
 
-        Intent intent = getIntent();
-
-        if (intent.hasExtra("expiredSnapby")) {
-            expiredSnapby = true;
-        }
-
-        final ImageView dismissButton = (ImageView) findViewById(R.id.display_dismiss_button);
-        final ImageView moreButton = (ImageView) findViewById(R.id.display_more_button);
-
+        View container = findViewById(R.id.display_container);
         snapby = getIntent().getParcelableExtra("snapby");
 
         imageView = (ImageView) findViewById(R.id.display_snapby_image_view);
+        username = (TextView) findViewById(R.id.display_username);
+        lastActive = (TextView) findViewById(R.id.display_last_active);
+        created = (TextView) findViewById(R.id.display_created_at);
+
+        if (snapby.anonymous) {
+            username.setText(getString(R.string.anonymous_name));
+        } else {
+            username.setText(snapby.username + " (" + snapby.userScore + ")");
+        }
+
+        String [] lastActiveStrings = TimeUtils.ageToShortStrings(TimeUtils.getAge(snapby.lastActive));
+        String [] createdStrings = TimeUtils.ageToShortStrings(TimeUtils.getAge(snapby.created));
+
+        lastActive.setText(getString(R.string.display_last_active) + " " + lastActiveStrings[0] + lastActiveStrings[1] + " ago");
+        created.setText(getString(R.string.display_created) + " " + createdStrings[0] + createdStrings[1] + " ago");
 
         Bitmap preset = GeneralUtils.getAquery(this).getCachedImage(GeneralUtils.getSnapbySmallPicturePrefix() + snapby.id + "--400");
         GeneralUtils.getAquery(this).id(imageView).image(GeneralUtils.getSnapbyBigPicturePrefix() + snapby.id + "--400", true, false, 0, 0, preset, AQuery.FADE_IN);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (imageFullScreen) {
-                    dismissButton.setVisibility(View.VISIBLE);
-                    moreButton.setVisibility(View.VISIBLE);
-
-                    imageFullScreen = false;
-                } else {
-                    dismissButton.setVisibility(View.INVISIBLE);
-                    moreButton.setVisibility(View.INVISIBLE);
-
-                    imageFullScreen = true;
-                }
-            }
-        });
-
-        moreButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.display_more_container).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openOptionsMenu();
             }
         });
-        dismissButton.setOnClickListener(new View.OnClickListener() {
+
+        container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setEnabled(false);
                 finish();
             }
         });

@@ -2,8 +2,6 @@ package com.snapby.android.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -12,17 +10,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.snapby.android.R;
 import com.snapby.android.utils.ApiUtils;
-import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**

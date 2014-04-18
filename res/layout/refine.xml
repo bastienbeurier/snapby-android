@@ -39,7 +39,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_gravity="right"
-                        android:src="@drawable/button_refresh_refine_map"/>
+                        android:src="@drawable/explore_refresh_button_selector"/>
 
             </FrameLayout>
 

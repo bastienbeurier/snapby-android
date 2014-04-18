@@ -2,7 +2,6 @@ package com.snapby.android.utils;
 
 import android.content.Context;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.snapby.android.models.Snapby;
 import com.snapby.android.models.User;
 import org.json.JSONException;
 import org.json.JSONObject;

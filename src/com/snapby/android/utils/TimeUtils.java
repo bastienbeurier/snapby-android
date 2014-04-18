@@ -16,7 +16,7 @@ public class TimeUtils {
 
 
     //Returns long in milliseconds
-    public static long getSnapbyAge(String dateCreated) {
+    public static long getAge(String dateCreated) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         Date date = null;
@@ -29,7 +29,7 @@ public class TimeUtils {
         return (new Date()).getTime() - date.getTime();
     }
 
-    public static String[] snapbyAgeToShortStrings(long age) {
+    public static String[] ageToShortStrings(long age) {
         String[] result = new String[2];
 
         if (age > 0) {
@@ -61,9 +61,5 @@ public class TimeUtils {
         }
 
         return result;
-    }
-
-    public static boolean snapbyExpired(String dateCreated) {
-        return getSnapbyAge(dateCreated) > Constants.SHOUT_DURATION;
     }
 }

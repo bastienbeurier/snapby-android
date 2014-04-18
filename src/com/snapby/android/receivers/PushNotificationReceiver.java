@@ -4,10 +4,7 @@ import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import com.snapby.android.activities.WelcomeActivity;
-import com.snapby.android.models.Snapby;
-import com.snapby.android.utils.SessionUtils;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
 

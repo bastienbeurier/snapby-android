@@ -1,7 +1,7 @@
 package com.snapby.android.utils;
 
 public class Constants {
-    public static boolean PRODUCTION = false;
+    public static boolean PRODUCTION = true;
 
     public static final boolean ADMIN = false;
 

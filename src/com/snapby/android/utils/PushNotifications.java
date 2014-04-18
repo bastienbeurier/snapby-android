@@ -2,12 +2,9 @@ package com.snapby.android.utils;
 
 import android.app.Application;
 import android.app.Notification;
-import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
-import android.util.Log;
 import com.androidquery.AQuery;
 import com.snapby.android.R;
 import com.snapby.android.receivers.PushNotificationReceiver;
@@ -17,7 +14,6 @@ import com.urbanairship.push.BasicPushNotificationBuilder;
 import com.urbanairship.push.PushManager;
 import com.urbanairship.push.PushPreferences;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class PushNotifications {

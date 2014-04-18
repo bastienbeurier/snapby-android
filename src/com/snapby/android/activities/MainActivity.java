@@ -32,7 +32,6 @@ import com.snapby.android.fragments.ProfileFragment;
 import com.snapby.android.R;
 import com.snapby.android.adapters.MainSlidePagerAdapter;
 import com.snapby.android.fragments.SettingsFragment;
-import com.snapby.android.models.User;
 import com.snapby.android.utils.ApiUtils;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
@@ -141,10 +140,6 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         mLocationRequest = LocationUtils.createLocationRequest(LocationRequest.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS);
 
         getMyLikes();
-
-
-        //TODO: Redesign display (1h)
-        //TODO: res
     }
 
 

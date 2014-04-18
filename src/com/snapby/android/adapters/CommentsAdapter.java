@@ -1,7 +1,6 @@
 package com.snapby.android.adapters;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.snapby.android.R;
 import com.snapby.android.models.Comment;
-import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
 import com.snapby.android.utils.LocationUtils;
 import com.snapby.android.utils.SessionUtils;
@@ -75,7 +73,7 @@ public class CommentsAdapter extends BaseAdapter{
 
             ((TextView) commentView.findViewById(R.id.comment_feed_description_textView)).setText(comment.description);
 
-            String[] ageStrings = TimeUtils.snapbyAgeToShortStrings(TimeUtils.getSnapbyAge(comment.created));
+            String[] ageStrings = TimeUtils.ageToShortStrings(TimeUtils.getAge(comment.created));
 
             String stamp = ageStrings[0] + ageStrings[1];
 

@@ -155,4 +155,6 @@
     <string name="failed_to_retrieve_snapby">Failed to retrieve snapby.</string>
     <string name="snapby_is_expired">Too late! This snapby has expired.</string>
     <string name="snapbies_cap">SNAPBYS</string>
+    <string name="display_created">Created:</string>
+    <string name="display_last_active">Last active:</string>
 </resources>
