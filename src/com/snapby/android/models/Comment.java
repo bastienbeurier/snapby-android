@@ -26,6 +26,8 @@ public class Comment {
 
     public String created = "";
 
+    public int commenterScore = 0;
+
     public static ArrayList<Comment> rawCommentsToInstances(JSONArray rawComments) {
         ArrayList<Comment> comments = new ArrayList<Comment>();
 
@@ -62,6 +64,10 @@ public class Comment {
 
                 comment.lat = lat.equals("null") ? 0 : Double.parseDouble(lat);
                 comment.lng = lng.equals("null") ? 0 : Double.parseDouble(lng);
+
+                if (rawComment.has("commenter_score") && !rawComment.getString("commenter_score").equals("null")) {
+                    comment.commenterScore = Integer.parseInt(rawComment.getString("commenter_score"));
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

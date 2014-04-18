@@ -26,7 +26,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.snapby.android.R;
-import com.snapby.android.activities.DisplayActivity;
 import com.snapby.android.activities.MainActivity;
 import com.snapby.android.adapters.MapWindowAdapter;
 import com.snapby.android.adapters.SnapbiesPagerAdapter;
@@ -53,9 +52,9 @@ public class ExploreFragment extends Fragment {
 
     private HashMap<Integer, Marker>  displayedSnapbyMarkers = null;
 
-    private ViewPager snapbyViewPager;
+    public ViewPager snapbyViewPager;
 
-    private PagerAdapter snapbyPagerAdapter;
+    private SnapbiesPagerAdapter snapbyPagerAdapter;
 
     private SnapbyViewPagerContainer viewPagerContainer = null;
 
@@ -289,7 +288,7 @@ public class ExploreFragment extends Fragment {
         snapbyProgressBar.setVisibility(View.GONE);
         snapbyViewPager.setAdapter(null);
         noSnapbyInFeed.setVisibility(View.VISIBLE);
-        snapbyViewPager.setVisibility(View.GONE);
+        viewPagerContainer.setVisibility(View.GONE);
     }
 
     private void displaySnapbiesOnMap(List<Snapby> snapbies) {
@@ -397,5 +396,4 @@ public class ExploreFragment extends Fragment {
             snapbyViewPager.setAdapter(snapbyPagerAdapter);
         }
     }
-
 }

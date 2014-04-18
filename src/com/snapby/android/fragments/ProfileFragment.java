@@ -1,6 +1,5 @@
 package com.snapby.android.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -27,7 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.snapby.android.R;
-import com.snapby.android.activities.SettingsActivity;
+import com.snapby.android.activities.MainActivity;
 import com.snapby.android.adapters.MapWindowAdapter;
 import com.snapby.android.adapters.SnapbiesPagerAdapter;
 import com.snapby.android.custom.SnapbyViewPagerContainer;
@@ -66,7 +65,7 @@ public class ProfileFragment extends Fragment {
 
     private ViewPager snapbyViewPager;
 
-    private PagerAdapter snapbyPagerAdapter;
+    private SnapbiesPagerAdapter snapbyPagerAdapter;
 
     private SnapbyViewPagerContainer viewPagerContainer = null;
 
@@ -76,7 +75,7 @@ public class ProfileFragment extends Fragment {
 
     private TextView likedSnapbies = null;
 
-    private View userInfoContainer = null;
+    private View profileSettingsButton = null;
 
     private Snapby snapbySelectedOnMap = null;
 
@@ -94,7 +93,7 @@ public class ProfileFragment extends Fragment {
         username = (TextView) rootView.findViewById(R.id.profile_username);
         profilePictureContainer = (FrameLayout) rootView.findViewById(R.id.profile_profile_picture_container);
         snapbyCountView = (TextView) rootView.findViewById(R.id.profile_snapby_count);
-        userInfoContainer = rootView.findViewById(R.id.profile_user_info_container);
+        profileSettingsButton = rootView.findViewById(R.id.profile_settings_button);
         likedSnapbies = (TextView) rootView.findViewById(R.id.profile_liked_count);
 
         profileMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.profile_map)).getMap();
@@ -165,9 +164,15 @@ public class ProfileFragment extends Fragment {
         profilePictureContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent settings = new Intent(getActivity(), SettingsActivity.class);
-                settings.putExtra("chooseProfilePicture", true);
-                startActivityForResult(settings, Constants.SETTINGS_REQUEST);
+                profilePictureContainer.setEnabled(false);
+                ((MainActivity) getActivity()).letUserChooseProfilePic();
+            }
+        });
+
+        profileSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).mainViewPager.setCurrentItem(3);
             }
         });
 
@@ -261,7 +266,8 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void updateUI(boolean reloadPicture) {
+    public void updateUI(boolean reloadPicture) {
+        profilePictureContainer.setEnabled(true);
         snapbyCountView.setText("" + user.snapbyCount);
 
 
@@ -269,7 +275,7 @@ public class ProfileFragment extends Fragment {
             GeneralUtils.getAquery(getActivity()).id(profilePicture).image(GeneralUtils.getProfileBigPicturePrefix() + user.id, false, false, 0, 0, null, AQuery.FADE_IN);
         }
 
-        username.setText("@" + user.username);
+        username.setText(user.username);
         likedSnapbies.setText("" + user.likedSnapbies);
     }
 
@@ -415,4 +421,5 @@ public class ProfileFragment extends Fragment {
             snapbyViewPager.setAdapter(snapbyPagerAdapter);
         }
     }
+
 }

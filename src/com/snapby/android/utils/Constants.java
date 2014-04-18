@@ -1,7 +1,7 @@
 package com.snapby.android.utils;
 
 public class Constants {
-    public static boolean PRODUCTION = true;
+    public static boolean PRODUCTION = false;
 
     public static final boolean ADMIN = false;
 
@@ -16,7 +16,7 @@ public class Constants {
     public static final int MIN_PASSWORD_LENGTH = 6;
 
     /** Zoom for the initial camera position when we have the user location */
-    public static final int EXPLORE_ZOOM = 15;
+    public static final int EXPLORE_ZOOM = 14;
     public static final int INITIAL_PROFILE_ZOOM = 13;
 
     /** Minimum radius around the user's location where he can create snapby **/
@@ -24,7 +24,6 @@ public class Constants {
 
     /** StartActivityForResult codes **/
     public static final int REFINE_LOCATION_ACTIVITY_REQUEST = 13450;
-    public static final int SETTINGS_REQUEST = 14760;
     public static final int RESET_PASSWORD_REQUEST = 64783;
     public static final int DISPLAY_SHOUT_REQUEST = 48392;
     public static final int CHOOSE_PROFILE_PICTURE_REQUEST = 37489;
@@ -47,4 +46,7 @@ public class Constants {
     /** Mixpanel tokens **/
     public static final String PROD_MIXPANEL_TOKEN = "781f8a3090780f2afbb8a260a58911c4";
     public static final String DEV_MIXPANEL_TOKEN = "293023eb15e4681ca1aa4c81d3a6ce19";
+
+    /** Feedback email **/
+    public static final String FEEDBACK_EMAIL = "info@snapby.co";
 }

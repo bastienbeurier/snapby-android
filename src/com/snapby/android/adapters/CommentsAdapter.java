@@ -16,6 +16,7 @@ import com.snapby.android.models.Comment;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
 import com.snapby.android.utils.LocationUtils;
+import com.snapby.android.utils.SessionUtils;
 import com.snapby.android.utils.TimeUtils;
 
 import java.util.ArrayList;
@@ -30,10 +31,13 @@ public class CommentsAdapter extends BaseAdapter{
 
     private Location snapbyLocation = null;
 
-    public CommentsAdapter(Activity activity, ArrayList<Comment> comments, Location snapbyLocation) {
+    private boolean anonymous = false;
+
+    public CommentsAdapter(Activity activity, ArrayList<Comment> comments, Location snapbyLocation, boolean anonymous) {
         this.activity = activity;
         this.items = comments;
         this.snapbyLocation = snapbyLocation;
+        this.anonymous = anonymous;
     }
 
     @Override
@@ -52,7 +56,22 @@ public class CommentsAdapter extends BaseAdapter{
             ImageView userPicture = (ImageView) commentView.findViewById(R.id.like_feed_user_picture);
             GeneralUtils.getAquery(activity).id(userPicture).image(GeneralUtils.getProfileThumbPicturePrefix() + comment.commenterId, true, false, 0, 0, null, AQuery.FADE_IN);
 
-            ((TextView) commentView.findViewById(R.id.comment_feed_username_textView)).setText("@" + comment.commenterUsername);
+            TextView username = ((TextView) commentView.findViewById(R.id.comment_feed_username_textView));
+            username.setText(comment.commenterUsername + " (" + comment.commenterScore + ")");
+
+            if (SessionUtils.getCurrentUser(activity).id == comment.snapbyerId) {
+                username.setTextColor(activity.getResources().getColor(R.color.snapbyPink));
+
+                if (anonymous) {
+                    username.setText(activity.getString(R.string.anonymous_name));
+                    userPicture.setVisibility(View.GONE);
+                } else {
+                    userPicture.setVisibility(View.VISIBLE);
+                }
+            } else {
+                username.setTextColor(activity.getResources().getColor(R.color.darkGrey));
+            }
+
 
             ((TextView) commentView.findViewById(R.id.comment_feed_description_textView)).setText(comment.description);
 
@@ -70,15 +89,6 @@ public class CommentsAdapter extends BaseAdapter{
             }
 
             ((TextView) commentView.findViewById(R.id.comment_feed_stamp_textView)).setText(stamp);
-
-            commentView.findViewById(R.id.comment_feed_user_container).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                    Intent profile = new Intent(activity, ProfileActivity.class);
-//                    profile.putExtra("userId", comment.commenterId);
-//                    activity.startActivityForResult(profile, Constants.PROFILE_REQUEST);
-                }
-            });
         }
 
         return commentView;

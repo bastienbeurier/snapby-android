@@ -28,6 +28,8 @@ public class Snapby implements Parcelable {
     /** Snapby creation date/time */
     public String created = "";
 
+    public String lastActive = "";
+
     public String username = "";
 
     public Boolean removed = false;
@@ -37,6 +39,8 @@ public class Snapby implements Parcelable {
     public int likeCount = 0;
 
     public int commentCount = 0;
+
+    public int userScore = 0;
 
     /** Turns a JSONArray received from the API to an ArrayList of UserModel instances */
     public static ArrayList<Snapby> rawSnapbiesToInstances(JSONArray rawSnapbies) {
@@ -68,11 +72,16 @@ public class Snapby implements Parcelable {
                 snapby.lat = Double.parseDouble(rawSnapby.getString("lat"));
                 snapby.lng = Double.parseDouble(rawSnapby.getString("lng"));
                 snapby.created = rawSnapby.getString("created_at");
+                snapby.lastActive = rawSnapby.getString("last_active");
                 snapby.username = rawSnapby.getString("username");
                 snapby.removed = rawSnapby.getBoolean("removed");
                 snapby.anonymous = rawSnapby.getBoolean("anonymous");
                 snapby.likeCount = Integer.parseInt(rawSnapby.getString("like_count"));
                 snapby.commentCount = Integer.parseInt(rawSnapby.getString("comment_count"));
+
+                if (rawSnapby.has("user_score") && !rawSnapby.getString("user_score").equals("null")) {
+                    snapby.userScore = Integer.parseInt(rawSnapby.getString("user_score"));
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -119,6 +128,7 @@ public class Snapby implements Parcelable {
      */
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(created);
+        out.writeString(lastActive);
         out.writeString(username);
         out.writeInt(id);
         out.writeInt(userId);
@@ -128,6 +138,7 @@ public class Snapby implements Parcelable {
         out.writeByte((byte) (anonymous ? 1 : 0));
         out.writeInt(likeCount);
         out.writeInt(commentCount);
+        out.writeInt(userScore);
     }
 
     /**
@@ -135,6 +146,7 @@ public class Snapby implements Parcelable {
      */
     public void readFromParcel(Parcel in) {
         created = in.readString();
+        lastActive = in.readString();
         username = in.readString();
         id = in.readInt();
         userId = in.readInt();
@@ -144,5 +156,6 @@ public class Snapby implements Parcelable {
         anonymous = in.readByte() != 0;
         likeCount = in.readInt();
         commentCount = in.readInt();
+        userScore = in.readInt();
     }
 }

@@ -78,42 +78,6 @@
                           android:text="@string/username_preference_button"/>
             </LinearLayout>
 
-            <TextView android:layout_height="match_parent"
-                      android:layout_width="wrap_content"
-                      android:textColor="@color/blackLighter"
-                      android:textSize="14sp"
-                      android:fontFamily="sans-serif"
-                      android:textStyle="bold"
-                      android:gravity="left|center_vertical"
-                      android:text="@string/snapby_settings"
-                      android:layout_marginBottom="5dp"
-                      android:layout_marginTop="10dp"/>
-
-            <View android:layout_height="1dp"
-                  android:layout_width="match_parent"
-                  android:background="@color/veryLightGrey" />
-
-            <LinearLayout android:layout_height="60dp"
-                          android:layout_width="match_parent"
-                          style="@style/PreferenceButton"
-                          android:orientation="horizontal">
-
-                <TextView android:layout_height="match_parent"
-                          android:layout_width="match_parent"
-                          android:layout_weight="1"
-                          android:textColor="@color/blackLighter"
-                          android:textSize="16sp"
-                          android:gravity="left|center_vertical"
-                          android:text="@string/distance_unit_preference_button"/>
-
-                <Spinner android:id="@+id/distance_preference_spinner"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:textSize="14sp"
-                         android:layout_gravity="center_vertical"
-                         android:layout_marginRight="10dp"/>
-
-            </LinearLayout>
 
             <TextView android:layout_height="match_parent"
                       android:layout_width="wrap_content"

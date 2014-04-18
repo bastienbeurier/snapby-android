@@ -116,8 +116,8 @@
     <string name="likes">likes</string>
     <string name="comment">comment</string>
     <string name="comments">comments</string>
-    <string name="share_snapby_text">Hey, check this snapby before it\'s too late! %s</string>
-    <string name="share_snapby_subject">Sharing a snapby with you.</string>
+    <string name="share_snapby_text">Snapby let\'s you explore and share photos with the people physically around you! %s</string>
+    <string name="share_snapby_subject">You should checkout Snapby.</string>
     <string name="report_snapby">Report</string>
     <string name="delete_snapby">Delete</string>
     <string name="share_snapby">Share</string>

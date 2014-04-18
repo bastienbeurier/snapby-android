@@ -1,13 +1,19 @@
 package com.snapby.android.activities;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.util.Base64;
+import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.common.ConnectionResult;
@@ -18,7 +24,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.snapby.android.custom.CustomViewPager;
 import com.snapby.android.fragments.CameraFragment;
@@ -26,14 +31,21 @@ import com.snapby.android.fragments.ExploreFragment;
 import com.snapby.android.fragments.ProfileFragment;
 import com.snapby.android.R;
 import com.snapby.android.adapters.MainSlidePagerAdapter;
+import com.snapby.android.fragments.SettingsFragment;
+import com.snapby.android.models.User;
 import com.snapby.android.utils.ApiUtils;
 import com.snapby.android.utils.Constants;
+import com.snapby.android.utils.GeneralUtils;
+import com.snapby.android.utils.ImageUtils;
 import com.snapby.android.utils.LocationUtils;
 import com.snapby.android.utils.SessionUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.IOException;
 import java.util.TreeSet;
 
 /**
@@ -59,6 +71,8 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
     private ProfileFragment profileFragment = null;
 
+    private SettingsFragment settingsFragment = null;
+
     public static final int UPDATE_INTERVAL_IN_MILLISECONDS = 30000;
 
     public TreeSet<Integer> myLikes = null;
@@ -69,7 +83,7 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
     private boolean preventRedirectToCamera = false;
 
-    private int pagePreviouslySelected = 1;
+    private int commingFromPage = 1;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,10 +97,11 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
         exploreFragment = new ExploreFragment();
         cameraFragment = new CameraFragment();
         profileFragment = new ProfileFragment();
+        settingsFragment  = new SettingsFragment();
 
-        mainPagerAdapter = new MainSlidePagerAdapter(this.getSupportFragmentManager(), exploreFragment, cameraFragment, profileFragment);
+        mainPagerAdapter = new MainSlidePagerAdapter(this.getSupportFragmentManager(), exploreFragment, cameraFragment, profileFragment, settingsFragment);
         mainViewPager.setAdapter(mainPagerAdapter);
-        mainViewPager.setOffscreenPageLimit(2);
+        mainViewPager.setOffscreenPageLimit(3);
 
         mainViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -98,11 +113,11 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
             public void onPageSelected(int i) {
                 if (i == 0) {
                     repullProfileSnapbies();
-                } else if (i == 2) {
+                } else if (i == 2 && commingFromPage == 1) {
                     repullExploreSnapbies();
                 }
 
-                pagePreviouslySelected = i;
+                commingFromPage = i;
             }
 
             @Override
@@ -127,30 +142,11 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
         getMyLikes();
 
-        //TODO: left Fragment click bug
 
-        //TODO: 2. Snapby order
-        //TODO: 3. implement liked (3 heures)
-        //TODO: 5. snapby age somewhere (1h)
-        //TODO: 6. paginate snapbies (2h)
-        //TODO: 7. settings fragment (1h)
-        //TODO: 10. update comment count on comment (2h)
-        //TODO: 12. Don't save image more than once (1h)
-        //TODO: 13. onActivityResult for refine
-        //TODO: show liked score
-        //TODO: refresh like and snapby count
-        //TODO: can't snapby twice when failure
-        //TODO: tap on display photo to dismiss
+        //TODO: Redesign display (1h)
+        //TODO: res
 
-        //TODO: profile update after settings changes
-
-        //BAS LES COUILLES
-        //TODO: remove viewpager when no shouts or no connection to be able to swipe
-        //TODO: 8. change share
-
-
-        //Ideas: See the snaps you have participated in / Favorite some snapbyers
-
+        //TODO: 6. paginate snapbies (1h)
     }
 
 
@@ -293,6 +289,8 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
     public void onBackPressed() {
         if (mainViewPager.getCurrentItem() == 0 || mainViewPager.getCurrentItem() == 2) {
             mainViewPager.setCurrentItem(1);
+        } else if (mainViewPager.getCurrentItem() == 3) {
+            mainViewPager.setCurrentItem(2);
         } else {
             super.onBackPressed();
         }
@@ -347,9 +345,74 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.DISPLAY_SHOUT_REQUEST && data != null && data.hasExtra("delete")) {
             repullSnapbies();
+        } else if (requestCode == Constants.CHOOSE_PROFILE_PICTURE_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                Bitmap formattedPicture = null;
+
+                //From camera?
+                if (data.hasExtra("data")) {
+                    formattedPicture = ImageUtils.makeThumb((Bitmap) data.getExtras().get("data"));
+                    //From library
+                } else {
+                    //New Kitkat way of doing things
+                    if (Build.VERSION.SDK_INT < 19) {
+                        String libraryPhotoPath = ImageUtils.getPathFromUri(this, data.getData());
+                        formattedPicture = ImageUtils.decodeAndMakeThumb(libraryPhotoPath);
+                    } else {
+                        ParcelFileDescriptor parcelFileDescriptor;
+                        try {
+                            parcelFileDescriptor = this.getContentResolver().openFileDescriptor(data.getData(), "r");
+                            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+                            formattedPicture = ImageUtils.makeThumb(BitmapFactory.decodeFileDescriptor(fileDescriptor));
+                            parcelFileDescriptor.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                //Convert bitmap to byte array
+                Bitmap bitmap = formattedPicture;
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, stream);
+                byte[] bmData = stream.toByteArray();
+                String encodedImage = Base64.encodeToString(bmData, Base64.DEFAULT);
+
+                ApiUtils.updateUserInfoWithLocation(this, GeneralUtils.getAquery(this), null, encodedImage, null, new AjaxCallback<JSONObject>() {
+                    @Override
+                    public void callback(String url, JSONObject object, AjaxStatus status) {
+                        super.callback(url, object, status);
+
+                        if (status.getError() == null && object != null && status.getCode() != 222) {
+                            Toast toast = Toast.makeText(MainActivity.this, MainActivity.this.getString(R.string.update_profile_picture_success), Toast.LENGTH_LONG);
+                            toast.show();
+                            profileFragment.updateUI(true);
+                            settingsFragment.updateUI();
+                        } else {
+                            Toast toast = Toast.makeText(MainActivity.this, getString(R.string.update_profile_picture_failure), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    }
+                });
+            }
+        } else if (requestCode == Constants.REFINE_LOCATION_ACTIVITY_REQUEST) {
+            if (data != null && data.hasExtra("accurateSnapbyLocation")) {
+                cameraFragment.refinedSnapbyLocation = data.getParcelableExtra("accurateSnapbyLocation");
+            }
         }
 
         preventRedirectToCamera = true;
     }
 
+    public void letUserChooseProfilePic() {
+        Intent chooserIntent = ImageUtils.getPhotoChooserIntent(this);
+
+        startActivityForResult(chooserIntent, Constants.CHOOSE_PROFILE_PICTURE_REQUEST);
+    }
+
+    public void refineSnapbyLocation(Location location) {
+        Intent refineIntent = new Intent(this, RefineLocationActivity.class);
+        refineIntent.putExtra("snapbyRefinedLocation", location);
+        startActivityForResult(refineIntent, Constants.REFINE_LOCATION_ACTIVITY_REQUEST);
+    }
 }

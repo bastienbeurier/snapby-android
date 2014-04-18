@@ -1,6 +1,7 @@
 package com.snapby.android.fragments;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -52,8 +53,6 @@ public class SnapbyPageFragment extends Fragment {
 
     private View commentContainer = null;
 
-    private ImageView commentIcon = null;
-
     private TextView commentCount = null;
 
     private View imageContainer = null;
@@ -64,22 +63,28 @@ public class SnapbyPageFragment extends Fragment {
 
     private String type = null;
 
-    public static SnapbyPageFragment newInstance(Snapby snapby) {
+    private View rootView = null;
+
+    private int index = 0;
+
+    public static SnapbyPageFragment newInstance(Snapby snapby, int index) {
         SnapbyPageFragment snapbyPageFragment = new SnapbyPageFragment();
 
         Bundle args = new Bundle();
         args.putParcelable("snapby", snapby);
+        args.putInt("index", index);
         snapbyPageFragment.setArguments(args);
 
         return snapbyPageFragment;
     }
 
-    public static SnapbyPageFragment newInstance(Snapby snapby, String type) {
+    public static SnapbyPageFragment newInstance(Snapby snapby, String type, int index) {
         SnapbyPageFragment snapbyPageFragment = new SnapbyPageFragment();
 
         Bundle args = new Bundle();
         args.putParcelable("snapby", snapby);
         args.putString("type", type);
+        args.putInt("index", index);
         snapbyPageFragment.setArguments(args);
 
         return snapbyPageFragment;
@@ -90,6 +95,8 @@ public class SnapbyPageFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
         aq = GeneralUtils.getAquery(mainActivity);
 
+        index = getArguments().getInt("index");
+
         if ((getArguments().getString("type") != null && getArguments().getString("type").equals("profile"))) {
             type = "profile";
         } else {
@@ -97,6 +104,7 @@ public class SnapbyPageFragment extends Fragment {
         }
 
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.snapby_page_fragment, container, false);
+        this.rootView = rootView;
         snapby = getArguments().getParcelable("snapby");
 
         imageView = (ImageView) rootView.findViewById(R.id.explore_snapby_image);
@@ -109,7 +117,6 @@ public class SnapbyPageFragment extends Fragment {
         likeIcon = (ImageView) rootView.findViewById(R.id.explore_snapby_like_button);
         likeCount = (TextView) rootView.findViewById(R.id.explore_snapby_like_count);
         commentContainer = rootView.findViewById(R.id.explore_snapby_comment_container);
-        commentIcon = (ImageView) rootView.findViewById(R.id.explore_snapby_comment_button);
         commentCount = (TextView) rootView.findViewById(R.id.explore_snapby_comment_count);
         userlikedCount = (TextView) rootView.findViewById(R.id.explore_snapby_liked_count);
 
@@ -119,29 +126,24 @@ public class SnapbyPageFragment extends Fragment {
             aq.id(imageView).image(Constants.SMALL_SHOUT_IMAGE_URL_PREFIX_DEV + snapby.id + "--400", true, false, 0, 0, null, AQuery.FADE_IN);
         }
 
-        if (snapby.anonymous || type.equals("profile")) {
+        if (type.equals("profile")) {
             userContainer.setVisibility(View.GONE);
         } else {
             userContainer.setVisibility(View.VISIBLE);
             imageContainer.setVisibility(View.VISIBLE);
-            aq.id(userProfilePic).image(GeneralUtils.getProfileThumbPicturePrefix() + snapby.userId, true, false, 0, 0, null, AQuery.FADE_IN);
 
-            userContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                    Intent profile = new Intent(getActivity(), ProfileActivity.class);
-//                    startActivityForResult(profile, Constants.PROFILE_REQUEST);
-                }
-            });
-        }
 
-        if (snapby.anonymous) {
-            usernameView.setText(getResources().getString(R.string.anonymous_name));
-            usernameView.setTextColor(getResources().getColor(R.color.anonymousGrey));
-            userlikedCount.setVisibility(View.GONE);
-        } else {
-            usernameView.setText("@" + snapby.username);
-            //TODO Pull score and name
+            if (snapby.anonymous) {
+                userProfilePic.setVisibility(View.GONE);
+                usernameView.setText(getActivity().getString(R.string.anonymous_name));
+                userlikedCount.setVisibility(View.GONE);
+            } else {
+                userProfilePic.setVisibility(View.VISIBLE);
+                userlikedCount.setVisibility(View.VISIBLE);
+                aq.id(userProfilePic).image(GeneralUtils.getProfileThumbPicturePrefix() + snapby.userId, true, false, 0, 0, null, AQuery.FADE_IN);
+                usernameView.setText(snapby.username);
+                userlikedCount.setText("(" + snapby.userScore + ")");
+            }
         }
 
         setLikeCountUI(snapby.likeCount);
@@ -206,6 +208,12 @@ public class SnapbyPageFragment extends Fragment {
                 Intent comments = new Intent(getActivity(), CommentsActivity.class);
                 comments.putExtra("snapby", snapby);
 
+                Location myLocation = ((MainActivity) getActivity()).myLocation;
+
+                if (myLocation != null && myLocation.getLatitude() != 0&& myLocation.getLongitude() != 0) {
+                    comments.putExtra("myLocation", myLocation);
+                }
+
                 startActivityForResult(comments, Constants.COMMENTS_REQUEST);
             }
         });
@@ -219,6 +227,10 @@ public class SnapbyPageFragment extends Fragment {
                 startActivityForResult(displaySnapby, Constants.DISPLAY_SHOUT_REQUEST);
             }
         });
+
+        if (index != 0) {
+            disableSnapbyOptions();
+        }
 
         return rootView;
     }
@@ -266,6 +278,38 @@ public class SnapbyPageFragment extends Fragment {
             commentCount.setText(Integer.toString(count));
         } else {
             commentCount.setText(Integer.toString(count));
+        }
+    }
+
+    private void disableSnapbyOptions() {
+        snapbyInfoContainer.setVisibility(View.GONE);
+        userContainer.setVisibility(View.GONE);
+
+        imageView.setEnabled(false);
+    }
+
+    public void enableSnapbyOptions() {
+        snapbyInfoContainer.setVisibility(View.VISIBLE);
+
+        if (!type.equals("profile")) {
+            userContainer.setVisibility(View.VISIBLE);
+        }
+
+        imageView.setEnabled(true);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (rootView == null) {
+            return;
+        }
+
+        if (isVisibleToUser) {
+            enableSnapbyOptions();
+        } else {
+            disableSnapbyOptions();
         }
     }
 }

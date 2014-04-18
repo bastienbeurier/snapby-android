@@ -214,7 +214,7 @@ public class CommentsActivity extends ListActivity {
     }
 
     public void setAdapter(Activity activity, ArrayList<Comment> comments, Location snapbyLocation) {
-        setListAdapter(new CommentsAdapter(activity, comments, snapbyLocation));
+        setListAdapter(new CommentsAdapter(activity, comments, snapbyLocation, snapby.anonymous));
     }
 
     @Override

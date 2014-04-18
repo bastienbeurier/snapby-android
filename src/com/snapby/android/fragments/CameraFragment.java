@@ -29,9 +29,7 @@ import com.androidquery.callback.AjaxStatus;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.snapby.android.R;
 import com.snapby.android.activities.MainActivity;
-import com.snapby.android.activities.RefineLocationActivity;
 import com.snapby.android.custom.CameraPreview;
-import com.snapby.android.models.Snapby;
 import com.snapby.android.utils.ApiUtils;
 import com.snapby.android.utils.AppPreferences;
 import com.snapby.android.utils.Constants;
@@ -65,8 +63,6 @@ public class CameraFragment extends Fragment {
 
     private boolean frontCamera = true;
 
-    private int imageCamera = 0;
-
     private FrameLayout preview = null;
 
     public ImageView exploreButton = null;
@@ -75,9 +71,7 @@ public class CameraFragment extends Fragment {
 
     private FrameLayout cameraBottomBar = null;
 
-    private Location snapbyLocation = null;
-
-    private boolean snapbyLocationRefined = false;
+    public Location refinedSnapbyLocation = null;
 
     private ProgressDialog createSnapbyDialog;
 
@@ -332,14 +326,10 @@ public class CameraFragment extends Fragment {
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             formattedPicture = BitmapFactory.decodeFile(imagePath, options);
 
-//            formattedPicture = ImageUtils.decodeFileAndShrinkBitmap(imagePath, Constants.SHOUT_BIG_RES);
-
             if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
                 if (frontCamera) {
-                    imageCamera = 0;
                     formattedPicture = ImageUtils.rotateImage(formattedPicture);
                 } else {
-                    imageCamera = 1;
                     formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
                     formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
                 }
@@ -431,10 +421,9 @@ public class CameraFragment extends Fragment {
     }
 
     private void quitCreationMode() {
+        refinedSnapbyLocation = null;
         snapbyImageView.setVisibility(View.GONE);
 
-        snapbyLocationRefined = false;
-        snapbyLocation = null;
         anonymousUser = false;
 
         anonymousButton.setImageDrawable(getResources().getDrawable(R.drawable.create_anonymous_button));
@@ -450,15 +439,16 @@ public class CameraFragment extends Fragment {
     }
 
     public void refineSnapbyLocation() {
-        Intent refineIntent = new Intent(getActivity(), RefineLocationActivity.class);
+        Location myLocation = ((MainActivity) getActivity()).myLocation;
 
-        if (snapbyLocationRefined) {
-            refineIntent.putExtra("snapbyRefinedLocation", snapbyLocation);
+        if (refinedSnapbyLocation != null) {
+            ((MainActivity) getActivity()).refineSnapbyLocation(refinedSnapbyLocation);
+        } else if (myLocation != null && myLocation.getLatitude() != 0 &&  myLocation.getLongitude() != 0) {
+            ((MainActivity) getActivity()).refineSnapbyLocation(myLocation);
         } else {
-            refineIntent.putExtra("snapbyRefinedLocation", snapbyLocation);
+            Toast toast = Toast.makeText(getActivity(), getString(R.string.no_location), Toast.LENGTH_LONG);
+            toast.show();
         }
-
-        startActivityForResult(refineIntent, Constants.REFINE_LOCATION_ACTIVITY_REQUEST);
     }
 
     public void snapbyCreationFailed() {
@@ -468,13 +458,20 @@ public class CameraFragment extends Fragment {
     }
 
     private void createSnapby() {
-        //TODO Don't save image more than once
-        Location myLocation = ((MainActivity) getActivity()).myLocation;
+        Location shoutLocation = null;
 
-        if (myLocation == null || myLocation.getLatitude() == 0 || myLocation.getLongitude() == 0) {
-            Toast toast = Toast.makeText(getActivity(), getString(R.string.no_location), Toast.LENGTH_SHORT);
-            toast.show();
-            return;
+        if (refinedSnapbyLocation != null) {
+            shoutLocation = refinedSnapbyLocation;
+        } else {
+            Location myLocation = ((MainActivity) getActivity()).myLocation;
+
+            if (myLocation == null || myLocation.getLatitude() == 0 || myLocation.getLongitude() == 0) {
+                Toast toast = Toast.makeText(getActivity(), getString(R.string.no_location), Toast.LENGTH_SHORT);
+                toast.show();
+                return;
+            } else {
+                shoutLocation = myLocation;
+            }
         }
 
         createSnapbyDialog = ProgressDialog.show(getActivity(), "", getString(R.string.snapby_processing), false);
@@ -494,7 +491,7 @@ public class CameraFragment extends Fragment {
             runner.execute(imagePath);
         }
 
-        ApiUtils.createSnapby(getActivity(), GeneralUtils.getAquery(getActivity()), myLocation.getLatitude(), myLocation.getLongitude(), "", anonymousUser, encodedImage, new AjaxCallback<JSONObject>() {
+        ApiUtils.createSnapby(getActivity(), GeneralUtils.getAquery(getActivity()), shoutLocation.getLatitude(), shoutLocation.getLongitude(), "", anonymousUser, encodedImage, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
                 super.callback(url, object, status);

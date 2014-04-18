@@ -109,7 +109,7 @@ public class DisplayActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.share_item:
-                GeneralUtils.shareSnapby(this, snapby);
+                GeneralUtils.shareSnapby(this);
                 return true;
             case R.id.directions_item:
                 String uri = "http://maps.google.com/maps?daddr=" + snapby.lat + "," + snapby.lng;

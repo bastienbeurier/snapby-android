@@ -107,8 +107,8 @@ public class GeneralUtils {
         return parameters;
     }
 
-    public static void shareSnapby(Activity activity, Snapby snapby) {
-        String url = ApiUtils.getUserSiteUrl() + "/snapbies/" + snapby.id;
+    public static void shareSnapby(Activity activity) {
+        String url = ApiUtils.getUserSiteUrl();
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, activity.getString(R.string.share_snapby_text, url));

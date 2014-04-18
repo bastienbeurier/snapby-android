@@ -17,21 +17,16 @@
             <TextView android:text="@string/create_snapby_map_instruction"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:layout_marginLeft="30dp"
-                      android:layout_marginRight="30dp"
+                      android:layout_margin="10dp"
                       android:textSize="18dp"/>
 
-            <com.snapby.android.utils.SquareLayout android:id="@+id/refine_location_map_fragment_container"
-                                                        android:layout_width="match_parent"
-                                                        android:layout_height="match_parent"
-                                                        android:layout_weight="1"
-                                                        android:layout_marginLeft="30dp"
-                                                        android:layout_marginRight="30dp"
-                                                        android:layout_marginTop="10dp"
-                                                        android:layout_gravity="center">
+            <FrameLayout android:id="@+id/refine_location_map_fragment_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_gravity="center">
 
-                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                          android:id="@+id/snapby_map"
+                <fragment android:id="@+id/snapby_map"
                           android:layout_width="match_parent"
                           android:layout_height="match_parent"
                           class="com.google.android.gms.maps.MapFragment" />
@@ -43,9 +38,10 @@
                         android:layout_alignParentRight="true"
                         android:layout_marginTop="10dp"
                         android:layout_marginRight="10dp"
+                        android:layout_gravity="right"
                         android:src="@drawable/button_refresh_refine_map"/>
 
-            </com.snapby.android.utils.SquareLayout>
+            </FrameLayout>
 
         </LinearLayout>
 

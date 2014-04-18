@@ -17,7 +17,7 @@
 
         <LinearLayout android:id="@+id/profile_user_info_container"
                       android:layout_width="match_parent"
-                      android:layout_height="100dp"
+                      android:layout_height="wrap_content"
                       android:orientation="horizontal"
                       android:layout_gravity="top"
                       android:gravity="center"
@@ -50,7 +50,9 @@
 
             <LinearLayout android:orientation="vertical"
                           android:layout_width="match_parent"
-                          android:layout_height="match_parent">
+                          android:layout_weight="1"
+                          android:layout_height="wrap_content"
+                          android:layout_gravity="center">
 
                 <TextView android:id="@+id/profile_username"
                           android:layout_height="wrap_content"
@@ -64,7 +66,8 @@
 
                 <LinearLayout android:orientation="horizontal"
                               android:layout_width="match_parent"
-                              android:layout_height="match_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_marginBottom="10dp"
                               android:layout_weight="1">
 
                     <LinearLayout android:id="@+id/profile_snapbies_button"
@@ -75,7 +78,7 @@
                                   android:gravity="center">
 
                         <TextView android:id="@+id/profile_snapby_count"
-                                  android:layout_height="match_parent"
+                                  android:layout_height="wrap_content"
                                   android:layout_width="wrap_content"
                                   android:textSize="20dp"
                                   android:text="0"
@@ -83,7 +86,7 @@
                                   android:gravity="center"/>
 
                         <TextView android:id="@+id/profile_snapby_count_label"
-                                  android:layout_height="match_parent"
+                                  android:layout_height="wrap_content"
                                   android:layout_width="match_parent"
                                   android:textSize="14dp"
                                   android:text="snapbies"
@@ -99,7 +102,7 @@
                                   android:gravity="center">
 
                         <TextView android:id="@+id/profile_liked_count"
-                                  android:layout_height="match_parent"
+                                  android:layout_height="wrap_content"
                                   android:layout_width="wrap_content"
                                   android:text="0"
                                   android:textSize="20dp"
@@ -107,7 +110,7 @@
                                   android:gravity="center"/>
 
                         <TextView android:id="@+id/profile_liked_label"
-                                  android:layout_height="match_parent"
+                                  android:layout_height="wrap_content"
                                   android:layout_width="match_parent"
                                   android:textSize="14dp"
                                   android:text="liked"
@@ -119,6 +122,13 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <ImageView android:id="@+id/profile_settings_button"
+                       android:layout_width="40dp"
+                       android:layout_margin="5dp"
+                       android:padding="5dp"
+                       android:layout_height="match_parent"
+                       android:src="@drawable/profile_settings_action_icon"/>
 
         </LinearLayout>
 

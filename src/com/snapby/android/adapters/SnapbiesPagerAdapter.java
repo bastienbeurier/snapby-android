@@ -16,6 +16,8 @@ public class SnapbiesPagerAdapter extends FragmentStatePagerAdapter {
 
     private String type = null;
 
+    public SnapbyPageFragment firstFragment = null;
+
     public SnapbiesPagerAdapter(FragmentManager fm, ArrayList<Snapby> snapbies) {
         super(fm);
 
@@ -32,11 +34,19 @@ public class SnapbiesPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        SnapbyPageFragment fragment = null;
+
         if (type != null && type.equals("profile")) {
-            return SnapbyPageFragment.newInstance(items.get(position), type);
+            fragment = SnapbyPageFragment.newInstance(items.get(position), type, position);
         } else {
-            return SnapbyPageFragment.newInstance(items.get(position));
+            fragment = SnapbyPageFragment.newInstance(items.get(position), position);
         }
+
+        if (position == 0) {
+            firstFragment = fragment;
+        }
+
+        return fragment;
     }
 
     @Override
