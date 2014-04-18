@@ -111,10 +111,10 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
             @Override
             public void onPageSelected(int i) {
-                if (i == 0) {
-                    repullProfileSnapbies();
-                } else if (i == 2 && commingFromPage == 1) {
+                if (i == 1 && commingFromPage == 0) {
                     repullExploreSnapbies();
+                } else if (i == 1 && commingFromPage == 2) {
+                    repullProfileSnapbies();
                 }
 
                 commingFromPage = i;
@@ -145,8 +145,6 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
         //TODO: Redesign display (1h)
         //TODO: res
-
-        //TODO: 6. paginate snapbies (1h)
     }
 
 

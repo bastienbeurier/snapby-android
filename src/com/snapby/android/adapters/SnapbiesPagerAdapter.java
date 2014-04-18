@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * Created by bastien on 3/3/14.
  */
 public class SnapbiesPagerAdapter extends FragmentStatePagerAdapter {
-    private ArrayList<Snapby> items = null;
+    public ArrayList<Snapby> items = null;
 
     private String type = null;
 

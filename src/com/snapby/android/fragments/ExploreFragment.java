@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,6 +79,10 @@ public class ExploreFragment extends Fragment {
 
     public boolean waitingForLocation = false;
 
+    private int page = 1;
+
+    static private int PAGE_SIZE = 10;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.explore, container, false);
@@ -131,6 +136,13 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onPageSelected(int i) {
                 updateSelectedSnapbyMarker(snapbies.get(i));
+
+                if (i == snapbies.size() - 1) {
+                    Log.d("BAB", "LOADING MORE SNAPBIES");
+
+                    LatLngBounds mapBounds = exploreMap.getProjection().getVisibleRegion().latLngBounds;
+                    mapReqHandler.addMapRequest(GeneralUtils.getAquery(getActivity()), mapBounds, page + 1, PAGE_SIZE);
+                }
             }
 
             @Override
@@ -210,27 +222,45 @@ public class ExploreFragment extends Fragment {
             public void responseReceived(String url, JSONObject object, AjaxStatus status) {
                 if (status.getError() == null) {
                     JSONArray rawSnapbies;
+                    int page = 0;
+
                     try {
 
                         if (object != null) {
                             JSONObject rawResult = object.getJSONObject("result");
                             rawSnapbies = rawResult.getJSONArray("snapbies");
+                            page = Integer.parseInt(rawResult.getString("page"));
                         } else {
                             showNoConnectionInFeedMessage();
                             return;
                         }
 
-                        snapbies = Snapby.rawSnapbiesToInstances(rawSnapbies);
-
-                        displaySnapbiesOnMap(snapbies);
-
                         noConnectionInFeed.setVisibility(View.GONE);
 
-                        if (snapbies.size() > 0) {
-                            updateUIForDisplaySnapbies();
-                        } else {
-                            showNoSnapbyInFeedMessage();
+                        if (page == 1) {
+                            snapbies = Snapby.rawSnapbiesToInstances(rawSnapbies);
+                            displaySnapbiesOnMap(snapbies);
+
+                            if (snapbies.size() > 0) {
+                                updateUIForDisplaySnapbies();
+                            } else {
+                                showNoSnapbyInFeedMessage();
+                            }
+                        } else if (page == ExploreFragment.this.page + 1) {
+                            ExploreFragment.this.page += 1;
+
+                            List<Snapby> newSnapbies = Snapby.rawSnapbiesToInstances(rawSnapbies);
+
+                            displayMoreSnapbiesOnMap(newSnapbies);
+
+                            snapbies.addAll(newSnapbies);
+
+                            snapbyPagerAdapter.items = snapbies;
+
+                            snapbyPagerAdapter.notifyDataSetChanged();
                         }
+
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -240,7 +270,8 @@ public class ExploreFragment extends Fragment {
             }
         });
 
-        mapReqHandler.addMapRequest(GeneralUtils.getAquery(getActivity()), mapBounds);
+        page = 1;
+        mapReqHandler.addMapRequest(GeneralUtils.getAquery(getActivity()), mapBounds, page, PAGE_SIZE);
     }
 
     public LatLngBounds getExploreMapBounds() {
@@ -252,7 +283,7 @@ public class ExploreFragment extends Fragment {
         snapbyProgressBar.setVisibility(View.GONE);
         viewPagerContainer.setVisibility(View.VISIBLE);
 
-        // Instantiate a ViewPager and a PagerAdapter.                   (
+        // Instantiate a ViewPager and a PagerAdapter.
         snapbyPagerAdapter = new SnapbiesPagerAdapter(getActivity().getSupportFragmentManager(), snapbies);
         snapbyViewPager.setAdapter(snapbyPagerAdapter);
         updateSelectedSnapbyMarker(snapbies.get(0));
@@ -293,27 +324,25 @@ public class ExploreFragment extends Fragment {
 
     private void displaySnapbiesOnMap(List<Snapby> snapbies) {
         displayedSnapbyModels.clear();
-        HashMap<Integer, Marker> newDisplayedSnapbyMarkers = new HashMap<Integer, Marker>();
+        displayedSnapbyMarkers.clear();
 
         for (Snapby snapby: snapbies) {
             displayedSnapbyModels.put(snapby.id, snapby);
 
-            //Check that the snapby is not already marked on the map
-            if (!displayedSnapbyMarkers.containsKey(snapby.id)) {
-                Marker snapbyMarker = displaySnapbyOnMap(snapby);
-                newDisplayedSnapbyMarkers.put(snapby.id, snapbyMarker);
-                //If he is, re-use the marker
-            } else {
-                newDisplayedSnapbyMarkers.put(snapby.id, displayedSnapbyMarkers.get(snapby.id));
-                displayedSnapbyMarkers.remove(snapby.id);
-            }
-        }
+            Marker snapbyMarker = displaySnapbyOnMap(snapby);
 
-        for (HashMap.Entry<Integer, Marker> entry: displayedSnapbyMarkers.entrySet()) {
-            entry.getValue().remove();
+            displayedSnapbyMarkers.put(snapby.id, snapbyMarker);
         }
+    }
 
-        displayedSnapbyMarkers = newDisplayedSnapbyMarkers;
+    private void displayMoreSnapbiesOnMap(List<Snapby> snapbies) {
+        for (Snapby snapby: snapbies) {
+            displayedSnapbyModels.put(snapby.id, snapby);
+
+            Marker snapbyMarker = displaySnapbyOnMap(snapby);
+
+            displayedSnapbyMarkers.put(snapby.id, snapbyMarker);
+        }
     }
 
     private Marker displaySnapbyOnMap(Snapby snapby) {

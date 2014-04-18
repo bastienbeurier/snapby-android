@@ -27,7 +27,7 @@ public class MapRequestHandler {
     }
 
     /** Add a request to populate a zone of the map with snapby, we're going to handle that */
-    public void addMapRequest(final AQuery aq, final LatLngBounds latLngBounds) {
+    public void addMapRequest(final AQuery aq, final LatLngBounds latLngBounds, final int page, final int pageSize) {
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -42,7 +42,7 @@ public class MapRequestHandler {
             @Override
             public void run() {
                 //API call to retrieve snapbies in the screen
-                ApiUtils.pullSnapbiesInZone(aq, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, new AjaxCallback<JSONObject>() {
+                ApiUtils.pullSnapbiesInZone(aq, latLngBounds.northeast.latitude, latLngBounds.northeast.longitude, latLngBounds.southwest.latitude, latLngBounds.southwest.longitude, page, pageSize, new AjaxCallback<JSONObject>() {
                     @Override
                     public void callback(String url, JSONObject object, AjaxStatus status) {
                         super.callback(url, object, status);

@@ -320,8 +320,6 @@ public class CameraFragment extends Fragment {
 
             imagePath = pictureFile.getAbsolutePath().toString();
 
-            Log.d("BAB", "IMAGE PATH: " + imagePath);
-
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             formattedPicture = BitmapFactory.decodeFile(imagePath, options);

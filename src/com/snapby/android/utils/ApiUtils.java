@@ -87,29 +87,16 @@ public class ApiUtils {
     }
 
     /** API call to retrieve snapbies in a zone of the map */
-    public static void pullSnapbiesInZone(AQuery aq, double neLat, double neLng, double swLat, double swLng, AjaxCallback<JSONObject> cb) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("neLat", String.valueOf(neLat));
-        params.put("neLng", String.valueOf(neLng));
-        params.put("swLat", String.valueOf(swLat));
-        params.put("swLng", String.valueOf(swLng));
-
-        String url = getBasePath() + "/bound_box_snapbies.json" + encodeParamsAsUrlParams(params);
-
-        cb.timeout(15000);
-
-        aq.ajax(url, JSONObject.class, cb);
-    }
-
-    public static void pullLocalSnapbies(AQuery aq, double neLat, double neLng, double swLat, double swLng, int page, AjaxCallback<JSONObject> cb) {
+    public static void pullSnapbiesInZone(AQuery aq, double neLat, double neLng, double swLat, double swLng, int page, int pageSize, AjaxCallback<JSONObject> cb) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("neLat", String.valueOf(neLat));
         params.put("neLng", String.valueOf(neLng));
         params.put("swLat", String.valueOf(swLat));
         params.put("swLng", String.valueOf(swLng));
         params.put("page", page);
+        params.put("page_size", pageSize);
 
-        String url = getBasePath() + "/snapbies/local_snapbies.json" + encodeParamsAsUrlParams(params);
+        String url = getBasePath() + "/bound_box_snapbies.json" + encodeParamsAsUrlParams(params);
 
         cb.timeout(15000);
 
