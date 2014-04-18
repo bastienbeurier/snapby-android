@@ -22,6 +22,10 @@ public class AppPreferences {
 
     private static final String LAST_ACTIVITIES_READ_PREF = "ss_last_activities_read_pref";
 
+    private static final String CAMERA_TUTORIAL_PREF = "camera_tutorial_pref";
+
+    private static final String CREATE_TUTORIAL_PREF = "create_tutorial_pref";
+
     private static final String APP_SHARED_PREFS = AppPreferences.class.getSimpleName();
 
     private SharedPreferences sharedPrefs = null;
@@ -109,13 +113,12 @@ public class AppPreferences {
         prefsEditor.commit();
     }
 
-    public long getLastActivitiesRead() {
-        return sharedPrefs.getLong(LAST_ACTIVITIES_READ_PREF, 0);
+    public void setCameraTutorialRead() {
+        prefsEditor.putString(CAMERA_TUTORIAL_PREF, "dummy");
+        prefsEditor.commit();
     }
 
-    public void setLastActivitiesRead() {
-        prefsEditor.putLong(LAST_ACTIVITIES_READ_PREF, System.currentTimeMillis());
-
-        prefsEditor.commit();
+    public boolean tutorialHasBeenRead() {
+        return !sharedPrefs.getString(CAMERA_TUTORIAL_PREF, "").equals("");
     }
 }

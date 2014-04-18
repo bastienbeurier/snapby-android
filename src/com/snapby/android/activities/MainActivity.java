@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -110,6 +111,14 @@ public class MainActivity extends FragmentActivity implements GooglePlayServices
 
             @Override
             public void onPageSelected(int i) {
+                if (i != 1 && cameraFragment.tutorialMode) {
+                    cameraFragment.endCameraTutorial();
+                }
+
+                if (i == 1) {
+                    cameraFragment.showCallToActionView();
+                }
+
                 if (i == 1 && commingFromPage == 0) {
                     repullExploreSnapbies();
                 } else if (i == 1 && commingFromPage == 2) {

@@ -23,7 +23,6 @@ import com.snapby.android.R;
 import com.snapby.android.activities.MainActivity;
 import com.snapby.android.models.User;
 import com.snapby.android.utils.ApiUtils;
-import com.snapby.android.utils.AppPreferences;
 import com.snapby.android.utils.Constants;
 import com.snapby.android.utils.GeneralUtils;
 import com.snapby.android.utils.ImageUtils;
@@ -36,8 +35,6 @@ import org.json.JSONObject;
  */
 public class SettingsFragment extends Fragment {
 
-    private AppPreferences appPrefs = null;
-
     private EditText settingsUsernameEditText = null;
 
     private ImageView profilePictureView = null;
@@ -49,8 +46,6 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.settings, container, false);
-
-        appPrefs = new AppPreferences(getActivity());
 
         currentUser = SessionUtils.getCurrentUser(getActivity());
 

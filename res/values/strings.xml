@@ -157,4 +157,9 @@
     <string name="snapbies_cap">SNAPBYS</string>
     <string name="display_created">Created:</string>
     <string name="display_last_active">Last active:</string>
+    <string name="tutorial_explore_button">Explore snapbies around you.</string>
+    <string name="tutorial_profile_button">Keep track of your snapbies.</string>
+    <string name="tutorial_dismiss">(tap anywhere to dismiss tutorial)</string>
+    <string name="tutorial_picture_button">A snapby is a picture shared with your neighborhood!</string>
+    <string name="camera_call_to_action">Be #%d to snapby in this area!</string>
 </resources>

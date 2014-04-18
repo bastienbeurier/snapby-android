@@ -16,6 +16,7 @@
     <color name="semiTransparentWhite">#AAffffff</color>
     <color name="semiTransparentBlack">#33000000</color>
     <color name="semiTransparentBlackDarker">#AA000000</color>
+    <color name="semiTransparentBlackEvenDarker">#DD000000</color>
     <color name="lightGrey">#999999</color>
     <color name="veryLightGrey">#D8D8D8</color>
     <color name="veryVeryLightGrey">#F2F2F2</color>

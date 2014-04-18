@@ -13,10 +13,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -53,6 +59,8 @@ import java.util.List;
  * Created by bastien on 4/11/14.
  */
 public class CameraFragment extends Fragment {
+
+    private AppPreferences appPrefs = null;
 
     private Camera mCamera = null;
 
@@ -96,15 +104,39 @@ public class CameraFragment extends Fragment {
 
     private FrameLayout localSnapbyCountContainer = null;
 
-    private AppPreferences appPrefs = null;
-
     private String imagePath = null;
 
-    private boolean firstLocalSnapbyCount = true;
+    private boolean firstSnapbyCountSet = false;
+
+    private Button captureButton = null;
+
+    private ImageView flipCameraView = null;
+
+    public boolean tutorialMode = false;
+
+    private View rootView = null;
+
+    private View tutorialContainer = null;
+
+    private View.OnClickListener exploreListener = null;
+
+    private View.OnClickListener profileListener = null;
+
+    private View.OnClickListener captureListener = null;
+
+    private View.OnClickListener flipCameraListener = null;
+
+    private View callToActionView = null;
+
+    private TextView callToActionText = null;
+
+    public int snapbyCount = 0;
+
+    private boolean animatingCallToAction = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.camera, container, false);
+        rootView = inflater.inflate(R.layout.camera, container, false);
 
         exploreButton = (ImageView) rootView.findViewById(R.id.camera_explore_button);
         profileButton = (ImageView) rootView.findViewById(R.id.camera_profile_button);
@@ -118,51 +150,60 @@ public class CameraFragment extends Fragment {
         localSnapbyCount = (TextView) rootView.findViewById(R.id.camera_snapby_count);
         localSnapbyCountContainer = (FrameLayout) rootView.findViewById(R.id.camera_snapby_count_container);
         exploreButtonContainer = rootView.findViewById(R.id.camera_explore_button_container);
-
-        appPrefs = ((SnapbyApplication) getActivity().getApplicationContext()).getAppPrefs();
+        tutorialContainer = rootView.findViewById(R.id.camera_tutorial_container);
+        callToActionView = rootView.findViewById(R.id.camera_call_to_action_container);
+        callToActionText = (TextView) rootView.findViewById(R.id.camera_call_to_action_text);
 
         //Front camera button
-        ImageView flipCameraView = (ImageView) rootView.findViewById(R.id.camera_flip_button);
+        flipCameraView = (ImageView) rootView.findViewById(R.id.camera_flip_button);
+
+        flipCameraListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                frontCamera = !frontCamera;
+
+                setUpCamera();
+            }
+        };
+
         if (Camera.getNumberOfCameras() > 1 ) {
             flipCameraView.setVisibility(View.VISIBLE);
 
-            flipCameraView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    frontCamera = !frontCamera;
-
-                    setUpCamera();
-                }
-            });
+            flipCameraView.setOnClickListener(flipCameraListener);
         }
 
-        exploreButton.setOnClickListener(new View.OnClickListener() {
+        exploreListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).mainViewPager.setCurrentItem(0);
             }
-        });
+        };
+
+        exploreButton.setOnClickListener(exploreListener);
 
         profileButton = (ImageView) rootView.findViewById(R.id.camera_profile_button);
 
-        profileButton.setOnClickListener(new View.OnClickListener() {
+        profileListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).mainViewPager.setCurrentItem(2);
             }
-        });
+        };
+
+        profileButton.setOnClickListener(profileListener);
 
         preview = (FrameLayout) rootView.findViewById(R.id.camera_preview);
 
-        Button captureButton = (Button) rootView.findViewById(R.id.capture_button);
-        captureButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mCamera.takePicture(null, null, mPicture);
-                    }
-                }
-        );
+        captureButton = (Button) rootView.findViewById(R.id.capture_button);
+
+        captureListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCamera.takePicture(null, null, mPicture);
+            }
+        };
+
+        captureButton.setOnClickListener(captureListener);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,6 +244,11 @@ public class CameraFragment extends Fragment {
         });
 
         setUpCamera();
+
+        appPrefs = ((SnapbyApplication) getActivity().getApplicationContext()).getAppPrefs();
+        if (!appPrefs.tutorialHasBeenRead()) {
+            startCameraTutorial();
+        }
 
         return rootView;
     }
@@ -532,25 +578,25 @@ public class CameraFragment extends Fragment {
                 super.callback(url, object, status);
 
                 if (status.getError() == null && object != null) {
-                    Integer snapbyCount = 0;
+                    Integer lastSnapbyCount = 0;
 
                     try {
                         JSONObject result = object.getJSONObject("result");
-                        snapbyCount = Integer.parseInt(result.getString("snapbies_count"));
+                        lastSnapbyCount = Integer.parseInt(result.getString("snapbies_count"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+                    snapbyCount = lastSnapbyCount;
 
                     localSnapbyCount.setText("" + snapbyCount);
                     localSnapbyCount.setVisibility(View.VISIBLE);
                     localSnapbyCountContainer.setVisibility(View.VISIBLE);
 
-                    if (firstLocalSnapbyCount) {
-                        firstLocalSnapbyCount = false;
 
-                        Toast toast = Toast.makeText(getActivity(), "Be #" + (snapbyCount + 1) + " to snapby this area!", Toast.LENGTH_LONG);
-                        toast.show();
-                    }
+                    firstSnapbyCountSet = true;
+
+                    showCallToActionView();
                 }
             }
         });
@@ -563,4 +609,78 @@ public class CameraFragment extends Fragment {
         }
     }
 
+    private void startCameraTutorial() {
+        tutorialMode = true;
+
+        tutorialContainer.setVisibility(View.VISIBLE);
+
+        View.OnClickListener dismissTutorial = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endCameraTutorial();
+            }
+        };
+
+        exploreButton.setOnClickListener(dismissTutorial);
+        profileButton.setOnClickListener(dismissTutorial);
+        captureButton.setOnClickListener(dismissTutorial);
+        flipCameraView.setOnClickListener(dismissTutorial);
+        rootView.setOnClickListener(dismissTutorial);
+    }
+
+    public void endCameraTutorial() {
+        appPrefs.setCameraTutorialRead();
+
+        tutorialMode = false;
+
+        tutorialContainer.setVisibility(View.GONE);
+        exploreButton.setOnClickListener(exploreListener);
+        profileButton.setOnClickListener(profileListener);
+        captureButton.setOnClickListener(captureListener);
+        flipCameraView.setOnClickListener(flipCameraListener);
+        rootView.setOnClickListener(null);
+    }
+
+    public void showCallToActionView() {
+        if (tutorialMode || !firstSnapbyCountSet || animatingCallToAction) {
+            return;
+        }
+
+        callToActionText.setText(getActivity().getResources().getString(R.string.camera_call_to_action, snapbyCount + 1));
+
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setDuration(1000);
+
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setStartOffset(2000);
+        fadeOut.setDuration(1000);
+
+        AnimationSet animation = new AnimationSet(false);
+        animation.addAnimation(fadeIn);
+        animation.addAnimation(fadeOut);
+
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                Log.d("BAB", "ANIMATION STARTED!!");
+                callToActionView.setVisibility(View.VISIBLE);
+                animatingCallToAction = true;
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                callToActionView.setVisibility(View.GONE);
+                animatingCallToAction = false;
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        callToActionView.setAnimation(animation);
+
+        callToActionView.animate();
+    }
 }
