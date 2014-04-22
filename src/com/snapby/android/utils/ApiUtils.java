@@ -73,7 +73,6 @@ public class ApiUtils {
         params.put("description", description);
         params.put("lat", lat);
         params.put("lng", lng);
-        params.put("device_id", GeneralUtils.getDeviceId(activity));
         params.put("anonymous", anonymousUser ? 1 : 0);
         params.put("avatar", image);
 

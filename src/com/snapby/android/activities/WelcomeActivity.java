@@ -124,7 +124,9 @@ public class WelcomeActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-        Session.getActiveSession().removeCallback(statusCallback);
+        if (Session.getActiveSession() != null && statusCallback != null) {
+            Session.getActiveSession().removeCallback(statusCallback);
+        }
     }
 
     @Override

@@ -16,7 +16,7 @@ public class Constants {
     public static final int MIN_PASSWORD_LENGTH = 6;
 
     /** Zoom for the initial camera position when we have the user location */
-    public static final int EXPLORE_ZOOM = 14;
+    public static final int EXPLORE_ZOOM = 13;
     public static final int INITIAL_PROFILE_ZOOM = 13;
 
     /** Minimum radius around the user's location where he can create snapby **/

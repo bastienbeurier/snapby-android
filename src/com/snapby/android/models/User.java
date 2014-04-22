@@ -35,25 +35,6 @@ public class User implements Parcelable {
 
     public int likedSnapbies = 0;
 
-    public static ArrayList<User> rawUsersToInstances(JSONArray rawUsers) {
-        ArrayList<User> users = new ArrayList<User>();
-
-        int len = rawUsers.length();
-        for (int i = 0; i < len; i++) {
-            try {
-                JSONObject rawUser = rawUsers.getJSONObject(i);
-                if (rawUser != null) {
-                    User user = rawUserToInstance(rawUser);
-                    users.add(user);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return users;
-    }
-
     public static User rawUserToInstance(JSONObject rawUser) {
         if (rawUser == null) {
             return null;
